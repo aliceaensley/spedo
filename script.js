@@ -25,6 +25,7 @@ function setSpeedMode(mode) {
     {
         case 1: unit = 'MPH'; break;
         case 2: unit = 'Knots'; break;
+        default: unit = 'KMH';
     }
     elements.speedMode.innerText = unit;
 }
@@ -146,6 +147,7 @@ function startSimulation() {
             setGear(0); 
         }
         
+        // Simulasikan pengurangan Fuel
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         setFuel(Math.max(0.1, currentFuelText / 100 - 0.005));
 
@@ -213,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimeWIB();
     setInterval(updateTimeWIB, 60000); 
     
-    // 2. SETUP INTERAKSI CLICK
+    // 2. SETUP INTERAKSI CLICK (Head Unit & Close)
     if (elements.headunitFooter) {
         elements.headunitFooter.addEventListener('click', () => {
             toggleHeadUnit(true); 
@@ -232,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- LOGIC: BROWSER APP (membuka https://nekopoi.care/) ---
+    // 3. LOGIC: BROWSER APP (membuka https://nekopoi.care/)
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
             window.open('https://nekopoi.care/', '_blank'); 
@@ -240,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. INISIASI DATA DAN MESIN
+    // 4. INISIASI DATA DAN MESIN
     setSpeedMode(1); 
     setHealth(1.0); 
     setFuel(0.49); 
@@ -249,12 +251,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     setEngine(false); 
 
+    // Engine ON/OFF Control
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
             setEngine(!engineState);
         });
     }
 
+    // Nyalakan mesin secara otomatis setelah 2 detik
     setTimeout(() => {
         setEngine(true);
     }, 2000);
