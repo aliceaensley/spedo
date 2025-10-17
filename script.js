@@ -6,7 +6,7 @@ let seatbeltState = true;
 let simulationInterval = null; 
 
 // *****************************************************************
-// ⚠️ PENTING: GANTI DENGAN KUNCI API YOUTUBE ANDA YANG VALID!
+// ⚠️ PENTING: API KEY ANDA TELAH DIMASUKKAN DI BAWAH INI
 // *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
 // *****************************************************************
@@ -170,8 +170,6 @@ function toggleYoutubeSearchUI(show) {
         elements.youtubeSearchUI.classList.toggle('hidden', !show);
     }
     if (elements.youtubeResults) {
-        // Hanya toggle results container jika tidak sedang menampilkan hasil
-        // Ini agar jika video sudah dimuat, UI pencarian tidak hilang total.
         elements.youtubeResults.classList.toggle('hidden', !show);
     }
     // Bersihkan hasil saat menyembunyikan
@@ -181,7 +179,7 @@ function toggleYoutubeSearchUI(show) {
 }
 
 async function searchYoutube(query) {
-    if (!query || YOUTUBE_API_KEY === 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs') {
+    if (!query || YOUTUBE_API_KEY === 'GANTI_DENGAN_API_KEY_ANDA_DI_SINI') {
         alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
         return;
     }
@@ -197,7 +195,7 @@ async function searchYoutube(query) {
         const response = await fetch(API_URL);
         
         if (!response.ok) {
-            // Tangkap status non-200 (misalnya 403 Forbidden karena API Key salah/kuota habis)
+            // Tangkap status non-200
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
         }
 
@@ -265,7 +263,6 @@ function showBrowser(url) {
     if (elements.iframeView) elements.iframeView.classList.remove('hidden');
     
     // Tampilkan UI pencarian YouTube hanya jika URL mengandung 'youtube' TAPI BUKAN URL EMBED
-    // Jika URL adalah URL embed (memutar video), kita hanya sembunyikan hasil pencarian, bukan search bar-nya
     const isYoutubeApp = url.includes('youtube') && url.includes('embed') === false;
     toggleYoutubeSearchUI(isYoutubeApp); 
     
@@ -376,7 +373,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Aksi Klik Browser (LSFD)
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
-            // Memuat LSFD - Sembunyikan UI Pencarian YouTube
             toggleYoutubeSearchUI(false); 
             showBrowser('https://lsfd.jg-rp.com/index.php'); 
         });
