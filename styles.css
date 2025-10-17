@@ -1,3 +1,4 @@
+/* ... (Bagian atas CSS tetap sama) ... */
 /* Basic Reset and Font */
 * {
     user-select: none;
@@ -16,10 +17,10 @@ body {
     color: white;
 }
 
-/* --- Container Utama --- */
+/* --- Container Utama Speedometer --- */
 .speedometer-container {
     position: fixed;
-    bottom: 15px;
+    bottom: 45px; /* Disesuaikan agar ada ruang untuk footer baru */
     right: 15px;
     width: 320px; 
     
@@ -154,4 +155,30 @@ body {
 /* Hidden elements from old code */
 #headlights, #indicators, #seatbelts, #engine, #speed-mode-display {
     display: none; 
+}
+
+
+/* --- HEAD UNIT FOOTER BAR (Styling Baru) --- */
+.headunit-footer {
+    position: fixed;
+    bottom: 15px; /* Tepat di bawah speedometer-container */
+    right: 15px;
+    width: 320px;
+    
+    background: linear-gradient(90deg, #FFA500, #FF4500); /* Orange Gradient */
+    color: white;
+    text-align: center;
+    font-size: 10pt;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
+}
+
+.headunit-footer .key-bind {
+    color: black;
+    background-color: white;
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin: 0 2px;
 }
