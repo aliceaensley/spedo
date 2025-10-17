@@ -5,6 +5,11 @@ let headlightsState = 1;
 let seatbeltState = true; 
 let simulationInterval = null; 
 let isYoutubeOpen = false; 
+let isFuelWarningActive = false; // Status peringatan bensin
+
+// BARU: Objek Audio Peringatan Bensin (Gunakan nama file Anda yang sudah di-upload)
+const fuelWarningSound = new Audio('bensin.mp3'); 
+fuelWarningSound.loop = true; // Agar suara berulang
 
 // *****************************************************************
 // ⚠️ PENTING: API KEY YOUTUBE
@@ -26,6 +31,23 @@ const toggleActive = (element, state) => {
         }
     }
 };
+
+// BARU: Fungsi untuk mengontrol suara peringatan
+function toggleFuelWarning(activate) {
+    if (activate && !isFuelWarningActive) {
+        // Nyalakan Peringatan
+        fuelWarningSound.currentTime = 0; 
+        fuelWarningSound.play().catch(e => {
+            console.warn("Gagal memutar suara peringatan.", e);
+        });
+        isFuelWarningActive = true;
+    } else if (!activate && isFuelWarningActive) {
+        // Matikan Peringatan
+        fuelWarningSound.pause();
+        isFuelWarningActive = false;
+    }
+}
+
 
 // --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
 function setSpeedMode(mode) {
@@ -58,8 +80,16 @@ function setRPM(rpm) {
 }
 
 function setFuel(fuel) {
+    // Tampilkan nilai Fuel seperti biasa
     const displayValue = `${Math.round(fuel * 100)}%`;
     if (elements.fuel) elements.fuel.innerText = displayValue;
+
+    // 🚨 LOGIC SUARA BARU: Cek apakah Fuel <= 25% (0.25)
+    if (fuel <= 0.25) {
+        toggleFuelWarning(true);
+    } else {
+        toggleFuelWarning(false);
+    }
 }
 
 function setHealth(health) {
@@ -90,6 +120,8 @@ function setEngine(state) {
             startSimulation();
         } else {
             stopSimulation();
+            // PENTING: Jika mesin mati, hentikan juga suara peringatan bensin
+            toggleFuelWarning(false);
         }
     }
 }
@@ -154,6 +186,7 @@ function startSimulation() {
             setGear(0); 
         }
         
+        // Simulasikan pengurangan bahan bakar
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         setFuel(Math.max(0.1, currentFuelText / 100 - 0.005));
 
@@ -244,7 +277,7 @@ function showVideo(url) {
 }
 
 
-// --- LOGIC TOGGLE YOUTUBE (Diperbarui agar musik tetap berjalan saat HIDE) ---
+// --- LOGIC TOGGLE YOUTUBE ---
 
 function toggleYoutubeUI(state) {
     const speedometer = elements.speedometerUI;
@@ -262,7 +295,6 @@ function toggleYoutubeUI(state) {
         youtubeWrapper.classList.remove('hidden');
         toggleActive(elements.youtubeToggleIcon, true);
         
-        // Pastikan UI pencarian aktif saat dibuka
         toggleYoutubeSearchUI(true);
         if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
         
@@ -272,10 +304,7 @@ function toggleYoutubeUI(state) {
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
         
-        // 🚨 PENTING: Baris yang mematikan video (iframe.src = 'about:blank') DIHAPUS.
         // Iframe tetap aktif di latar belakang (hidden).
-        
-        // Cukup sembunyikan UI pencarian saja
         toggleYoutubeSearchUI(false);
     }
 }
@@ -325,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // 4. Listener untuk Tombol HIDE/CLOSE BARU
+    // 4. Listener untuk Tombol HIDE/CLOSE
     if (elements.youtubeHideButton) {
         elements.youtubeHideButton.addEventListener('click', () => {
             toggleYoutubeUI(false); 
@@ -363,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
     setHealth(1.0); 
-    setFuel(0.49); 
+    setFuel(0.49); // Mulai dari 49% agar simulasi cepat mencapai batas 25%
     
     setEngine(false); 
     setHeadlights(1);
