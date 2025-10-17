@@ -35,7 +35,7 @@ const toggleActive = (element, state) => {
     }
 };
 
-// 🚨 BARU: Fungsi untuk memainkan bensin.mp3 dua kali (ting ting)
+// Fungsi untuk memainkan bensin.mp3 dua kali (ting ting)
 function playLowFuelSoundTwice() {
     fuelWarningSound.currentTime = 0;
     fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (1).", e); });
@@ -148,7 +148,7 @@ function setGear(gear) {
     }
     if (elements.gear) elements.gear.innerText = gearText;
     
-    // Update maxGearAchieved jika gear saat ini lebih tinggi dari 0
+    // Update maxGearAchieved jika gear saat ini lebih tinggi
     if (gear > maxGearAchieved) {
         maxGearAchieved = gear;
     }
@@ -237,7 +237,7 @@ function startSimulation() {
         const currentRPM = currentSpeed > 0 ? Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05)) : 0.1;
         setRPM(currentRPM);
         
-        // 🚨 LOGIKA GEAR STABIL KRITIS
+        // 🚨 LOGIKA GEAR SANGAT STABIL (PERBAIKAN TERAKHIR):
         let targetGear = 0; 
         
         // Tentukan Gear ideal berdasarkan kecepatan saat ini
@@ -250,20 +250,27 @@ function startSimulation() {
         } 
         
         if (currentSpeed > 0) {
-            // Gear akan selalu mengikuti yang terbesar antara maxGearAchieved dan targetGear.
-            // Ini mencegah gear turun karena fluktuasi minor pada kecepatan tinggi.
-            let finalGear = Math.max(maxGearAchieved, targetGear);
-            
-            // Downshift Terpaksa: Hanya turunkan maxGearAchieved jika speed benar-benar anjlok.
-            if (finalGear === 3 && currentSpeed < 10) {
-                maxGearAchieved = 2; // Paksa turun maxGear untuk iterasi berikutnya
-                finalGear = 2;
-            } else if (finalGear === 2 && currentSpeed < 5) {
-                maxGearAchieved = 1; // Paksa turun maxGear
-                finalGear = 1;
+            // Jika targetGear lebih besar dari maxGearAchieved, kita naik gear
+            if (targetGear > maxGearAchieved) {
+                setGear(targetGear);
+            } else if (targetGear === 0) {
+                // Kecepatan mendekati 0, set Gear 1
+                setGear(1); 
+                maxGearAchieved = 1;
+            } else {
+                // Jika kecepatan tidak 0 dan tidak perlu naik gear, PERTAHANKAN maxGearAchieved.
+                // Ini mengatasi masalah fluktuasi minor pada speed tinggi.
+                setGear(maxGearAchieved);
             }
             
-            setGear(finalGear);
+            // Atur ulang maxGearAchieved jika terjadi deselerasi ekstrem (optional, tapi menjaga realisme)
+            if (maxGearAchieved === 3 && currentSpeed < 10) { 
+                maxGearAchieved = 2;
+                setGear(maxGearAchieved);
+            } else if (maxGearAchieved === 2 && currentSpeed < 5) {
+                maxGearAchieved = 1;
+                setGear(maxGearAchieved);
+            }
             
         } else {
             // Jika kendaraan diam (Speed = 0)
