@@ -11,7 +11,7 @@ body {
   bottom: 15px;
   right: 15px;
   display: flex;
-  gap: 12px;
+  gap: 15px;
 }
 
 .circular-panel {
@@ -40,7 +40,7 @@ body {
   stroke-linecap: round;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
-  transition: stroke-dashoffset 0.3s ease;
+  transition: stroke-dashoffset 0.2s ease;
 }
 
 .dial-text {
@@ -52,7 +52,9 @@ body {
 
 .circular-bars {
   display: flex;
+  flex-direction: column;
   gap: 10px;
+  margin-left: 10px; /* geser ke kanan */
   align-items: center;
 }
 
@@ -64,6 +66,7 @@ body {
 .bar-label {
   text-align: center;
   font-size: 10px;
+  margin-bottom: 2px;
 }
 
 .info-panel {
