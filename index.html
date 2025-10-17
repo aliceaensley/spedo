@@ -3,16 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stylish Racing HUD</title>
+<title>Minimalist Digital HUD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="hud">
-  <canvas id="speedMeter" width="160" height="160"></canvas>
-  <canvas id="rpmMeter" width="160" height="160"></canvas>
+  <div id="digital-meters">
+    <div id="speed-display">
+      <span id="speed-value">0</span> <span id="speed-unit">KMH</span>
+    </div>
+    <div id="rpm-display">
+      <span id="rpm-value">0</span> <span id="rpm-unit">RPM</span>
+    </div>
+  </div>
   <div id="info">
     <div id="engine">Engine: Off</div>
-    <div id="gear">N</div>
+    <div id="gear">Gear: N</div>
     <div id="fuel">Fuel: 100%</div>
     <div id="health">Health: 100%</div>
     <div id="headlights">Headlights: Off</div>
