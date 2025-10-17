@@ -1,12 +1,13 @@
 /* --- Global & Variables --- */
 :root {
-    --primary-pink: #FF00FF; /* Bright Pink */
-    --secondary-teal: #00FFFF; /* Bright Cyan/Teal */
-    --background-dark: rgba(0, 0, 0, 0.7);
+    --primary-pink: #FF00FF; /* Fuchia Bright */
+    --secondary-teal: #00FFFF; /* Cyan Bright */
     --text-light: #FFFFFF;
     --text-muted: #CCC;
-    --gradient-bg: linear-gradient(135deg, var(--primary-pink) 0%, var(--secondary-teal) 100%);
-    --grid-line: rgba(255, 255, 255, 0.1);
+    --danger-red: #FF4136;
+    --success-green: #2ECC40;
+    --card-bg: rgba(255, 255, 255, 0.15); /* Background card semi-transparan */
+    --outline-color: rgba(255, 255, 255, 0.3);
 }
 
 * {
@@ -17,7 +18,7 @@
 
 body {
     background-color: transparent !important;
-    font-family: 'Orbitron', sans-serif; /* Font untuk tampilan modern */
+    font-family: 'Orbitron', sans-serif;
     color: var(--text-light);
     display: flex;
     justify-content: flex-end; 
@@ -34,213 +35,194 @@ body {
     bottom: 30px;    
     right: 30px;     
     
-    width: 380px;    /* Lebar sesuai gambar */
-    height: 250px;   /* Tinggi sesuai gambar */
+    width: 350px;    
+    height: 480px;   /* Dibuat lebih tinggi untuk menampung semua info */
     
-    background: var(--gradient-bg); /* Gradien utama */
-    border-radius: 15px;
-    box-shadow: 0 0 40px rgba(255, 0, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.5);
+    background-color: var(--card-bg); /* Background utama transparan */
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(255, 0, 255, 0.3);
     padding: 10px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     overflow: hidden;
-    position: relative;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--outline-color);
+    /* Efek scanline tipis (opsional) */
+    background-image: linear-gradient(0deg, transparent 50%, rgba(0,0,0,0.15) 50%);
+    background-size: 100% 4px;
 }
 
-/* --- Header Graphic (Palm Trees & Sun) --- */
+/* --- Header Graphic (Top Area) --- */
 #header-graphic {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 70px; /* Tinggi grafis atas */
-    background: linear-gradient(0deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%);
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: calc(100% + 20px);
+    margin: -10px -10px 0 -10px;
+    height: 150px;
+    background: linear-gradient(135deg, var(--primary-pink) 0%, var(--secondary-teal) 100%);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+    position: relative;
     overflow: hidden;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    border-bottom: 2px solid var(--outline-color);
 }
 
+/* Langit dan Pohon Palem */
 .sun {
     position: absolute;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #FFC107 0%, #FFA000 70%, transparent 100%);
-    top: -40px;
-    left: 50%;
-    transform: translateX(-50%);
+    width: 150px; height: 150px; border-radius: 50%;
+    background: radial-gradient(circle, #FFC107 0%, #FFA000 60%, transparent 100%);
+    top: -50px; left: 50%; transform: translateX(-50%);
     box-shadow: 0 0 30px #FFC107;
+    opacity: 0.8;
 }
-
-.palm-tree {
-    position: absolute;
-    bottom: 0;
-    width: 0; 
-    height: 0; 
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 50px solid rgba(0,0,0,0.8); /* Batang pohon */
-    border-radius: 50%;
-    transform: rotate(15deg);
-}
-.palm-tree.left { left: 10%; transform: rotate(-20deg); }
-.palm-tree.right { right: 10%; transform: rotate(20deg); }
-.palm-tree::before, .palm-tree::after { /* Daun */
-    content: '';
-    position: absolute;
+.palm-tree { /* Sederhana untuk mencocokkan siluet gambar */
+    position: absolute; bottom: -10px; 
     width: 0; height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 30px solid rgba(0,0,0,0.7);
-    top: -20px;
-    transform-origin: bottom center;
+    border-left: 20px solid transparent; border-right: 20px solid transparent;
+    border-bottom: 70px solid rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
 }
-.palm-tree::before { left: -18px; transform: rotate(-45deg); }
-.palm-tree::after { right: -18px; transform: rotate(45deg); }
+.palm-tree.left { left: 15%; transform: rotate(-10deg); }
+.palm-tree.right { right: 15%; transform: rotate(10deg); }
 
 
-/* --- Main Content Area --- */
-#main-content {
-    display: flex;
-    width: 100%;
-    flex-grow: 1;
-    margin-top: 60px; /* Jarak dari header graphic */
-    background-color: rgba(0,0,0,0.6); /* Background gelap untuk konten */
-    border-radius: 10px;
-    padding: 10px;
-    position: relative;
-    z-index: 15;
+/* SPEED DISPLAY dalam header */
+#speed-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    line-height: 1;
 }
-
-#left-column, #right-column {
-    display: flex;
-    flex-direction: column;
-    padding: 5px;
-    height: 100%;
-}
-
-#left-column {
-    width: 55%;
-    border-right: 1px dashed var(--grid-line);
-}
-
-#right-column {
-    width: 45%;
-}
-
-.stat-block {
-    margin-bottom: 8px;
-    padding: 3px 0;
-    position: relative;
-}
-.stat-block .label {
-    font-size: 0.7em;
-    color: var(--text-muted);
-    margin-bottom: 2px;
-    display: block;
+.label-small {
     font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 1px;
+    font-size: 1.2em;
+    color: var(--text-light);
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 5px;
+    text-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
-
-/* Speed Block */
-.speed-block {
-    text-align: left;
-    margin-bottom: 10px;
+.speed-value-group {
+    display: flex;
+    align-items: flex-end;
 }
 .big-value {
-    font-family: 'Major Mono Display', monospace; /* Font Digital Retro */
-    font-size: 3.5em; /* Ukuran besar */
-    color: var(--secondary-teal);
-    text-shadow: 0 0 10px var(--secondary-teal);
+    font-family: 'Major Mono Display', monospace;
+    font-size: 4.5em; 
+    color: var(--text-light);
+    text-shadow: 0 0 15px var(--secondary-teal);
     line-height: 0.9;
-    display: block;
+    font-weight: bold;
 }
 .unit-text {
     font-family: 'Major Mono Display', monospace;
-    font-size: 0.9em;
-    color: var(--primary-pink);
-    text-shadow: 0 0 5px var(--primary-pink);
-    position: relative;
-    top: -5px;
-    left: 2px;
-}
-
-/* RPM Block */
-.rpm-block {
-    text-align: left;
-}
-.value-small {
-    font-family: 'Major Mono Display', monospace;
     font-size: 1.2em;
-    color: var(--text-light);
-    display: block;
-}
-
-/* Fuel & Health Bars */
-.bar-container {
-    width: 80%;
-    height: 8px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-.bar-fill {
-    height: 100%;
-    width: 100%;
-    background-color: var(--success-green); /* Default green */
-    transition: width 0.3s ease-out, background-color 0.3s;
-}
-/* Specific bar colors are handled by JS */
-
-/* Gear Block */
-.gear-block {
-    text-align: center;
-    margin-top: auto; /* Dorong ke bawah */
-    padding-top: 5px;
-    border-top: 1px dashed var(--grid-line);
-}
-.big-value-gear {
-    font-family: 'Major Mono Display', monospace;
-    font-size: 2.5em;
     color: var(--primary-pink);
     text-shadow: 0 0 8px var(--primary-pink);
-    line-height: 1;
+    margin-left: 5px;
+    padding-bottom: 8px;
+}
+
+/* --- Status Grid (RPM, Fuel, Health) --- */
+#status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.stat-card {
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 8px;
+    border-radius: 5px;
+    text-align: center;
+    border: 1px solid var(--outline-color);
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.stat-card .label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.8em;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.value-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3em;
+    font-weight: bold;
     display: block;
 }
 
-/* Status Icons */
-#status-icons {
+/* Ikon Status */
+#icon-status-area {
+    grid-column: 1 / span 2;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    gap: 15px;
-    margin-top: auto; /* Dorong ke bawah */
-    padding-top: 10px;
-    border-top: 1px dashed var(--grid-line);
-    font-size: 1.4em;
-    color: var(--text-muted);
+    padding: 10px 0;
+    margin-top: 10px;
+    border-top: 1px solid var(--outline-color);
 }
 
-#status-icons .fas {
+.fas {
+    font-size: 1.8em;
+    color: var(--text-muted);
     transition: color 0.2s;
 }
 
 .icon-on {
     color: var(--secondary-teal);
-    text-shadow: 0 0 8px var(--secondary-teal);
+    text-shadow: 0 0 10px var(--secondary-teal);
 }
 
-.arrow-on {
+/* --- Bottom Bar (Gear & Indicators) --- */
+#bottom-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 2px solid var(--outline-color);
+    margin-top: 10px;
+}
+
+#gear-display {
+    text-align: left;
+}
+.label-bottom {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1em;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    display: block;
+}
+.big-value-gear {
+    font-family: 'Major Mono Display', monospace;
+    font-size: 3em;
     color: var(--primary-pink);
-    text-shadow: 0 0 8px var(--primary-pink);
+    text-shadow: 0 0 10px var(--primary-pink);
+    line-height: 1;
+}
+
+/* Indicators */
+#indicator-arrows {
+    display: flex;
+    gap: 20px;
+}
+
+.indicator-arrow {
+    font-size: 2.5em;
+    color: var(--text-muted);
+    transition: color 0.1s;
+}
+
+.indicator-arrow.arrow-on {
+    color: var(--primary-pink);
+    text-shadow: 0 0 10px var(--primary-pink);
     animation: blink 0.5s step-start infinite;
 }
 
@@ -248,9 +230,7 @@ body {
     50% { opacity: 0.3; }
 }
 
-/* Hidden elements for original JS compatibility */
-dd[id="speed"], dd[id="rpm"], dd[id="fuel"], dd[id="health"],
-dd[id="gear"], dd[id="headlights"], dd[id="indicators"],
-dd[id="seatbelts"], dd[id="speed-mode"], dd[id="engine"] {
+/* HIDDEN ELEMENTS */
+dd[id] {
     display: none !important;
 }
