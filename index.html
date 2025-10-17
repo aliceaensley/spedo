@@ -1,16 +1,66 @@
-<div class="youtube-integrated-container hidden" id="youtube-ui-wrapper">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Speedometer & YouTube</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
     
-    <div class="search-bar-container" id="youtube-search-ui">
-        <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
-        <button id="youtube-search-button">Cari</button>
-    </div>
-    
-    <div class="search-results-container hidden" id="youtube-results">
+    <main class="speedometer-container" id="speedometer-ui">
+        
+        <div class="youtube-integrated-container hidden" id="youtube-ui-wrapper">
+            
+            <div class="search-bar-container" id="youtube-search-ui">
+                <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
+                <button id="youtube-search-button">Cari</button>
+            </div>
+            
+            <div class="search-results-container hidden" id="youtube-results">
+                </div>
+
+            <iframe id="browser-iframe" src="about:blank"></iframe>
+            
+            <div class="youtube-close-button" id="youtube-hide-button">
+                HIDE YOUTUBE [ESC]
+            </div>
+        </div>
+        
+        <div class="panel speed-panel">
+            <div class="speed-header">
+                <span class="speed-title">Speed</span>
+                <span class="speed-unit" id="speed-mode">MPH</span>
+            </div>
+            <div class="speed-value-wrapper">
+                <div class="speed-value" id="speed">000</div>
+                <img src="https://bit.ly/signalice" alt="Logo Hak Cipta" class="speed-copyright-logo">
+            </div>
         </div>
 
-    <iframe id="browser-iframe" src="about:blank"></iframe>
-    
-    <div class="youtube-close-button" id="youtube-hide-button">
-        HIDE YOUTUBE [ESC]
-    </div>
-</div>
+        <div class="panel info-panels-grid">
+            <div class="stat-item"><div class="stat-label">RPM</div><div class="stat-value" id="rpm">0000</div></div>
+            <div class="stat-item"><div class="stat-label">Fuel</div><div class="stat-value" id="fuel">0%</div></div>
+            <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value" id="health">100%</div></div>
+            <div class="stat-item"><div class="stat-label">WIB</div><div class="stat-value" id="time-wib">00:00</div></div>
+        </div>
+
+        <div class="panel bottom-panel">
+            <div class="gear-display">
+                <span class="gear-label">Gear</span>
+                <span class="gear-value" id="gear">N</span>
+            </div>
+            <div class="status-indicators">
+                <div class="indicator-icon" id="headlights-icon">💡</div> 
+                <div class="indicator-icon" id="engine-icon">⚙️</div> 
+                <div class="indicator-icon" id="seatbelt-icon">💺</div> 
+                
+                <div class="indicator-icon youtube-toggle" id="youtube-toggle-icon">▶️</div> 
+            </div>
+        </div>
+        
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
