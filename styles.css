@@ -14,10 +14,10 @@ body {
     display: flex;
     gap: 15px;
     align-items: flex-end;
-    background: rgba(20,20,50,0.85); /* semi-transparent */
+    background: rgba(20, 20, 50, 0.4); /* lebih pudar, alpha 0.4 */
     padding: 12px;
     border-radius: 14px;
-    box-shadow: 0 0 25px #0ff;
+    box-shadow: 0 0 20px #0ff;
 }
 
 .circular-panel {
