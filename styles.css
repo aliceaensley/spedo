@@ -16,23 +16,24 @@ body {
     color: white;
 }
 
-/* --- MEDIA BUTTON (Styling Baru) --- */
+/* --- MEDIA BUTTON --- */
 .media-button {
     position: fixed;
-    bottom: 350px; /* Di atas speedometer utama */
+    /* Disesuaikan: 300px (tinggi speedometer) + 15px (margin bawah) + 15px (margin atas) = ~330px */
+    bottom: 330px; 
     right: 15px;
     width: 320px;
     
-    background: linear-gradient(90deg, #FFD700, #FFA500); /* Kuning Emas ke Orange */
+    background: linear-gradient(90deg, #FFD700, #FFA500); 
     color: black;
     text-align: center;
     font-size: 12pt;
     font-weight: bold;
     padding: 8px 10px;
-    border-radius: 8px 8px 0 0; /* Sudut tumpul di atas */
+    border-radius: 8px 8px 0 0; 
     box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
     cursor: pointer;
-    z-index: 1000;
+    z-index: 1000; /* Pastikan tombol di atas speedometer */
 }
 
 
@@ -42,6 +43,7 @@ body {
     bottom: 15px;
     right: 15px;
     width: 320px; 
+    /* Perkiraan Tinggi Speedometer Utama: Sekitar 300px */
     
     /* Neon border/background - ORANGE */
     background: linear-gradient(135deg, #FFA500, #FF4500); 
@@ -51,16 +53,12 @@ body {
     z-index: 900; /* Di bawah tombol media */
 }
 
-.speedometer-container.hidden {
-    display: none;
-}
-
 .speedometer-container > div {
     background-color: rgba(0, 0, 0, 0.75); 
     border-radius: 12px;
 }
 
-/* ... (Styling internal speedometer tetap sama: .speed-gauge, .info-panels, .bottom-panel, dll.) ... */
+/* ... (Styling internal speedometer tetap sama) ... */
 
 
 /* --- TABLET UI (YouTube View) --- */
@@ -69,7 +67,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 900px; /* Ukuran yang ideal untuk video */
+    width: 900px; 
     height: 600px;
     background-color: rgba(0, 0, 0, 0.95);
     border-radius: 15px;
@@ -80,7 +78,7 @@ body {
     
     color: white;
     font-family: Arial, sans-serif;
-    z-index: 2000; /* Paling atas */
+    z-index: 2000; /* Paling atas agar tidak tertutup speedometer */
 }
 
 .tablet-container.hidden {
@@ -88,7 +86,7 @@ body {
 }
 
 .tablet-header {
-    background-color: #FF4500; /* Warna header orange gelap */
+    background-color: #FF4500; 
     padding: 10px 15px;
     font-size: 14pt;
     font-weight: bold;
@@ -104,6 +102,6 @@ body {
 .close-btn {
     cursor: pointer;
     font-weight: 900;
-    color: #FFD700; /* Kuning Emas */
+    color: #FFD700; 
     text-shadow: 0 0 5px #FFD700;
 }
