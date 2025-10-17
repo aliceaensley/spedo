@@ -154,19 +154,94 @@ body {
     cursor: pointer; font-weight: bold; margin-top: auto; 
 }
 
-/* iFrame View Styling */
+/* iFrame View Styling (Diperbarui untuk YouTube) */
 .iframe-container {
-    flex-grow: 1; display: flex; flex-direction: column; padding: 0;
+    flex-grow: 1; 
+    display: flex; 
+    flex-direction: column; 
+    padding: 0;
+    background-color: #333; 
+}
+
+#browser-iframe {
+    width: 100%; 
+    flex-grow: 1; 
+    border: none; 
     background-color: white;
 }
-#browser-iframe {
-    width: 100%; flex-grow: 1; border: none; background-color: white;
-}
+
 .iframe-back-button {
-    background-color: #FF4500; color: white; text-align: center; padding: 8px;
-    cursor: pointer; font-weight: bold;
+    background-color: #FF4500; 
+    color: white; 
+    text-align: center; 
+    padding: 8px;
+    cursor: pointer; 
+    font-weight: bold;
 }
 
 .hidden {
     display: none !important;
+}
+
+/* --- STYLING BARU UNTUK YOUTUBE SEARCH --- */
+
+.search-bar-container {
+    display: flex;
+    padding: 10px 15px;
+    background-color: #222;
+    border-bottom: 1px solid #FF4500;
+}
+
+#youtube-search-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #555;
+    border-radius: 5px 0 0 5px;
+    background-color: #1a1a1a;
+    color: white;
+}
+
+#youtube-search-button {
+    padding: 8px 15px;
+    border: none;
+    background-color: #FF0000; 
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+}
+
+/* Area Hasil Pencarian */
+.search-results-container {
+    height: 150px; 
+    overflow-x: scroll; /* Scroll horizontal */
+    overflow-y: hidden;
+    display: flex;
+    flex-wrap: nowrap; 
+    gap: 10px;
+    padding: 10px 15px;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #444;
+}
+
+.search-result-item {
+    cursor: pointer;
+    flex: 0 0 auto; 
+    width: 150px;
+    text-align: center;
+}
+
+.search-result-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.search-result-item p {
+    font-size: 9pt;
+    color: #AAA;
+    margin-top: 5px;
+    height: 30px; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
 }
