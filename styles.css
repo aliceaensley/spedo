@@ -4,35 +4,73 @@
     user-drag: none;
     box-sizing: border-box; 
 }
-/* ... (Font dan body styling tetap sama) ... */
+
+@font-face {
+    font-family: 'Digital';
+    /* Ganti dengan font bergaya digital/retro jika ada */
+}
+
+body {
+    background-color: transparent !important;
+    font-family: 'Digital', Arial, sans-serif;
+    color: white;
+}
 
 /* ---------------------------------------------------------------- */
-/* --- Container Utama Speedometer (Neon Orange) --- */
+/* --- Speedometer Utama (Neon Orange) --- */
 /* ---------------------------------------------------------------- */
 .speedometer-container {
-    /* ... (Styling Neon Orange tetap sama) ... */
     position: fixed;
     bottom: 15px; 
     right: 15px;
     width: 320px; 
+    
+    /* Neon border/background - ORANGE */
     background: linear-gradient(135deg, #FFA500, #FF4500); 
     padding: 3px;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
     z-index: 1000; 
 }
-/* ... (Styling internal speedometer lainnya tetap sama) ... */
+
+.speedometer-container > div {
+    background-color: rgba(0, 0, 0, 0.75); 
+    border-radius: 12px;
+}
+
+/* Speed Gauge (Kecepatan) */
+.speed-gauge { padding: 10px 15px; margin-bottom: 5px; text-align: right; }
+.speed-header { display: flex; justify-content: space-between; font-size: 14pt; font-weight: bold; color: #FFA500; }
+.speed-value { font-size: 48pt; font-weight: 900; line-height: 1; color: white; text-shadow: 0 0 10px #FFA500; }
+.speed-value-wrapper { display: flex; align-items: center; justify-content: space-between; }
+.speed-gauge-image { width: 50px; height: 50px; } /* Area ikon mobil dikosongkan */
+
+/* Info Panels (Grid Stats) */
+.info-panels { padding: 5px; margin-bottom: 5px; background-color: transparent; }
+.info-grid { padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; text-align: center; }
+.stat-item { padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; }
+.stat-label { color: #FFA500; font-size: 9pt; }
+.stat-value { font-size: 12pt; font-weight: bold; color: white; }
+
+/* Bottom Panel (Gear, Indicators) */
+.bottom-panel { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; }
+.gear-label { color: #FFD700; font-size: 14pt; font-weight: bold; }
+.gear-value { font-size: 32pt; font-weight: 900; color: white; line-height: 1; text-shadow: 0 0 8px #FFD700; margin-right: 15px; }
+.status-indicators { display: flex; gap: 10px; font-size: 18pt; }
+.indicator-icon { opacity: 0.4; cursor: pointer; } /* Ikon Engine/Lampu bisa diklik */
+.indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
+
 
 /* ---------------------------------------------------------------- */
 /* --- HEAD UNIT TRIGGER (FLOATING DI TENGAH BAWAH) --- */
 /* ---------------------------------------------------------------- */
 .headunit-floating-trigger {
-    /* ... (Styling Head Unit Trigger tetap sama) ... */
     position: fixed;
     bottom: 15px; 
     left: 50%;
     transform: translateX(-50%); 
     width: 350px; 
+    
     background: linear-gradient(90deg, #FFA500, #FF4500); 
     color: white;
     text-align: center;
@@ -42,12 +80,19 @@
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
     cursor: pointer; 
-    z-index: 1500; 
+    z-index: 9000; /* Paling atas agar bisa diklik */
 }
-/* ... (Styling key-bind tetap sama) ... */
+
+.headunit-floating-trigger .key-bind {
+    color: black;
+    background-color: white;
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin: 0 2px;
+}
 
 /* ---------------------------------------------------------------- */
-/* --- PERBAIKAN: TABLET UI (HEAD UNIT MENU - Tampilan Rapi) --- */
+/* --- TABLET UI (HEAD UNIT MENU - ANIMASI MENGEMBANG) --- */
 /* ---------------------------------------------------------------- */
 .headunit-menu-container {
     position: fixed;
@@ -63,7 +108,7 @@
     transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
 
     /* Styling Head Unit Menu yang Rapi (Abu-abu/Hitam) */
-    background-color: rgba(0, 0, 0, 0.95); /* Warna latar gelap */
+    background-color: rgba(0, 0, 0, 0.95); 
     border-radius: 15px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
@@ -72,7 +117,6 @@
     font-family: Arial, sans-serif;
     z-index: 5000; 
     
-    /* Pastikan tampilan default aplikasi rapi */
     display: flex;
     flex-direction: column;
 }
@@ -92,7 +136,7 @@
     padding: 10px 15px;
     font-size: 14pt;
     font-weight: bold;
-    color: #FFA500; /* Harmony text color */
+    color: #FFA500; 
     border-bottom: 1px solid rgba(255, 165, 0, 0.2);
 }
 
@@ -102,7 +146,7 @@
     gap: 15px;
     padding: 20px 15px;
     text-align: center;
-    flex-grow: 1; /* Agar mengambil ruang vertikal di tengah */
+    flex-grow: 1; 
 }
 
 .app-icon {
@@ -123,7 +167,7 @@
 }
 
 .headunit-footer-close {
-    position: relative; /* Diubah dari absolute agar menempel di bagian bawah flex container */
+    position: relative; 
     width: 100%;
     background: linear-gradient(90deg, #FF4500, #FFA500); 
     padding: 10px;
@@ -131,5 +175,5 @@
     border-radius: 0 0 15px 15px;
     cursor: pointer;
     font-weight: bold;
-    margin-top: auto; /* Memaksa ke bagian bawah */
+    margin-top: auto; 
 }
