@@ -1,84 +1,96 @@
-let elements = {};
-let speedMode = 0; // 0: KMH, 1: MPH
-let maxSpeed = 240, maxRPM = 8000;
+const speedCanvas = document.getElementById('speedometerCanvas');
+const rpmCanvas = document.getElementById('rpmCanvas');
+const speedCtx = speedCanvas.getContext('2d');
+const rpmCtx = rpmCanvas.getContext('2d');
+
+let speed = 0;
+let rpm = 0;
 let engineOn = false;
+let maxSpeed = 240;
+let maxRPM = 8000;
 
-let speedCanvas, rpmCanvas, fuelCanvas, healthCanvas;
-let speedCtx, rpmCtx, fuelCtx, healthCtx;
+function drawAnalogMeter(ctx, value, maxValue, labels = []) {
+    const cx = ctx.canvas.width / 2;
+    const cy = ctx.canvas.height / 2;
+    const radius = cx - 8;
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-// Draw analog meter
-function drawAnalogMeter(ctx,value,maxValue){
-    const cx=ctx.canvas.width/2,cy=ctx.canvas.height/2,radius=cx-8;
-    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-
-    // Background arc
+    // Arc background
     ctx.beginPath();
-    ctx.arc(cx,cy,radius,0.75*Math.PI,0.25*Math.PI,false);
-    ctx.strokeStyle="rgba(0,255,255,0.2)";
-    ctx.lineWidth=4; ctx.stroke();
+    ctx.arc(cx, cy, radius, 0.75 * Math.PI, 0.25 * Math.PI, false);
+    ctx.strokeStyle = "rgba(0,255,255,0.15)";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Tick numbers
+    ctx.font = "10px Arial";
+    ctx.fillStyle = "#0ff";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for(let i=0;i<labels.length;i++){
+        const ang = 0.75*Math.PI + (i/(labels.length-1))*1.5*Math.PI;
+        const x = cx + Math.cos(ang)*(radius - 10);
+        const y = cy + Math.sin(ang)*(radius - 10);
+        ctx.fillText(labels[i], x, y);
+    }
+
+    // Arc foreground (value)
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0.75 * Math.PI, 0.75 * Math.PI + (value/maxValue)*1.5*Math.PI, false);
+    ctx.strokeStyle = "#0ff";
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = "#0ff";
+    ctx.stroke();
 
     // Needle
-    const angle=0.75*Math.PI+(value/maxValue)*(1.5*Math.PI);
+    const angle = 0.75*Math.PI + (value/maxValue)*1.5*Math.PI;
     ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.lineTo(cx+radius*Math.cos(angle),cy+radius*Math.sin(angle));
-    ctx.strokeStyle="#0ff"; ctx.lineWidth=2;
-    ctx.shadowBlur=8; ctx.shadowColor="#0ff";
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
+    ctx.strokeStyle = "#0ff";
+    ctx.lineWidth = 2;
     ctx.stroke();
+
+    // Center dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI*2);
+    ctx.fillStyle = "#0ff";
+    ctx.fill();
 }
 
-// Circular bar
-function drawCircularBar(ctx,percent,color){
-    const cx=ctx.canvas.width/2,cy=ctx.canvas.height/2,radius=cx-5;
-    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+// Label data
+const speedLabels = [];
+for(let i=0;i<=maxSpeed;i+=20) speedLabels.push(i);
+const rpmLabels = [];
+for(let i=0;i<=maxRPM;i+=1000) rpmLabels.push(i);
 
-    ctx.beginPath();
-    ctx.arc(cx,cy,radius,0,2*Math.PI);
-    ctx.strokeStyle="rgba(0,255,255,0.1)";
-    ctx.lineWidth=4; ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(cx,cy,radius,-Math.PI/2,-Math.PI/2+2*Math.PI*percent,false);
-    ctx.strokeStyle=color; ctx.lineWidth=4;
-    ctx.shadowBlur=8; ctx.shadowColor=color;
-    ctx.stroke();
+// Update visual
+function updateHUD(){
+    drawAnalogMeter(speedCtx, speed, maxSpeed, speedLabels);
+    drawAnalogMeter(rpmCtx, rpm, maxRPM, rpmLabels);
+    requestAnimationFrame(updateHUD);
 }
 
-// Setters
-function setEngine(state){ engineOn=state; elements.engine.innerText=state?"On":"Off"; if(!engineOn){ setSpeed(0); setRPM(0); setGear("N"); } }
-function setSpeed(speed){ const val=engineOn?(speedMode==1?Math.round(speed*2.236936):Math.round(speed*3.6)):0; elements.speed.innerText=val+(speedMode==1?' MPH':' KMH'); drawAnalogMeter(speedCtx,val,maxSpeed); }
-function setRPM(rpm){ const val=engineOn?rpm:0; elements.rpm.innerText=Math.round(val); drawAnalogMeter(rpmCtx,val,maxRPM); }
-function setFuel(fuel){ elements.fuel.innerText=`${(fuel*100).toFixed(0)}%`; let color=fuel>0.7?"#0f0":fuel>0.3?"#ff0":"#f00"; drawCircularBar(fuelCtx,fuel,color); }
-function setHealth(health){ elements.health.innerText=`${(health*100).toFixed(0)}%`; let color=health>0.7?"#0f0":health>0.3?"#ff0":"#f00"; drawCircularBar(healthCtx,health,color); }
-function setGear(gear){ elements.gear.innerText=engineOn?String(gear):"N"; }
+// Simulasi (untuk tes manual)
+setInterval(() => {
+    if(engineOn){
+        speed = (speed + 3) % maxSpeed;
+        rpm = (rpm + 500) % maxRPM;
+        document.getElementById("engine").innerText = "On";
+    } else {
+        document.getElementById("engine").innerText = "Off";
+        speed = 0; rpm = 0;
+    }
+    document.getElementById("fuel").innerText = `${(Math.random()*100).toFixed(1)}%`;
+    document.getElementById("health").innerText = `${(Math.random()*100).toFixed(1)}%`;
+    document.getElementById("gear").innerText = engineOn ? "D" : "N";
+}, 500);
 
-// Init
-document.addEventListener('DOMContentLoaded',()=>{
-    elements={
-        speed:document.getElementById('speed'),
-        rpm:document.getElementById('rpm'),
-        fuel:document.getElementById('fuel'),
-        health:document.getElementById('health'),
-        gear:document.getElementById('gear'),
-        engine:document.getElementById('engine')
-    };
-    speedCanvas=document.getElementById('speedometerCanvas');
-    rpmCanvas=document.getElementById('rpmCanvas');
-    fuelCanvas=document.getElementById('fuelCanvas');
-    healthCanvas=document.getElementById('healthCanvas');
-
-    speedCtx=speedCanvas.getContext('2d');
-    rpmCtx=rpmCanvas.getContext('2d');
-    fuelCtx=fuelCanvas.getContext('2d');
-    healthCtx=healthCanvas.getContext('2d');
+// Toggle mesin (klik kanan untuk uji)
+document.body.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    engineOn = !engineOn;
 });
 
-// Update HUD
-function updateHUD(engine,speed,rpm,fuel,health,gear){
-    setEngine(engine);
-    setSpeed(speed);
-    setRPM(rpm);
-    setFuel(fuel);
-    setHealth(health);
-    setGear(gear);
-}
+updateHUD();
