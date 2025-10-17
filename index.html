@@ -10,24 +10,29 @@
     
     <main class="speedometer-container" id="speedometer-ui">
         
-        <div class="speed-section">
-            <span class="speed-title">Speed</span>
-            <span class="speed-unit" id="speed-mode">MPH</span>
-            <div class="speed-value" id="speed">050</div>
+        <div class="panel speed-panel">
+            <div class="speed-header">
+                <span class="speed-title">Speed</span>
+                <span class="speed-unit" id="speed-mode">MPH</span>
+            </div>
+            <div class="speed-value-wrapper">
+                <div class="speed-value" id="speed">050</div>
+                </div>
         </div>
 
-        <div class="info-grid">
+        <div class="panel info-panels-grid">
             <div class="stat-item"><div class="stat-label">RPM</div><div class="stat-value" id="rpm">5821</div></div>
             <div class="stat-item"><div class="stat-label">Fuel</div><div class="stat-value" id="fuel">49%</div></div>
             <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value" id="health">100%</div></div>
             <div class="stat-item"><div class="stat-label">WIB</div><div class="stat-value" id="time-wib">01:27</div></div>
-            
-            <div class="gear-display stat-item">
-                <span class="stat-label">Gear</span>
-                <span class="stat-value" id="gear">2</span>
+        </div>
+
+        <div class="panel bottom-panel">
+            <div class="gear-display">
+                <span class="gear-label">Gear</span>
+                <span class="gear-value" id="gear">2</span>
             </div>
-            
-            <div class="status-indicators stat-item">
+            <div class="status-indicators">
                 <div class="indicator-icon" id="headlights-icon">💡</div> 
                 <div class="indicator-icon" id="engine-icon">⚙️</div> <div class="indicator-icon" id="seatbelt-icon">💺</div> 
             </div>
@@ -41,8 +46,8 @@
     
     <div id="tablet-ui" class="headunit-menu-container hidden">
         <div class="headunit-header">
-            Head Unit 
-            <span class="headunit-time" id="headunit-time-wib">01:27</span> </div>
+            Head Unit <span class="headunit-time" id="headunit-time-wib">01:27</span> 
+        </div>
         <div class="headunit-app-grid">
             <div class="app-icon"><span class="icon">🎵</span>Music</div>
             <div class="app-icon"><span class="icon">🗺️</span>Maps</div>
