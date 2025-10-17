@@ -3,17 +3,19 @@ const rpmCanvas = document.getElementById("rpmMeter");
 const speedCtx = speedCanvas.getContext("2d");
 const rpmCtx = rpmCanvas.getContext("2d");
 
+let elements = {};
+let speedMode = 0; // 0 = KMH, 1 = MPH
 let engineOn = false;
 let currentSpeed = 0;
 let currentRPM = 0;
-let currentGear = "P";
-let currentFuel = 100;
+let currentGear = "N";
+let currentFuel = 1;
 
 // === DRAW FUNCTION ===
-function drawMeter(ctx, value, max, color, labels, labelText) {
+function drawGauge(ctx, value, max, color, labels, text) {
   const cx = ctx.canvas.width / 2;
   const cy = ctx.canvas.height / 2;
-  const radius = cx - 8;
+  const radius = cx - 10;
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   // Background arc
@@ -23,80 +25,89 @@ function drawMeter(ctx, value, max, color, labels, labelText) {
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  // Numbers around
-  ctx.font = "9px Arial";
+  // Numbers around arc
+  ctx.font = "10px Arial";
   ctx.fillStyle = "cyan";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   for (let i = 0; i < labels.length; i++) {
     const angle = 0.75 * Math.PI + (i / (labels.length - 1)) * (1.5 * Math.PI);
-    const x = cx + Math.cos(angle) * (radius - 10);
-    const y = cy + Math.sin(angle) * (radius - 10);
+    const x = cx + Math.cos(angle) * (radius - 12);
+    const y = cy + Math.sin(angle) * (radius - 12);
     ctx.fillText(labels[i], x, y);
   }
 
   // Needle
-  const needleAngle = 0.75 * Math.PI + (value / max) * (1.5 * Math.PI);
+  const angle = 0.75 * Math.PI + (value / max) * (1.5 * Math.PI);
   ctx.beginPath();
   ctx.moveTo(cx, cy);
-  ctx.lineTo(cx + radius * Math.cos(needleAngle), cy + radius * Math.sin(needleAngle));
+  ctx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
   ctx.strokeStyle = color;
   ctx.lineWidth = 2;
   ctx.shadowBlur = 8;
   ctx.shadowColor = color;
   ctx.stroke();
-
-  // Center Text
   ctx.shadowBlur = 0;
+
+  // Center text
   ctx.fillStyle = color;
-  ctx.font = "bold 13px Arial";
-  ctx.fillText(`${labelText}`, cx, cy + 15);
-  ctx.font = "bold 18px Arial";
+  ctx.font = "bold 14px Arial";
   ctx.fillText(`${Math.round(value)}`, cx, cy - 5);
+  ctx.font = "10px Arial";
+  ctx.fillText(text, cx, cy + 12);
 }
 
-// === UPDATE LOOP ===
-function updateHUD() {
+// === UPDATE DISPLAY ===
+function updateDisplay() {
   const speedLabels = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200];
   const rpmLabels = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
-  drawMeter(speedCtx, currentSpeed, 200, "cyan", speedLabels, "KMH");
-  drawMeter(rpmCtx, currentRPM / 1000, 8, "lime", rpmLabels, "RPM");
+  drawGauge(speedCtx, currentSpeed, 200, "cyan", speedLabels, "KMH");
+  drawGauge(rpmCtx, currentRPM / 1000, 8, "lime", rpmLabels, "RPM");
 
   document.getElementById("gear").innerText = currentGear;
-  document.getElementById("fuel").innerText = `Fuel: ${Math.round(currentFuel)}%`;
+  document.getElementById("fuel").innerText = `Fuel: ${(currentFuel * 100).toFixed(0)}%`;
 }
 
-setInterval(updateHUD, 50);
+// === ORIGINAL FUNCTIONAL STYLE ===
+function onOrOff(state) {
+  return state ? "On" : "Off";
+}
 
-// === FUNGSI UNTUK GAME ===
 function setEngine(state) {
   engineOn = state;
-  if (!engineOn) {
-    currentRPM = 0;
+  if (!state) {
     currentSpeed = 0;
+    currentRPM = 0;
   }
+  updateDisplay();
 }
 
 function setSpeed(speed) {
-  currentSpeed = engineOn ? speed : 0;
+  if (!engineOn) return;
+  currentSpeed = speedMode === 1 ? Math.round(speed * 2.236936) : Math.round(speed * 3.6);
+  updateDisplay();
 }
 
 function setRPM(rpm) {
-  currentRPM = engineOn ? rpm : 0;
-}
-
-function setGear(gear) {
-  currentGear = gear;
+  if (!engineOn) return;
+  currentRPM = rpm;
+  updateDisplay();
 }
 
 function setFuel(fuel) {
   currentFuel = fuel;
+  updateDisplay();
 }
 
-// === TEST MODE (hapus di game) ===
-setEngine(true);
-setInterval(() => {
-  currentSpeed = (currentSpeed + 1) % 200;
-  currentRPM = ((currentRPM + 150) % 8000);
-}, 100);
+function setGear(gear) {
+  currentGear = gear;
+  updateDisplay();
+}
+
+function setSpeedMode(mode) {
+  speedMode = mode;
+  updateDisplay();
+}
+
+document.addEventListener("DOMContentLoaded", updateDisplay);
