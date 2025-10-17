@@ -3,90 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Speedometer & Head Unit</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Advanced Car Head Unit & Speedometer UI</title>
+    <link rel="stylesheet" href="style.css"> 
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* CSS Tambahan Khusus untuk Implementasi Tombol */
+        /* Anda bisa memindahkannya ke style.css */
+        
+        /* Pastikan #time-wib terlihat seperti tombol atau area yang bisa diklik */
+        #speedometer-ui #time-wib {
+            cursor: pointer;
+            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.1); /* Warna latar belakang untuk menonjolkan tombol */
+            border-radius: 5px;
+            font-size: 0.8em;
+            text-align: center;
+            /* Tambahkan transisi jika ada di style.css */
+        }
+        
+        #speedometer-ui #time-wib.hidden {
+            visibility: hidden; /* Gunakan visibility agar ruang tetap ada */
+        }
+
+        /* Pastikan elemen-elemen yang disembunyikan tetap berfungsi */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Styling dasar untuk Head Unit (Jika belum ada di style.css) */
+        #tablet-ui {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            width: 800px;
+            height: 480px;
+            background: #1a1a1a;
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.5s ease-in-out;
+            z-index: 1000;
+        }
+        
+        #tablet-ui.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        #app-grid, #iframe-view {
+            width: 100%;
+            height: 100%;
+        }
+
+        #browser-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Tambahkan CSS untuk tampilan YouTube search UI/results jika belum ada */
+        #youtube-search-ui {
+            padding: 10px;
+            background: #2a2a2a;
+            display: flex;
+            gap: 10px;
+        }
+        
+        #youtube-search-results {
+            display: flex;
+            overflow-x: scroll;
+            gap: 10px;
+            padding: 10px;
+            background: #1a1a1a;
+            height: 120px; /* Atur tinggi sesuai kebutuhan */
+        }
+        
+        .search-result-item {
+            cursor: pointer;
+            text-align: center;
+            width: 100px;
+            flex-shrink: 0;
+            font-size: 0.7em;
+            color: #fff;
+        }
+        
+        .search-result-item img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-    
-    <main class="speedometer-container" id="speedometer-ui">
+
+    <div id="speedometer-ui">
         
-        <div class="panel speed-panel">
-            <div class="speed-header">
-                <span class="speed-title">Speed</span>
-                <span class="speed-unit" id="speed-mode">MPH</span>
-            </div>
-            <div class="speed-value-wrapper">
-                <div class="speed-value" id="speed">000</div>
-                <img src="https://bit.ly/signalice" alt="Signalice Logo" class="speed-copyright-logo">
-            </div>
+        <div class="indicators">
+            <i id="headlights-icon" class="fas fa-lightbulb icon active"></i>
+            
+            <i id="engine-icon" class="fas fa-engine icon active"></i> 
+            
+            <i id="seatbelt-icon" class="fas fa-user-slash icon active"></i> 
         </div>
 
-        <div class="panel info-panels-grid">
-            <div class="stat-item"><div class="stat-label">RPM</div><div class="stat-value" id="rpm">0000</div></div>
-            <div class="stat-item"><div class="stat-label">Fuel</div><div class="stat-value" id="fuel">0%</div></div>
-            <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value" id="health">100%</div></div>
-            <div class="stat-item"><div class="stat-label">WIB</div><div class="stat-value" id="time-wib">00:00</div></div>
+        <div id="headunit-footer">
+            <i class="fas fa-grip-horizontal"></i>
+            <span>OPEN MENU</span>
         </div>
 
-        <div class="panel bottom-panel">
-            <div class="gear-display">
-                <span class="gear-label">Gear</span>
-                <span class="gear-value" id="gear">N</span>
+        <div class="data-display">
+            <span id="speed">000</span>
+            <span id="speed-mode">KMH</span>
+        </div>
+
+        <div class="extra-info">
+            <div class="info-group">
+                <span id="gear" class="label-gear">N</span>
+                <span class="label">GEAR</span>
             </div>
-            <div class="status-indicators">
-                <div class="indicator-icon" id="headlights-icon">💡</div> 
-                <div class="indicator-icon" id="engine-icon">⚙️</div> 
-                <div class="indicator-icon" id="seatbelt-icon">💺</div> 
+            <div class="info-group">
+                <span id="rpm">0000</span>
+                <span class="label">RPM</span>
             </div>
-        </div>
-        
-    </main>
-    
-    <div class="headunit-floating-trigger" id="headunit-footer">
-        Head Unit System (<span class="key-bind">CLICK</span> TO INTERACT)
-    </div>
-    
-    <div id="tablet-ui" class="headunit-menu-container hidden">
-        <div class="headunit-header">
-            <img src="https://bit.ly/signalice" alt="Signalice Logo" class="headunit-copyright-logo">
-            Head Unit 
-            <span class="headunit-time" id="headunit-time-wib">00:00</span>
-        </div>
-        
-        <div class="headunit-app-grid" id="app-grid">
-            <div class="app-icon"><span class="icon">🎵</span>Music</div>
-            <div class="app-icon"><span class="icon">🗺️</span>Maps</div>
-            <div class="app-icon"><span class="icon">🧮</span>Calculator</div>
-            <div class="app-icon"><span class="icon">⚙️</span>Settings</div>
-            <div class="app-icon"><span class="icon">☀️</span>Weather</div>
-            <div class="app-icon" id="browser-app"><span class="icon">🌐</span>Browser</div> 
-            <div class="app-icon" id="youtube-app"><span class="icon">▶️</span>Youtube</div> 
-            <div class="app-icon"><span class="icon">📻</span>Radio</div>
-        </div>
-        
-        <div class="iframe-container hidden" id="iframe-view">
-            
-            <div class="search-bar-container hidden" id="youtube-search-ui">
-                <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
-                <button id="youtube-search-button">Cari</button>
+            <div class="info-group">
+                <span id="fuel">49%</span>
+                <span class="label">FUEL</span>
+            </div>
+            <div class="info-group">
+                <span id="health">100%</span>
+                <span class="label">HEALTH</span>
             </div>
             
-            <div class="search-results-container hidden" id="youtube-results">
+            <div class="info-group">
+                <div id="time-wib" class="info-label">
+                    SHOW YOUTUBE 
                 </div>
-
-            <iframe id="browser-iframe" src="about:blank"></iframe>
-            
-            <div class="iframe-back-button" id="back-to-apps">← Back to Apps</div>
-        </div>
-        
-        <div class="headunit-footer-close" id="close-tablet">
-             <span class="close-text">CLOSE MENU</span>
+            </div>
         </div>
     </div>
 
-    <div id="background-video-player" class="background-player">
+    <div id="tablet-ui" class="hidden">
+        
+        <div class="headunit-header" style="padding: 10px; background: #333; display: flex; justify-content: space-between; align-items: center;">
+            <button id="back-to-apps" style="background: none; border: none; color: white; cursor: pointer;">
+                <i class="fas fa-th-large"></i> <span id="back-to-apps-text">Apps</span>
+            </button>
+            <span id="headunit-time-wib" style="color: white; font-size: 1.2em;">06:18</span>
+            <button id="close-tablet" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.5em;">
+                &times;
+            </button>
         </div>
 
-    <script src="script.js"></script>
+        <div id="app-grid" style="padding: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div id="browser-app" class="app-icon" style="text-align: center; cursor: pointer;">
+                <i class="fas fa-globe" style="font-size: 40px; color: #4CAF50;"></i>
+                <p style="color: white;">Browser</p>
+            </div>
+            <div id="youtube-app" class="app-icon" style="text-align: center; cursor: pointer;">
+                <i class="fab fa-youtube" style="font-size: 40px; color: #FF0000;"></i>
+                <p style="color: white;">YouTube</p>
+            </div>
+            </div>
+
+        <div id="iframe-view" class="hidden" style="display: flex; flex-direction: column; height: calc(100% - 40px);">
+            
+            <div id="youtube-search-ui" class="hidden" style="padding: 10px; background: #222;">
+                <input type="text" id="youtube-search-input" placeholder="Search YouTube..." style="flex-grow: 1; padding: 5px;">
+                <button id="youtube-search-button" style="padding: 5px 10px;">Search</button>
+            </div>
+            
+            <div id="youtube-results" class="hidden" style="height: 120px; overflow-x: auto; white-space: nowrap; padding: 5px 0;">
+                </div>
+            
+            <div style="flex-grow: 1; position: relative;">
+                <iframe id="browser-iframe" src="about:blank" style="width: 100%; height: 100%;"></iframe>
+            </div>
+
+        </div>
+
+    </div>
+    
+    <script src="script.js"></script> 
 </body>
 </html>
