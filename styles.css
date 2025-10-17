@@ -3,13 +3,14 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font yang lebih modern */
     color: #fff;
 }
 
 body {
-    background: #000; 
+    background: #222; /* Latar belakang gelap */
     display: flex;
+    flex-direction: column; /* Untuk menempatkan tombol di bawah speedometer */
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -21,129 +22,151 @@ body {
 }
 
 /* ========================================================================= */
-/* 1. SPEEDOMETER UI STYLING */
+/* 1. SPEEDOMETER UI STYLING (DIROMBAK TOTAL) */
 /* ========================================================================= */
 
 #speedometer-ui {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    width: 280px;
-    background: linear-gradient(145deg, rgba(255, 140, 0, 0.95), rgba(255, 100, 0, 0.95)); 
-    border-radius: 15px;
-    padding: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    z-index: 50;
+    width: 300px; /* Ukuran total speedometer */
+    background: #000; /* Latar belakang hitam untuk speedometer */
+    border-radius: 10px;
+    overflow: hidden; /* Penting untuk radius border */
+    box-shadow: 0 0 20px rgba(255, 140, 0, 0.7); /* Efek glow oranye */
+    border: 3px solid #ff8c00; /* Border oranye */
+    padding: 5px; /* Padding keseluruhan di dalam border */
+    display: flex;
+    flex-direction: column; /* Mengatur bagian-bagian vertikal */
+    margin-bottom: 20px; /* Jarak dengan tombol di bawah */
+}
+
+/* Styling untuk setiap bagian (speed, info-grid, bottom) */
+.speed-section, .info-grid, .bottom-section {
+    background: linear-gradient(145deg, rgba(255, 140, 0, 0.9), rgba(255, 100, 0, 0.9)); /* Gradien oranye */
+    border-radius: 5px;
+    margin: 5px; /* Jarak antar bagian */
+    padding: 10px;
+    text-align: center;
+    color: white;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* Header/Indikator Atas */
-.indicators {
-    position: absolute;
-    top: 10px;
-    left: 15px;
+/* Bagian SPEED */
+.speed-section {
+    padding-bottom: 5px; /* Sedikit lebih kecil di bawah header speed */
+}
+.speed-header {
     display: flex;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: flex-end; /* MPH sejajar di bawah "Speed" */
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-bottom: 5px;
 }
-
-.indicators .icon {
-    font-size: 1.2em;
-    color: rgba(255, 255, 255, 0.4); 
+.speed-display {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 5px;
 }
-
-/* Indikator Menyala */
-.indicators .icon.active {
-    color: #ff0; 
-}
-
-
-/* Data Utama (Speed) */
-.data-display {
-    text-align: center;
-    padding: 20px 0 10px;
-}
-
 #speed {
-    font-size: 4em;
+    font-size: 4.5em; /* Lebih besar dari sebelumnya */
     font-weight: bold;
-    display: inline-block;
-    color: white;
+    line-height: 1; /* Menghilangkan spasi ekstra */
+}
+.small-text {
+    font-size: 0.8em;
+    opacity: 0.7;
+    align-self: flex-end; /* Sejajar di bawah speed */
+    padding-bottom: 8px; /* Atur posisi vertikalnya */
 }
 
-#speed-mode {
-    font-size: 1.2em;
-    font-weight: bold;
-    vertical-align: top;
-    margin-left: 5px;
-}
-
-/* Info Tambahan (Grid yang Rapi - 2 kolom) */
-.extra-info {
+/* Bagian INFO GRID (RPM, Fuel, Health, WIB) */
+.info-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 5px; /* Jarak antar kotak info */
+    padding: 5px; /* Padding internal */
+    background: none; /* Hilangkan background untuk grid itu sendiri */
 }
 
-.info-group {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    padding: 8px;
-    text-align: center;
-    /* Memastikan semua kotak memiliki tinggi yang sama */
+.info-grid .info-group {
+    background: #000; /* Kotak info punya background hitam */
+    border-radius: 5px;
+    padding: 8px 5px;
+    font-size: 0.9em;
+    color: white;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3); /* Sedikit efek kedalaman */
+}
+.info-grid .info-group span:first-child {
+    opacity: 0.7;
+    font-size: 0.8em;
+}
+.info-grid .info-group span:last-child {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+
+/* Bagian BAWAH (Gear & Ikon Indikator) */
+.bottom-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px; /* Padding lebih banyak */
+}
+.gear-display {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: flex-start; /* Gear di kiri */
+    gap: 2px;
 }
-
-.info-group span {
-    display: block;
-    line-height: 1.2;
+#gear {
+    font-size: 3em; /* Ukuran gear yang besar */
+    font-weight: bold;
+    line-height: 1;
 }
-
-.label {
-    font-size: 0.7em;
+.gear-display span:last-child {
+    font-size: 0.8em;
     opacity: 0.7;
 }
 
-/* Gear */
-.label-gear {
-    font-size: 1.8em;
-    font-weight: bold;
-}
-
-/* Ikon Bawah (sesuai screenshot Anda) */
-.icon-group {
+.indicator-icons {
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
+    gap: 15px; /* Jarak antar ikon */
+}
+.indicator-icons .icon {
+    font-size: 1.8em; /* Ukuran ikon yang besar */
+    color: rgba(255, 255, 255, 0.4); /* Default redup */
+}
+.indicator-icons .icon.active {
+    color: #ffd700; /* Aktif terang kuning */
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8); /* Efek glow untuk ikon aktif */
 }
 
-.icon-group i {
-    font-size: 1.2em;
-    color: #fff;
-    opacity: 0.8;
-}
 
-
-/* Footer Trigger (Open Menu) */
-#headunit-footer {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.3);
-    padding: 5px 15px;
-    border-radius: 10px 10px 0 0;
+/* Tombol Head Unit Interact (Terpisah di luar speedometer) */
+#headunit-interact-button {
+    background: linear-gradient(45deg, #ff8c00, #ffa500); /* Gradien oranye */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: bold;
     cursor: pointer;
-    font-size: 0.8em;
+    box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+#headunit-interact-button:hover {
+    background: linear-gradient(45deg, #ffa500, #ffc107);
+    box-shadow: 0 8px 20px rgba(255, 140, 0, 0.6);
+    transform: translateY(-2px);
 }
 
 
 /* ========================================================================= */
-/* 2. HEAD UNIT UI STYLING (TIDAK BERUBAH) */
+/* 2. HEAD UNIT UI STYLING (TIDAK BERUBAH SECARA SIGNIFIKAN) */
 /* ========================================================================= */
 
 #tablet-ui {
