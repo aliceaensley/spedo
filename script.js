@@ -243,13 +243,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. LOGIC PERBAIKAN FINAL: BROWSER APP (membuka link dan menutup Head Unit setelah jeda)
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
-            // Membuka link di tab baru
+            // 1. Aksi utama: Buka link
             window.open('https://nekopoi.care/', '_blank'); 
             
-            // Tutup Head Unit setelah 500ms untuk memastikan link terbuka tanpa interupsi.
+            // 2. Aksi penutup: Diberi jeda 500ms
             setTimeout(() => {
                  toggleHeadUnit(false); 
-            }, 500); 
+            }, 500); // Menu Head Unit akan ditutup setelah 0.5 detik.
         });
     }
 
