@@ -1,48 +1,38 @@
 * {
     user-select: none;
     user-drag: none;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
 }
 
 body {
     background-color: transparent !important;
-    font-family: 'Orbitron', Arial, sans-serif;
-    font-size: 12pt;
-    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 11pt;
 }
 
-/* Container utama */
-main.speedometer {
+main {
     position: fixed;
     bottom: 15px;
     right: 15px;
-    width: 280px;
+
+    width: 250px;
     display: flex;
     flex-direction: row;
-    background: linear-gradient(145deg, #0f0c29, #302b63, #24243e);
-    border-radius: 15px;
-    padding: 15px;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 40px rgba(0, 255, 255, 0.2) inset;
-    border: 2px solid #00ffff88;
+    background-color: #000000AA;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
 }
 
-/* Section kiri & kanan */
 section {
-    flex: 1;
-    padding: 0 10px;
+    width: 125px;
 }
 
-/* List style */
 dl {
     margin: 0;
 }
 
 dt {
     font-weight: bold;
-    font-size: 0.9em;
-    color: #00ffff;
-    text-shadow: 0 0 5px #00ffff;
 }
 
 dt::after {
@@ -50,41 +40,9 @@ dt::after {
 }
 
 dd {
-    margin: 0 0 8px 0;
-    font-weight: bold;
-    padding: 3px 6px;
-    border-radius: 5px;
-    background: linear-gradient(90deg, #ff6a00, #ee0979);
-    color: #fff;
-    text-align: center;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-    font-family: 'Orbitron', sans-serif;
+    margin: 0;
 }
 
-/* Warna untuk status tertentu */
-#engine.dd-on { background: linear-gradient(90deg, #00ff00, #00cc00); }
-#engine.dd-off { background: linear-gradient(90deg, #ff0000, #cc0000); }
-
-#headlights.dd-on { background: linear-gradient(90deg, #ffff00, #ffaa00); }
-#headlights.dd-highbeam { background: linear-gradient(90deg, #ffffff, #cccccc); }
-#headlights.dd-off { background: linear-gradient(90deg, #555555, #222222); }
-
-#seatbelts.dd-on { background: linear-gradient(90deg, #00ffcc, #009988); }
-#seatbelts.dd-off { background: linear-gradient(90deg, #ff0033, #cc0011); }
-
-/* Gear highlight */
-#gear { background: linear-gradient(90deg, #ff00ff, #660066); }
-
-/* Speed mode */
-#speed-mode { background: linear-gradient(90deg, #00ffff, #006666); }
-
-/* Fuel & health */
-#fuel, #health {
-    background: linear-gradient(90deg, #ffff00, #ffaa00);
-}
-
-/* Hover efek */
-dd:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 12px #00ffff, 0 0 25px rgba(255,255,255,0.2);
+dd:not(:last-child) {
+    margin-bottom: 5px;
 }
