@@ -3,19 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Futuristic HUD</title>
+<title>Futuristic Digital HUD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="hud">
+  <!-- Speed Panel -->
   <div class="digital-panel" id="speed-panel">
     <div class="panel-label">SPEED</div>
-    <div class="panel-value"><span id="speed-value">0</span> <span id="speed-unit">KMH</span></div>
+    <div class="panel-box">
+      <span id="speed-value">0</span> <span id="speed-unit">KMH</span>
+    </div>
   </div>
+
+  <!-- RPM Panel -->
   <div class="digital-panel" id="rpm-panel">
     <div class="panel-label">RPM</div>
-    <div class="panel-value"><span id="rpm-value">0</span> <span id="rpm-unit">RPM</span></div>
+    <div class="panel-box">
+      <span id="rpm-value">0</span> <span id="rpm-unit">RPM</span>
+    </div>
   </div>
+
+  <!-- Fuel & Health Bars -->
   <div class="bars">
     <div class="bar-container">
       <div class="bar-label">Fuel</div>
@@ -26,6 +35,8 @@
       <div class="bar-bg"><div id="health-bar" class="bar-fill"></div></div>
     </div>
   </div>
+
+  <!-- Other Info -->
   <div id="info">
     <div id="engine">Engine: Off</div>
     <div id="gear">Gear: N</div>
