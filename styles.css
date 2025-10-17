@@ -35,7 +35,7 @@ body {
     flex-direction: column;
     gap: 5px;
     
-    /* Tambahkan transisi untuk animasi perubahan ukuran/posisi */
+    /* Transisi untuk animasi YouTube */
     transition: width 0.3s, height 0.3s, right 0.3s, bottom 0.3s;
 }
 
@@ -43,10 +43,10 @@ body {
 .speedometer-container.youtube-active {
     width: 500px; /* Lebar diperluas */
     height: 500px; /* Tinggi diperluas */
-    right: 15px; /* Tetap di kanan */
-    bottom: 15px; /* Tetap di bawah */
+    right: 15px; 
+    bottom: 15px; 
     padding: 10px;
-    flex-direction: row; /* Tata letak berubah */
+    flex-direction: row; 
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: flex-end;
@@ -67,7 +67,7 @@ body {
     border-radius: 10px;
     width: 100%;
     height: 100%;
-    position: absolute; /* Mengisi seluruh container speedometer */
+    position: absolute; 
     top: 0;
     left: 0;
     padding: 10px;
@@ -89,9 +89,9 @@ body {
     background-color: rgba(0, 0, 0, 0.75); 
     border-radius: 10px;
     padding: 10px;
-    width: 100%; /* Default 100% untuk mode biasa */
+    width: 100%; 
 }
-/* Atur lebar panel speed & bottom agar sejajar saat YT active */
+/* Atur tata letak default */
 .speedometer-container:not(.youtube-active) .speed-panel { order: 1; }
 .speedometer-container:not(.youtube-active) .info-panels-grid { order: 2; }
 .speedometer-container:not(.youtube-active) .bottom-panel { order: 3; }
@@ -150,12 +150,12 @@ body {
     text-shadow: 0 0 8px #FF0000; /* Warna merah untuk YouTube aktif */
 }
 
-/* --- STYLING YOUTUBE SEARCH (Diadaptasi dari Head Unit) --- */
+/* --- STYLING YOUTUBE SEARCH --- */
 
 .search-bar-container {
     display: flex;
     padding-bottom: 10px;
-    background-color: transparent; /* Ubah agar tidak ada background dobel */
+    background-color: transparent; 
     border-bottom: 1px solid #FF4500;
 }
 
@@ -180,8 +180,8 @@ body {
 
 /* Area Hasil Pencarian */
 .search-results-container {
-    height: 100px; /* Dikecilkan agar menyisakan ruang untuk iframe */
-    overflow-x: scroll; /* Scroll horizontal */
+    height: 100px; 
+    overflow-x: scroll; 
     overflow-y: hidden;
     display: flex;
     flex-wrap: nowrap; 
@@ -194,7 +194,7 @@ body {
 .search-result-item {
     cursor: pointer;
     flex: 0 0 auto; 
-    width: 100px; /* Dikecilkan */
+    width: 100px; 
     text-align: center;
 }
 
@@ -205,7 +205,7 @@ body {
 }
 
 .search-result-item p {
-    font-size: 8pt; /* Dikecilkan */
+    font-size: 8pt; 
     color: #AAA;
     margin-top: 5px;
     height: 25px; 
@@ -213,8 +213,23 @@ body {
     text-overflow: ellipsis; 
 }
 
+/* TOMBOL HIDE YOUTUBE BARU */
+.youtube-close-button {
+    background-color: #FF4500; 
+    color: white;
+    text-align: center;
+    padding: 8px;
+    margin-top: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.youtube-close-button:hover {
+    background-color: #FF6347;
+}
+
 .hidden {
     display: none !important;
 }
-
-/* KODE HEAD UNIT YANG TIDAK DIGUNAKAN DIHAPUS */
