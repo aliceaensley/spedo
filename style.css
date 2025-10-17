@@ -4,7 +4,6 @@ body {
   background: transparent;
   color: #0ff;
 }
-
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 
 .speedometer {
@@ -39,8 +38,6 @@ body {
   stroke: #0ff;
   stroke-width: 8;
   stroke-linecap: round;
-  stroke-dasharray: 314; /* 2 * pi * r (50) */
-  stroke-dashoffset: 314;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
   transition: stroke-dashoffset 0.3s ease;
@@ -56,6 +53,12 @@ body {
 .circular-bars {
   display: flex;
   gap: 10px;
+  align-items: center;
+}
+
+.circular-bars svg {
+  width: 80px;
+  height: 80px;
 }
 
 .bar-label {
