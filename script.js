@@ -4,7 +4,7 @@ let indicators = 0;
 
 const onOrOff = state => state ? 'On' : 'Off';
 
-// update functions
+// Update functions
 function setEngine(state){ elements.engine.innerText = onOrOff(state); }
 function setGear(gear){ elements.gear.innerText = gear===0?'N':gear; }
 function setHeadlights(state){ elements.headlights.innerText = state===1?'On':state===2?'High Beam':'Off'; }
@@ -42,15 +42,20 @@ function setRPM(rpm){
 function setFuel(fuel){ elements.fuel.innerText = (fuel*100).toFixed(1)+'%'; }
 function setHealth(health){ elements.health.innerText = (health*100).toFixed(1)+'%'; }
 
-// real-time loop (replace with vehicle data in game)
-function updateHUD(){
-    // simulation
-    const speed = Math.random()*50;  // m/s
-    const rpm = Math.random();        // 0-1
-    const fuel = Math.random();
-    const health = Math.random();
-    const gear = Math.floor(Math.random()*6);
-    const engineOn = Math.random() > 0.2;
+// RageMP / FiveM vehicle data update
+function updateHUD(vehicle) {
+    if (!vehicle) return;
+
+    const speed = vehicle.velocity.length(); // in m/s
+    const rpm = vehicle.rpm; // 0-1
+    const fuel = vehicle.fuel / 100; // 0-1
+    const health = vehicle.health / 100; // 0-1
+    const gear = vehicle.gear; 
+    const engineOn = vehicle.engine; 
+    const headlights = vehicle.headlights; 
+    const seatbelts = vehicle.seatbelts;
+    const leftIndicator = vehicle.leftIndicator;
+    const rightIndicator = vehicle.rightIndicator;
 
     setSpeed(speed);
     setRPM(rpm);
@@ -58,8 +63,12 @@ function updateHUD(){
     setHealth(health);
     setGear(gear);
     setEngine(engineOn);
+    setHeadlights(headlights);
+    setSeatbelts(seatbelts);
+    setLeftIndicator(leftIndicator);
+    setRightIndicator(rightIndicator);
 
-    requestAnimationFrame(updateHUD);
+    requestAnimationFrame(()=>updateHUD(vehicle));
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
@@ -80,5 +89,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
         rpmCircle: document.getElementById('rpm-circle')
     };
 
-    updateHUD(); // start
+    // ambil vehicle dari game (RageMP/FiveM)
+    mp.events.add('updateVehicleHUD', (vehicleData) => {
+        // vehicleData harus berisi semua properti: velocity, rpm, fuel, health, gear, engine, headlights, seatbelts, leftIndicator, rightIndicator
+        updateHUD(vehicleData);
+    });
 });
