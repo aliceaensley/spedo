@@ -1,13 +1,18 @@
 /* --- Global & Variables --- */
 :root {
-    --main-bg-dark: rgba(10, 10, 10, 0.8);
-    --secondary-bg-dark: #2c2c2c;
-    --accent-blue: #00bcd4; /* Cyan - Warna utama keren */
+    --main-bg-dark: rgba(10, 10, 10, 0.85);
+    --accent-color: #00bcd4; /* Cyan */
     --text-light: #f0f0f0;
     --text-muted: #888;
     --danger-red: #ff5252;
     --success-green: #4CAF50;
     --warning-yellow: #FFC107;
+}
+
+* {
+    user-select: none;
+    user-drag: none;
+    box-sizing: border-box;
 }
 
 body {
@@ -21,9 +26,7 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    /* Hilangkan seleksi teks default */
-    user-select: none;
-    user-drag: none;
+    font-size: 11pt; /* Sama dengan template awal Anda */
 }
 
 /* --- Main Container (POSISI & UKURAN) --- */
@@ -32,118 +35,105 @@ body {
     bottom: 30px;    
     right: 30px;     
     
-    width: 350px;    /* UKURAN BARU (Agak besar) */
-    height: 350px;   
+    width: 300px;    
+    height: 180px;   
     
     background: var(--main-bg-dark);
-    border-radius: 15px;
-    box-shadow: 0 0 30px rgba(0, 188, 212, 0.4); 
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 188, 212, 0.3); 
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: space-between;
-    overflow: hidden;
-    padding: 20px;
-    box-sizing: border-box;
     border: 1px solid rgba(0, 188, 212, 0.2);
 }
 
-/* --- RPM Ring (Gauge) --- */
-#rpm-ring-bg {
-    position: absolute;
-    top: 5px;
-    width: 95%;
-    height: 95%;
-    border-radius: 50%;
-    border: 15px solid var(--secondary-bg-dark); 
-    box-sizing: border-box;
-    opacity: 0.5;
+/* --- Center Main Display (SPEED & GEAR) --- */
+#center-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 10px;
 }
 
-#rpm-ring-fill {
-    position: absolute;
-    top: 5px;
-    width: 95%;
-    height: 95%;
-    border-radius: 50%;
-    border: 15px solid transparent; 
-    border-top-color: var(--accent-blue);
-    border-right-color: var(--accent-blue);
-    transform: rotate(45deg); /* Posisi awal RPM 0 */
-    box-sizing: border-box;
-    transition: transform 0.1s linear, border-color 0.3s;
-    filter: drop-shadow(0 0 7px var(--accent-blue)); 
-}
-
-/* --- Center Display (Speed & Gear) --- */
-#center-display {
-    position: relative;
-    z-index: 10;
+/* Gear Display */
+#gear-display-box {
+    width: 30%;
     text-align: center;
-    margin-top: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#speed-value {
-    font-family: 'Aldrich', sans-serif;
-    font-size: 5.5em; 
-    font-weight: bold;
-    color: var(--text-light);
     line-height: 1;
-    text-shadow: 0 0 15px rgba(0, 188, 212, 0.9);
 }
 
-#speed-unit {
-    font-size: 1em;
-    color: var(--text-muted);
-    margin-top: 5px;
-}
-
-#gear-display {
-    background: var(--accent-blue);
-    padding: 5px 15px;
-    border-radius: 5px;
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #000;
-    box-shadow: 0 0 10px rgba(0, 188, 212, 0.7);
-}
-
-#gear-display .label {
+#gear-display-box .label {
     font-size: 0.7em;
-    font-weight: bold;
+    color: var(--text-muted);
 }
 
 #gear-value {
     font-family: 'Aldrich', sans-serif;
-    font-size: 1.8em; 
+    font-size: 3.5em; 
     font-weight: bold;
+    color: var(--warning-yellow); 
+    text-shadow: 0 0 10px rgba(255, 193, 7, 0.7);
+}
+
+/* Speed Display */
+#speed-display {
+    width: 70%;
+    text-align: right;
     line-height: 1;
 }
 
+#speed-value {
+    font-family: 'Aldrich', sans-serif;
+    font-size: 4.5em; 
+    font-weight: bold;
+    color: var(--text-light);
+    text-shadow: 0 0 15px rgba(0, 188, 212, 0.9);
+    display: inline-block;
+}
+
+#speed-unit {
+    font-size: 0.9em;
+    color: var(--accent-color);
+    margin-left: 5px;
+    display: inline-block;
+}
+
+/* RPM Display */
+#rpm-display-box {
+    position: absolute;
+    bottom: 55px; /* Posisikan di bawah speed */
+    right: 15px;
+    text-align: right;
+    font-size: 0.8em;
+}
+#rpm-display-box .label {
+    color: var(--text-muted);
+}
+#rpm-value {
+    font-family: 'Aldrich', sans-serif;
+    color: var(--accent-color);
+}
 
 /* --- Bottom Status Bar (Health, Fuel, Indicators) --- */
 #bottom-status-bar {
-    width: 100%;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: flex-end;
-    padding-bottom: 10px;
-    z-index: 20; /* Pastikan di atas ring */
+    width: 100%;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-top: 10px;
 }
 
 /* Status Bar Item (Fuel/Health) */
 .bar-status-item {
-    width: 35%;
-    text-align: center;
+    width: 30%;
+    text-align: left;
+    margin-right: 10px;
 }
 
 .bar-status-item .label {
-    font-size: 0.7em;
+    font-size: 0.65em;
     color: var(--text-muted);
     margin-bottom: 3px;
     display: block;
@@ -151,72 +141,63 @@ body {
 
 .bar-bg {
     width: 100%;
-    height: 8px; 
-    background-color: var(--secondary-bg-dark);
-    border-radius: 4px;
+    height: 7px; 
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
     overflow: hidden;
 }
 
 .bar-fill {
     height: 100%;
     width: 100%;
-    border-radius: 4px;
     transition: width 0.3s ease-out, background-color 0.3s;
 }
 
-.bar-fill.fuel {
-    background-color: var(--success-green);
-}
+.fuel-bar { background-color: var(--success-green); }
+.health-bar { background-color: var(--accent-color); }
 
-.bar-fill.health {
-    background-color: var(--accent-blue);
-}
-
-/* Indicator Wrapper (Icons) */
+/* Indicator Wrapper (Icons/Text) */
 #indicators-wrapper {
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    width: 30%;
-    font-size: 1.2em;
+    justify-content: flex-end;
+    width: 40%;
+    font-size: 0.8em;
+    font-family: 'Aldrich', sans-serif;
 }
 
-.icon-status {
-    cursor: default;
-    transition: color 0.2s;
-    color: var(--text-muted);
-}
-
-.icon-status.on {
-    color: var(--warning-yellow);
-    filter: drop-shadow(0 0 5px var(--warning-yellow));
-}
-
-/* Engine Status */
-#engine-status {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+.status-indicator {
+    margin-left: 10px;
     font-weight: bold;
-    color: var(--success-green);
-}
-#engine-status.off {
-    color: var(--danger-red);
-}
-
-/* Indicators Arrows */
-.indicator-arrow {
-    font-size: 1.5em;
     color: var(--text-muted);
-    transition: color 0.1s;
+    transition: color 0.2s;
 }
 
-.indicator-arrow.blinking {
+/* Status ON Color */
+#indicators-wrapper .on,
+#indicators-wrapper .High,
+#indicators-wrapper .Knots,
+#indicators-wrapper .MPH {
     color: var(--warning-yellow);
-    filter: drop-shadow(0 0 5px var(--warning-yellow));
+    text-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+}
+
+/* Engine On Status */
+#indicators-wrapper .EngineOn {
+    color: var(--success-green);
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+/* Engine Off Status */
+#indicators-wrapper .EngineOff {
+    color: var(--danger-red);
+    text-shadow: 0 0 5px rgba(255, 82, 82, 0.5);
+}
+
+/* Blinking effect (Indicator) */
+.blinking {
     animation: blink 0.5s step-start infinite;
 }
 
 @keyframes blink {
-    50% { opacity: 0; }
+    50% { opacity: 0.4; }
 }
