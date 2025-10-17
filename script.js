@@ -244,7 +244,7 @@ function showVideo(url) {
 }
 
 
-// --- LOGIC TOGGLE YOUTUBE ---
+// --- LOGIC TOGGLE YOUTUBE (Diperbarui agar musik tetap berjalan saat HIDE) ---
 
 function toggleYoutubeUI(state) {
     const speedometer = elements.speedometerUI;
@@ -257,6 +257,7 @@ function toggleYoutubeUI(state) {
     isYoutubeOpen = state;
     
     if (state) {
+        // Logika saat membuka YouTube
         speedometer.classList.add('youtube-active');
         youtubeWrapper.classList.remove('hidden');
         toggleActive(elements.youtubeToggleIcon, true);
@@ -266,13 +267,15 @@ function toggleYoutubeUI(state) {
         if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
         
     } else {
-        // Mode kembali ke Speedometer murni
+        // Logika saat menutup/menyembunyikan YouTube
         speedometer.classList.remove('youtube-active');
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
         
-        // Hentikan video dan bersihkan iframe
-        if (elements.browserIframe) elements.browserIframe.src = 'about:blank';
+        // 🚨 PENTING: Baris yang mematikan video (iframe.src = 'about:blank') DIHAPUS.
+        // Iframe tetap aktif di latar belakang (hidden).
+        
+        // Cukup sembunyikan UI pencarian saja
         toggleYoutubeSearchUI(false);
     }
 }
