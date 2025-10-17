@@ -164,7 +164,7 @@ function startSimulation() {
     }, 3000); 
 }
 
-// --- FUNGSI YOUTUBE API (TIDAK BERUBAH) ---
+// --- FUNGSI YOUTUBE API ---
 
 function toggleYoutubeSearchUI(show) {
     if (elements.youtubeSearchUI) {
@@ -213,8 +213,9 @@ async function searchYoutube(query) {
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
                 resultItem.addEventListener('click', () => {
-                    // Gunakan 'rel=0' agar tidak ada video terkait.
-                    const embedUrl = `https://www.googleapis.com/youtube/embed/${videoId}?rel=0`;
+                    // *** PERBAIKAN UTAMA DI SINI ***
+                    // Menggunakan domain YouTube yang benar
+                    const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1`; 
                     showBrowser(embedUrl); 
                     elements.youtubeResults.classList.add('hidden'); 
                 });
@@ -249,7 +250,6 @@ function showAppGrid() {
     
     toggleYoutubeSearchUI(false); 
 
-    // Kosongkan src iframe saat kembali ke app grid, kecuali jika video berada di background player
     if (elements.browserIframe && !elements.backgroundVideoPlayer.contains(elements.browserIframe)) {
         elements.browserIframe.src = 'about:blank'; 
     }
@@ -294,7 +294,7 @@ function toggleHeadUnit(state) {
             if (elements.appGrid) elements.appGrid.classList.add('hidden');
             if (elements.iframeView) elements.iframeView.classList.remove('hidden');
             
-            // Tampilkan Search UI
+            // Tampilkan Search UI (jika sebelumnya YouTube)
             if (iframe.src.includes('youtube')) {
                  toggleYoutubeSearchUI(true); 
                  elements.youtubeResults.classList.add('hidden'); 
@@ -318,7 +318,7 @@ function toggleHeadUnit(state) {
         if (isYoutubeVideoPlaying) {
             // 1. Pindahkan iFrame ke pemutar latar belakang
             backgroundPlayer.appendChild(iframe);
-            // 2. Tidak ada refresh iframe.src = iframe.src, agar video tidak mengulang.
+            // 2. Tidak ada refresh, agar video tidak mengulang.
         } 
         
         // Animasi penutupan
@@ -341,7 +341,7 @@ function toggleHeadUnit(state) {
 // --- INISIALISASI DAN EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pemetaan Elemen 
+    // 1. Pemetaan Elemen (Sama)
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
         headunitFooter: document.getElementById('headunit-footer'), 
@@ -464,8 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setHeadlights(1); 
     setSeatbelts(true); 
 
-    // HAPUS SEMUA EVENT LISTENERS UNTUK INDIKATOR (KECUALI ENGINE SIMULATION)
-    // Headlights dan Seatbelt dibuat statis (tidak berfungsi)
+    // LOGIKA INTERAKTIF HANYA UNTUK ENGINE SIMULATION
     
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
