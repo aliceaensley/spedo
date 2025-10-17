@@ -4,10 +4,10 @@ let engineState = false;
 let headlightsState = 1; 
 let seatbeltState = true; 
 let simulationInterval = null; 
-let isYoutubeOpen = false; // Status baru untuk toggle YouTube
+let isYoutubeOpen = false; 
 
 // *****************************************************************
-// ⚠️ PENTING: API KEY ANDA TELAH DIMASUKKAN DI BAWAH INI
+// ⚠️ PENTING: API KEY YOUTUBE
 // *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
 // *****************************************************************
@@ -28,7 +28,6 @@ const toggleActive = (element, state) => {
 };
 
 // --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
-// ... (setSpeedMode, setSpeed, setRPM, setFuel, setHealth, setGear, setHeadlights, setEngine, setSeatbelts tidak berubah)
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -114,13 +113,10 @@ function updateTimeWIB() {
     if (elements.timeWIB) {
         elements.timeWIB.innerText = timeString;
     }
-    
-    // HEAD UNIT TELAH DIHAPUS, HEADUNIT TIME WIB JUGA DIHAPUS
 }
 // ---------------------------------------------------------------------
 
 // --- FUNGSI KONTROL SIMULASI ---
-// ... (stopSimulation dan startSimulation tidak berubah)
 function stopSimulation() {
     if (simulationInterval !== null) {
         clearInterval(simulationInterval);
@@ -164,7 +160,7 @@ function startSimulation() {
     }, 3000); 
 }
 
-// --- FUNGSI YOUTUBE API BARU (Diadaptasi) ---
+// --- FUNGSI YOUTUBE API ---
 
 function toggleYoutubeSearchUI(show) {
     if (elements.youtubeSearchUI) {
@@ -173,7 +169,6 @@ function toggleYoutubeSearchUI(show) {
     if (elements.youtubeResults) {
         elements.youtubeResults.classList.toggle('hidden', !show);
     }
-    // Bersihkan hasil saat menyembunyikan
     if (!show && elements.youtubeResults) {
         elements.youtubeResults.innerHTML = '';
     }
@@ -187,7 +182,6 @@ async function searchYoutube(query) {
     
     const API_URL = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=5&key=${YOUTUBE_API_KEY}`;
     
-    // Tampilkan pesan loading
     elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Mencari...</p>';
     elements.youtubeResults.classList.remove('hidden');
 
@@ -213,7 +207,6 @@ async function searchYoutube(query) {
                 resultItem.setAttribute('data-videoid', videoId);
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
-                // Event listener untuk memuat video saat thumbnail diklik
                 resultItem.addEventListener('click', () => {
                     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
                     showVideo(embedUrl); 
@@ -242,7 +235,7 @@ async function searchYoutube(query) {
 }
 
 
-// --- FUNGSI KONTROL VIDEO (MIRIP showBrowser lama) ---
+// --- FUNGSI KONTROL VIDEO ---
 
 function showVideo(url) {
     if (elements.browserIframe) {
@@ -251,7 +244,7 @@ function showVideo(url) {
 }
 
 
-// --- LOGIC TOGGLE YOUTUBE BARU ---
+// --- LOGIC TOGGLE YOUTUBE ---
 
 function toggleYoutubeUI(state) {
     const speedometer = elements.speedometerUI;
@@ -291,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
-        youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), // BARU
+        youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), 
         
         speed: document.getElementById('speed'),
         rpm: document.getElementById('rpm'),
@@ -305,14 +298,17 @@ document.addEventListener('DOMContentLoaded', () => {
         headlightsIcon: document.getElementById('headlights-icon'),
         engineIcon: document.getElementById('engine-icon'), 
         seatbeltIcon: document.getElementById('seatbelt-icon'),
-        youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), // BARU
+        youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
         
         // Elemen YouTube Internal
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
         youtubeSearchInput: document.getElementById('youtube-search-input'),
         youtubeSearchButton: document.getElementById('youtube-search-button'),
         youtubeResults: document.getElementById('youtube-results'),
-        browserIframe: document.getElementById('browser-iframe'), // Tetap menggunakan ID lama
+        browserIframe: document.getElementById('browser-iframe'), 
+        
+        // Tombol Hide/Close YouTube
+        youtubeHideButton: document.getElementById('youtube-hide-button'),
     };
     
     // 2. SETUP CLOCK WIB
@@ -326,7 +322,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // 4. LOGIC INTERAKSI PENCARIAN YOUTUBE
+    // 4. Listener untuk Tombol HIDE/CLOSE BARU
+    if (elements.youtubeHideButton) {
+        elements.youtubeHideButton.addEventListener('click', () => {
+            toggleYoutubeUI(false); 
+        });
+    }
+
+    // 5. LOGIC INTERAKSI PENCARIAN YOUTUBE
     const handleSearch = () => {
         const query = elements.youtubeSearchInput.value;
         if (query.trim() !== '') {
@@ -354,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // 5. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
+    // 6. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
     setHealth(1.0); 
     setFuel(0.49); 
