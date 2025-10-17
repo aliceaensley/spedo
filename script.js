@@ -6,6 +6,7 @@ let indicators = 0;
 const onOrOff = state => state ? 'On' : 'Off';
 
 // === FUNGSI ASLI ANDA (Dimodifikasi untuk memperbarui tampilan baru) ===
+// (Fungsi-fungsi ini harus tetap sama persis seperti yang saya berikan sebelumnya)
 
 function setEngine(state) {
     elements.engine.innerText = onOrOff(state);
@@ -26,11 +27,9 @@ function setSpeed(speed) {
 
 function setRPM(rpm) {
     elements.rpm.innerText = `${rpm.toFixed(4)} RPM`;
-    // Menampilkan nilai RPM yang lebih mudah dibaca (0-8000)
-    elements.rpmValue.innerText = `${Math.round(rpm * 8000)}`; 
+    const rpmValue = Math.round(rpm * 8000);
+    elements.rpmValue.innerText = `${rpmValue}`; 
     
-    // Opsional: Warna RPM
-    const rpmValue = rpm * 8000;
     let color = '#FFF'; 
     if (rpmValue > 7000) {
         color = '#FF4136'; // Red
@@ -114,46 +113,46 @@ function setSpeedMode(mode) {
 }
 
 
-// === NUI INTERFACE (Mengatasi Masalah Hilang 1 Detik) ===
+// === NUI INTERFACE: LOGIC UTAMA PENGENDALI TAMPIL/SEMBUNYI ===
 window.addEventListener('message', (event) => {
     const data = event.data;
     
-    // Cek apakah ada data yang masuk
-    const dataReceived = data.speed !== undefined || data.inVehicle !== undefined;
-    
-    // Logika tampil/sembunyi berdasarkan field 'inVehicle' dari server/client.lua Anda
-    const isInVehicle = data.inVehicle !== undefined ? data.inVehicle : (data.speed !== undefined); 
+    // 1. Logika Tampil/Sembunyi
+    // Kita asumsikan resource Anda akan mengirim field 'show' atau 'inVehicle'
+    // Jika ada field 'inVehicle' (standar FiveM), gunakan itu.
+    // Jika tidak ada, gunakan default (tampilkan jika ada data speed > 0)
+    const shouldShow = data.show !== undefined ? data.show : (data.inVehicle || (data.speed && data.speed > 0.1)); 
 
-    if (isInVehicle) {
+    if (shouldShow) {
         elements.speedoContainer.style.display = 'flex'; // Tampilkan HUD
-
-        if (data.engine !== undefined) setEngine(data.engine);
-        if (data.speed !== undefined) setSpeed(data.speed); 
-        if (data.rpm !== undefined) setRPM(data.rpm);
-        if (data.fuel !== undefined) setFuel(data.fuel);
-        if (data.health !== undefined) setHealth(data.health);
-        if (data.gear !== undefined) setGear(data.gear);
-        if (data.headlights !== undefined) setHeadlights(data.headlights);
-        if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts);
-        
-        // Asumsi data.indicators adalah bitmask (0, 1=Kiri, 2=Kanan, 3=Keduanya)
-        if (data.indicators !== undefined) {
-             setLeftIndicator(data.indicators & 0b01);
-             setRightIndicator(data.indicators & 0b10);
-        }
-
-        if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
-    } else if (dataReceived) {
-        // Jika data diterima tetapi inVehicle=false, sembunyikan.
-        elements.speedoContainer.style.display = 'none'; 
+    } else {
+        elements.speedoContainer.style.display = 'none'; // Sembunyikan HUD
     }
+    
+    // 2. Pembaruan Data (Hanya jika data valid masuk)
+    if (data.speed !== undefined) setSpeed(data.speed); 
+    if (data.rpm !== undefined) setRPM(data.rpm);
+    if (data.fuel !== undefined) setFuel(data.fuel);
+    if (data.health !== undefined) setHealth(data.health);
+    if (data.gear !== undefined) setGear(data.gear);
+    if (data.headlights !== undefined) setHeadlights(data.headlights);
+    if (data.seatbelts !== undefined) setSeatbelts(data.seatbelts);
+    if (data.engine !== undefined) setEngine(data.engine); // Biasanya digunakan untuk kunci mobil
+    
+    // Indicators (Asumsi menggunakan logika bitwise)
+    if (data.indicators !== undefined) {
+         setLeftIndicator(data.indicators & 0b01);
+         setRightIndicator(data.indicators & 0b10);
+    }
+
+    if (data.speedMode !== undefined) setSpeedMode(data.speedMode);
 });
 
 
 // === DOM LOADED (Inisialisasi) ===
 document.addEventListener('DOMContentLoaded', () => {
     elements = {
-        // --- ID Asli (yang harus diisi agar JS lama Anda tetap berfungsi) ---
+        // --- ID Asli (yang harus diisi) ---
         engine: document.getElementById('engine'),
         speed: document.getElementById('speed'),
         rpm: document.getElementById('rpm'),
@@ -179,9 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
         rightIndicator: document.getElementById('right-indicator'),
     };
     
-    // Inisialisasi unit kecepatan
     setSpeedMode(speedMode); 
 
-    // Sembunyikan default
+    // Sembunyikan default, menunggu data dari game untuk menampilkannya
     elements.speedoContainer.style.display = 'none';
 });
