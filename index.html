@@ -3,20 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern Speedometer HUD</title>
+<title>Modern Digital HUD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="speedometer">
-  <div class="digital-panel">
+<div id="hud">
+  <!-- Speed & RPM -->
+  <div class="panel speed-panel">
     <div class="label">SPEED</div>
     <div class="value"><span id="speed">0</span> <span id="speed-unit">KMH</span></div>
   </div>
-  <div class="digital-panel">
+  <div class="panel rpm-panel">
     <div class="label">RPM</div>
     <div class="value"><span id="rpm">0</span></div>
   </div>
 
+  <!-- Fuel & Health -->
   <div class="bars">
     <div class="bar-container">
       <div class="bar-label">Fuel</div>
@@ -28,7 +30,8 @@
     </div>
   </div>
 
-  <div class="info">
+  <!-- Other Info -->
+  <div id="info">
     <div id="engine">Engine: Off</div>
     <div id="gear">Gear: N</div>
     <div id="headlights">Headlights: Off</div>
@@ -36,7 +39,7 @@
     <div id="indicators">Indicators: Off/Off</div>
     <div id="speed-mode">Speed Mode: KMH</div>
   </div>
-</main>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
