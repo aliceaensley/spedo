@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Super Futuristic HUD</title>
+<title>Futuristic HUD</title>
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -17,9 +17,22 @@
         <div id="rpm" class="dd-neon">0 RPM</div>
     </section>
     <section class="status-section">
-        <canvas id="fuelCanvas" width="80" height="80"></canvas>
-        <canvas id="healthCanvas" width="80" height="80"></canvas>
-        <div id="gear" class="dd-neon">N</div>
+        <div class="status-bar">
+            <canvas id="fuelCanvas" width="80" height="80"></canvas>
+            <div id="fuel" class="dd-neon">100%</div>
+        </div>
+        <div class="status-bar">
+            <canvas id="healthCanvas" width="80" height="80"></canvas>
+            <div id="health" class="dd-neon">100%</div>
+        </div>
+        <div class="gear-display">
+            <div id="gear" class="dd-neon">N</div>
+            <div>Gear</div>
+        </div>
+        <div class="engine-display">
+            <div id="engine" class="dd-neon">Off</div>
+            <div>Engine</div>
+        </div>
     </section>
 </main>
 <script src="/script.js"></script>
