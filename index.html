@@ -1,55 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Speedometer</title>
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<main class="speedometer">
+body {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: #111; /* ubah agar ada kontras */
+    color: #0ff;
+}
 
-  <div class="circular-panel">
-    <div class="dial">
-      <svg width="120" height="120">
-        <circle class="bg-ring" cx="60" cy="60" r="50"></circle>
-        <circle id="speed-ring" class="progress-ring" cx="60" cy="60" r="50"></circle>
-        <text x="60" y="60" class="dial-text" id="speed">0 KMH</text>
-      </svg>
-    </div>
-    <div class="dial">
-      <svg width="120" height="120">
-        <circle class="bg-ring" cx="60" cy="60" r="50"></circle>
-        <circle id="rpm-ring" class="progress-ring" cx="60" cy="60" r="50"></circle>
-        <text x="60" y="60" class="dial-text" id="rpm">0 RPM</text>
-      </svg>
-    </div>
-  </div>
+.speedometer {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    background: rgba(10,10,30,0.8); /* semi-transparent dark blue */
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #0ff;
+}
 
-  <div class="circular-bars">
-    <div class="bar-label">Fuel</div>
-    <svg>
-      <circle class="bg-ring" cx="40" cy="40" r="30"></circle>
-      <circle id="fuel" class="progress-ring" cx="40" cy="40" r="30"></circle>
-    </svg>
+.bg-ring {
+    fill: none;
+    stroke: rgba(0,255,255,0.1);
+    stroke-width: 8;
+}
 
-    <div class="bar-label">Health</div>
-    <svg>
-      <circle class="bg-ring" cx="40" cy="40" r="30"></circle>
-      <circle id="health" class="progress-ring" cx="40" cy="40" r="30"></circle>
-    </svg>
-  </div>
+.progress-ring {
+    fill: none;
+    stroke: #0ff; /* neon cyan */
+    stroke-width: 8;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 0.2s ease, stroke 0.3s ease;
+    filter: drop-shadow(0 0 6px #0ff);
+}
 
-  <div class="info-panel">
-    <div class="panel-row">Engine: <span id="engine">&nbsp;</span></div>
-    <div class="panel-row">Gear: <span id="gear">&nbsp;</span></div>
-    <div class="panel-row">Headlights: <span id="headlights">&nbsp;</span></div>
-    <div class="panel-row">Indicators: <span id="indicators">&nbsp;</span></div>
-    <div class="panel-row">Seatbelts: <span id="seatbelts">&nbsp;</span></div>
-    <div class="panel-row">Speed Mode: <span id="speed-mode">&nbsp;</span></div>
-  </div>
+.dial-text {
+    font-size: 18px;
+    fill: #0ff;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    text-shadow: 0 0 4px #0ff;
+}
 
-</main>
-<script src="script.js"></script>
-</body>
-</html>
+.panel-row {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(0,0,50,0.5);
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid #0ff;
+    text-shadow: 0 0 3px #0ff;
+    width: 120px;
+}
