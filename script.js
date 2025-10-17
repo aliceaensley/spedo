@@ -6,30 +6,28 @@ let engineOn = false;
 let speedCanvas, rpmCanvas, fuelCanvas, healthCanvas;
 let speedCtx, rpmCtx, fuelCtx, healthCtx;
 
-// Draw analog meter with motion blur
+// Draw analog meter
 function drawAnalogMeter(ctx,value,maxValue){
-    const cx=ctx.canvas.width/2,cy=ctx.canvas.height/2,radius=cx-10;
+    const cx=ctx.canvas.width/2,cy=ctx.canvas.height/2,radius=cx-8;
     ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
 
+    // Background arc
     ctx.beginPath();
     ctx.arc(cx,cy,radius,0.75*Math.PI,0.25*Math.PI,false);
     ctx.strokeStyle="rgba(0,255,255,0.2)";
-    ctx.lineWidth=5;
-    ctx.stroke();
+    ctx.lineWidth=4; ctx.stroke();
 
+    // Needle
     const angle=0.75*Math.PI+(value/maxValue)*(1.5*Math.PI);
-    const grad=ctx.createLinearGradient(cx,cy,cx+radius*Math.cos(angle),cy+radius*Math.sin(angle));
-    grad.addColorStop(0,"#0ff"); grad.addColorStop(1,"#f00");
-
     ctx.beginPath();
     ctx.moveTo(cx,cy);
     ctx.lineTo(cx+radius*Math.cos(angle),cy+radius*Math.sin(angle));
-    ctx.strokeStyle=grad; ctx.lineWidth=3;
-    ctx.shadowBlur=12; ctx.shadowColor="#0ff";
+    ctx.strokeStyle="#0ff"; ctx.lineWidth=2;
+    ctx.shadowBlur=8; ctx.shadowColor="#0ff";
     ctx.stroke();
 }
 
-// Circular neon bar
+// Circular bar
 function drawCircularBar(ctx,percent,color){
     const cx=ctx.canvas.width/2,cy=ctx.canvas.height/2,radius=cx-5;
     ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
@@ -37,12 +35,12 @@ function drawCircularBar(ctx,percent,color){
     ctx.beginPath();
     ctx.arc(cx,cy,radius,0,2*Math.PI);
     ctx.strokeStyle="rgba(0,255,255,0.1)";
-    ctx.lineWidth=5; ctx.stroke();
+    ctx.lineWidth=4; ctx.stroke();
 
     ctx.beginPath();
     ctx.arc(cx,cy,radius,-Math.PI/2,-Math.PI/2+2*Math.PI*percent,false);
-    ctx.strokeStyle=color; ctx.lineWidth=5;
-    ctx.shadowBlur=10; ctx.shadowColor=color;
+    ctx.strokeStyle=color; ctx.lineWidth=4;
+    ctx.shadowBlur=8; ctx.shadowColor=color;
     ctx.stroke();
 }
 
@@ -75,7 +73,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     healthCtx=healthCanvas.getContext('2d');
 });
 
-// Update HUD real-time
+// Update HUD
 function updateHUD(engine,speed,rpm,fuel,health,gear){
     setEngine(engine);
     setSpeed(speed);
