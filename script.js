@@ -2,14 +2,22 @@ let elements = {};
 let speedMode = 1; 
 let indicators = 0; 
 
-// ... (Semua fungsi toggleActive, setEngine, setSpeed, setRPM, setFuel, setHealth, setGear, setHeadlights, setSeatbelts, setSpeedMode tetap sama) ...
+const onOrOff = state => state ? 'On' : 'Off';
+
+// Helper function for toggling active state
+const toggleActive = (element, state) => {
+    if (state) {
+        element.classList.add('active');
+    } else {
+        element.classList.remove('active');
+    }
+};
 
 /**
- * Toggles the visibility of the Head Unit/Tablet UI and hides the main UI.
+ * Toggles the visibility of the Head Unit/Tablet UI.
  */
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
-    const speedometer = elements.speedometerUI; 
     const mediaButton = elements.mediaButton;
     
     if (state === undefined) {
@@ -19,26 +27,25 @@ function toggleHeadUnit(state) {
     if (state) {
         // OPEN Tablet
         tablet.classList.remove('hidden');
-        speedometer.classList.add('hidden'); // Sembunyikan speedometer
-        mediaButton.classList.add('hidden'); // Sembunyikan tombol media saat tablet terbuka
-        console.log(`[HEAD UNIT] Status: OPENED (Main UI Hidden)`);
+        mediaButton.classList.add('hidden'); // Sembunyikan tombol media agar tidak double-click
+        // HILANGKAN PENYEMBUNYIAN SPEEDOMETER DARI SINI
+        console.log(`[HEAD UNIT] Status: OPENED (Speedometer Tetap Aktif)`);
     } else {
         // CLOSE Tablet
         tablet.classList.add('hidden');
-        speedometer.classList.remove('hidden'); // Tampilkan speedometer
         mediaButton.classList.remove('hidden'); // Tampilkan tombol media
-        console.log(`[HEAD UNIT] Status: CLOSED (Main UI Visible)`);
+        console.log(`[HEAD UNIT] Status: CLOSED`);
     }
 }
 
-// ... (Fungsi updateTimeWIB tetap sama) ...
+// ... (Semua fungsi set dan updateTimeWIB tetap sama) ...
 
 // Wait for the DOM to be fully loaded and map elements
 document.addEventListener('DOMContentLoaded', () => {
     elements = {
         // UI Containers
         speedometerUI: document.getElementById('speedometer-ui'),
-        mediaButton: document.getElementById('media-button'), // Tombol Baru
+        mediaButton: document.getElementById('media-button'),
         tabletUI: document.getElementById('tablet-ui'),
         
         // Visible Elements (Speedometer)
@@ -76,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Penutup: Tombol ESCAPE
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            // Hanya tutup jika tablet sedang terbuka
             if (!elements.tabletUI.classList.contains('hidden')) {
                 toggleHeadUnit(false);
             }
@@ -84,13 +90,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial setup and example values 
-    setSpeedMode(1); 
-    setEngine(true);
-    setSpeed(22.35); 
-    setRPM(0.5821);
-    setFuel(0.49);
-    setHealth(1.0); 
-    setGear(2);
-    setHeadlights(1);
-    setSeatbelts(true);
+    // ... (Initial setup tetap sama) ...
 });
