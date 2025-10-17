@@ -23,11 +23,11 @@ body {
     right: 15px;
     width: 320px; 
     
-    /* Neon border/background */
-    background: linear-gradient(135deg, #FF69B4, #DA70D6); /* Pink to Orchid/Purple */
+    /* Neon border/background - ORANGE */
+    background: linear-gradient(135deg, #FFA500, #FF4500); /* Bright Orange to Orange-Red */
     padding: 3px;
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(255, 105, 180, 0.7); /* Neon glow effect */
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); /* Neon glow effect (Orange) */
 }
 
 .speedometer-container > div {
@@ -47,7 +47,7 @@ body {
     justify-content: space-between;
     font-size: 14pt;
     font-weight: bold;
-    color: #FF69B4; /* Pink */
+    color: #FFA500; /* Orange Cerah */
 }
 
 .speed-value-wrapper {
@@ -61,7 +61,7 @@ body {
     font-weight: 900;
     line-height: 1;
     color: white;
-    text-shadow: 0 0 10px #FF69B4; /* Neon text effect */
+    text-shadow: 0 0 10px #FFA500; /* Neon text effect (Orange) */
 }
 
 .speed-gauge-image {
@@ -90,13 +90,14 @@ body {
 
 .stat-item {
     padding: 5px;
-    border: 1px solid rgba(255, 105, 180, 0.3);
+    /* Border menjadi orange transparan */
+    border: 1px solid rgba(255, 165, 0, 0.3);
     border-radius: 8px;
 }
 
 .stat-label {
+    color: #FFA500; /* Orange Cerah */
     font-size: 9pt;
-    color: #FF69B4;
 }
 
 .stat-value {
@@ -120,9 +121,9 @@ body {
 }
 
 .gear-label {
+    color: #FFD700; /* Gold/Kuning untuk Gear Label */
     font-size: 14pt;
     font-weight: bold;
-    color: #DA70D6;
 }
 
 .gear-value {
@@ -130,7 +131,7 @@ body {
     font-weight: 900;
     color: white;
     line-height: 1;
-    text-shadow: 0 0 8px #DA70D6;
+    text-shadow: 0 0 8px #FFD700; /* Neon text effect (Gold) */
     margin-right: 15px;
 }
 
