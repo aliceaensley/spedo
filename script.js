@@ -31,7 +31,7 @@ function drawGauge(ctx, value, max, color1, color2, labels, unit, healthPercent=
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  // Health indicator ring (if provided)
+  // Health indicator ring (only for speedometer)
   if(healthPercent!==null){
     ctx.beginPath();
     const endAngle = 0.75*Math.PI + (healthPercent/100)*1.5*Math.PI;
@@ -86,9 +86,11 @@ function updateHUD(){
   displayedSpeed += (currentSpeed-displayedSpeed)*0.15;
   displayedRPM += (currentRPM-displayedRPM)*0.15;
 
+  // Draw gauges
   drawGauge(speedCtx, displayedSpeed,200,"red","cyan",speedLabels,"KMH", currentHealth);
   drawGauge(rpmCtx, displayedRPM/1000,8,"lime","blue",rpmLabels,"RPM");
 
+  // Update info text
   document.getElementById("gear").innerText = currentGear;
   document.getElementById("fuel").innerText = `Fuel: ${(currentFuel*100).toFixed(0)}%`;
   document.getElementById("health").innerText = `Health: ${(currentHealth*100).toFixed(0)}%`;
@@ -102,9 +104,7 @@ function updateHUD(){
 }
 updateHUD();
 
-// --- Original functional API ---
-function onOrOff(state){return state?"On":"Off";}
-
+// --- Functional API ---
 function setEngine(state){ engineOn=state; if(!state){currentSpeed=0;currentRPM=0;} }
 function setSpeed(speed){ if(!engineOn) return; currentSpeed = speedMode===1?Math.round(speed*2.236936):Math.round(speed*3.6); }
 function setRPM(rpm){ if(!engineOn) return; currentRPM = rpm; }
