@@ -1,27 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Speedometer HUD</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speedometer Final</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="hud" id="hud">
-    <div class="gauges">
-      <canvas id="speedometer" width="160" height="160"></canvas>
-      <canvas id="rpm" width="160" height="160"></canvas>
-    </div>
-
-    <div class="info">
-      <div>Engine: <span id="engine">Off</span></div>
-      <div>Fuel: <span id="fuel">100%</span></div>
-      <div>Health: <span id="health">100%</span></div>
-      <div>Gear: <span id="gear">N</span></div>
-      <div>Seatbelt: <span id="seatbelts">Off</span></div>
-    </div>
-  </main>
-
-  <script src="script.js"></script>
+<div id="hud">
+  <canvas id="speedMeter" width="200" height="200"></canvas>
+  <canvas id="rpmMeter" width="200" height="200"></canvas>
+  <div id="info">
+    <div id="gear">P</div>
+    <div id="fuel">Fuel: 100%</div>
+  </div>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
