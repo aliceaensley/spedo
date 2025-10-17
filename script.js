@@ -101,7 +101,6 @@ function setLeftIndicator(state) {
     // Indicators are now hidden but the logic remains for internal use if needed
     indicators = (indicators & 0b10) | (state ? 0b01 : 0b00);
     // Hidden: elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
-    // You could add indicator icons (left/right arrows) to the bottom panel if desired.
 }
 
 /**
