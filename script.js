@@ -106,8 +106,8 @@ updateHUD();
 
 // --- Functional API ---
 function setEngine(state){ engineOn=state; if(!state){currentSpeed=0;currentRPM=0;} }
-function setSpeed(speed){ if(!engineOn) return; currentSpeed = speedMode===1?Math.round(speed*2.236936):Math.round(speed*3.6); }
-function setRPM(rpm){ if(!engineOn) return; currentRPM = rpm; }
+function setSpeed(speed){ if(!engineOn){ currentSpeed=0; return; } currentSpeed = speedMode===1?Math.round(speed*2.236936):Math.round(speed*3.6); }
+function setRPM(rpm){ currentRPM = rpm; } // selalu update RPM
 function setGear(gear){ currentGear = gear; }
 function setFuel(fuel){ currentFuel = fuel; }
 function setHealth(health){ currentHealth = health; }
