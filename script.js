@@ -18,7 +18,7 @@ const toggleActive = (element, state) => {
     }
 };
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
+// --- FUNGSI PEMBARUAN DATA SPEEDOMETER (TETAP SAMA) ---
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -107,10 +107,9 @@ function updateTimeWIB() {
         elements.headunitTimeWIB.innerText = timeString;
     }
 }
+// ---------------------------------------------------------------------
 
-
-// --- FUNGSI KONTROL SIMULASI ---
-
+// --- FUNGSI KONTROL SIMULASI (TETAP SAMA) ---
 function stopSimulation() {
     if (simulationInterval !== null) {
         clearInterval(simulationInterval);
@@ -148,14 +147,11 @@ function startSimulation() {
             setGear(0); 
         }
         
-        // Simulasikan pengurangan Fuel
-        // Ambil nilai fuel, konversi ke desimal, kurangi sedikit, lalu set ulang
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         setFuel(Math.max(0.1, currentFuelText / 100 - 0.005));
 
     }, 3000); 
 }
-
 
 // --- LOGIC: KONTROL TAMPILAN HEAD UNIT ---
 
@@ -163,7 +159,6 @@ function showAppGrid() {
     if (elements.appGrid) elements.appGrid.classList.remove('hidden');
     if (elements.iframeView) elements.iframeView.classList.add('hidden');
     
-    // Bersihkan iFrame saat kembali ke menu aplikasi
     if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; 
 }
 
@@ -174,7 +169,7 @@ function showBrowser(url) {
 }
 
 
-// --- FUNGSI HEAD UNIT (Bisa Diklik/Toggle) ---
+// --- FUNGSI HEAD UNIT (TETAP SAMA) ---
 
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
@@ -190,7 +185,6 @@ function toggleHeadUnit(state) {
         tablet.classList.remove('hidden');
         if (footerTrigger) footerTrigger.style.display = 'none'; 
         
-        // Selalu mulai dari App Grid saat menu dibuka
         showAppGrid(); 
 
         setTimeout(() => {
@@ -204,7 +198,6 @@ function toggleHeadUnit(state) {
         setTimeout(() => {
             tablet.classList.add('hidden'); 
             if (footerTrigger) footerTrigger.style.display = 'block'; 
-            // Bersihkan iFrame saat headunit ditutup
             showAppGrid(); 
         }, transitionDuration); 
     }
@@ -235,10 +228,10 @@ document.addEventListener('DOMContentLoaded', () => {
         headunitTimeWIB: document.getElementById('headunit-time-wib'), 
         closeTablet: document.getElementById('close-tablet'),
         
-        // Elemen Head Unit Internal
         appGrid: document.getElementById('app-grid'),
         iframeView: document.getElementById('iframe-view'),
         browserApp: document.getElementById('browser-app'),
+        youtubeApp: document.getElementById('youtube-app'),
         browserIframe: document.getElementById('browser-iframe'),
         backToApps: document.getElementById('back-to-apps')
     };
@@ -266,17 +259,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 4. LOGIC INTI: KLIK BROWSER & KEMBALI
+    // 4. LOGIC INTI: KLIK BROWSER & YOUTUBE
+    
+    // Aksi Klik Browser (LSFD)
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
-            // URL yang diminta (memuat ke dalam iFrame)
-            showBrowser('https://www.youtube.com'); 
+            showBrowser('https://lsfd.jg-rp.com/index.php'); 
         });
     }
     
+    // LOGIC KLIK YOUTUBE (Memuat VIDEO YouTube EMBED)
+    if (elements.youtubeApp) {
+        elements.youtubeApp.addEventListener('click', () => {
+            const YOUTUBE_VIDEO_ID = 'dQw4w9WgXcQ'; // GANTI ID ini dengan video yang Anda inginkan!
+            const YOUTUBE_EMBED_URL = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&rel=0`;
+            
+            showBrowser(YOUTUBE_EMBED_URL); 
+        });
+    }
+
     if (elements.backToApps) {
         elements.backToApps.addEventListener('click', () => {
-            // Kembali ke tampilan App Grid
             showAppGrid(); 
         });
     }
@@ -290,14 +293,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     setEngine(false); 
 
-    // Kontrol Mesin ON/OFF via ikon
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
             setEngine(!engineState);
         });
     }
 
-    // Mulai simulasi Mesin ON secara otomatis setelah 2 detik
     setTimeout(() => {
         setEngine(true);
     }, 2000);
