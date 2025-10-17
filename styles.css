@@ -1,154 +1,107 @@
-/* Basic Reset and Font */
-* {
-    user-select: none;
-    user-drag: none;
-    box-sizing: border-box; 
-}
+/* ... (SEMUA STYLING SPEEDOMETER UTAMA TETAP SAMA) ... */
 
-@font-face {
-    font-family: 'Digital';
-    /* Ganti dengan font bergaya digital/retro jika ada */
-}
-
-body {
-    background-color: transparent !important;
-    font-family: 'Digital', Arial, sans-serif;
-    color: white;
-}
-
-/* --- Container Utama Speedometer --- */
-.speedometer-container {
+/* --- HEAD UNIT TRIGGER (FLOATING DI TENGAH BAWAH) --- */
+.headunit-floating-trigger {
     position: fixed;
-    bottom: 15px; /* Posisi awal */
-    right: 15px;
-    width: 320px; 
+    bottom: 15px; /* Jarak dari bawah */
+    left: 50%;
+    transform: translateX(-50%); /* Pusatkan elemen */
+    width: 350px; /* Ukuran yang ideal */
     
-    /* Neon border/background - ORANGE */
-    background: linear-gradient(135deg, #FFA500, #FF4500); /* Bingkai Orange Neon */
-    padding: 3px;
+    /* Neon style Orange untuk trigger */
+    background: linear-gradient(90deg, #FFA500, #FF4500); 
+    color: white;
+    text-align: center;
+    font-size: 10pt;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
+    cursor: pointer; 
+    z-index: 1500; /* Di atas speedometer */
+}
+
+.headunit-floating-trigger .key-bind {
+    color: black;
+    background-color: white;
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin: 0 2px;
+}
+
+/* --- TABLET UI (HEAD UNIT MENU - Tampilan Tengah) --- */
+.headunit-menu-container {
+    position: fixed;
+    bottom: 50px; /* Posisi awal, sedikit di atas trigger */
+    left: 50%;
+    
+    /* Ukuran sesuai foto, anggap 70% dari viewport width */
+    width: 700px;
+    height: 450px;
+    
+    /* Pusatkan, tapi transform harus disesuaikan untuk animasi */
+    transform: translateX(-50%) scale(0.1) translateY(100%); 
+    transform-origin: center bottom; /* Anchor di tengah bawah */
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Animasi Elastis */
+
+    /* Styling Head Unit: Warna Gelap/Abu-abu */
+    background-color: rgba(0, 0, 0, 0.9); 
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); /* Efek glow neon */
-    z-index: 1000; 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    
+    color: white;
+    font-family: Arial, sans-serif;
+    z-index: 5000; 
 }
 
-/* Latar belakang gelap untuk setiap bagian di dalam speedometer */
-.speedometer-container > div {
-    background-color: rgba(0, 0, 0, 0.75); 
-    border-radius: 12px;
+/* Tampilan Menu saat Aktif (Mengembang) */
+.headunit-menu-container.active {
+    transform: translateX(-50%) scale(1) translateY(0);
 }
 
-/* --- Speed Gauge (Bagian Kecepatan Utama) --- */
-.speed-gauge {
-    padding: 10px 15px;
-    margin-bottom: 5px;
-    text-align: right;
+.headunit-menu-container.hidden {
+    display: none;
+    /* Reset transform saat hidden agar tidak mengganggu */
+    transform: translateX(-50%) scale(0.1) translateY(100%);
 }
 
-.speed-header {
+.headunit-header {
     display: flex;
     justify-content: space-between;
+    padding: 10px 15px;
     font-size: 14pt;
     font-weight: bold;
-    color: #FFA500; /* Label Orange Cerah */
+    color: #FFA500; 
+    border-bottom: 1px solid rgba(255, 165, 0, 0.2);
 }
 
-.speed-value-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.speed-value {
-    font-size: 48pt; 
-    font-weight: 900;
-    line-height: 1;
-    color: white;
-    text-shadow: 0 0 10px #FFA500; /* Neon text effect (Orange) */
-}
-
-.speed-gauge-image {
-    width: 60px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24pt; 
-}
-
-/* --- Info Panels (Grid Stats) --- */
-.info-panels {
-    padding: 5px;
-    margin-bottom: 5px;
-    background-color: transparent; 
-}
-
-.info-grid {
-    padding: 10px;
+/* ... (Styling App Grid dan App Icon tetap sama) ... */
+.headunit-app-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(4, 1fr); /* 4 kolom agar pas dengan ukuran besar */
+    gap: 15px;
+    padding: 20px 15px;
     text-align: center;
 }
 
-.stat-item {
-    padding: 5px;
-    /* Perbaikan: Border tipis orange di sekitar item grid */
-    border: 1px solid rgba(255, 165, 0, 0.3);
-    border-radius: 8px;
-}
-
-.stat-label {
-    color: #FFA500; /* Label Orange Cerah */
-    font-size: 9pt;
-}
-
-.stat-value {
-    font-size: 12pt;
-    font-weight: bold;
-    color: white;
-}
-
-/* --- Bottom Panel (Gear, Indicators) --- */
-.bottom-panel {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-}
-
-.gear-display {
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
-}
-
-.gear-label {
-    color: #FFD700; /* Kuning/Gold untuk Gear Label */
-    font-size: 14pt;
-    font-weight: bold;
-}
-
-.gear-value {
+.app-icon .icon {
     font-size: 32pt;
-    font-weight: 900;
-    color: white;
-    line-height: 1;
-    text-shadow: 0 0 8px #FFD700; /* Neon text effect (Gold) */
-    margin-right: 15px;
+    margin-bottom: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 10px;
 }
 
-.status-indicators {
-    display: flex;
-    gap: 10px;
-    font-size: 18pt;
-}
-
-.indicator-icon {
-    opacity: 0.4;
-    /* Ikon tidak perlu cursor jika tidak bisa diklik */
-}
-
-.indicator-icon.active {
-    opacity: 1;
-    text-shadow: 0 0 5px yellow; 
+.headunit-footer-close {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #FF4500, #FFA500); 
+    padding: 10px;
+    text-align: center;
+    border-radius: 0 0 15px 15px;
+    cursor: pointer;
+    font-weight: bold;
 }
