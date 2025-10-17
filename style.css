@@ -1,12 +1,12 @@
 /* --- Global & Variables --- */
 :root {
-    --main-bg-dark: rgba(10, 10, 10, 0.85);
-    --accent-color: #00bcd4; /* Cyan */
-    --text-light: #f0f0f0;
-    --text-muted: #888;
-    --danger-red: #ff5252;
-    --success-green: #4CAF50;
-    --warning-yellow: #FFC107;
+    --primary-pink: #FF00FF; /* Bright Pink */
+    --secondary-teal: #00FFFF; /* Bright Cyan/Teal */
+    --background-dark: rgba(0, 0, 0, 0.7);
+    --text-light: #FFFFFF;
+    --text-muted: #CCC;
+    --gradient-bg: linear-gradient(135deg, var(--primary-pink) 0%, var(--secondary-teal) 100%);
+    --grid-line: rgba(255, 255, 255, 0.1);
 }
 
 * {
@@ -17,7 +17,7 @@
 
 body {
     background-color: transparent !important;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Orbitron', sans-serif; /* Font untuk tampilan modern */
     color: var(--text-light);
     display: flex;
     justify-content: flex-end; 
@@ -26,178 +26,231 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    font-size: 11pt; /* Sama dengan template awal Anda */
 }
 
-/* --- Main Container (POSISI & UKURAN) --- */
+/* --- Speedometer Container --- */
 #speedometer-container {
     position: fixed;
     bottom: 30px;    
     right: 30px;     
     
-    width: 300px;    
-    height: 180px;   
+    width: 380px;    /* Lebar sesuai gambar */
+    height: 250px;   /* Tinggi sesuai gambar */
     
-    background: var(--main-bg-dark);
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 188, 212, 0.3); 
-    padding: 15px;
+    background: var(--gradient-bg); /* Gradien utama */
+    border-radius: 15px;
+    box-shadow: 0 0 40px rgba(255, 0, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.5);
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    border: 1px solid rgba(0, 188, 212, 0.2);
+    overflow: hidden;
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-/* --- Center Main Display (SPEED & GEAR) --- */
-#center-main {
+/* --- Header Graphic (Palm Trees & Sun) --- */
+#header-graphic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px; /* Tinggi grafis atas */
+    background: linear-gradient(0deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%);
+    z-index: 10;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
-/* Gear Display */
-#gear-display-box {
-    width: 30%;
-    text-align: center;
-    line-height: 1;
+.sun {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #FFC107 0%, #FFA000 70%, transparent 100%);
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 30px #FFC107;
 }
 
-#gear-display-box .label {
+.palm-tree {
+    position: absolute;
+    bottom: 0;
+    width: 0; 
+    height: 0; 
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 50px solid rgba(0,0,0,0.8); /* Batang pohon */
+    border-radius: 50%;
+    transform: rotate(15deg);
+}
+.palm-tree.left { left: 10%; transform: rotate(-20deg); }
+.palm-tree.right { right: 10%; transform: rotate(20deg); }
+.palm-tree::before, .palm-tree::after { /* Daun */
+    content: '';
+    position: absolute;
+    width: 0; height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 30px solid rgba(0,0,0,0.7);
+    top: -20px;
+    transform-origin: bottom center;
+}
+.palm-tree::before { left: -18px; transform: rotate(-45deg); }
+.palm-tree::after { right: -18px; transform: rotate(45deg); }
+
+
+/* --- Main Content Area --- */
+#main-content {
+    display: flex;
+    width: 100%;
+    flex-grow: 1;
+    margin-top: 60px; /* Jarak dari header graphic */
+    background-color: rgba(0,0,0,0.6); /* Background gelap untuk konten */
+    border-radius: 10px;
+    padding: 10px;
+    position: relative;
+    z-index: 15;
+}
+
+#left-column, #right-column {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    height: 100%;
+}
+
+#left-column {
+    width: 55%;
+    border-right: 1px dashed var(--grid-line);
+}
+
+#right-column {
+    width: 45%;
+}
+
+.stat-block {
+    margin-bottom: 8px;
+    padding: 3px 0;
+    position: relative;
+}
+.stat-block .label {
     font-size: 0.7em;
     color: var(--text-muted);
+    margin-bottom: 2px;
+    display: block;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
 }
 
-#gear-value {
-    font-family: 'Aldrich', sans-serif;
-    font-size: 3.5em; 
-    font-weight: bold;
-    color: var(--warning-yellow); 
-    text-shadow: 0 0 10px rgba(255, 193, 7, 0.7);
-}
-
-/* Speed Display */
-#speed-display {
-    width: 70%;
-    text-align: right;
-    line-height: 1;
-}
-
-#speed-value {
-    font-family: 'Aldrich', sans-serif;
-    font-size: 4.5em; 
-    font-weight: bold;
-    color: var(--text-light);
-    text-shadow: 0 0 15px rgba(0, 188, 212, 0.9);
-    display: inline-block;
-}
-
-#speed-unit {
-    font-size: 0.9em;
-    color: var(--accent-color);
-    margin-left: 5px;
-    display: inline-block;
-}
-
-/* RPM Display */
-#rpm-display-box {
-    position: absolute;
-    bottom: 55px; /* Posisikan di bawah speed */
-    right: 15px;
-    text-align: right;
-    font-size: 0.8em;
-}
-#rpm-display-box .label {
-    color: var(--text-muted);
-}
-#rpm-value {
-    font-family: 'Aldrich', sans-serif;
-    color: var(--accent-color);
-}
-
-/* --- Bottom Status Bar (Health, Fuel, Indicators) --- */
-#bottom-status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    width: 100%;
-    border-top: 1px dashed rgba(255, 255, 255, 0.1);
-    padding-top: 10px;
-}
-
-/* Status Bar Item (Fuel/Health) */
-.bar-status-item {
-    width: 30%;
+/* Speed Block */
+.speed-block {
     text-align: left;
-    margin-right: 10px;
+    margin-bottom: 10px;
+}
+.big-value {
+    font-family: 'Major Mono Display', monospace; /* Font Digital Retro */
+    font-size: 3.5em; /* Ukuran besar */
+    color: var(--secondary-teal);
+    text-shadow: 0 0 10px var(--secondary-teal);
+    line-height: 0.9;
+    display: block;
+}
+.unit-text {
+    font-family: 'Major Mono Display', monospace;
+    font-size: 0.9em;
+    color: var(--primary-pink);
+    text-shadow: 0 0 5px var(--primary-pink);
+    position: relative;
+    top: -5px;
+    left: 2px;
 }
 
-.bar-status-item .label {
-    font-size: 0.65em;
-    color: var(--text-muted);
-    margin-bottom: 3px;
+/* RPM Block */
+.rpm-block {
+    text-align: left;
+}
+.value-small {
+    font-family: 'Major Mono Display', monospace;
+    font-size: 1.2em;
+    color: var(--text-light);
     display: block;
 }
 
-.bar-bg {
-    width: 100%;
-    height: 7px; 
+/* Fuel & Health Bars */
+.bar-container {
+    width: 80%;
+    height: 8px;
     background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
+    border-radius: 4px;
     overflow: hidden;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
-
 .bar-fill {
     height: 100%;
     width: 100%;
+    background-color: var(--success-green); /* Default green */
     transition: width 0.3s ease-out, background-color 0.3s;
 }
+/* Specific bar colors are handled by JS */
 
-.fuel-bar { background-color: var(--success-green); }
-.health-bar { background-color: var(--accent-color); }
-
-/* Indicator Wrapper (Icons/Text) */
-#indicators-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: 40%;
-    font-size: 0.8em;
-    font-family: 'Aldrich', sans-serif;
+/* Gear Block */
+.gear-block {
+    text-align: center;
+    margin-top: auto; /* Dorong ke bawah */
+    padding-top: 5px;
+    border-top: 1px dashed var(--grid-line);
+}
+.big-value-gear {
+    font-family: 'Major Mono Display', monospace;
+    font-size: 2.5em;
+    color: var(--primary-pink);
+    text-shadow: 0 0 8px var(--primary-pink);
+    line-height: 1;
+    display: block;
 }
 
-.status-indicator {
-    margin-left: 10px;
-    font-weight: bold;
+/* Status Icons */
+#status-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: auto; /* Dorong ke bawah */
+    padding-top: 10px;
+    border-top: 1px dashed var(--grid-line);
+    font-size: 1.4em;
     color: var(--text-muted);
+}
+
+#status-icons .fas {
     transition: color 0.2s;
 }
 
-/* Status ON Color */
-#indicators-wrapper .on,
-#indicators-wrapper .High,
-#indicators-wrapper .Knots,
-#indicators-wrapper .MPH {
-    color: var(--warning-yellow);
-    text-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+.icon-on {
+    color: var(--secondary-teal);
+    text-shadow: 0 0 8px var(--secondary-teal);
 }
 
-/* Engine On Status */
-#indicators-wrapper .EngineOn {
-    color: var(--success-green);
-    text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-}
-/* Engine Off Status */
-#indicators-wrapper .EngineOff {
-    color: var(--danger-red);
-    text-shadow: 0 0 5px rgba(255, 82, 82, 0.5);
-}
-
-/* Blinking effect (Indicator) */
-.blinking {
+.arrow-on {
+    color: var(--primary-pink);
+    text-shadow: 0 0 8px var(--primary-pink);
     animation: blink 0.5s step-start infinite;
 }
 
 @keyframes blink {
-    50% { opacity: 0.4; }
+    50% { opacity: 0.3; }
+}
+
+/* Hidden elements for original JS compatibility */
+dd[id="speed"], dd[id="rpm"], dd[id="fuel"], dd[id="health"],
+dd[id="gear"], dd[id="headlights"], dd[id="indicators"],
+dd[id="seatbelts"], dd[id="speed-mode"], dd[id="engine"] {
+    display: none !important;
 }
