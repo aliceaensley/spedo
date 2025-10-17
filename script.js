@@ -8,7 +8,7 @@ let vitalInterval = null;
 let isYoutubeOpen = false; 
 let fuelWarningInterval = null; 
 let currentFuelWarningType = null; 
-let maxGearAchieved = 0; // BARU: Menyimpan gear tertinggi yang pernah dicapai
+let maxGearAchieved = 0; // Menyimpan gear tertinggi yang pernah dicapai
 
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
@@ -140,7 +140,7 @@ function setGear(gear) {
     }
     if (elements.gear) elements.gear.innerText = gearText;
     
-    // BARU: Update maxGearAchieved jika gear saat ini lebih tinggi
+    // Update maxGearAchieved jika gear saat ini lebih tinggi dari 0
     if (gear > maxGearAchieved) {
         maxGearAchieved = gear;
     }
@@ -195,7 +195,7 @@ function stopSimulation() {
     }
     
     setSpeed(0);
-    setRPM(0.1); // Tetap di idle RPM
+    setRPM(0.1); 
     setGear(0); 
     maxGearAchieved = 0; // Reset max gear saat mesin mati
 }
@@ -221,7 +221,6 @@ function startSimulation() {
              currentSpeed = Math.max(0, currentSpeed);
         }
         
-        // Limit max speed
         currentSpeed = Math.min(25, currentSpeed); 
         setSpeed(currentSpeed);
         
@@ -230,8 +229,8 @@ function startSimulation() {
         const currentRPM = currentSpeed > 0 ? Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05)) : 0.1;
         setRPM(currentRPM);
         
-        // 🚨 PERBAIKAN KRITIS UNTUK GEAR STABIL
-        let targetGear = 0; // Default Netral
+        // LOGIKA GEAR STABIL
+        let targetGear = 0; 
         
         if (currentSpeed >= 20) { 
             targetGear = 3;
@@ -241,31 +240,23 @@ function startSimulation() {
             targetGear = 1;
         } 
         
-        // Jika targetGear lebih besar dari gear tertinggi yang pernah dicapai, gunakan targetGear
-        // Jika targetGear lebih kecil, cek apakah speed sudah benar-benar rendah.
-        if (targetGear > maxGearAchieved) {
-            setGear(targetGear);
-        } else if (targetGear < maxGearAchieved) {
-            // Ini adalah kondisi pengereman/deselerasi
-            // JIKA speed turun di bawah ambang batas (misal < 15 untuk Gear 3), baru turunkan gear.
-            // Kita biarkan Gear tetap di 3 selama speed > 15 (setengah dari ambang 20) untuk stabilitas.
-            if (maxGearAchieved === 3 && currentSpeed < 15) {
-                maxGearAchieved = 2; // Paksa turun
-            } else if (maxGearAchieved === 2 && currentSpeed < 5) {
-                maxGearAchieved = 1; // Paksa turun
+        if (currentSpeed > 0) {
+            // Gunakan Gear tertinggi yang pernah dicapai atau targetGear saat ini.
+            let finalGear = Math.max(maxGearAchieved, targetGear);
+            
+            // Logic downshift terpaksa (hanya jika kecepatan benar-benar anjlok)
+            if (finalGear === 3 && currentSpeed < 10) {
+                finalGear = 2; // Speed < 10, paksa turun ke Gear 2
+            } else if (finalGear === 2 && currentSpeed < 5) {
+                finalGear = 1; // Speed < 5, paksa turun ke Gear 1
             }
             
-            // Akhirnya, set gear ke gear tertinggi yang stabil
-            if (currentSpeed > 0) {
-                setGear(maxGearAchieved); 
-            } else {
-                setGear(0); // Kembali ke Netral jika diam
-                maxGearAchieved = 0; // Reset
-            }
-
+            setGear(finalGear);
+            
         } else {
-            // TargetGear sama dengan MaxGearAchieved (kondisi stabil)
-            setGear(targetGear);
+            // Jika kendaraan diam (Speed = 0)
+            setGear(0); // Netral
+            maxGearAchieved = 0; 
         }
         
     }, 3000); 
@@ -288,6 +279,7 @@ function startVitalUpdates() {
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
         
+        // Batas aman minimum di set ke 0.01 (1%) agar bisa turun sampai 0%
         setFuel(Math.max(0.01, currentFuel - fuelReductionRate)); 
         
     }, 3000); 
