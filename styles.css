@@ -23,7 +23,7 @@ body {
     position: fixed;
     bottom: 15px; 
     right: 15px;
-    width: 300px; 
+    width: 300px; /* Lebar default */
     
     background: linear-gradient(135deg, #FFA500, #FF4500); 
     padding: 5px;
@@ -34,13 +34,68 @@ body {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    
+    /* Tambahkan transisi untuk animasi perubahan ukuran/posisi */
+    transition: width 0.3s, height 0.3s, right 0.3s, bottom 0.3s;
 }
 
+/* KONDISI SPEEDOMETER SAAT YOUTUBE AKTIF */
+.speedometer-container.youtube-active {
+    width: 500px; /* Lebar diperluas */
+    height: 500px; /* Tinggi diperluas */
+    right: 15px; /* Tetap di kanan */
+    bottom: 15px; /* Tetap di bawah */
+    padding: 10px;
+    flex-direction: row; /* Tata letak berubah */
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.speedometer-container.youtube-active .speed-panel,
+.speedometer-container.youtube-active .info-panels-grid,
+.speedometer-container.youtube-active .bottom-panel {
+    /* Sembunyikan panel data utama saat YouTube aktif */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s;
+}
+
+/* YOUTUBE INTEGRATION CONTAINER */
+.youtube-integrated-container {
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    position: absolute; /* Mengisi seluruh container speedometer */
+    top: 0;
+    left: 0;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+#browser-iframe {
+    width: 100%;
+    flex-grow: 1;
+    border: none;
+    background-color: black;
+    border-radius: 5px;
+}
+
+/* Panel Data Speedometer */
 .panel {
     background-color: rgba(0, 0, 0, 0.75); 
     border-radius: 10px;
     padding: 10px;
+    width: 100%; /* Default 100% untuk mode biasa */
 }
+/* Atur lebar panel speed & bottom agar sejajar saat YT active */
+.speedometer-container:not(.youtube-active) .speed-panel { order: 1; }
+.speedometer-container:not(.youtube-active) .info-panels-grid { order: 2; }
+.speedometer-container:not(.youtube-active) .bottom-panel { order: 3; }
+
 
 /* Speed Panel */
 .speed-panel { display: flex; flex-direction: column; }
@@ -90,105 +145,17 @@ body {
 .indicator-icon { opacity: 0.4; cursor: pointer; } 
 .indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
 
-
-/* --- HEAD UNIT TRIGGER (KLIK) --- */
-.headunit-floating-trigger {
-    position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); 
-    width: 350px; background: linear-gradient(90deg, #FFA500, #FF4500); 
-    color: white; text-align: center; font-size: 10pt; font-weight: bold;
-    padding: 5px 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
-    cursor: pointer; z-index: 9000; 
+.youtube-toggle.active {
+    opacity: 1;
+    text-shadow: 0 0 8px #FF0000; /* Warna merah untuk YouTube aktif */
 }
 
-/* --- TABLET UI (HEAD UNIT MENU) --- */
-.headunit-menu-container {
-    position: fixed; bottom: 50px; left: 50%; width: 700px; height: 450px;
-    transform: translateX(-50%) scale(0.1) translateY(100%); 
-    transform-origin: center bottom; 
-    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
-    background-color: rgba(0, 0, 0, 0.95); border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
-    color: white; font-family: Arial, sans-serif; z-index: 5000; 
-    display: flex; flex-direction: column;
-}
-.headunit-menu-container.active {
-    transform: translateX(-50%) scale(1) translateY(0);
-}
-.headunit-menu-container.hidden {
-    display: none !important;
-    transform: translateX(-50%) scale(0.1) translateY(100%);
-}
-
-.headunit-header {
-    display: flex; justify-content: space-between; align-items: center; 
-    padding: 10px 15px; font-size: 14pt; font-weight: bold; color: #FFA500; 
-    border-bottom: 1px solid rgba(255, 165, 0, 0.2);
-}
-
-/* STYLING GAMBAR HAK CIPTA HEAD UNIT */
-.headunit-copyright-logo {
-    width: 30px; 
-    height: 30px; 
-    margin-right: 10px;
-}
-
-.headunit-app-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
-    padding: 20px 15px; text-align: center; flex-grow: 1; 
-}
-
-.app-icon {
-    display: flex; flex-direction: column; align-items: center;
-    font-size: 10pt; color: #DDD; cursor: pointer;
-}
-
-.app-icon .icon {
-    font-size: 32pt; margin-bottom: 5px;
-    background-color: rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 10px;
-}
-
-.headunit-footer-close {
-    position: relative; width: 100%;
-    background: linear-gradient(90deg, #FF4500, #FFA500); 
-    padding: 10px; text-align: center; border-radius: 0 0 15px 15px;
-    cursor: pointer; font-weight: bold; margin-top: auto; 
-}
-
-/* iFrame View Styling (Diperbarui untuk YouTube) */
-.iframe-container {
-    flex-grow: 1; 
-    display: flex; 
-    flex-direction: column; 
-    padding: 0;
-    background-color: #333; 
-}
-
-#browser-iframe {
-    width: 100%; 
-    flex-grow: 1; 
-    border: none; 
-    background-color: white;
-}
-
-.iframe-back-button {
-    background-color: #FF4500; 
-    color: white; 
-    text-align: center; 
-    padding: 8px;
-    cursor: pointer; 
-    font-weight: bold;
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* --- STYLING BARU UNTUK YOUTUBE SEARCH --- */
+/* --- STYLING YOUTUBE SEARCH (Diadaptasi dari Head Unit) --- */
 
 .search-bar-container {
     display: flex;
-    padding: 10px 15px;
-    background-color: #222;
+    padding-bottom: 10px;
+    background-color: transparent; /* Ubah agar tidak ada background dobel */
     border-bottom: 1px solid #FF4500;
 }
 
@@ -213,21 +180,21 @@ body {
 
 /* Area Hasil Pencarian */
 .search-results-container {
-    height: 150px; 
+    height: 100px; /* Dikecilkan agar menyisakan ruang untuk iframe */
     overflow-x: scroll; /* Scroll horizontal */
     overflow-y: hidden;
     display: flex;
     flex-wrap: nowrap; 
     gap: 10px;
-    padding: 10px 15px;
-    background-color: #1a1a1a;
+    padding: 10px 0;
+    background-color: transparent;
     border-bottom: 1px solid #444;
 }
 
 .search-result-item {
     cursor: pointer;
     flex: 0 0 auto; 
-    width: 150px;
+    width: 100px; /* Dikecilkan */
     text-align: center;
 }
 
@@ -238,10 +205,16 @@ body {
 }
 
 .search-result-item p {
-    font-size: 9pt;
+    font-size: 8pt; /* Dikecilkan */
     color: #AAA;
     margin-top: 5px;
-    height: 30px; 
+    height: 25px; 
     overflow: hidden; 
     text-overflow: ellipsis; 
 }
+
+.hidden {
+    display: none !important;
+}
+
+/* KODE HEAD UNIT YANG TIDAK DIGUNAKAN DIHAPUS */
