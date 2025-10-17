@@ -3,29 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minimalist Digital HUD</title>
+<title>Ultra-Compact HUD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="hud">
   <div id="digital-meters">
     <div id="speed-display">
-      <span id="speed-value">0</span> <span id="speed-unit">KMH</span>
+      <span id="speed-value">0</span><span id="speed-unit">KMH</span>
     </div>
     <div id="rpm-display">
-      <span id="rpm-value">0</span> <span id="rpm-unit">RPM</span>
+      <span id="rpm-value">0</span><span id="rpm-unit">RPM</span>
+    </div>
+    <div id="gear-display">
+      <span id="gear">N</span>
     </div>
   </div>
-  <div id="info">
-    <div id="engine">Engine: Off</div>
-    <div id="gear">Gear: N</div>
-    <div id="fuel">Fuel: 100%</div>
-    <div id="health">Health: 100%</div>
-    <div id="headlights">Headlights: Off</div>
-    <div id="seatbelts">Seatbelts: Off</div>
-    <div id="indicators">Indicators: Off/Off</div>
-    <div id="speed-mode">Speed Mode: KMH</div>
-  </div>
+  <div id="engine-display">Engine: Off</div>
 </div>
 <script src="script.js"></script>
 </body>
