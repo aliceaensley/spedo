@@ -10,11 +10,9 @@ let currentGear = "N";
 let headlightsState = 0;
 let seatbeltsState = false;
 
-// Utility
 const onOrOff = state => state ? 'On' : 'Off';
 
-// Update HUD
-function updateHUD() {
+function updateHUD(){
     elements.speed.innerText = speedMode===1?Math.round(currentSpeed*2.236936):Math.round(currentSpeed*3.6);
     elements.speedUnit.innerText = speedMode===1?"MPH":"KMH";
     elements.rpm.innerText = Math.round(currentRPM);
@@ -29,7 +27,7 @@ function updateHUD() {
     requestAnimationFrame(updateHUD);
 }
 
-// API Functions
+// API
 function setEngine(state){ engineOn=state; if(!state){currentSpeed=0;currentRPM=0;} }
 function setSpeed(speed){ if(!engineOn){currentSpeed=0; return;} currentSpeed=speed; }
 function setRPM(rpm){ currentRPM = rpm; }
@@ -42,19 +40,18 @@ function setLeftIndicator(state){ indicators = (indicators & 0b10)|(state?0b01:0
 function setRightIndicator(state){ indicators = (indicators & 0b01)|(state?0b10:0b00); }
 function setSpeedMode(mode){ speedMode = mode; }
 
-// Init
 document.addEventListener('DOMContentLoaded',()=>{
     elements = {
-        engine: document.getElementById('engine'),
         speed: document.getElementById('speed'),
         speedUnit: document.getElementById('speed-unit'),
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
+        engine: document.getElementById('engine'),
         gear: document.getElementById('gear'),
         headlights: document.getElementById('headlights'),
-        indicators: document.getElementById('indicators'),
         seatbelts: document.getElementById('seatbelts'),
+        indicators: document.getElementById('indicators'),
         speedMode: document.getElementById('speed-mode')
     };
     updateHUD();
