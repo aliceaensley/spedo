@@ -113,10 +113,10 @@ function updateTimeWIB() {
         elements.timeWIB.innerText = timeString;
     }
     
-    // BARIS INI DIHAPUS karena jam WIB di Head Unit sudah menjadi tombol "Hide"
-    // if (elements.headunitTimeWIB) {
-    //     elements.headunitTimeWIB.innerText = timeString;
-    // }
+    // LOGIC WIB DI HEAD UNIT DIKEMBALIKAN
+    if (elements.headunitTimeWIB) {
+        elements.headunitTimeWIB.innerText = timeString;
+    }
 }
 // ---------------------------------------------------------------------
 
@@ -326,9 +326,9 @@ document.addEventListener('DOMContentLoaded', () => {
         engineIcon: document.getElementById('engine-icon'), 
         seatbeltIcon: document.getElementById('seatbelt-icon'),
         
-        // PERUBAHAN: headunitTimeWIB dihapus dan diganti dengan tombol hide
-        // headunitTimeWIB: document.getElementById('headunit-time-wib'), 
-        headunitHideButton: document.getElementById('headunit-hide-button'),
+        // Elemen jam WIB di Head Unit dikembalikan
+        headunitTimeWIB: document.getElementById('headunit-time-wib'), 
+        // headunitHideButton dihapus
         closeTablet: document.getElementById('close-tablet'),
         
         // Elemen Head Unit Internal
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimeWIB();
     setInterval(updateTimeWIB, 60000); 
     
-    // 3. SETUP INTERAKSI CLICK (Head Unit & Close/Hide)
+    // 3. SETUP INTERAKSI CLICK (Head Unit & Close)
     if (elements.headunitFooter) {
         elements.headunitFooter.addEventListener('click', () => {
             toggleHeadUnit(true); 
@@ -363,22 +363,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // LOGIC BARU: Tombol HIDE di header Head Unit
-    if (elements.headunitHideButton) {
-        elements.headunitHideButton.addEventListener('click', () => {
-            toggleHeadUnit(false); // Menyembunyikan Head Unit
-        });
-    }
+    // Event Listener untuk tombol "Hide" di header HEAD UNIT (SUDAH DIHAPUS)
+    // if (elements.headunitHideButton) {
+    //     elements.headunitHideButton.addEventListener('click', () => {
+    //         toggleHeadUnit(false); 
+    //     });
+    // }
     
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && elements.tabletUI && !elements.tabletUI.classList.contains('hidden')) {
             toggleHeadUnit(false);
         }
     });
-    
-    // ... (sisa code JS Anda tidak berubah) ...
-    
-    // 4. LOGIC KLIK APLIKASI
+
+    // 4. LOGIC KLIK APLIKASI
     
     // Aksi Klik Browser (LSFD)
     if (elements.browserApp) {
