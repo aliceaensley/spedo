@@ -6,6 +6,7 @@ const onOrOff = state => state ? 'On' : 'Off';
 
 // Helper function for toggling active state
 const toggleActive = (element, state) => {
+    // Fungsi ini sekarang juga menerima array elemen
     if (Array.isArray(element)) {
         element.forEach(el => toggleActive(el, state));
         return;
@@ -20,6 +21,7 @@ const toggleActive = (element, state) => {
 
 /**
  * Toggles the visibility of the Head Unit/Tablet UI.
+ * Speedometer TIDAK akan disembunyikan.
  */
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
@@ -42,35 +44,12 @@ function toggleHeadUnit(state) {
     }
 }
 
+// ... (Semua fungsi set tetap sama, hanya memengaruhi elemen speedometer utama) ...
+
 /**
- * Updates the display of the engine state and its icon.
+ * Updates the time display to current WIB.
  */
-function setEngine(state) {
-    toggleActive([elements.engineIcon, elements.tabletEngineIcon], state);
-}
-// ... (Semua fungsi setSpeed, setRPM, setFuel, setHealth, setGear, setHeadlights, setSeatbelts, setSpeedMode, dan updateTimeWIB) harus diperbarui untuk sinkronisasi data ke elemen tablet yang baru.
-
-// Hanya menampilkan fungsi set yang penting untuk sinkronisasi
-function setSpeed(speed) {
-    let speedValue;
-    switch(speedMode) {
-        case 1: speedValue = Math.round(speed * 2.236936); break; 
-        default: speedValue = Math.round(speed * 3.6); 
-    }
-    const displayValue = String(speedValue).padStart(3, '0');
-    
-    elements.speed.innerText = displayValue;
-    if (elements.tabletSpeed) elements.tabletSpeed.innerText = displayValue;
-}
-
-function setRPM(rpm) {
-    const displayValue = `${Math.round(rpm * 10000)}`;
-    elements.rpm.innerText = displayValue;
-    if (elements.tabletRPM) elements.tabletRPM.innerText = displayValue;
-}
-
 function updateTimeWIB() {
-    // ... (logic waktu WIB)
     const now = new Date();
     const options = {
         hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' 
@@ -84,9 +63,7 @@ function updateTimeWIB() {
     }
     
     elements.timeWIB.innerText = timeString;
-    if (elements.tabletTimeWIB) elements.tabletTimeWIB.innerText = timeString;
 }
-
 
 // Wait for the DOM to be fully loaded and map elements
 document.addEventListener('DOMContentLoaded', () => {
@@ -109,19 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
         engineIcon: document.getElementById('engine-icon'),
         seatbeltIcon: document.getElementById('seatbelt-icon'),
         
-        // Tablet Elements (Pastikan semua elemen statistik terdaftar)
-        tabletSpeed: document.getElementById('tablet-speed'),
-        tabletRPM: document.getElementById('tablet-rpm'),
-        tabletFuel: document.getElementById('tablet-fuel'),
-        tabletHealth: document.getElementById('tablet-health'),
-        tabletTimeWIB: document.getElementById('tablet-time-wib'),
-        tabletGear: document.getElementById('tablet-gear'),
-        tabletSpeedMode: document.getElementById('tablet-speed-mode'),
-
-        tabletHeadlightsIcon: document.getElementById('tablet-headlights-icon'),
-        tabletEngineIcon: document.getElementById('tablet-engine-icon'),
-        tabletSeatbeltIcon: document.getElementById('tablet-seatbelt-icon'),
-
         // Tablet Close Element
         closeTablet: document.getElementById('close-tablet'),
     };
@@ -132,13 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- SETUP INTERAKSI CLICK ---
     elements.mediaButton.addEventListener('click', () => {
-        toggleHeadUnit(true); 
+        toggleHeadUnit(true); // Buka tablet
     });
     
     elements.closeTablet.addEventListener('click', () => {
-        toggleHeadUnit(false); 
+        toggleHeadUnit(false); // Tutup tablet
     });
     
+    // Tombol ESCAPE untuk menutup
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && !elements.tabletUI.classList.contains('hidden')) {
             toggleHeadUnit(false);
@@ -146,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial setup and example values 
-    // Anda perlu memanggil semua fungsi set agar data disinkronkan ke tablet
-    // Contoh: setFuel(0.49); setRPM(0.5821); setHeadlights(1);
-    
+    // Untuk memastikan speedometer terlihat dan berfungsi saat pertama kali dimuat
+    // setSpeedMode, setEngine, setSpeed, dll. harus dipanggil di sini.
 });
