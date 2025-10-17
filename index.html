@@ -3,28 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analog Neon HUD</title>
+<title>Super Futuristic HUD</title>
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <main class="speedometer">
     <section class="meter-section">
-        <canvas id="speedometerCanvas" width="120" height="120"></canvas>
+        <canvas id="speedometerCanvas" width="140" height="140"></canvas>
         <div id="speed" class="dd-neon">0 KMH</div>
     </section>
     <section class="meter-section">
-        <canvas id="rpmCanvas" width="120" height="120"></canvas>
+        <canvas id="rpmCanvas" width="140" height="140"></canvas>
         <div id="rpm" class="dd-neon">0 RPM</div>
     </section>
     <section class="status-section">
-        <dl>
-            <dt>Fuel</dt>
-            <dd id="fuel" class="dd-fuel">100%</dd>
-            <dt>Health</dt>
-            <dd id="health" class="dd-health">100%</dd>
-            <dt>Gear</dt>
-            <dd id="gear" class="dd-neon">N</dd>
-        </dl>
+        <canvas id="fuelCanvas" width="80" height="80"></canvas>
+        <canvas id="healthCanvas" width="80" height="80"></canvas>
+        <div id="gear" class="dd-neon">N</div>
     </section>
 </main>
 <script src="/script.js"></script>
