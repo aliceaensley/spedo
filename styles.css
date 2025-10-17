@@ -18,7 +18,7 @@ body {
 canvas {
   background: rgba(0,0,0,0.25);
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255,0,0,0.4), 0 0 6px rgba(0,0,255,0.4);
+  box-shadow: 0 0 12px rgba(255,0,0,0.4), 0 0 8px rgba(0,0,255,0.4);
 }
 
 #info {
