@@ -5,11 +5,11 @@ let headlightsState = 1;
 let seatbeltState = true; 
 let simulationInterval = null; 
 let isYoutubeOpen = false; 
-let isFuelWarningActive = false; // Status peringatan bensin
+let fuelWarningInterval = null; // BARU: Menampung ID interval untuk delay suara
 
-// BARU: Objek Audio Peringatan Bensin (Gunakan nama file Anda yang sudah di-upload)
+// Objek Audio Peringatan Bensin (Gunakan nama file Anda yang sudah di-upload)
 const fuelWarningSound = new Audio('bensin.mp3'); 
-fuelWarningSound.loop = true; // Agar suara berulang
+// Properti loop dihilangkan
 
 // *****************************************************************
 // ⚠️ PENTING: API KEY YOUTUBE
@@ -32,19 +32,33 @@ const toggleActive = (element, state) => {
     }
 };
 
-// BARU: Fungsi untuk mengontrol suara peringatan
+// MODIFIKASI: Fungsi untuk mengontrol suara peringatan dengan delay 10 detik
 function toggleFuelWarning(activate) {
-    if (activate && !isFuelWarningActive) {
-        // Nyalakan Peringatan
-        fuelWarningSound.currentTime = 0; 
-        fuelWarningSound.play().catch(e => {
-            console.warn("Gagal memutar suara peringatan.", e);
-        });
-        isFuelWarningActive = true;
-    } else if (!activate && isFuelWarningActive) {
+    if (activate) {
+        // Hanya aktifkan jika interval belum berjalan
+        if (fuelWarningInterval === null) {
+            
+            // 1. Putar suara segera
+            fuelWarningSound.currentTime = 0; 
+            fuelWarningSound.play().catch(e => {
+                console.warn("Gagal memutar suara peringatan.", e);
+            });
+            
+            // 2. Set interval untuk memutar ulang setiap 10 detik
+            fuelWarningInterval = setInterval(() => {
+                fuelWarningSound.currentTime = 0;
+                fuelWarningSound.play().catch(e => {
+                    console.warn("Gagal memutar suara peringatan (interval).", e);
+                });
+            }, 10000); // 10000 ms = 10 detik
+        }
+    } else {
         // Matikan Peringatan
-        fuelWarningSound.pause();
-        isFuelWarningActive = false;
+        if (fuelWarningInterval !== null) {
+            clearInterval(fuelWarningInterval);
+            fuelWarningInterval = null;
+            fuelWarningSound.pause();
+        }
     }
 }
 
@@ -84,8 +98,8 @@ function setFuel(fuel) {
     const displayValue = `${Math.round(fuel * 100)}%`;
     if (elements.fuel) elements.fuel.innerText = displayValue;
 
-    // 🚨 LOGIC SUARA BARU: Cek apakah Fuel <= 25% (0.25)
-    if (fuel <= 0.25) {
+    // 🚨 MODIFIKASI: Cek apakah Fuel <= 10% (0.1)
+    if (fuel <= 0.1) {
         toggleFuelWarning(true);
     } else {
         toggleFuelWarning(false);
@@ -188,8 +202,8 @@ function startSimulation() {
         
         // Simulasikan pengurangan bahan bakar
         const currentFuelText = elements.fuel.innerText.replace('%', '');
-        setFuel(Math.max(0.1, currentFuelText / 100 - 0.005));
-
+        setFuel(Math.max(0.05, currentFuelText / 100 - 0.005)); // Mengurangi bahan bakar
+        // Note: Batas aman minimum set ke 5% agar tidak langsung habis
     }, 3000); 
 }
 
@@ -290,7 +304,6 @@ function toggleYoutubeUI(state) {
     isYoutubeOpen = state;
     
     if (state) {
-        // Logika saat membuka YouTube
         speedometer.classList.add('youtube-active');
         youtubeWrapper.classList.remove('hidden');
         toggleActive(elements.youtubeToggleIcon, true);
@@ -299,12 +312,10 @@ function toggleYoutubeUI(state) {
         if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
         
     } else {
-        // Logika saat menutup/menyembunyikan YouTube
         speedometer.classList.remove('youtube-active');
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
         
-        // Iframe tetap aktif di latar belakang (hidden).
         toggleYoutubeSearchUI(false);
     }
 }
@@ -392,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
     setHealth(1.0); 
-    setFuel(0.49); // Mulai dari 49% agar simulasi cepat mencapai batas 25%
+    setFuel(0.49); // Mulai dari 49%
     
     setEngine(false); 
     setHeadlights(1);
