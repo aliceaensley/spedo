@@ -3,54 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Modern Speedometer</title>
+<title>Futuristic Circular HUD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main class="speedometer">
-  <section class="panel">
-    <div class="panel-row">
-      <div class="panel-label">Engine</div>
-      <div class="panel-value" id="engine">&nbsp;</div>
+  <section class="circular-panel">
+    <div class="dial">
+      <svg viewBox="0 0 120 120">
+        <circle class="bg-ring" cx="60" cy="60" r="50"/>
+        <circle class="progress-ring" id="speed-ring" cx="60" cy="60" r="50"/>
+        <text x="60" y="65" text-anchor="middle" id="speed" class="dial-text">0 KMH</text>
+      </svg>
     </div>
-    <div class="panel-row">
-      <div class="panel-label">Speed</div>
-      <div class="panel-value digital" id="speed">&nbsp;</div>
+    <div class="dial">
+      <svg viewBox="0 0 120 120">
+        <circle class="bg-ring" cx="60" cy="60" r="50"/>
+        <circle class="progress-ring" id="rpm-ring" cx="60" cy="60" r="50"/>
+        <text x="60" y="65" text-anchor="middle" id="rpm" class="dial-text">0 RPM</text>
+      </svg>
     </div>
-    <div class="panel-row">
-      <div class="panel-label">RPM</div>
-      <div class="panel-value digital" id="rpm">&nbsp;</div>
-    </div>
-    <div class="panel-row">
-      <div class="panel-label">Fuel</div>
-      <div class="bar-bg"><div id="fuel" class="bar-fill"></div></div>
-    </div>
-    <div class="panel-row">
-      <div class="panel-label">Health</div>
-      <div class="bar-bg"><div id="health" class="bar-fill"></div></div>
+    <div class="circular-bars">
+      <div class="bar-label">Fuel</div>
+      <svg viewBox="0 0 100 100">
+        <circle class="bg-ring" cx="50" cy="50" r="40"/>
+        <circle class="progress-ring" id="fuel" cx="50" cy="50" r="40"/>
+      </svg>
+      <div class="bar-label">Health</div>
+      <svg viewBox="0 0 100 100">
+        <circle class="bg-ring" cx="50" cy="50" r="40"/>
+        <circle class="progress-ring" id="health" cx="50" cy="50" r="40"/>
+      </svg>
     </div>
   </section>
-  <section class="panel">
-    <div class="panel-row">
-      <div class="panel-label">Gear</div>
-      <div class="panel-value" id="gear">&nbsp;</div>
-    </div>
-    <div class="panel-row">
-      <div class="panel-label">Headlights</div>
-      <div class="panel-value" id="headlights">&nbsp;</div>
-    </div>
-    <div class="panel-row">
-      <div class="panel-label">Indicators</div>
-      <div class="panel-value" id="indicators">&nbsp;</div>
-    </div>
-    <div class="panel-row">
-      <div class="panel-label">Seatbelts</div>
-      <div class="panel-value" id="seatbelts">&nbsp;</div>
-    </div>
-    <div class="panel-row">
-      <div class="panel-label">Speed Mode</div>
-      <div class="panel-value" id="speed-mode">&nbsp;</div>
-    </div>
+
+  <section class="info-panel">
+    <div class="panel-row"><span>Engine</span><span id="engine">&nbsp;</span></div>
+    <div class="panel-row"><span>Gear</span><span id="gear">&nbsp;</span></div>
+    <div class="panel-row"><span>Headlights</span><span id="headlights">&nbsp;</span></div>
+    <div class="panel-row"><span>Indicators</span><span id="indicators">&nbsp;</span></div>
+    <div class="panel-row"><span>Seatbelts</span><span id="seatbelts">&nbsp;</span></div>
+    <div class="panel-row"><span>Speed Mode</span><span id="speed-mode">&nbsp;</span></div>
   </section>
 </main>
 <script src="script.js"></script>
