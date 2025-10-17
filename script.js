@@ -23,12 +23,14 @@ function updateHUD(){
 
   document.getElementById("engine").innerText = `Engine: ${engineOn?"On":"Off"}`;
   document.getElementById("gear").innerText = `Gear: ${currentGear}`;
-  document.getElementById("fuel").innerText = `Fuel: ${(currentFuel*100).toFixed(0)}%`;
-  document.getElementById("health").innerText = `Health: ${(currentHealth*100).toFixed(0)}%`;
   document.getElementById("headlights").innerText = `Headlights: ${headlightsState===1?"On":headlightsState===2?"High":"Off"}`;
   document.getElementById("seatbelts").innerText = `Seatbelts: ${seatbeltsState?"On":"Off"}`;
   document.getElementById("indicators").innerText = `Indicators: ${indicatorsState&0b01?"On":"Off"}/${indicatorsState&0b10?"On":"Off"}`;
   document.getElementById("speed-mode").innerText = `Speed Mode: ${speedMode===1?"MPH":"KMH"}`;
+
+  // Update fuel & health bars
+  document.getElementById("fuel-bar").style.width = `${(currentFuel*100).toFixed(0)}%`;
+  document.getElementById("health-bar").style.width = `${(currentHealth*100).toFixed(0)}%`;
 
   requestAnimationFrame(updateHUD);
 }
