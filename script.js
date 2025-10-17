@@ -31,7 +31,7 @@ function drawGauge(ctx, value, max, color1, color2, labels, unit, healthPercent=
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  // Health indicator ring (only for speedometer)
+  // Health ring only for speedometer
   if(healthPercent!==null){
     ctx.beginPath();
     const endAngle = 0.75*Math.PI + (healthPercent/100)*1.5*Math.PI;
@@ -80,7 +80,7 @@ function drawGauge(ctx, value, max, color1, color2, labels, unit, healthPercent=
 // --- Update HUD ---
 function updateHUD(){
   const speedLabels = [0,20,40,60,80,100,120,140,160,180,200];
-  const rpmLabels = [0,1,2,3,4,5,6,7,8];
+  const rpmLabels = [0,1000,2000,3000,4000,5000,6000,7000];
 
   // Smooth animation
   displayedSpeed += (currentSpeed-displayedSpeed)*0.15;
@@ -88,7 +88,7 @@ function updateHUD(){
 
   // Draw gauges
   drawGauge(speedCtx, displayedSpeed,200,"red","cyan",speedLabels,"KMH", currentHealth);
-  drawGauge(rpmCtx, displayedRPM/1000,8,"lime","blue",rpmLabels,"RPM");
+  drawGauge(rpmCtx, displayedRPM,7000,"lime","blue",rpmLabels,"RPM"); // Max RPM 7000
 
   // Update info text
   document.getElementById("gear").innerText = currentGear;
