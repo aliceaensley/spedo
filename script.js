@@ -8,7 +8,7 @@ let simulationInterval = null;
 // *****************************************************************
 // ⚠️ PENTING: GANTI DENGAN KUNCI API YOUTUBE ANDA YANG VALID!
 // *****************************************************************
-const YOUTUBE_API_KEY = 'GANTI_DENGAN_API_KEY_ANDA_DI_SINI'; 
+const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
 // *****************************************************************
 
 // --- FUNGSI UTILITY & TOGGLE ---
@@ -181,7 +181,7 @@ function toggleYoutubeSearchUI(show) {
 }
 
 async function searchYoutube(query) {
-    if (!query || YOUTUBE_API_KEY === 'GANTI_DENGAN_API_KEY_ANDA_DI_SINI') {
+    if (!query || YOUTUBE_API_KEY === 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs') {
         alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
         return;
     }
