@@ -1,20 +1,18 @@
 let elements = {};
 let speedMode = 0; // 0: KMH, 1: MPH
 let maxSpeed = 240, maxRPM = 8000;
-let engineOn = false; // status mesin
+let engineOn = false;
 
 // Canvas
 let speedCanvas, rpmCanvas, fuelCanvas, healthCanvas;
 let speedCtx, rpmCtx, fuelCtx, healthCtx;
 
-// Draw Analog Meter
+// Draw functions sama seperti sebelumnya
 function drawAnalogMeter(ctx, value, maxValue){
-    const cx = ctx.canvas.width/2;
-    const cy = ctx.canvas.height/2;
-    const radius = cx - 10;
+    const cx = ctx.canvas.width/2, cy = ctx.canvas.height/2, radius = cx-10;
     ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
 
-    // Outer arc
+    // Outer
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0.75*Math.PI, 0.25*Math.PI, false);
     ctx.strokeStyle = "rgba(0,255,255,0.2)";
@@ -37,11 +35,8 @@ function drawAnalogMeter(ctx, value, maxValue){
     ctx.stroke();
 }
 
-// Circular Bar
 function drawCircularBar(ctx, percent, color){
-    const cx = ctx.canvas.width/2;
-    const cy = ctx.canvas.height/2;
-    const radius = cx - 5;
+    const cx = ctx.canvas.width/2, cy = ctx.canvas.height/2, radius = cx-5;
     ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
 
     // Background
@@ -61,11 +56,10 @@ function drawCircularBar(ctx, percent, color){
     ctx.stroke();
 }
 
-// Setters
+// Setters untuk input real
 function setEngine(state){
     engineOn = state;
     elements.engine.innerText = state ? "On" : "Off";
-
     if(!engineOn){
         setSpeed(0);
         setRPM(0);
@@ -73,36 +67,36 @@ function setEngine(state){
     }
 }
 
-function setSpeed(speed){
-    const val = engineOn ? (speedMode==1? Math.round(speed*2.236936): Math.round(speed*3.6)) : 0;
-    elements.speed.innerText = val + (speedMode==1?' MPH':' KMH');
+function setSpeed(speed){ // speed dari game (m/s)
+    const val = engineOn ? (speedMode==1 ? Math.round(speed*2.236936) : Math.round(speed*3.6)) : 0;
+    elements.speed.innerText = val + (speedMode==1 ? ' MPH':' KMH');
     drawAnalogMeter(speedCtx, val, maxSpeed);
 }
 
-function setRPM(rpm){
+function setRPM(rpm){ // rpm dari game
     const val = engineOn ? rpm : 0;
     elements.rpm.innerText = Math.round(val);
     drawAnalogMeter(rpmCtx, val, maxRPM);
 }
 
-function setFuel(fuel){
+function setFuel(fuel){ // fuel 0-1
     elements.fuel.innerText = `${(fuel*100).toFixed(0)}%`;
     let color = fuel>0.7?"#0f0":fuel>0.3?"#ff0":"#f00";
-    drawCircularBar(fuelCtx,fuel,color);
+    drawCircularBar(fuelCtx, fuel, color);
 }
 
-function setHealth(health){
+function setHealth(health){ // health 0-1
     elements.health.innerText = `${(health*100).toFixed(0)}%`;
     let color = health>0.7?"#0f0":health>0.3?"#ff0":"#f00";
-    drawCircularBar(healthCtx,health,color);
+    drawCircularBar(healthCtx, health, color);
 }
 
-function setGear(gear){
+function setGear(gear){ // angka atau N
     elements.gear.innerText = engineOn ? String(gear) : "N";
 }
 
-// Init
-document.addEventListener('DOMContentLoaded',()=>{
+// Inisialisasi DOM & Canvas
+document.addEventListener('DOMContentLoaded', ()=>{
     elements = {
         engine: document.getElementById('engine'),
         speed: document.getElementById('speed'),
@@ -120,24 +114,15 @@ document.addEventListener('DOMContentLoaded',()=>{
     rpmCtx = rpmCanvas.getContext('2d');
     fuelCtx = fuelCanvas.getContext('2d');
     healthCtx = healthCanvas.getContext('2d');
-
-    // Demo loop
-    let speedVal=0, rpmVal=0, fuelVal=1, healthVal=1, gearVal=1;
-    setEngine(false); // start off
-    setInterval(()=>{
-        // Contoh: update hanya jika engine on
-        if(engineOn){
-            speedVal = (speedVal+1)%maxSpeed;
-            rpmVal = (rpmVal+50)%maxRPM;
-            gearVal = Math.floor(Math.random()*6)+1;
-        }
-        fuelVal = Math.random();
-        healthVal = Math.random();
-
-        setSpeed(speedVal);
-        setRPM(rpmVal);
-        setFuel(fuelVal);
-        setHealth(healthVal);
-        setGear(gearVal);
-    }, 50);
 });
+
+// Contoh integrasi dengan data game
+// Misal: dari RageMP / FiveM / server JS
+// mp.events.add('updateHUD', (engine, speed, rpm, fuel, health, gear)=>{
+//      setEngine(engine);
+//      setSpeed(speed);
+//      setRPM(rpm);
+//      setFuel(fuel);
+//      setHealth(health);
+//      setGear(gear);
+// });
