@@ -19,7 +19,6 @@ const toggleActive = (element, state) => {
 };
 
 // --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
-
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -149,5 +148,157 @@ function startSimulation() {
             setGear(0); 
         }
         
+        // Simulasikan pengurangan Fuel
+        // Ambil nilai fuel, konversi ke desimal, kurangi sedikit, lalu set ulang
         const currentFuelText = elements.fuel.innerText.replace('%', '');
-        setFuel(Math.max(0.1, currentFuelText /
+        setFuel(Math.max(0.1, currentFuelText / 100 - 0.005));
+
+    }, 3000); 
+}
+
+
+// --- LOGIC: KONTROL TAMPILAN HEAD UNIT ---
+
+function showAppGrid() {
+    if (elements.appGrid) elements.appGrid.classList.remove('hidden');
+    if (elements.iframeView) elements.iframeView.classList.add('hidden');
+    
+    // Bersihkan iFrame saat kembali ke menu aplikasi
+    if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; 
+}
+
+function showBrowser(url) {
+    if (elements.appGrid) elements.appGrid.classList.add('hidden');
+    if (elements.iframeView) elements.iframeView.classList.remove('hidden');
+    if (elements.browserIframe) elements.browserIframe.src = url; 
+}
+
+
+// --- FUNGSI HEAD UNIT (Bisa Diklik/Toggle) ---
+
+function toggleHeadUnit(state) {
+    const tablet = elements.tabletUI;
+    const footerTrigger = elements.headunitFooter;
+    
+    if (!tablet) return;
+
+    if (state === undefined) {
+        state = tablet.classList.contains('hidden');
+    }
+
+    if (state) {
+        tablet.classList.remove('hidden');
+        if (footerTrigger) footerTrigger.style.display = 'none'; 
+        
+        // Selalu mulai dari App Grid saat menu dibuka
+        showAppGrid(); 
+
+        setTimeout(() => {
+            tablet.classList.add('active'); 
+        }, 10);
+        
+    } else {
+        tablet.classList.remove('active'); 
+        
+        const transitionDuration = 500; 
+        setTimeout(() => {
+            tablet.classList.add('hidden'); 
+            if (footerTrigger) footerTrigger.style.display = 'block'; 
+            // Bersihkan iFrame saat headunit ditutup
+            showAppGrid(); 
+        }, transitionDuration); 
+    }
+}
+
+
+// --- INISIALISASI DAN EVENT LISTENERS ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Pemetaan Elemen
+    elements = {
+        speedometerUI: document.getElementById('speedometer-ui'), 
+        headunitFooter: document.getElementById('headunit-footer'), 
+        tabletUI: document.getElementById('tablet-ui'),
+        
+        speed: document.getElementById('speed'),
+        rpm: document.getElementById('rpm'),
+        fuel: document.getElementById('fuel'),
+        health: document.getElementById('health'),
+        timeWIB: document.getElementById('time-wib'), 
+        gear: document.getElementById('gear'),
+        speedMode: document.getElementById('speed-mode'),
+
+        headlightsIcon: document.getElementById('headlights-icon'),
+        engineIcon: document.getElementById('engine-icon'), 
+        seatbeltIcon: document.getElementById('seatbelt-icon'),
+        
+        headunitTimeWIB: document.getElementById('headunit-time-wib'), 
+        closeTablet: document.getElementById('close-tablet'),
+        
+        // Elemen Head Unit Internal
+        appGrid: document.getElementById('app-grid'),
+        iframeView: document.getElementById('iframe-view'),
+        browserApp: document.getElementById('browser-app'),
+        browserIframe: document.getElementById('browser-iframe'),
+        backToApps: document.getElementById('back-to-apps')
+    };
+    
+    // 2. SETUP CLOCK WIB
+    updateTimeWIB();
+    setInterval(updateTimeWIB, 60000); 
+    
+    // 3. SETUP INTERAKSI CLICK (Head Unit & Close)
+    if (elements.headunitFooter) {
+        elements.headunitFooter.addEventListener('click', () => {
+            toggleHeadUnit(true); 
+        });
+    }
+    
+    if (elements.closeTablet) {
+        elements.closeTablet.addEventListener('click', () => {
+            toggleHeadUnit(false); 
+        });
+    }
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && elements.tabletUI && !elements.tabletUI.classList.contains('hidden')) {
+            toggleHeadUnit(false);
+        }
+    });
+
+    // 4. LOGIC INTI: KLIK BROWSER & KEMBALI
+    if (elements.browserApp) {
+        elements.browserApp.addEventListener('click', () => {
+            // URL yang diminta (memuat ke dalam iFrame)
+            showBrowser('https://lsfd.jg-rp.com/index.php'); 
+        });
+    }
+    
+    if (elements.backToApps) {
+        elements.backToApps.addEventListener('click', () => {
+            // Kembali ke tampilan App Grid
+            showAppGrid(); 
+        });
+    }
+
+    // 5. INISIASI DATA DAN MESIN
+    setSpeedMode(1); 
+    setHealth(1.0); 
+    setFuel(0.49); 
+    setSeatbelts(true);
+    setHeadlights(1);
+    
+    setEngine(false); 
+
+    // Kontrol Mesin ON/OFF via ikon
+    if (elements.engineIcon) {
+        elements.engineIcon.addEventListener('click', () => {
+            setEngine(!engineState);
+        });
+    }
+
+    // Mulai simulasi Mesin ON secara otomatis setelah 2 detik
+    setTimeout(() => {
+        setEngine(true);
+    }, 2000);
+});
