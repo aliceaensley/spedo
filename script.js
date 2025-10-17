@@ -25,7 +25,7 @@ function drawGauge(ctx, value, max, color1, color2, labels, unit, healthPercent=
   // Background arc
   ctx.beginPath();
   ctx.arc(cx,cy,radius,0.75*Math.PI,0.25*Math.PI,false);
-  ctx.strokeStyle = "#444";
+  ctx.strokeStyle = "rgba(255,255,255,0.2)";
   ctx.lineWidth = 3;
   ctx.stroke();
 
@@ -36,18 +36,21 @@ function drawGauge(ctx, value, max, color1, color2, labels, unit, healthPercent=
     ctx.arc(cx,cy,radius-5,0.75*Math.PI,endAngle,false);
     ctx.strokeStyle = "#f00";
     ctx.lineWidth = 4;
+    ctx.shadowBlur = 5;
+    ctx.shadowColor = "#f00";
     ctx.stroke();
+    ctx.shadowBlur = 0;
   }
 
   // Numbers
-  ctx.font = "9px Helvetica";
+  ctx.font = "10px Arial";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   for(let i=0;i<labels.length;i++){
     const angle = 0.75*Math.PI + (i/(labels.length-1))*1.5*Math.PI;
     const x = cx + Math.cos(angle)*(radius-12);
     const y = cy + Math.sin(angle)*(radius-12);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#0ff";
     ctx.fillText(labels[i],x,y);
   }
 
@@ -57,15 +60,18 @@ function drawGauge(ctx, value, max, color1, color2, labels, unit, healthPercent=
   ctx.beginPath();
   ctx.moveTo(cx,cy);
   ctx.lineTo(cx + radius*Math.cos(angle), cy + radius*Math.sin(angle));
-  ctx.strokeStyle = color1;
-  ctx.lineWidth = 2;
+  const grad = ctx.createLinearGradient(cx,cy,cx + radius*Math.cos(angle), cy + radius*Math.sin(angle));
+  grad.addColorStop(0,"#0ff");
+  grad.addColorStop(1,"#f00");
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 2.5;
   ctx.stroke();
 
   // Center text
   ctx.fillStyle = "#fff";
-  ctx.font = "bold 12px Helvetica";
+  ctx.font = "bold 14px Arial";
   ctx.fillText(Math.round(value), cx, cy-5);
-  ctx.font = "9px Helvetica";
+  ctx.font = "10px Arial";
   ctx.fillText(unit, cx, cy+12);
 }
 
