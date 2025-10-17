@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
             // URL yang diminta (memuat ke dalam iFrame)
-            showBrowser('https://www.google.com'); 
+            showBrowser('https://www.youtube.com'); 
         });
     }
     
