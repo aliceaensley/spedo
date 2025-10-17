@@ -1,12 +1,6 @@
-* {
-  box-sizing: border-box;
-  user-select: none;
-}
-
 body {
   margin: 0;
   font-family: 'Orbitron', sans-serif;
-  font-size: 12px;
   background: transparent;
   color: #0ff;
 }
@@ -18,62 +12,69 @@ body {
   bottom: 15px;
   right: 15px;
   display: flex;
-  flex-direction: row;
-  width: 300px;
-  gap: 10px;
-  background: rgba(0,0,0,0.6);
-  padding: 12px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px #0ff, 0 0 15px #0ff inset;
+  gap: 12px;
 }
 
-.panel {
-  flex: 1;
+.circular-panel {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  align-items: center;
+}
+
+.dial {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.bg-ring {
+  fill: none;
+  stroke: rgba(0,255,255,0.1);
+  stroke-width: 8;
+}
+
+.progress-ring {
+  fill: none;
+  stroke: #0ff;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 314; /* 2 * pi * r (50) */
+  stroke-dashoffset: 314;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.dial-text {
+  font-size: 18px;
+  fill: #0ff;
+  font-weight: bold;
+  dominant-baseline: middle;
+}
+
+.circular-bars {
+  display: flex;
+  gap: 10px;
+}
+
+.bar-label {
+  text-align: center;
+  font-size: 10px;
+}
+
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .panel-row {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.panel-label {
-  font-size: 10px;
-  font-weight: bold;
-  text-shadow: 0 0 3px #0ff;
-}
-
-.panel-value {
-  background: rgba(0,0,0,0.3);
-  border: 1px solid #0ff;
-  border-radius: 6px;
+  justify-content: space-between;
+  background: rgba(0,0,0,0.4);
   padding: 4px 6px;
-  font-size: 14px;
-  text-align: center;
-  text-shadow: 0 0 5px #0ff;
-}
-
-.panel-value.digital {
-  font-size: 16px;
-  font-weight: bold;
-  background: rgba(0,255,255,0.1);
-  box-shadow: 0 0 6px #0ff inset, 0 0 10px #0ff;
-}
-
-.bar-bg {
-  width: 100%;
-  height: 10px;
-  background: rgba(0,255,255,0.1);
-  border-radius: 5px;
-}
-
-.bar-fill {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, #0ff, #0ff99);
-  border-radius: 5px 0 0 5px;
-  transition: width 0.2s ease;
+  border-radius: 6px;
+  border: 1px solid #0ff;
+  text-shadow: 0 0 3px #0ff;
 }
