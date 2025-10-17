@@ -34,7 +34,7 @@ const toggleActive = (element, state) => {
     }
 };
 
-// Fungsi untuk mengontrol dua tingkat peringatan suara (10% dan 5%)
+// Fungsi untuk mengontrol dua tingkat peringatan suara (10% dan 4%)
 function toggleFuelWarning(type) {
     if (currentFuelWarningType === type) {
         return; 
@@ -115,10 +115,10 @@ function setFuel(fuel) {
     const displayValue = `${Math.round(fuel * 100)}%`;
     if (elements.fuel) elements.fuel.innerText = displayValue;
 
-    // Logika Peringatan Bahan Bakar (Fix Issue 3: Gap Suara 5% ke 4%)
+    // Logika Peringatan Bahan Bakar (Diperbaiki: Tidak ada gap antara 5% dan 4%)
     if (fuel <= 0.04) { // 4% ke bawah -> SEKART.MP3
         toggleFuelWarning('critical');
-    } else if (fuel > 0.04 && fuel <= 0.1) { // 10% sampai 5% (tepat di atas 4%) -> BENSIN.MP3
+    } else if (fuel <= 0.1) { // 10% sampai 4.01% -> BENSIN.MP3
         toggleFuelWarning('low');
     } else { // >10%
         toggleFuelWarning(null); 
@@ -205,7 +205,7 @@ function startSimulation() {
         let speedChange = (Math.random() - 0.5) * 0.5;
         currentSpeed = currentSpeed + speedChange;
 
-        // Fix Issue 1: Speed Jittering - Clamp speed menjadi 0 jika mendekati 0
+        // Fix Issue: Speed Jittering - Clamp speed menjadi 0 jika mendekati 0
         if (currentSpeed < 0.1) { 
             currentSpeed = 0; 
         }
@@ -218,8 +218,8 @@ function startSimulation() {
         const currentRPM = Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
         setRPM(currentRPM);
         
-        // Fix Issue 2: Gear - Memastikan gear tetap di angka tertinggi saat speed max
-        if (currentSpeed >= 20) { // Jika speed 20 atau lebih (termasuk max speed 25)
+        // Fix Issue: Gear - Memastikan gear tetap di angka tertinggi saat speed max
+        if (currentSpeed >= 20) { 
             setGear(3);
         } else if (currentSpeed >= 10) {
             setGear(2);
@@ -248,13 +248,13 @@ function startVitalUpdates() {
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
         
-        setFuel(Math.max(0.04, currentFuel - fuelReductionRate)); // Batas aman minimum di set 4%
+        // Perbaikan: Batas aman minimum di set ke 0.01 (1%) agar bisa turun sampai 0%
+        setFuel(Math.max(0.01, currentFuel - fuelReductionRate)); 
         
     }, 3000); 
 }
 
 // --- FUNGSI YOUTUBE API ---
-// ... (searchYoutube, showVideo, toggleYoutubeSearchUI, toggleYoutubeUI tidak berubah)
 async function searchYoutube(query) {
     if (!query || YOUTUBE_API_KEY === 'GANTI_DENGAN_API_KEY_ANDA_DI_SINI') {
         alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
