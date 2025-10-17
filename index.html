@@ -3,42 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern Digital HUD</title>
+<title>Futuristic Digital HUD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="hud">
-  <!-- Speed & RPM -->
-  <div class="panel speed-panel">
-    <div class="label">SPEED</div>
-    <div class="value"><span id="speed">0</span> <span id="speed-unit">KMH</span></div>
-  </div>
-  <div class="panel rpm-panel">
-    <div class="label">RPM</div>
-    <div class="value"><span id="rpm">0</span></div>
-  </div>
-
-  <!-- Fuel & Health -->
-  <div class="bars">
-    <div class="bar-container">
-      <div class="bar-label">Fuel</div>
-      <div class="bar-bg"><div id="fuel" class="bar-fill"></div></div>
-    </div>
-    <div class="bar-container">
-      <div class="bar-label">Health</div>
-      <div class="bar-bg"><div id="health" class="bar-fill"></div></div>
-    </div>
-  </div>
-
-  <!-- Other Info -->
-  <div id="info">
-    <div id="engine">Engine: Off</div>
-    <div id="gear">Gear: N</div>
-    <div id="headlights">Headlights: Off</div>
-    <div id="seatbelts">Seatbelts: Off</div>
-    <div id="indicators">Indicators: Off/Off</div>
-    <div id="speed-mode">Speed Mode: KMH</div>
-  </div>
+<canvas id="hudCanvas" width="300" height="300"></canvas>
+<div class="info-panel">
+  <div id="engine">Engine: Off</div>
+  <div id="gear">Gear: N</div>
+  <div id="headlights">Headlights: Off</div>
+  <div id="seatbelts">Seatbelts: Off</div>
+  <div id="indicators">Indicators: Off/Off</div>
+  <div id="speed-mode">Speed Mode: KMH</div>
 </div>
 <script src="script.js"></script>
 </body>
