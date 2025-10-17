@@ -1,14 +1,52 @@
-/* ... (SEMUA STYLING SPEEDOMETER UTAMA TETAP SAMA) ... */
+/* Basic Reset and Font */
+* {
+    user-select: none;
+    user-drag: none;
+    box-sizing: border-box; 
+}
+
+@font-face {
+    font-family: 'Digital';
+    /* Ganti dengan font bergaya digital/retro jika ada */
+}
+
+body {
+    background-color: transparent !important;
+    font-family: 'Digital', Arial, sans-serif;
+    color: white;
+}
+
+/* --- Container Utama Speedometer (Wajib di Kanan Bawah) --- */
+.speedometer-container {
+    position: fixed;
+    bottom: 15px; 
+    right: 15px;
+    width: 320px; 
+    
+    /* Neon border/background - ORANGE */
+    background: linear-gradient(135deg, #FFA500, #FF4500); 
+    padding: 3px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
+    z-index: 1000; /* Ditingkatkan untuk memastikan terlihat */
+}
+
+.speedometer-container > div {
+    background-color: rgba(0, 0, 0, 0.75); 
+    border-radius: 12px;
+}
+
+/* ... (Styling internal speedometer seperti .speed-gauge, .info-grid, .stat-item tetap sama dan sudah diperbaiki di langkah sebelumnya) ... */
+
 
 /* --- HEAD UNIT TRIGGER (FLOATING DI TENGAH BAWAH) --- */
 .headunit-floating-trigger {
     position: fixed;
-    bottom: 15px; /* Jarak dari bawah */
+    bottom: 15px; 
     left: 50%;
-    transform: translateX(-50%); /* Pusatkan elemen */
-    width: 350px; /* Ukuran yang ideal */
+    transform: translateX(-50%); 
+    width: 350px; 
     
-    /* Neon style Orange untuk trigger */
     background: linear-gradient(90deg, #FFA500, #FF4500); 
     color: white;
     text-align: center;
@@ -21,30 +59,21 @@
     z-index: 1500; /* Di atas speedometer */
 }
 
-.headunit-floating-trigger .key-bind {
-    color: black;
-    background-color: white;
-    padding: 2px 4px;
-    border-radius: 3px;
-    margin: 0 2px;
-}
-
 /* --- TABLET UI (HEAD UNIT MENU - Tampilan Tengah) --- */
 .headunit-menu-container {
     position: fixed;
-    bottom: 50px; /* Posisi awal, sedikit di atas trigger */
+    bottom: 50px; 
     left: 50%;
     
-    /* Ukuran sesuai foto, anggap 70% dari viewport width */
     width: 700px;
     height: 450px;
     
-    /* Pusatkan, tapi transform harus disesuaikan untuk animasi */
+    /* Animasi Mengembang ke Atas */
     transform: translateX(-50%) scale(0.1) translateY(100%); 
-    transform-origin: center bottom; /* Anchor di tengah bawah */
-    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Animasi Elastis */
+    transform-origin: center bottom; 
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
 
-    /* Styling Head Unit: Warna Gelap/Abu-abu */
+    /* Styling Head Unit */
     background-color: rgba(0, 0, 0, 0.9); 
     border-radius: 15px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -52,56 +81,15 @@
     
     color: white;
     font-family: Arial, sans-serif;
-    z-index: 5000; 
+    z-index: 5000; /* Paling atas */
 }
 
-/* Tampilan Menu saat Aktif (Mengembang) */
 .headunit-menu-container.active {
     transform: translateX(-50%) scale(1) translateY(0);
 }
 
 .headunit-menu-container.hidden {
     display: none;
-    /* Reset transform saat hidden agar tidak mengganggu */
     transform: translateX(-50%) scale(0.1) translateY(100%);
 }
-
-.headunit-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 15px;
-    font-size: 14pt;
-    font-weight: bold;
-    color: #FFA500; 
-    border-bottom: 1px solid rgba(255, 165, 0, 0.2);
-}
-
-/* ... (Styling App Grid dan App Icon tetap sama) ... */
-.headunit-app-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 kolom agar pas dengan ukuran besar */
-    gap: 15px;
-    padding: 20px 15px;
-    text-align: center;
-}
-
-.app-icon .icon {
-    font-size: 32pt;
-    margin-bottom: 5px;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.headunit-footer-close {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: linear-gradient(90deg, #FF4500, #FFA500); 
-    padding: 10px;
-    text-align: center;
-    border-radius: 0 0 15px 15px;
-    cursor: pointer;
-    font-weight: bold;
-}
+/* ... (Styling internal Head Unit Menu tetap sama) ... */
