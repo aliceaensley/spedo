@@ -1,32 +1,39 @@
 * {
     user-select: none;
     user-drag: none;
+    box-sizing: border-box;
 }
 
 body {
     background-color: transparent !important;
     font-family: Arial, sans-serif;
     font-size: 11pt;
+    margin: 0;
 }
 
-main {
+/* Container utama */
+main.speedometer {
     position: fixed;
-    bottom: 15px;
-    right: 15px;
-
-    width: 250px;
+    bottom: 1%;
+    right: 1%;
     display: flex;
     flex-direction: row;
+    width: 90%;
+    max-width: 300px;
     background-color: #000000AA;
     color: white;
     padding: 10px;
     border-radius: 10px;
+    justify-content: space-between;
 }
 
+/* Section kiri & kanan */
 section {
-    width: 125px
+    flex: 1;
+    min-width: 100px;
 }
 
+/* List style */
 dl {
     margin: 0;
 }
@@ -45,4 +52,29 @@ dd {
 
 dd:not(:last-child) {
     margin-bottom: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+    main.speedometer {
+        flex-direction: column;
+        width: 95%;
+        right: 2.5%;
+        bottom: 2.5%;
+        padding: 8px;
+    }
+
+    section {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    dd {
+        font-size: 0.9em;
+        padding: 2px 4px;
+    }
+
+    dt {
+        font-size: 0.9em;
+    }
 }
