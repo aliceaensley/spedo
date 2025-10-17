@@ -27,7 +27,7 @@ const toggleActive = (element, state) => {
     }
 };
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER (STATIS/AWAL) ---
+// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -39,7 +39,7 @@ function setSpeedMode(mode) {
     }
     if (elements.speedMode) elements.speedMode.innerText = unit;
 }
-// ... (setSpeed, setRPM, setFuel, setHealth, setGear, setHeadlights, setEngine, setSeatbelts - tetap sama) ...
+
 function setSpeed(speed) {
     const speedValue = String(Math.round(speed * 3.6)).padStart(3, '0');
     if (elements.speed) elements.speed.innerText = speedValue;
@@ -81,7 +81,7 @@ function setSeatbelts(state) {
 }
 
 
-// --- FUNGSI JAM WIB (DIPERBARUI) ---
+// --- FUNGSI JAM WIB (MEMPERBARUI KEDUA ELEMEN) ---
 function updateTimeWIB() {
     const now = new Date();
     const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' };
@@ -106,7 +106,7 @@ function updateTimeWIB() {
 // ---------------------------------------------------------------------
 
 
-// --- FUNGSI YOUTUBE API (Fungsi inti pencarian tetap, hanya logika penutupan yang berubah) ---
+// --- FUNGSI YOUTUBE API ---
 
 function toggleYoutubeSearchUI(show) {
     if (elements.youtubeSearchUI) {
@@ -155,7 +155,7 @@ async function searchYoutube(query) {
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
                 resultItem.addEventListener('click', () => {
-                    // Pastikan URL absolut untuk menghindari 404
+                    // PERBAIKAN URL ABSOLUT DENGAN HTTPS://
                     const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&enablejsapi=1&modestbranding=1`; 
                     showBrowser(embedUrl, 'youtube'); 
                     elements.youtubeResults.classList.add('hidden');                     
@@ -192,10 +192,8 @@ function showAppGrid() {
     
     toggleYoutubeSearchUI(false); 
 
-    const iframe = elements.browserIframe;
-    
-    // Kosongkan iframe saat kembali ke app grid
-    iframe.src = 'about:blank'; 
+    // Kosongkan iframe saat kembali ke app grid (Menghentikan YouTube)
+    if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; 
     activeMediaInHeadUnit = null;
 }
 
@@ -243,9 +241,8 @@ function toggleHeadUnit(state) {
         }, 10);
         
     } else {
-        // --- KONDISI: HEAD UNIT DITUTUP (LOGIKA KEMBALI KE ASLI) ---
+        // --- KONDISI: HEAD UNIT DITUTUP (HENTIKAN SEMUA MEDIA) ---
         
-        // HENTIKAN DAN KOSONGKAN SEMUA IFRAME SAAT DITUTUP
         iframe.src = 'about:blank';
         activeMediaInHeadUnit = null;
         
@@ -274,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
         
-        // KEMBALI SEBAGAI ELEMEN PENAMPIL JAM
+        // Elemen WIB yang dikembalikan
         timeWIB: document.getElementById('time-wib'), 
         
         gear: document.getElementById('gear'),
@@ -296,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         browserIframe: document.getElementById('browser-iframe'),
         backToApps: document.getElementById('back-to-apps'),
         
-        // Elemen BARU untuk YouTube Search
+        // Elemen YouTube Search
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
         youtubeSearchInput: document.getElementById('youtube-search-input'),
         youtubeSearchButton: document.getElementById('youtube-search-button'),
