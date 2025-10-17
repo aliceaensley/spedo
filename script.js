@@ -1,10 +1,10 @@
 let elements = {};
 let speedMode = 1; 
-let engineState = true; // Mesin statis, diatur menyala (true)
-let headlightsState = 1; // Lampu statis, diatur menyala (1)
-let seatbeltState = true; // Seatbelt statis, diatur menyala (true)
+let engineState = true; 
+let headlightsState = 1; 
+let seatbeltState = true; 
 let simulationInterval = null; 
-let activeMediaInHeadUnit = null; // Melacak apakah media (YouTube) aktif
+let activeMediaInHeadUnit = null; 
 
 // *****************************************************************
 // ⚠️ PENTING: API KEY YOUTUBE
@@ -65,7 +65,6 @@ function setGear(gear) {
     if (elements.gear) elements.gear.innerText = gearText;
 }
 
-// *** INDIKATOR: TIDAK ADA PERUBAHAN, HANYA MENGATUR TAMPILAN SESUAI STATUS DI ATAS ***
 function setHeadlights(state) {
     headlightsState = state;
     toggleActive(elements.headlightsIcon, state > 0);
@@ -106,7 +105,7 @@ function updateTimeWIB() {
 function stopSimulation() {}
 function startSimulation() {}
 
-// --- FUNGSI YOUTUBE API (TIDAK BERUBAH) ---
+// --- FUNGSI YOUTUBE API (Perubahan URL Embed) ---
 
 function toggleYoutubeSearchUI(show) {
     if (elements.youtubeSearchUI) {
@@ -155,7 +154,8 @@ async function searchYoutube(query) {
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
                 resultItem.addEventListener('click', () => {
-                    const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1`; 
+                    // *** PERBAIKAN 1: Tambahkan enablejsapi=1 dan modestbranding=1 ***
+                    const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&enablejsapi=1&modestbranding=1`; 
                     showBrowser(embedUrl, 'youtube'); 
                     elements.youtubeResults.classList.add('hidden'); 
                 });
@@ -216,7 +216,7 @@ function showBrowser(url, mediaType = 'browser') {
     const backgroundPlayer = elements.backgroundVideoPlayer;
 
     if (backgroundPlayer.contains(iframe)) {
-        // Memindahkan iframe dari background ke view untuk menimpa src-nya
+        // Memindahkan iframe dari background ke view
         elements.iframeView.appendChild(iframe);
     }
     
@@ -249,7 +249,7 @@ function toggleHeadUnit(state) {
         tablet.classList.remove('hidden');
         if (footerTrigger) footerTrigger.style.display = 'none'; 
         
-        // Cek apakah video sedang diputar di latar belakang
+        // *** PERBAIKAN 2: Jika YouTube ada di background, langsung tampilkan VIEW ***
         if (activeMediaInHeadUnit === 'youtube' && backgroundPlayer.contains(iframe)) {
             // Pindahkan iFrame kembali ke dalam iframeView
             elements.iframeView.appendChild(iframe);
@@ -258,13 +258,14 @@ function toggleHeadUnit(state) {
             if (elements.appGrid) elements.appGrid.classList.add('hidden');
             if (elements.iframeView) elements.iframeView.classList.remove('hidden');
             
-            // Tampilkan Search UI (karena ini adalah YouTube)
+            // Tampilkan Search UI
             toggleYoutubeSearchUI(true); 
             elements.youtubeResults.classList.add('hidden'); 
             
         } else {
             // Jika tidak ada video di latar belakang, tampilkan App Grid normal
-            showAppGrid(); 
+            if (elements.appGrid) elements.appGrid.classList.remove('hidden');
+            if (elements.iframeView) elements.iframeView.classList.add('hidden');
         }
 
         setTimeout(() => {
@@ -274,13 +275,12 @@ function toggleHeadUnit(state) {
     } else {
         // --- KONDISI: HEAD UNIT DITUTUP (BACKGROUND PLAYBACK) ---
         
-        // Cek apakah iFrame saat ini memuat URL embed YouTube dan berada di view
         const isYoutubeVideoPlayingInView = iframe.src.includes('youtube.com/embed') && elements.iframeView.contains(iframe);
         
         if (isYoutubeVideoPlayingInView) {
             // Pindahkan iFrame ke pemutar latar belakang
             backgroundPlayer.appendChild(iframe);
-            activeMediaInHeadUnit = 'youtube'; // Set status media aktif
+            activeMediaInHeadUnit = 'youtube'; 
         } else if (elements.iframeView.contains(iframe) && !isYoutubeVideoPlayingInView) {
             // Jika konten lain yang aktif saat ditutup, kosongkan
             iframe.src = 'about:blank';
@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleYoutubeSearchUI(true); 
             elements.youtubeResults.innerHTML = '';
             
-            // Pindahkan/bersihkan iFrame jika bukan dari sesi YouTube background
+            // Logika untuk membersihkan/memindahkan iframe saat masuk aplikasi YouTube
             if (elements.browserIframe.src === 'about:blank' || elements.browserIframe.src === '') {
                  // Tidak perlu berbuat apa-apa
             } else if (!elements.backgroundVideoPlayer.contains(elements.browserIframe)) {
@@ -431,8 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setRPM(0.1); 
     setGear(-1); 
     
-    // *** INDIKATOR MENYALA ***
-    setEngine(true); // Mesin menyala
-    setHeadlights(1); // Lampu menyala
-    setSeatbelts(true); // Seatbelt terpasang
+    // *** INDIKATOR MENYALA (STATIS) ***
+    setEngine(true); 
+    setHeadlights(1); 
+    setSeatbelts(true); 
 });
