@@ -1,4 +1,27 @@
-...
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Speedometer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="speedometer-container">
+        <div class="speed-gauge">
+            <div class="speed-header">
+                <span class="speed-title">Speed</span>
+                <span class="speed-unit" id="speed-mode">MPH</span>
+            </div>
+            <div class="speed-value-wrapper">
+                <div class="speed-value" id="speed">050</div>
+                <div class="speed-gauge-image">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panels">
             <div class="info-grid">
                 <div class="stat-item">
                     <div class="stat-label">RPM</div>
@@ -14,6 +37,20 @@
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">WIB</div> 
-                    <div class="stat-value" id="time-wib">13:27</div> </div>
+                    <div class="stat-value" id="time-wib">01:27</div>
+                </div>
             </div>
-...
+        </div>
+
+        <div class="bottom-panel">
+            <div class="gear-display" id="gear-container">
+                <span class="gear-label">Gear</span>
+                <span class="gear-value" id="gear">2</span>
+            </div>
+            <div class="status-indicators">
+                <div class="indicator-icon" id="headlights-icon">💡</div> <div class="indicator-icon" id="engine-icon">⚙️</div> <div class="indicator-icon" id="seatbelt-icon">💺</div> </div>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
