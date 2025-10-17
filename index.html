@@ -21,8 +21,7 @@
             <div class="speed-value-wrapper">
                 <div class="speed-value" id="speed">050</div>
                 <div class="speed-gauge-image">
-                    
-                </div>
+                                    </div>
             </div>
         </div>
 
@@ -61,20 +60,32 @@
     </main>
     
     <div id="tablet-ui" class="tablet-container hidden">
-        <div class="tablet-header">
-            YouTube & Media Player
-            <span id="close-tablet" class="close-btn">[ X ]</span>
-        </div>
         <div class="tablet-content">
-            <iframe 
-                width="100%" 
-                height="400" 
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-            </iframe>
-            <p>Klik [ X ] atau tekan Escape untuk menutup.</p>
+            <div class="tablet-stat-line">Speed <span id="tablet-speed-mode">MPH</span></div>
+            <div class="tablet-stat-value" id="tablet-speed">050</div>
+
+            <div class="tablet-stat-line">RPM</div>
+            <div class="tablet-stat-value" id="tablet-rpm">5821</div>
+
+            <div class="tablet-stat-line">Fuel</div>
+            <div class="tablet-stat-value" id="tablet-fuel">49%</div>
+
+            <div class="tablet-stat-line">Health</div>
+            <div class="tablet-stat-value" id="tablet-health">100%</div>
+
+            <div class="tablet-stat-line">WIB</div>
+            <div class="tablet-stat-value" id="tablet-time-wib">01:27</div>
+
+            <div class="tablet-stat-line">Gear <span id="tablet-gear">2</span></div>
+            
+            <div class="tablet-icon-status">
+                <div class="tablet-indicator-icon" id="tablet-headlights-icon">💡</div> 
+                <div class="tablet-indicator-icon" id="tablet-engine-icon">⚙️</div> 
+                <div class="tablet-indicator-icon" id="tablet-seatbelt-icon">💺</div> 
+            </div>
+        </div>
+        <div class="tablet-headunit-footer" id="close-tablet">
+            Head Unit System (<span class="key-bind">CLICK</span> TO INTERACT)
         </div>
     </div>
 
