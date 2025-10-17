@@ -12,19 +12,19 @@ body {
     margin: 0;
 }
 
-/* Main container rounded mini */
+/* Container HUD */
 main.speedometer {
     position: fixed;
     bottom: 20px;
     right: 20px;
     display: flex;
-    width: 230px;
-    padding: 12px 18px;
-    background: rgba(0,0,0,0.6);
+    width: 240px;
+    padding: 14px 20px;
+    background: rgba(0,0,0,0.5);
     border-radius: 50px;
-    box-shadow: 0 0 15px rgba(0,255,255,0.5), 0 0 25px rgba(0,255,255,0.2) inset;
+    box-shadow: 0 0 20px rgba(0,255,255,0.6), inset 0 0 15px rgba(0,255,255,0.2);
     backdrop-filter: blur(5px);
-    color: #fff;
+    color: #0ff;
     font-weight: bold;
 }
 
@@ -36,8 +36,7 @@ dl { margin: 0; }
 dt {
     font-weight: bold;
     font-size: 0.85em;
-    color: #0ff;
-    text-shadow: 0 0 5px #0ff;
+    text-shadow: 0 0 6px #0ff;
 }
 
 dt::after { content: ":"; }
@@ -47,23 +46,35 @@ dd {
     font-weight: bold;
     padding: 3px 6px;
     border-radius: 20px;
-    background: rgba(0,0,0,0.2);
     text-align: center;
     font-size: 0.85em;
     color: #0ff;
-    text-shadow: 0 0 6px #0ff;
+    text-shadow: 0 0 6px #0ff, 0 0 12px #0ff;
 }
 
-/* Neon color for speed & rpm based on value */
+/* Neon Animation */
 .dd-neon {
-    animation: neonGlow 1s ease-in-out infinite alternate;
+    animation: neonPulse 1s ease-in-out infinite alternate;
 }
 
-@keyframes neonGlow {
-    0% { text-shadow: 0 0 6px #0ff, 0 0 10px #0ff; }
-    50% { text-shadow: 0 0 12px #0ff, 0 0 20px #0ff; }
-    100% { text-shadow: 0 0 6px #0ff, 0 0 10px #0ff; }
+@keyframes neonPulse {
+    0% { text-shadow: 0 0 6px #0ff, 0 0 12px #0ff; }
+    50% { text-shadow: 0 0 12px #0ff, 0 0 24px #0ff; }
+    100% { text-shadow: 0 0 6px #0ff, 0 0 12px #0ff; }
 }
+
+/* Fuel & Health Colors */
+.dd-fuel, .dd-health {
+    transition: all 0.3s ease;
+}
+
+.fuel-high { background: rgba(0,255,0,0.3); text-shadow: 0 0 8px #0f0; }
+.fuel-medium { background: rgba(255,255,0,0.3); text-shadow: 0 0 8px #ff0; }
+.fuel-low { background: rgba(255,0,0,0.3); text-shadow: 0 0 8px #f00; }
+
+.health-high { background: rgba(0,255,0,0.3); text-shadow: 0 0 8px #0f0; }
+.health-medium { background: rgba(255,255,0,0.3); text-shadow: 0 0 8px #ff0; }
+.health-low { background: rgba(255,0,0,0.3); text-shadow: 0 0 8px #f00; }
 
 /* Responsive */
 @media (max-width: 500px) {
@@ -72,27 +83,8 @@ dd {
         right: 5%;
         bottom: 10px;
         flex-direction: column;
-        padding: 10px;
+        padding: 12px;
     }
     dd { font-size: 0.8em; }
     dt { font-size: 0.8em; }
 }
-
-.dd-fuel, .dd-health {
-    border-radius: 20px;
-    padding: 3px 6px;
-    text-align: center;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 6px #0ff;
-    transition: all 0.3s ease;
-}
-
-/* Warna dinamis */
-.fuel-high { background: rgba(0,255,0,0.3); text-shadow: 0 0 8px #0f0; }
-.fuel-medium { background: rgba(255,255,0,0.3); text-shadow: 0 0 8px #ff0; }
-.fuel-low { background: rgba(255,0,0,0.3); text-shadow: 0 0 8px #f00; }
-
-.health-high { background: rgba(0,255,0,0.3); text-shadow: 0 0 8px #0f0; }
-.health-medium { background: rgba(255,255,0,0.3); text-shadow: 0 0 8px #ff0; }
-.health-low { background: rgba(255,0,0,0.3); text-shadow: 0 0 8px #f00; }
