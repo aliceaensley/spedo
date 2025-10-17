@@ -195,7 +195,6 @@ async function searchYoutube(query) {
         const response = await fetch(API_URL);
         
         if (!response.ok) {
-            // Tangkap status non-200
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
         }
 
@@ -219,7 +218,6 @@ async function searchYoutube(query) {
                 resultItem.addEventListener('click', () => {
                     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
                     showBrowser(embedUrl); 
-                    // Sembunyikan hasil pencarian (hanya results container yang hidden)
                     elements.youtubeResults.classList.add('hidden'); 
                 });
 
@@ -227,7 +225,6 @@ async function searchYoutube(query) {
             });
             elements.youtubeResults.classList.remove('hidden');
             
-            // Scroll ke awal hasil jika ada
             elements.youtubeResults.scrollLeft = 0;
 
         } else {
@@ -275,31 +272,69 @@ function showBrowser(url) {
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
     const footerTrigger = elements.headunitFooter;
+    const iframe = elements.browserIframe;
+    const backgroundPlayer = elements.backgroundVideoPlayer;
     
-    if (!tablet) return;
+    if (!tablet || !iframe || !backgroundPlayer) return;
 
     if (state === undefined) {
         state = tablet.classList.contains('hidden');
     }
 
     if (state) {
+        // --- KONDISI: HEAD UNIT DIBUKA ---
         tablet.classList.remove('hidden');
         if (footerTrigger) footerTrigger.style.display = 'none'; 
         
-        showAppGrid(); 
+        // 1. Cek apakah video sedang diputar di latar belakang
+        if (backgroundPlayer.contains(iframe)) {
+            // 2. Pindahkan iFrame kembali ke dalam iframeView
+            elements.iframeView.appendChild(iframe);
+            
+            // 3. Tampilkan kembali tampilan iFrame/Browser
+            if (elements.appGrid) elements.appGrid.classList.add('hidden');
+            if (elements.iframeView) elements.iframeView.classList.remove('hidden');
+            
+            // Tampilkan Search UI dan sembunyikan hasil
+            if (iframe.src.includes('youtube')) {
+                 toggleYoutubeSearchUI(true); 
+                 elements.youtubeResults.classList.add('hidden'); 
+            }
+            
+        } else {
+            // Jika tidak ada video di latar belakang, tampilkan App Grid normal
+            showAppGrid(); 
+        }
 
         setTimeout(() => {
             tablet.classList.add('active'); 
         }, 10);
         
     } else {
+        // --- KONDISI: HEAD UNIT DITUTUP ---
+        
+        // Cek apakah iFrame saat ini memuat URL embed YouTube
+        const isYoutubeVideoPlaying = iframe.src.includes('youtube.com/embed');
+        
+        if (isYoutubeVideoPlaying) {
+            // 1. Pindahkan iFrame ke pemutar latar belakang
+            backgroundPlayer.appendChild(iframe);
+            // 2. Trik untuk menjaga audio tetap hidup (terkadang perlu)
+            iframe.src = iframe.src; 
+        } 
+        
+        // Animasi penutupan
         tablet.classList.remove('active'); 
         
         const transitionDuration = 500; 
         setTimeout(() => {
             tablet.classList.add('hidden'); 
             if (footerTrigger) footerTrigger.style.display = 'block'; 
-            showAppGrid(); 
+            
+            // Jika video diputar di latar belakang, JANGAN panggil showAppGrid
+            if (!isYoutubeVideoPlaying) {
+                 showAppGrid(); 
+            }
         }, transitionDuration); 
     }
 }
@@ -337,6 +372,9 @@ document.addEventListener('DOMContentLoaded', () => {
         youtubeApp: document.getElementById('youtube-app'), 
         browserIframe: document.getElementById('browser-iframe'),
         backToApps: document.getElementById('back-to-apps'),
+        
+        // Elemen BARU untuk Background Playback
+        backgroundVideoPlayer: document.getElementById('background-video-player'),
         
         // Elemen BARU untuk YouTube Search
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
