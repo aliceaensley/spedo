@@ -10,7 +10,8 @@ const toggleActive = (element, state) => {
         return;
     }
     
-    if (element) { // Tambahkan pengecekan null/undefined
+    // Perkuat: Pastikan elemen ada sebelum diakses
+    if (element) {
         if (state) {
             element.classList.add('active');
         } else {
@@ -19,7 +20,7 @@ const toggleActive = (element, state) => {
     }
 };
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER (TETAP SAMA) ---
+// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
 
 function setSpeedMode(mode) {
     speedMode = mode;
@@ -111,7 +112,7 @@ function updateTimeWIB() {
 }
 
 
-// --- FUNGSI KONTROL SIMULASI (TETAP SAMA) ---
+// --- FUNGSI KONTROL SIMULASI ---
 
 function stopSimulation() {
     if (simulationInterval !== null) {
@@ -157,12 +158,14 @@ function startSimulation() {
 }
 
 
-// --- FUNGSI HEAD UNIT (TETAP SAMA) ---
+// --- FUNGSI HEAD UNIT (Perkuat: Pastikan elemen ada) ---
 
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
     const footerTrigger = elements.headunitFooter;
     
+    if (!tablet) return; // Keluar jika tablet tidak ada
+
     if (state === undefined) {
         state = tablet.classList.contains('hidden');
     }
@@ -211,40 +214,42 @@ document.addEventListener('DOMContentLoaded', () => {
         headunitTimeWIB: document.getElementById('headunit-time-wib'), 
         closeTablet: document.getElementById('close-tablet'),
         
-        browserApp: document.getElementById('browser-app')
+        browserApp: document.getElementById('browser-app') // ID Aplikasi Browser
     };
     
     // 2. SETUP CLOCK WIB
     updateTimeWIB();
     setInterval(updateTimeWIB, 60000); 
     
-    // 3. SETUP INTERAKSI CLICK (DIPERKUAT)
-    // Head Unit Trigger - MASALAH KLIK TERATASI DENGAN Z-INDEX DI CSS
+    // 3. SETUP INTERAKSI CLICK (Head Unit & Close)
     if (elements.headunitFooter) {
         elements.headunitFooter.addEventListener('click', () => {
             toggleHeadUnit(true); 
         });
     }
     
-    // Close Button
     if (elements.closeTablet) {
         elements.closeTablet.addEventListener('click', () => {
             toggleHeadUnit(false); 
         });
     }
     
-    // Escape Key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && elements.tabletUI && !elements.tabletUI.classList.contains('hidden')) {
             toggleHeadUnit(false);
         }
     });
 
-    // 4. LOGIC: BROWSER APP 
+    // 4. LOGIC PERBAIKAN FINAL: BROWSER APP (membuka link dan menutup Head Unit setelah jeda)
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
+            // Membuka link di tab baru
             window.open('https://nekopoi.care/', '_blank'); 
-            // Menu Head Unit TIDAK LANGSUNG ditutup.
+            
+            // Tutup Head Unit setelah 500ms untuk memastikan link terbuka tanpa interupsi.
+            setTimeout(() => {
+                 toggleHeadUnit(false); 
+            }, 500); 
         });
     }
 
@@ -255,17 +260,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setSeatbelts(true);
     setHeadlights(1);
     
-    // Mesin Awal: OFF
     setEngine(false); 
 
-    // Tombol Engine ON/OFF
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
             setEngine(!engineState);
         });
     }
 
-    // Mesin ON Otomatis setelah 2 detik (memastikan speedometer berfungsi)
+    // Memulai simulasi mesin ON
     setTimeout(() => {
         setEngine(true);
     }, 2000);
