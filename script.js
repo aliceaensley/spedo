@@ -39,11 +39,15 @@ function setGear(gear) {
     if (elements.gearValue) elements.gearValue.innerText = gear === 0 ? 'N' : String(gear);
 }
 function setHeadlights(state) {
-    const isOn = state > 0;
-    if (elements.headlightsIcon) elements.headlightsIcon.classList.toggle('icon-on', isOn);
+    switch(state) {
+        case 1: elements.headlights.innerText = 'On'; elements.headlights.className = 'dd-on'; break;
+        case 2: elements.headlights.innerText = 'High Beam'; elements.headlights.className = 'dd-highbeam'; break;
+        default: elements.headlights.innerText = 'Off'; elements.headlights.className = 'dd-off';
+    }
 }
 function setSeatbelts(state) {
-    if (elements.seatbeltIcon) elements.seatbeltIcon.classList.toggle('icon-on', state);
+    elements.seatbelts.innerText = onOrOff(state);
+    elements.seatbelts.className = state ? 'dd-on' : 'dd-off';
 }
 function setLeftIndicator(state) {
     if (elements.leftIndicator) elements.leftIndicator.classList.toggle('arrow-on', state);
@@ -51,7 +55,10 @@ function setLeftIndicator(state) {
 function setRightIndicator(state) {
     if (elements.rightIndicator) elements.rightIndicator.classList.toggle('arrow-on', state);
 }
-function setEngine(state) { /* Do nothing */ }
+function setEngine(state) {
+    elements.engine.innerText = onOrOff(state);
+    elements.engine.className = state ? 'dd-on' : 'dd-off';
+}
 function setSpeedMode(mode) { 
     speedMode = mode;
     let unitText = 'KMH';
