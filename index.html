@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Final Minimalist HUD</title>
+<title>Digital HUD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="hud">
-  <div id="digital-meters">
-    <div id="speed-display">
-      <span id="speed-value">0</span> <span id="speed-unit">KMH</span>
-    </div>
-    <div id="rpm-display">
-      <span id="rpm-value">0</span> <span id="rpm-unit">RPM</span>
-    </div>
+  <div class="digital-panel" id="speed-panel">
+    <div class="panel-label">SPEED</div>
+    <div class="panel-value"><span id="speed-value">0</span> <span id="speed-unit">KMH</span></div>
+  </div>
+  <div class="digital-panel" id="rpm-panel">
+    <div class="panel-label">RPM</div>
+    <div class="panel-value"><span id="rpm-value">0</span> <span id="rpm-unit">RPM</span></div>
   </div>
   <div id="info">
     <div id="engine">Engine: Off</div>
