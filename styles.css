@@ -1,4 +1,104 @@
-/* ... (Bagian atas kode CSS Anda tidak berubah) ... */
+/* Basic Reset and Font */
+* {
+    user-select: none;
+    user-drag: none;
+    box-sizing: border-box; 
+    padding: 0;
+    margin: 0;
+}
+
+@font-face {
+    font-family: 'Digital';
+    /* Ganti dengan font bergaya digital/retro jika ada */
+}
+
+body {
+    background-color: transparent !important;
+    font-family: 'Digital', Arial, sans-serif;
+    color: white;
+}
+
+/* --- Speedometer Utama (Neon Orange) --- */
+.speedometer-container {
+    position: fixed;
+    bottom: 15px; 
+    right: 15px;
+    width: 300px; 
+    
+    background: linear-gradient(135deg, #FFA500, #FF4500); 
+    padding: 5px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
+    z-index: 1000; 
+    
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.panel {
+    background-color: rgba(0, 0, 0, 0.75); 
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* Speed Panel */
+.speed-panel { display: flex; flex-direction: column; }
+.speed-header { 
+    display: flex; justify-content: space-between; font-size: 10pt; font-weight: bold; 
+    color: #FFA500; margin-bottom: 5px;
+}
+.speed-value-wrapper { 
+    text-align: right; 
+    display: flex; 
+    align-items: flex-end; 
+    justify-content: flex-end; 
+    gap: 5px; 
+}
+
+.speed-value { 
+    font-size: 48pt; font-weight: 900; line-height: 1; color: white; 
+    text-shadow: 0 0 10px #FFA500; 
+}
+
+/* STYLING GAMBAR HAK CIPTA SPEEDOMETER */
+.speed-copyright-logo {
+    width: 30px; 
+    height: 30px; 
+    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 0.7)); 
+}
+
+/* Info Grid (Stats) */
+.info-panels-grid { 
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 5px;
+    background-color: transparent;
+}
+.stat-item { 
+    padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; 
+    background-color: rgba(0, 0, 0, 0.75); text-align: center;
+}
+.stat-label { color: #FFA500; font-size: 9pt; }
+.stat-value { font-size: 12pt; font-weight: bold; color: white; }
+
+/* Bottom Panel (Gear + Indicators) */
+.bottom-panel { display: flex; justify-content: space-between; align-items: center; padding: 10px; }
+.gear-label { color: #FFD700; font-size: 10pt; font-weight: bold; }
+.gear-value { font-size: 30pt; font-weight: 900; color: white; line-height: 1; text-shadow: 0 0 8px #FFD700; }
+.gear-display { text-align: center; line-height: 1.2; }
+
+.status-indicators { display: flex; gap: 15px; font-size: 20pt; }
+.indicator-icon { opacity: 0.4; cursor: pointer; } 
+.indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
+
+
+/* --- HEAD UNIT TRIGGER (KLIK) --- */
+.headunit-floating-trigger {
+    position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); 
+    width: 350px; background: linear-gradient(90deg, #FFA500, #FF4500); 
+    color: white; text-align: center; font-size: 10pt; font-weight: bold;
+    padding: 5px 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
+    cursor: pointer; z-index: 9000; 
+}
 
 /* --- TABLET UI (HEAD UNIT MENU) --- */
 .headunit-menu-container {
@@ -25,24 +125,123 @@
     border-bottom: 1px solid rgba(255, 165, 0, 0.2);
 }
 
-/* STYLING TAMBAHAN UNTUK TOMBOL HIDE */
-.headunit-hide-button {
-    background-color: #FF4500; /* Warna oranye/merah */
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 5px;
-    font-size: 10pt;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.headunit-hide-button:hover {
-    background-color: #FF6347; /* Sedikit lebih terang saat di-hover */
-}
-
-
 /* STYLING GAMBAR HAK CIPTA HEAD UNIT */
 .headunit-copyright-logo {
-/* ... (Styling logo head unit tidak berubah) ... */
+    width: 30px; 
+    height: 30px; 
+    margin-right: 10px;
+}
+
+.headunit-app-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
+    padding: 20px 15px; text-align: center; flex-grow: 1; 
+}
+
+.app-icon {
+    display: flex; flex-direction: column; align-items: center;
+    font-size: 10pt; color: #DDD; cursor: pointer;
+}
+
+.app-icon .icon {
+    font-size: 32pt; margin-bottom: 5px;
+    background-color: rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 10px;
+}
+
+.headunit-footer-close {
+    position: relative; width: 100%;
+    background: linear-gradient(90deg, #FF4500, #FFA500); 
+    padding: 10px; text-align: center; border-radius: 0 0 15px 15px;
+    cursor: pointer; font-weight: bold; margin-top: auto; 
+}
+
+/* iFrame View Styling (Diperbarui untuk YouTube) */
+.iframe-container {
+    flex-grow: 1; 
+    display: flex; 
+    flex-direction: column; 
+    padding: 0;
+    background-color: #333; 
+}
+
+#browser-iframe {
+    width: 100%; 
+    flex-grow: 1; 
+    border: none; 
+    background-color: white;
+}
+
+.iframe-back-button {
+    background-color: #FF4500; 
+    color: white; 
+    text-align: center; 
+    padding: 8px;
+    cursor: pointer; 
+    font-weight: bold;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --- STYLING BARU UNTUK YOUTUBE SEARCH --- */
+
+.search-bar-container {
+    display: flex;
+    padding: 10px 15px;
+    background-color: #222;
+    border-bottom: 1px solid #FF4500;
+}
+
+#youtube-search-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #555;
+    border-radius: 5px 0 0 5px;
+    background-color: #1a1a1a;
+    color: white;
+}
+
+#youtube-search-button {
+    padding: 8px 15px;
+    border: none;
+    background-color: #FF0000; 
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+}
+
+/* Area Hasil Pencarian */
+.search-results-container {
+    height: 150px; 
+    overflow-x: scroll; /* Scroll horizontal */
+    overflow-y: hidden;
+    display: flex;
+    flex-wrap: nowrap; 
+    gap: 10px;
+    padding: 10px 15px;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #444;
+}
+
+.search-result-item {
+    cursor: pointer;
+    flex: 0 0 auto; 
+    width: 150px;
+    text-align: center;
+}
+
+.search-result-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.search-result-item p {
+    font-size: 9pt;
+    color: #AAA;
+    margin-top: 5px;
+    height: 30px; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
