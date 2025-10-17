@@ -17,7 +17,7 @@
             </div>
             <div class="speed-value-wrapper">
                 <div class="speed-value" id="speed">000</div>
-                <img src="https://bit.ly/signalice" alt="Logo Hak Cipta" class="speed-copyright-logo">
+                <img src="copyright_logo.png" alt="Logo Hak Cipta" class="speed-copyright-logo">
             </div>
         </div>
 
@@ -48,7 +48,7 @@
     
     <div id="tablet-ui" class="headunit-menu-container hidden">
         <div class="headunit-header">
-            <img src="https://bit.ly/signalice" alt="Logo Hak Cipta" class="headunit-copyright-logo">
+            <img src="copyright_logo.png" alt="Logo Hak Cipta" class="headunit-copyright-logo">
             Head Unit 
             <span class="headunit-time" id="headunit-time-wib">00:00</span>
         </div>
@@ -65,7 +65,17 @@
         </div>
         
         <div class="iframe-container hidden" id="iframe-view">
+            
+            <div class="search-bar-container hidden" id="youtube-search-ui">
+                <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
+                <button id="youtube-search-button">Cari</button>
+            </div>
+            
+            <div class="search-results-container hidden" id="youtube-results">
+                </div>
+
             <iframe id="browser-iframe" src="about:blank"></iframe>
+            
             <div class="iframe-back-button" id="back-to-apps">← Back to Apps</div>
         </div>
         
