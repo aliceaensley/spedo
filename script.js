@@ -14,7 +14,7 @@ function drawAnalogMeter(ctx,value,maxValue){
     ctx.beginPath();
     ctx.arc(cx,cy,radius,0.75*Math.PI,0.25*Math.PI,false);
     ctx.strokeStyle="rgba(0,255,255,0.2)";
-    ctx.lineWidth=6;
+    ctx.lineWidth=5;
     ctx.stroke();
 
     const angle=0.75*Math.PI+(value/maxValue)*(1.5*Math.PI);
@@ -24,8 +24,8 @@ function drawAnalogMeter(ctx,value,maxValue){
     ctx.beginPath();
     ctx.moveTo(cx,cy);
     ctx.lineTo(cx+radius*Math.cos(angle),cy+radius*Math.sin(angle));
-    ctx.strokeStyle=grad; ctx.lineWidth=4;
-    ctx.shadowBlur=15; ctx.shadowColor="#0ff";
+    ctx.strokeStyle=grad; ctx.lineWidth=3;
+    ctx.shadowBlur=12; ctx.shadowColor="#0ff";
     ctx.stroke();
 }
 
@@ -37,12 +37,12 @@ function drawCircularBar(ctx,percent,color){
     ctx.beginPath();
     ctx.arc(cx,cy,radius,0,2*Math.PI);
     ctx.strokeStyle="rgba(0,255,255,0.1)";
-    ctx.lineWidth=6; ctx.stroke();
+    ctx.lineWidth=5; ctx.stroke();
 
     ctx.beginPath();
     ctx.arc(cx,cy,radius,-Math.PI/2,-Math.PI/2+2*Math.PI*percent,false);
-    ctx.strokeStyle=color; ctx.lineWidth=6;
-    ctx.shadowBlur=12; ctx.shadowColor=color;
+    ctx.strokeStyle=color; ctx.lineWidth=5;
+    ctx.shadowBlur=10; ctx.shadowColor=color;
     ctx.stroke();
 }
 
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     healthCtx=healthCanvas.getContext('2d');
 });
 
-// Real-time update from game/server
+// Update HUD real-time
 function updateHUD(engine,speed,rpm,fuel,health,gear){
     setEngine(engine);
     setSpeed(speed);
