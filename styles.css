@@ -8,18 +8,18 @@ body {
 
 #hud {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
-  width: 240px;
-  background: rgba(0,0,0,0.6);
-  padding: 12px;
-  border-radius: 12px;
+  right: 15px;
+  bottom: 15px;
+  width: 180px;
+  background: rgba(0,0,0,0.65);
+  padding: 10px;
+  border-radius: 10px;
   color: #0ff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 0 20px rgba(0,255,255,0.5);
+  gap: 6px;
+  box-shadow: 0 0 15px rgba(0,255,255,0.5);
 }
 
 /* Digital Panel */
@@ -28,24 +28,24 @@ body {
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .panel-label {
-  font-size: 10px;
+  font-size: 9px;
   color: #0ff;
-  text-shadow: 0 0 3px #0ff;
+  text-shadow: 0 0 2px #0ff;
 }
 
 .panel-box {
-  background: rgba(0,0,0,0.5);
-  padding: 6px 0;
-  border-radius: 6px;
-  box-shadow: inset 0 0 10px rgba(0,255,255,0.3);
-  font-size: 24px;
+  background: rgba(0,0,0,0.55);
+  padding: 4px 0;
+  border-radius: 5px;
+  box-shadow: inset 0 0 8px rgba(0,255,255,0.3);
+  font-size: 20px;
   font-weight: bold;
   color: #0ff;
-  text-shadow: 0 0 6px #0ff, 0 0 12px #0ff;
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
 }
 
 /* Bars */
@@ -53,35 +53,35 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .bar-container {
   display: flex;
   flex-direction: column;
-  font-size: 10px;
+  font-size: 9px;
 }
 
 .bar-label {
   color: #0ff;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   text-shadow: 0 0 2px #0ff;
 }
 
 .bar-bg {
   width: 100%;
-  height: 8px;
+  height: 6px;
   background: rgba(0,255,255,0.1);
-  border-radius: 4px;
-  box-shadow: inset 0 0 4px rgba(0,255,255,0.3);
+  border-radius: 3px;
+  box-shadow: inset 0 0 3px rgba(0,255,255,0.3);
 }
 
 .bar-fill {
   height: 100%;
   background: #0ff;
-  border-radius: 4px 0 0 4px;
+  border-radius: 3px 0 0 3px;
   width: 100%;
-  box-shadow: 0 0 8px #0ff, 0 0 12px #0ff;
+  box-shadow: 0 0 6px #0ff, 0 0 10px #0ff;
 }
 
 /* Other Info */
@@ -89,12 +89,12 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  font-size: 12px;
-  gap: 2px;
+  font-size: 11px;
+  gap: 1px;
 }
 
 #info div {
   display: flex;
   justify-content: space-between;
-  text-shadow: 0 0 3px #0ff;
+  text-shadow: 0 0 2px #0ff;
 }
