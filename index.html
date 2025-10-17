@@ -1,42 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Speedometer HUD</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
 <main class="speedometer">
-    <div class="hud-circles">
-        <div class="circle-wrapper">
-            <svg width="100" height="100">
-                <circle id="speed-circle" class="progress-ring" cx="50" cy="50" r="45"></circle>
-                <circle class="bg-ring" cx="50" cy="50" r="45"></circle>
-                <text id="speed-display" class="dial-text" x="50" y="50">0 KMH</text>
-            </svg>
-            <div class="label">Speed</div>
-        </div>
-        <div class="circle-wrapper">
-            <svg width="100" height="100">
-                <circle id="rpm-circle" class="progress-ring" cx="50" cy="50" r="45"></circle>
-                <circle class="bg-ring" cx="50" cy="50" r="45"></circle>
-                <text id="rpm-display" class="dial-text" x="50" y="50">0 RPM</text>
-            </svg>
-            <div class="label">RPM</div>
-        </div>
+    <div class="circle-panel">
+        <svg class="circle-svg" width="100" height="100">
+            <circle id="speed-circle" class="progress-ring" r="45" cx="50" cy="50"/>
+        </svg>
+        <div id="speed-display" class="dial-text">0 KMH</div>
     </div>
-    <div class="hud-panels">
-        <div class="panel-row"><span>Engine</span><span id="engine">&nbsp;</span></div>
-        <div class="panel-row"><span>Gear</span><span id="gear">&nbsp;</span></div>
-        <div class="panel-row"><span>Fuel</span><span id="fuel">&nbsp;</span></div>
-        <div class="panel-row"><span>Health</span><span id="health">&nbsp;</span></div>
-        <div class="panel-row"><span>Headlights</span><span id="headlights">&nbsp;</span></div>
-        <div class="panel-row"><span>Indicators</span><span id="indicators">&nbsp;</span></div>
-        <div class="panel-row"><span>Seatbelts</span><span id="seatbelts">&nbsp;</span></div>
-        <div class="panel-row"><span>Speed Mode</span><span id="speed-mode">KMH</span></div>
+
+    <div class="circle-panel">
+        <svg class="circle-svg" width="100" height="100">
+            <circle id="rpm-circle" class="progress-ring" r="45" cx="50" cy="50"/>
+        </svg>
+        <div id="rpm-display" class="dial-text">0 RPM</div>
+    </div>
+
+    <div class="panel-info">
+        <div class="panel-row">Engine: <span id="engine">Off</span></div>
+        <div class="panel-row">Fuel: <span id="fuel">100%</span></div>
+        <div class="panel-row">Health: <span id="health">100%</span></div>
+        <div class="panel-row">Gear: <span id="gear">N</span></div>
+        <div class="panel-row">Headlights: <span id="headlights">Off</span></div>
+        <div class="panel-row">Indicators: <span id="indicators">Off / Off</span></div>
+        <div class="panel-row">Seatbelts: <span id="seatbelts">Off</span></div>
+        <div class="panel-row">Speed Mode: <span id="speed-mode">KMH</span></div>
     </div>
 </main>
-<script src="script.js"></script>
-</body>
-</html>
