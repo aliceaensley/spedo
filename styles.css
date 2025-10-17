@@ -1,6 +1,22 @@
-/* ... (Bagian atas CSS speedometer tetap sama) ... */
+/* Basic Reset and Font */
+* {
+    user-select: none;
+    user-drag: none;
+    box-sizing: border-box; 
+}
 
-/* --- Container Utama Speedometer --- */
+@font-face {
+    font-family: 'Digital';
+    /* Ganti dengan font bergaya digital/retro jika ada */
+}
+
+body {
+    background-color: transparent !important;
+    font-family: 'Digital', Arial, sans-serif;
+    color: white;
+}
+
+/* --- Container Utama Speedometer (Disembunyikan saat tablet aktif) --- */
 .speedometer-container {
     position: fixed;
     bottom: 45px; 
@@ -12,12 +28,12 @@
     padding: 3px;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
-    z-index: 1000; /* Pastikan speedometer berada di atas elemen lain jika ada */
+    z-index: 1000; 
 }
-/* ... (Styling di dalam speedometer-container tetap sama) ... */
 
+/* ... (Styling di dalam speedometer-container tetap sama: .speed-gauge, .speed-header, .info-panels, .info-grid, .bottom-panel, .gear-display, .status-indicators, dll.) ... */
 
-/* --- HEAD UNIT FOOTER BAR --- */
+/* --- HEAD UNIT FOOTER BAR (Trigger utama) --- */
 .headunit-footer {
     position: fixed;
     bottom: 15px; 
@@ -32,7 +48,7 @@
     padding: 5px 10px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
-    cursor: pointer; /* Menandakan elemen bisa diklik */
+    cursor: pointer; 
     z-index: 1000;
 }
 
@@ -44,47 +60,74 @@
     margin: 0 2px;
 }
 
-/* --- TABLET UI (Styling Baru) --- */
+/* --- TABLET UI (Styling Sesuai Gambar Terbaru) --- */
 .tablet-container {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 800px; /* Ukuran tablet lebih besar */
-    height: 600px;
-    background-color: rgba(0, 0, 0, 0.9);
-    border-radius: 15px;
+    /* Posisikan di kanan bawah, di atas footer trigger */
+    bottom: 45px;
+    right: 15px;
+    width: 250px; /* Ukuran lebih kecil sesuai gambar terbaru */
     
-    /* Neon Border Tablet */
-    border: 3px solid #FFA500;
-    box-shadow: 0 0 30px rgba(255, 165, 0, 1);
+    background: linear-gradient(135deg, #FFA500, #FF4500); /* Border/Background Orange */
+    padding: 3px; 
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7);
     
     color: white;
-    font-family: Arial, sans-serif;
-    z-index: 2000; /* Pastikan tablet di atas speedometer */
+    font-family: 'Digital', Arial, sans-serif;
+    z-index: 2000; 
 }
 
 .tablet-container.hidden {
     display: none;
 }
 
-.tablet-header {
-    background-color: #FF4500; /* Warna header orange gelap */
-    padding: 10px 15px;
-    font-size: 14pt;
-    font-weight: bold;
-    border-radius: 12px 12px 0 0;
-    display: flex;
-    justify-content: space-between;
-}
-
 .tablet-content {
-    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.75); /* Inner background */
+    padding: 10px 15px;
+    border-radius: 12px;
 }
 
-.close-btn {
-    cursor: pointer;
+.tablet-stat-line {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #FFA500; /* Label Orange */
+    margin-top: 5px;
+}
+
+.tablet-stat-value {
+    font-size: 14pt;
     font-weight: 900;
-    color: #FFA500;
-    text-shadow: 0 0 5px #FFA500;
+    margin-bottom: 5px;
+    text-indent: 10px; /* Sedikit indentasi agar mirip di gambar */
+}
+
+.tablet-icon-status {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+    padding-left: 15px;
+}
+
+.tablet-indicator-icon {
+    font-size: 18pt;
+    opacity: 0.4;
+    /* Kelas .active akan ditambahkan oleh JS */
+}
+
+.tablet-indicator-icon.active {
+    opacity: 1;
+    text-shadow: 0 0 5px yellow; 
+}
+
+/* Styling Footer Head Unit di dalam Tablet (Ini adalah tombol close di dalam tab) */
+.tablet-headunit-footer {
+    margin-top: 15px;
+    background: linear-gradient(90deg, #FFA500, #FF4500); 
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(255, 165, 0, 0.5);
+    font-size: 10pt;
 }
