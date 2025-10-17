@@ -1,11 +1,22 @@
 let elements = {};
 let speedMode = 1; 
 
-// ... (Semua fungsi set dan toggleActive tetap sama) ...
+const toggleActive = (element, state) => {
+    if (Array.isArray(element)) {
+        element.forEach(el => toggleActive(el, state));
+        return;
+    }
+    
+    if (state) {
+        element.classList.add('active');
+    } else {
+        element.classList.remove('active');
+    }
+};
 
 /**
  * Toggles the visibility and "expand up" animation of the Head Unit/Tablet UI.
- * SPEEDOMETER TIDAK disembunyikan.
+ * Speedometer TIDAK disembunyikan.
  */
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
@@ -41,14 +52,33 @@ function toggleHeadUnit(state) {
     }
 }
 
-// ... (Semua fungsi set dan updateTimeWIB tetap sama) ...
+// ... (Semua fungsi setSpeed, setRPM, setFuel, dll. DITAHAN) ...
+
+/**
+ * Updates the time display to current WIB.
+ */
+function updateTimeWIB() {
+    const now = new Date();
+    const options = {
+        hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' 
+    };
+    
+    let timeString;
+    try {
+        timeString = now.toLocaleTimeString('en-US', options);
+    } catch (e) {
+        timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    }
+    
+    elements.timeWIB.innerText = timeString;
+}
 
 // Wait for the DOM to be fully loaded and map elements
 document.addEventListener('DOMContentLoaded', () => {
     elements = {
         // UI Containers
-        speedometerUI: document.getElementById('speedometer-ui'), // SPEEDOMETER UTAMA
-        headunitFooter: document.getElementById('headunit-footer'), // TRIGGER TENGAH
+        speedometerUI: document.getElementById('speedometer-ui'), 
+        headunitFooter: document.getElementById('headunit-footer'), 
         tabletUI: document.getElementById('tablet-ui'),
         
         // Visible Elements (Speedometer)
@@ -68,7 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
         closeTablet: document.getElementById('close-tablet'),
     };
     
-    // ... (Setup WIB dan Initial setup) ...
+    // --- SETUP WIB ---
+    updateTimeWIB();
+    setInterval(updateTimeWIB, 60000); 
     
     // --- SETUP INTERAKSI CLICK ---
     elements.headunitFooter.addEventListener('click', () => {
@@ -85,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initial setup and example values 
-    // Untuk memastikan speedometer terlihat dan berfungsi saat pertama kali dimuat
-    // setSpeedMode, setEngine, setSpeed, dll. harus dipanggil di sini.
+    // Initial setup (Contoh nilai untuk mengisi speedometer agar tidak kosong)
+    // Asumsikan fungsi set sudah didefinisikan (walaupun tidak ditampilkan di sini)
+    // setSpeedMode(1); setSpeed(22.35); setRPM(0.5821); setFuel(0.49); setHealth(1.0); setGear(2); 
 });
