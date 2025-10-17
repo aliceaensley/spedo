@@ -8,6 +8,7 @@ let vitalInterval = null;
 let isYoutubeOpen = false; 
 let fuelWarningInterval = null; 
 let currentFuelWarningType = null; 
+let maxGearAchieved = 0; // BARU: Menyimpan gear tertinggi yang pernah dicapai
 
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
@@ -115,7 +116,7 @@ function setFuel(fuel) {
     const displayValue = `${Math.round(fuel * 100)}%`;
     if (elements.fuel) elements.fuel.innerText = displayValue;
 
-    // Logika Peringatan Bahan Bakar (Diperbaiki: Tidak ada gap antara 5% dan 4%)
+    // Logika Peringatan Bahan Bakar
     if (fuel <= 0.04) { // 4% ke bawah -> SEKART.MP3
         toggleFuelWarning('critical');
     } else if (fuel <= 0.1) { // 10% sampai 4.01% -> BENSIN.MP3
@@ -138,6 +139,11 @@ function setGear(gear) {
         gearText = 'R';
     }
     if (elements.gear) elements.gear.innerText = gearText;
+    
+    // BARU: Update maxGearAchieved jika gear saat ini lebih tinggi
+    if (gear > maxGearAchieved) {
+        maxGearAchieved = gear;
+    }
 }
 
 function setHeadlights(state) {
@@ -189,8 +195,9 @@ function stopSimulation() {
     }
     
     setSpeed(0);
-    setRPM(0);
+    setRPM(0.1); // Tetap di idle RPM
     setGear(0); 
+    maxGearAchieved = 0; // Reset max gear saat mesin mati
 }
 
 function startSimulation() {
@@ -199,35 +206,68 @@ function startSimulation() {
     let currentSpeed = 0;
     setRPM(0.1); 
     setGear(0); 
+    maxGearAchieved = 0; // Reset max gear saat simulasi baru dimulai
 
     simulationInterval = setInterval(() => {
-        // Logika pergerakan
+        // Logika pergerakan (Speed Jittering Fix)
         let speedChange = (Math.random() - 0.5) * 0.5;
         currentSpeed = currentSpeed + speedChange;
 
-        // Fix Issue: Speed Jittering - Clamp speed menjadi 0 jika mendekati 0
-        if (currentSpeed < 0.1) { 
+        // Fix Speed Stabil di 0
+        if (currentSpeed < 0.5 && speedChange < 0) { 
             currentSpeed = 0; 
+            speedChange = 0; 
+        } else {
+             currentSpeed = Math.max(0, currentSpeed);
         }
         
         // Limit max speed
         currentSpeed = Math.min(25, currentSpeed); 
         setSpeed(currentSpeed);
         
+        // RPM Logic
         let baseRPM = currentSpeed > 5 ? 0.3 : 0.1;
-        const currentRPM = Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
+        const currentRPM = currentSpeed > 0 ? Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05)) : 0.1;
         setRPM(currentRPM);
         
-        // Fix Issue: Gear - Memastikan gear tetap di angka tertinggi saat speed max
+        // 🚨 PERBAIKAN KRITIS UNTUK GEAR STABIL
+        let targetGear = 0; // Default Netral
+        
         if (currentSpeed >= 20) { 
-            setGear(3);
+            targetGear = 3;
         } else if (currentSpeed >= 10) {
-            setGear(2);
+            targetGear = 2;
         } else if (currentSpeed > 0) {
-            setGear(1);
+            targetGear = 1;
+        } 
+        
+        // Jika targetGear lebih besar dari gear tertinggi yang pernah dicapai, gunakan targetGear
+        // Jika targetGear lebih kecil, cek apakah speed sudah benar-benar rendah.
+        if (targetGear > maxGearAchieved) {
+            setGear(targetGear);
+        } else if (targetGear < maxGearAchieved) {
+            // Ini adalah kondisi pengereman/deselerasi
+            // JIKA speed turun di bawah ambang batas (misal < 15 untuk Gear 3), baru turunkan gear.
+            // Kita biarkan Gear tetap di 3 selama speed > 15 (setengah dari ambang 20) untuk stabilitas.
+            if (maxGearAchieved === 3 && currentSpeed < 15) {
+                maxGearAchieved = 2; // Paksa turun
+            } else if (maxGearAchieved === 2 && currentSpeed < 5) {
+                maxGearAchieved = 1; // Paksa turun
+            }
+            
+            // Akhirnya, set gear ke gear tertinggi yang stabil
+            if (currentSpeed > 0) {
+                setGear(maxGearAchieved); 
+            } else {
+                setGear(0); // Kembali ke Netral jika diam
+                maxGearAchieved = 0; // Reset
+            }
+
         } else {
-            setGear(0); 
+            // TargetGear sama dengan MaxGearAchieved (kondisi stabil)
+            setGear(targetGear);
         }
+        
     }, 3000); 
 }
 
@@ -248,7 +288,6 @@ function startVitalUpdates() {
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
         
-        // Perbaikan: Batas aman minimum di set ke 0.01 (1%) agar bisa turun sampai 0%
         setFuel(Math.max(0.01, currentFuel - fuelReductionRate)); 
         
     }, 3000); 
