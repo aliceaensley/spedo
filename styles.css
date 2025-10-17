@@ -3,7 +3,7 @@
 body {
     margin: 0;
     font-family: 'Orbitron', sans-serif;
-    background: #111;
+    background: transparent; /* transparan, bukan full hitam */
     color: #0ff;
 }
 
@@ -14,7 +14,7 @@ body {
     display: flex;
     gap: 15px;
     align-items: flex-end;
-    background: rgba(20,20,50,0.85);
+    background: rgba(20,20,50,0.85); /* semi-transparent */
     padding: 12px;
     border-radius: 14px;
     box-shadow: 0 0 25px #0ff;
