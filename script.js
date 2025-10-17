@@ -1,5 +1,5 @@
 let engineOn = false;
-let speedMode = 0; // 0=KMH,1=MPH
+let speedMode = 0;
 let currentSpeed = 0;
 let displayedSpeed = 0;
 let currentRPM = 0;
@@ -28,7 +28,6 @@ function updateHUD(){
   document.getElementById("indicators").innerText = `Indicators: ${indicatorsState&0b01?"On":"Off"}/${indicatorsState&0b10?"On":"Off"}`;
   document.getElementById("speed-mode").innerText = `Speed Mode: ${speedMode===1?"MPH":"KMH"}`;
 
-  // Update fuel & health bars
   document.getElementById("fuel-bar").style.width = `${(currentFuel*100).toFixed(0)}%`;
   document.getElementById("health-bar").style.width = `${(currentHealth*100).toFixed(0)}%`;
 
