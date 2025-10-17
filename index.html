@@ -1,54 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Speedometer & Head Unit</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    
-    <main class="speedometer-container" id="speedometer-ui">
-        
-        <div class="panel speed-panel">
-            <div class="speed-header">
-                <span class="speed-title">Speed</span>
-                <span class="speed-unit" id="speed-mode">MPH</span>
-            </div>
-            <div class="speed-value-wrapper">
-                <div class="speed-value" id="speed">050</div>
-                </div>
-        </div>
-
-        <div class="panel info-panels-grid">
-            <div class="stat-item"><div class="stat-label">RPM</div><div class="stat-value" id="rpm">5821</div></div>
-            <div class="stat-item"><div class="stat-label">Fuel</div><div class="stat-value" id="fuel">49%</div></div>
-            <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value" id="health">100%</div></div>
-            <div class="stat-item"><div class="stat-label">WIB</div><div class="stat-value" id="time-wib">01:27</div></div>
-        </div>
-
-        <div class="panel bottom-panel">
-            <div class="gear-display">
-                <span class="gear-label">Gear</span>
-                <span class="gear-value" id="gear">2</span>
-            </div>
-            <div class="status-indicators">
-                <div class="indicator-icon" id="headlights-icon">💡</div> 
-                <div class="indicator-icon" id="engine-icon">⚙️</div> <div class="indicator-icon" id="seatbelt-icon">💺</div> 
-            </div>
-        </div>
-        
-    </main>
-    
-    <div class="headunit-floating-trigger" id="headunit-footer">
-        Head Unit System (<span class="key-bind">CLICK</span> TO INTERACT)
-    </div>
-    
-    <div id="tablet-ui" class="headunit-menu-container hidden">
+<div id="tablet-ui" class="headunit-menu-container hidden">
         <div class="headunit-header">
-            Head Unit <span class="headunit-time" id="headunit-time-wib">01:27</span> 
-        </div>
-        <div class="headunit-app-grid">
+            Head Unit 
+            <span class="headunit-time" id="headunit-time-wib">01:27</span> </div>
+        
+        <div class="headunit-app-grid" id="app-grid">
             <div class="app-icon"><span class="icon">🎵</span>Music</div>
             <div class="app-icon"><span class="icon">🗺️</span>Maps</div>
             <div class="app-icon"><span class="icon">🧮</span>Calculator</div>
@@ -58,6 +13,12 @@
             <div class="app-icon"><span class="icon">▶️</span>Youtube</div>
             <div class="app-icon"><span class="icon">📻</span>Radio</div>
         </div>
+        
+        <div class="iframe-container hidden" id="iframe-view">
+            <iframe id="browser-iframe" src="about:blank"></iframe>
+            <div class="iframe-back-button" id="back-to-apps">← Back to Apps</div>
+        </div>
+        
         <div class="headunit-footer-close" id="close-tablet">
              <span class="close-text">CLOSE MENU</span>
         </div>
