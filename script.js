@@ -6,9 +6,9 @@ let seatbeltState = true;
 let simulationInterval = null; 
 
 // *****************************************************************
-// PENTING: GANTI DENGAN KUNCI API YOUTUBE ANDA YANG VALID!
+// ⚠️ PENTING: GANTI DENGAN KUNCI API YOUTUBE ANDA YANG VALID!
 // *****************************************************************
-const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
+const YOUTUBE_API_KEY = 'GANTI_DENGAN_API_KEY_ANDA_DI_SINI'; 
 // *****************************************************************
 
 // --- FUNGSI UTILITY & TOGGLE ---
@@ -163,13 +163,15 @@ function startSimulation() {
     }, 3000); 
 }
 
-// --- FUNGSI YOUTUBE API BARU ---
+// --- FUNGSI YOUTUBE API DAN LOGIC BARU ---
 
 function toggleYoutubeSearchUI(show) {
     if (elements.youtubeSearchUI) {
         elements.youtubeSearchUI.classList.toggle('hidden', !show);
     }
     if (elements.youtubeResults) {
+        // Hanya toggle results container jika tidak sedang menampilkan hasil
+        // Ini agar jika video sudah dimuat, UI pencarian tidak hilang total.
         elements.youtubeResults.classList.toggle('hidden', !show);
     }
     // Bersihkan hasil saat menyembunyikan
@@ -179,21 +181,29 @@ function toggleYoutubeSearchUI(show) {
 }
 
 async function searchYoutube(query) {
-    if (!query || YOUTUBE_API_KEY === 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs') {
+    if (!query || YOUTUBE_API_KEY === 'GANTI_DENGAN_API_KEY_ANDA_DI_SINI') {
         alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
         return;
     }
     
     const API_URL = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=5&key=${YOUTUBE_API_KEY}`;
     
-    elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px;">Mencari...</p>';
+    // Tampilkan pesan loading
+    elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Mencari...</p>';
     elements.youtubeResults.classList.remove('hidden');
 
 
     try {
         const response = await fetch(API_URL);
+        
+        if (!response.ok) {
+            // Tangkap status non-200 (misalnya 403 Forbidden karena API Key salah/kuota habis)
+            throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        }
+
         const data = await response.json();
 
+        // Bersihkan area hasil sebelum memasukkan yang baru
         elements.youtubeResults.innerHTML = ''; 
 
         if (data.items && data.items.length > 0) {
@@ -211,22 +221,30 @@ async function searchYoutube(query) {
                 resultItem.addEventListener('click', () => {
                     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
                     showBrowser(embedUrl); 
-                    // Hide search results but keep search bar visible
+                    // Sembunyikan hasil pencarian (hanya results container yang hidden)
                     elements.youtubeResults.classList.add('hidden'); 
                 });
 
                 elements.youtubeResults.appendChild(resultItem);
             });
             elements.youtubeResults.classList.remove('hidden');
+            
+            // Scroll ke awal hasil jika ada
+            elements.youtubeResults.scrollLeft = 0;
+
         } else {
             elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px;">Tidak ditemukan video.</p>';
-            elements.youtubeResults.classList.remove('hidden');
         }
 
     } catch (error) {
         console.error('Error fetching YouTube data:', error);
-        elements.youtubeResults.innerHTML = '<p style="color:red; padding: 10px;">Gagal terhubung ke API. Cek API Key dan koneksi Anda.</p>';
-        elements.youtubeResults.classList.remove('hidden');
+        
+        let errorMessage = 'Gagal terhubung ke API.';
+        if (error.message.includes('403')) {
+             errorMessage = 'API Key GAGAL. Cek apakah kunci Anda sudah valid atau kuota habis.';
+        }
+        
+        elements.youtubeResults.innerHTML = `<p style="color:red; padding: 10px; width: 300px;">${errorMessage}</p>`;
     }
 }
 
@@ -246,8 +264,10 @@ function showBrowser(url) {
     if (elements.appGrid) elements.appGrid.classList.add('hidden');
     if (elements.iframeView) elements.iframeView.classList.remove('hidden');
     
-    // Tampilkan UI pencarian YouTube hanya jika URL mengandung 'youtube'
-    toggleYoutubeSearchUI(url.includes('youtube') && url.includes('embed') === false); 
+    // Tampilkan UI pencarian YouTube hanya jika URL mengandung 'youtube' TAPI BUKAN URL EMBED
+    // Jika URL adalah URL embed (memutar video), kita hanya sembunyikan hasil pencarian, bukan search bar-nya
+    const isYoutubeApp = url.includes('youtube') && url.includes('embed') === false;
+    toggleYoutubeSearchUI(isYoutubeApp); 
     
     if (elements.browserIframe) elements.browserIframe.src = url; 
 }
@@ -389,7 +409,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleSearch = () => {
         const query = elements.youtubeSearchInput.value;
         if (query.trim() !== '') {
-            // Memuat video yang diklik akan memanggil showBrowser(embedUrl) dari fungsi searchYoutube
             searchYoutube(query.trim());
         }
     };
