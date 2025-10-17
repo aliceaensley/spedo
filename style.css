@@ -1,10 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
 body {
-  margin: 0;
+  margin:0;
   font-family: 'Orbitron', sans-serif;
   background: transparent;
   color: #0ff;
 }
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 
 .speedometer {
   position: fixed;
@@ -12,9 +13,10 @@ body {
   right: 15px;
   display: flex;
   gap: 15px;
+  align-items: flex-end;
 }
 
-.circular-panel {
+.circular-panel, .circular-bars, .info-panel {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -40,22 +42,15 @@ body {
   stroke-linecap: round;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
-  transition: stroke-dashoffset 0.2s ease;
+  transition: stroke-dashoffset 0.2s ease, stroke 0.3s ease;
 }
 
 .dial-text {
   font-size: 18px;
   fill: #0ff;
   font-weight: bold;
+  text-anchor: middle;
   dominant-baseline: middle;
-}
-
-.circular-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-left: 10px; /* geser ke kanan */
-  align-items: center;
 }
 
 .circular-bars svg {
@@ -64,9 +59,8 @@ body {
 }
 
 .bar-label {
-  text-align: center;
   font-size: 10px;
-  margin-bottom: 2px;
+  text-align: center;
 }
 
 .info-panel {
@@ -83,4 +77,5 @@ body {
   border-radius: 6px;
   border: 1px solid #0ff;
   text-shadow: 0 0 3px #0ff;
+  width: 120px;
 }
