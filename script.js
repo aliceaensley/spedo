@@ -1,8 +1,8 @@
 let elements = {};
 let speedMode = 1; 
-let engineState = true; // Mesin statis menyala di awal
-let headlightsState = 1; // Lampu statis menyala di awal
-let seatbeltState = true; // Seatbelt statis terpasang di awal
+let engineState = true; // Mesin statis, diatur menyala (true)
+let headlightsState = 1; // Lampu statis, diatur menyala (1)
+let seatbeltState = true; // Seatbelt statis, diatur menyala (true)
 let simulationInterval = null; 
 let activeMediaInHeadUnit = null; // Melacak apakah media (YouTube) aktif
 
@@ -28,7 +28,6 @@ const toggleActive = (element, state) => {
 };
 
 // --- FUNGSI PEMBARUAN DATA SPEEDOMETER (STATIS) ---
-// Speedometer akan menampilkan nilai awal dan tidak bergerak karena engine non-interaktif
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -42,7 +41,7 @@ function setSpeedMode(mode) {
 }
 
 function setSpeed(speed) {
-    const speedValue = String(Math.round(speed * 3.6)).padStart(3, '0'); // Statis di 0 jika simulasi mati
+    const speedValue = String(Math.round(speed * 3.6)).padStart(3, '0');
     if (elements.speed) elements.speed.innerText = speedValue;
 }
 
@@ -62,10 +61,11 @@ function setHealth(health) {
 }
 
 function setGear(gear) {
-    let gearText = 'N'; // Gear statis di N
+    let gearText = 'N'; 
     if (elements.gear) elements.gear.innerText = gearText;
 }
 
+// *** INDIKATOR: TIDAK ADA PERUBAHAN, HANYA MENGATUR TAMPILAN SESUAI STATUS DI ATAS ***
 function setHeadlights(state) {
     headlightsState = state;
     toggleActive(elements.headlightsIcon, state > 0);
@@ -74,7 +74,6 @@ function setHeadlights(state) {
 function setEngine(state) {
     engineState = state;
     toggleActive(elements.engineIcon, state);
-    // SIMULASI TIDAK AKAN DIPANGGIL KARENA ENGINE NON-INTERAKTIF
 }
 
 function setSeatbelts(state) {
@@ -104,13 +103,8 @@ function updateTimeWIB() {
 // ---------------------------------------------------------------------
 
 // --- FUNGSI KONTROL SIMULASI (DINONAKTIFKAN TOTAL) ---
-function stopSimulation() {
-    // Dinonaktifkan
-}
-
-function startSimulation() {
-    // Dinonaktifkan
-}
+function stopSimulation() {}
+function startSimulation() {}
 
 // --- FUNGSI YOUTUBE API (TIDAK BERUBAH) ---
 
@@ -188,11 +182,11 @@ async function searchYoutube(query) {
     }
 }
 
-// --- LOGIC: KONTROL TAMPILAN HEAD UNIT (Background Playback LOGIC) ---
+// --- LOGIC: KONTROL TAMPILAN HEAD UNIT (YouTube Background Playback) ---
 
 function showAppGrid() {
-    // *** Perubahan 1: Memindahkan iframe ke background saat BACK TO APPS ***
-    
+    // Dipanggil saat BACK TO APPS
+
     if (elements.appGrid) elements.appGrid.classList.remove('hidden');
     if (elements.iframeView) elements.iframeView.classList.add('hidden');
     
@@ -200,23 +194,21 @@ function showAppGrid() {
 
     const iframe = elements.browserIframe;
     const backgroundPlayer = elements.backgroundVideoPlayer;
-    const isYoutubeVideoPlaying = iframe.src.includes('youtube.com/embed');
-
-    if (isYoutubeVideoPlaying) {
-         // Pindahkan iframe YouTube ke background player
+    
+    if (activeMediaInHeadUnit === 'youtube' && elements.iframeView.contains(iframe)) {
+         // Memindahkan iframe dari view ke background
         backgroundPlayer.appendChild(iframe);
-        activeMediaInHeadUnit = 'youtube';
         
     } else if (elements.browserIframe && !backgroundPlayer.contains(iframe)) {
-        // Jika bukan YouTube dan tidak ada di background, kosongkan (misal browser biasa)
+        // Jika konten lain (bukan YouTube), kosongkan
         elements.browserIframe.src = 'about:blank'; 
         activeMediaInHeadUnit = null;
     }
-    
-    // Jika YouTube sudah ada di background, biarkan di sana (tidak dikosongkan)
 }
 
 function showBrowser(url, mediaType = 'browser') {
+    // Dipanggil saat aplikasi Head Unit diklik
+    
     if (elements.appGrid) elements.appGrid.classList.add('hidden');
     if (elements.iframeView) elements.iframeView.classList.remove('hidden');
     
@@ -224,20 +216,21 @@ function showBrowser(url, mediaType = 'browser') {
     const backgroundPlayer = elements.backgroundVideoPlayer;
 
     if (backgroundPlayer.contains(iframe)) {
-        // Pindahkan iframe dari background ke view untuk menimpa src-nya
+        // Memindahkan iframe dari background ke view untuk menimpa src-nya
         elements.iframeView.appendChild(iframe);
     }
     
     const isYoutubeApp = url.includes('youtube') && url.includes('embed') === false;
     toggleYoutubeSearchUI(isYoutubeApp); 
     
+    // Set URL baru
     if (elements.browserIframe) elements.browserIframe.src = url; 
     
     activeMediaInHeadUnit = mediaType === 'youtube' ? 'youtube' : null;
 }
 
 
-// --- FUNGSI HEAD UNIT (LOGIKA BACKGROUND PLAYBACK) ---
+// --- FUNGSI HEAD UNIT (LOGIKA CLOSE MENU) ---
 
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
@@ -256,12 +249,12 @@ function toggleHeadUnit(state) {
         tablet.classList.remove('hidden');
         if (footerTrigger) footerTrigger.style.display = 'none'; 
         
-        // 1. Cek apakah video sedang diputar di latar belakang
+        // Cek apakah video sedang diputar di latar belakang
         if (activeMediaInHeadUnit === 'youtube' && backgroundPlayer.contains(iframe)) {
-            // 2. Pindahkan iFrame kembali ke dalam iframeView
+            // Pindahkan iFrame kembali ke dalam iframeView
             elements.iframeView.appendChild(iframe);
             
-            // 3. Tampilkan kembali tampilan iFrame/Browser
+            // Tampilkan tampilan iFrame/Browser
             if (elements.appGrid) elements.appGrid.classList.add('hidden');
             if (elements.iframeView) elements.iframeView.classList.remove('hidden');
             
@@ -281,18 +274,18 @@ function toggleHeadUnit(state) {
     } else {
         // --- KONDISI: HEAD UNIT DITUTUP (BACKGROUND PLAYBACK) ---
         
-        // Cek apakah iFrame saat ini memuat URL embed YouTube
-        const isYoutubeVideoPlaying = iframe.src.includes('youtube.com/embed') || activeMediaInHeadUnit === 'youtube';
+        // Cek apakah iFrame saat ini memuat URL embed YouTube dan berada di view
+        const isYoutubeVideoPlayingInView = iframe.src.includes('youtube.com/embed') && elements.iframeView.contains(iframe);
         
-        if (isYoutubeVideoPlaying) {
-            // 1. Pindahkan iFrame ke pemutar latar belakang
-            if (elements.iframeView.contains(iframe)) {
-                backgroundPlayer.appendChild(iframe);
-            }
+        if (isYoutubeVideoPlayingInView) {
+            // Pindahkan iFrame ke pemutar latar belakang
+            backgroundPlayer.appendChild(iframe);
             activeMediaInHeadUnit = 'youtube'; // Set status media aktif
-        } else {
+        } else if (elements.iframeView.contains(iframe) && !isYoutubeVideoPlayingInView) {
+            // Jika konten lain yang aktif saat ditutup, kosongkan
+            iframe.src = 'about:blank';
             activeMediaInHeadUnit = null;
-        }
+        } 
         
         // Animasi penutupan
         tablet.classList.remove('active'); 
@@ -388,19 +381,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (elements.iframeView) elements.iframeView.classList.remove('hidden');
 
             toggleYoutubeSearchUI(true); 
-            
             elements.youtubeResults.innerHTML = '';
             
             // Pindahkan/bersihkan iFrame jika bukan dari sesi YouTube background
             if (elements.browserIframe.src === 'about:blank' || elements.browserIframe.src === '') {
-                 // Tidak perlu berbuat apa-apa, iframe sudah bersih/di view
+                 // Tidak perlu berbuat apa-apa
             } else if (!elements.backgroundVideoPlayer.contains(elements.browserIframe)) {
-                 // Jika ada content lain, kosongkan
+                 // Jika ada konten lain (browser), kosongkan
                  elements.browserIframe.src = 'about:blank';
             }
             
             if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
-            activeMediaInHeadUnit = 'youtube'; // Set status YouTube
+            activeMediaInHeadUnit = 'youtube'; 
         });
     }
 
@@ -435,15 +427,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setSpeedMode(1); 
     setHealth(1.0); 
     setFuel(0.49); 
-    setSpeed(0); // Kecepatan statis
-    setRPM(0.1); // RPM statis
-    setGear(-1); // Gear statis (misal: R)
+    setSpeed(0); 
+    setRPM(0.1); 
+    setGear(-1); 
     
-    // SET STATUS AWAL INDIKATOR (STATIS)
-    setEngine(true); 
-    setHeadlights(1); 
-    setSeatbelts(true); 
-
-    // 6. TIDAK ADA EVENT LISTENER UNTUK INDIKATOR (STATIS)
-    // Semua indikator (Lampu, Mesin, Seatbelt) statis.
+    // *** INDIKATOR MENYALA ***
+    setEngine(true); // Mesin menyala
+    setHeadlights(1); // Lampu menyala
+    setSeatbelts(true); // Seatbelt terpasang
 });
