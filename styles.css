@@ -2,7 +2,7 @@
 * {
     user-select: none;
     user-drag: none;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    box-sizing: border-box; 
 }
 
 @font-face {
@@ -12,7 +12,7 @@
 
 body {
     background-color: transparent !important;
-    font-family: 'Digital', Arial, sans-serif; /* Menggunakan font Digital jika tersedia */
+    font-family: 'Digital', Arial, sans-serif;
     color: white;
 }
 
@@ -21,17 +21,17 @@ body {
     position: fixed;
     bottom: 15px;
     right: 15px;
-    width: 320px; /* Ukuran yang lebih besar untuk menampung semua elemen */
+    width: 320px; 
     
-    /* Neon border/background - Meniru desain gambar */
+    /* Neon border/background */
     background: linear-gradient(135deg, #FF69B4, #DA70D6); /* Pink to Orchid/Purple */
-    padding: 3px; /* Untuk menciptakan efek bingkai */
+    padding: 3px;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(255, 105, 180, 0.7); /* Neon glow effect */
 }
 
 .speedometer-container > div {
-    background-color: rgba(0, 0, 0, 0.75); /* Background dalam yang lebih gelap */
+    background-color: rgba(0, 0, 0, 0.75); 
     border-radius: 12px;
 }
 
@@ -57,7 +57,7 @@ body {
 }
 
 .speed-value {
-    font-size: 48pt; /* Kecepatan besar */
+    font-size: 48pt; 
     font-weight: 900;
     line-height: 1;
     color: white;
@@ -70,14 +70,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24pt; /* Ukuran ikon mobil */
+    font-size: 24pt; 
 }
 
 /* --- Info Panels (Grid Stats) --- */
 .info-panels {
     padding: 5px;
     margin-bottom: 5px;
-    background-color: transparent; /* Hilangkan background kontainer luar */
+    background-color: transparent; 
 }
 
 .info-grid {
@@ -86,7 +86,6 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     text-align: center;
-    /* Tambahkan background grid jika diperlukan, tetapi di sini kita biarkan transparan agar ikut background container */
 }
 
 .stat-item {
@@ -138,21 +137,20 @@ body {
 .status-indicators {
     display: flex;
     gap: 10px;
-    font-size: 18pt; /* Ukuran ikon status */
+    font-size: 18pt;
 }
 
 .indicator-icon {
-    /* Atur opacity/warna di JS untuk menunjukkan ON/OFF */
     opacity: 0.4;
     cursor: pointer;
 }
 
 .indicator-icon.active {
     opacity: 1;
-    text-shadow: 0 0 5px yellow; /* Efek menyala */
+    text-shadow: 0 0 5px yellow; 
 }
 
 /* Hidden elements from old code */
 #headlights, #indicators, #seatbelts, #engine, #speed-mode-display {
-    display: none; /* Menyembunyikan elemen lama yang digantikan oleh ikon/struktur baru */
+    display: none; 
 }
