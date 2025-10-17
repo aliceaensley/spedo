@@ -213,9 +213,8 @@ async function searchYoutube(query) {
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
                 resultItem.addEventListener('click', () => {
-                    // Gunakan 'rel=0' agar tidak ada video terkait, tapi HILANGKAN 'autoplay=1'
-                    // Ini untuk mematuhi perilaku browser yang lebih ketat, walau embed YT sering memaksa autoplay.
-                    const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0`;
+                    // Gunakan 'rel=0' agar tidak ada video terkait.
+                    const embedUrl = `https://www.googleapis.com/youtube/embed/${videoId}?rel=0`;
                     showBrowser(embedUrl); 
                     elements.youtubeResults.classList.add('hidden'); 
                 });
@@ -250,7 +249,10 @@ function showAppGrid() {
     
     toggleYoutubeSearchUI(false); 
 
-    if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; 
+    // Kosongkan src iframe saat kembali ke app grid, kecuali jika video berada di background player
+    if (elements.browserIframe && !elements.backgroundVideoPlayer.contains(elements.browserIframe)) {
+        elements.browserIframe.src = 'about:blank'; 
+    }
 }
 
 function showBrowser(url) {
@@ -264,7 +266,7 @@ function showBrowser(url) {
 }
 
 
-// --- FUNGSI HEAD UNIT (LOGIKA PERSISTENSI VIDEO BARU) ---
+// --- FUNGSI HEAD UNIT (LOGIKA PERSISTENSI VIDEO) ---
 
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
@@ -316,8 +318,7 @@ function toggleHeadUnit(state) {
         if (isYoutubeVideoPlaying) {
             // 1. Pindahkan iFrame ke pemutar latar belakang
             backgroundPlayer.appendChild(iframe);
-            // 2. HAPUS LOGIKA REFRESH iframe.src = iframe.src; 
-            //    Tujuannya: agar video TIDAK MENGULANG dari awal.
+            // 2. Tidak ada refresh iframe.src = iframe.src, agar video tidak mengulang.
         } 
         
         // Animasi penutupan
@@ -340,7 +341,7 @@ function toggleHeadUnit(state) {
 // --- INISIALISASI DAN EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pemetaan Elemen (Sama)
+    // 1. Pemetaan Elemen 
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
         headunitFooter: document.getElementById('headunit-footer'), 
@@ -403,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 4. LOGIC KLIK APLIKASI (Sama)
+    // 4. LOGIC KLIK APLIKASI
     
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
@@ -432,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // LOGIC INTERAKSI PENCARIAN YOUTUBE (Sama)
+    // LOGIC INTERAKSI PENCARIAN YOUTUBE
     const handleSearch = () => {
         const query = elements.youtubeSearchInput.value;
         if (query.trim() !== '') {
@@ -458,26 +459,21 @@ document.addEventListener('DOMContentLoaded', () => {
     setHealth(1.0); 
     setFuel(0.49); 
     
-    // SET STATUS AWAL INDIKATOR (TIDAK INTERAKTIF)
-    setEngine(false); // Engine tetap interaktif (untuk simulasi speed)
-    setHeadlights(1); // Lampu akan menyala (active=1) dan TIDAK bisa di-klik
-    setSeatbelts(true); // Seatbelt menyala (active=true) dan TIDAK bisa di-klik
+    // SET STATUS AWAL INDIKATOR (STATIS)
+    setEngine(false); 
+    setHeadlights(1); 
+    setSeatbelts(true); 
 
-    // 6. HAPUS EVENT LISTENERS INDIKATOR (Agar tidak berfungsi/statis)
-    // Logika ENGINE (Engine On/Off) tetap dipertahankan karena terhubung ke simulasi kecepatan.
+    // HAPUS SEMUA EVENT LISTENERS UNTUK INDIKATOR (KECUALI ENGINE SIMULATION)
+    // Headlights dan Seatbelt dibuat statis (tidak berfungsi)
     
-    /*
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
             setEngine(!engineState); 
         });
-    } 
-    */ 
+    }
     
-    // **EVENT LISTENER HEADLIGHTS DIHAPUS**
-
-    // **EVENT LISTENER SEATBELT DIHAPUS**
-
+    // Simulasikan mobil menyala setelah 2 detik
     setTimeout(() => {
         setEngine(true);
     }, 2000);
