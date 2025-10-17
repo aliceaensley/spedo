@@ -1,26 +1,26 @@
-<main class="speedometer">
-    <div class="circle-panel">
-        <svg class="circle-svg" width="100" height="100">
-            <circle id="speed-circle" class="progress-ring" r="45" cx="50" cy="50"/>
-        </svg>
-        <div id="speed-display" class="dial-text">0 KMH</div>
-    </div>
-
-    <div class="circle-panel">
-        <svg class="circle-svg" width="100" height="100">
-            <circle id="rpm-circle" class="progress-ring" r="45" cx="50" cy="50"/>
-        </svg>
-        <div id="rpm-display" class="dial-text">0 RPM</div>
-    </div>
-
-    <div class="panel-info">
-        <div class="panel-row">Engine: <span id="engine">Off</span></div>
-        <div class="panel-row">Fuel: <span id="fuel">100%</span></div>
-        <div class="panel-row">Health: <span id="health">100%</span></div>
-        <div class="panel-row">Gear: <span id="gear">N</span></div>
-        <div class="panel-row">Headlights: <span id="headlights">Off</span></div>
-        <div class="panel-row">Indicators: <span id="indicators">Off / Off</span></div>
-        <div class="panel-row">Seatbelts: <span id="seatbelts">Off</span></div>
-        <div class="panel-row">Speed Mode: <span id="speed-mode">KMH</span></div>
-    </div>
-</main>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedometer Digital HUD</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <main class="speedometer">
+        <div class="panel-info">
+            <div class="panel-row">Engine: <span id="engine">Off</span></div>
+            <div class="panel-row">Speed: <span id="speed">0 KMH</span></div>
+            <div class="panel-row">RPM: <span id="rpm">0 RPM</span></div>
+            <div class="panel-row">Fuel: <span id="fuel">100%</span></div>
+            <div class="panel-row">Health: <span id="health">100%</span></div>
+            <div class="panel-row">Gear: <span id="gear">N</span></div>
+            <div class="panel-row">Headlights: <span id="headlights">Off</span></div>
+            <div class="panel-row">Indicators: <span id="indicators">Off / Off</span></div>
+            <div class="panel-row">Seatbelts: <span id="seatbelts">Off</span></div>
+            <div class="panel-row">Speed Mode: <span id="speed-mode">KMH</span></div>
+        </div>
+    </main>
+    <script src="/script.js"></script>
+</body>
+</html>
