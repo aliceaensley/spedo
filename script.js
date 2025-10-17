@@ -237,10 +237,10 @@ function startSimulation() {
         const currentRPM = currentSpeed > 0 ? Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05)) : 0.1;
         setRPM(currentRPM);
         
-        // 🚨 LOGIKA GEAR SANGAT STABIL (PERBAIKAN TERAKHIR):
+        // 🚨 LOGIKA GEAR SANGAT STABIL (PERBAIKAN FOKUS UNTUK SPEED TINGGI):
         let targetGear = 0; 
         
-        // Tentukan Gear ideal berdasarkan kecepatan saat ini
+        // Tentukan Gear ideal berdasarkan kecepatan saat ini (saat akselerasi)
         if (currentSpeed >= 20) { 
             targetGear = 3;
         } else if (currentSpeed >= 10) {
@@ -250,26 +250,29 @@ function startSimulation() {
         } 
         
         if (currentSpeed > 0) {
-            // Jika targetGear lebih besar dari maxGearAchieved, kita naik gear
+            
+            // 1. Up-shifting: Jika targetGear lebih tinggi dari yang pernah dicapai, kita naik gear.
             if (targetGear > maxGearAchieved) {
                 setGear(targetGear);
-            } else if (targetGear === 0) {
-                // Kecepatan mendekati 0, set Gear 1
-                setGear(1); 
-                maxGearAchieved = 1;
-            } else {
-                // Jika kecepatan tidak 0 dan tidak perlu naik gear, PERTAHANKAN maxGearAchieved.
-                // Ini mengatasi masalah fluktuasi minor pada speed tinggi.
-                setGear(maxGearAchieved);
-            }
+            } 
             
-            // Atur ulang maxGearAchieved jika terjadi deselerasi ekstrem (optional, tapi menjaga realisme)
-            if (maxGearAchieved === 3 && currentSpeed < 10) { 
-                maxGearAchieved = 2;
-                setGear(maxGearAchieved);
-            } else if (maxGearAchieved === 2 && currentSpeed < 5) {
-                maxGearAchieved = 1;
-                setGear(maxGearAchieved);
+            // 2. Maintaining/Down-shifting:
+            else {
+                // Selama kendaraan bergerak (currentSpeed > 0), set Gear ke maxGearAchieved.
+                // Logika ini yang paling penting untuk mencegah Gear kembali ke N saat speed tinggi.
+                let finalGear = maxGearAchieved;
+                
+                // Tambahkan pengecekan Deselerasi Ekstrem agar bisa turun jika speed anjlok, 
+                // TETAPI JANGAN MERESET maxGearAchieved, hanya membatasi finalGear.
+                if (maxGearAchieved === 3 && currentSpeed < 10) { 
+                    finalGear = 2;
+                } else if (maxGearAchieved === 2 && currentSpeed < 5) {
+                    finalGear = 1;
+                }
+                
+                // Set Gear. Jika finalGear < maxGearAchieved, kita biarkan setGear memperbarui.
+                // PENTING: maxGearAchieved TIDAK direset di sini, hanya di setGear jika gear naik.
+                setGear(finalGear);
             }
             
         } else {
