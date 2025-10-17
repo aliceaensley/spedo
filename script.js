@@ -35,6 +35,18 @@ const toggleActive = (element, state) => {
     }
 };
 
+// 🚨 BARU: Fungsi untuk memainkan bensin.mp3 dua kali (ting ting)
+function playLowFuelSoundTwice() {
+    fuelWarningSound.currentTime = 0;
+    fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (1).", e); });
+    
+    // Play the sound a second time after a very short pause (0.5 detik)
+    setTimeout(() => {
+        fuelWarningSound.currentTime = 0;
+        fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (2).", e); });
+    }, 500); 
+}
+
 // Fungsi untuk mengontrol dua tingkat peringatan suara (10% dan 4%)
 function toggleFuelWarning(type) {
     if (currentFuelWarningType === type) {
@@ -53,15 +65,11 @@ function toggleFuelWarning(type) {
 
     // 2. Tentukan status baru
     if (type === 'low') {
-        // Status Rendah (10% - 5%): bensin.mp3 setiap 10 detik
+        // Status Rendah (10% - 5%): bensin.mp3 dua kali setiap 10 detik
         
-        fuelWarningSound.currentTime = 0; 
-        fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3.", e); });
+        playLowFuelSoundTwice();
         
-        fuelWarningInterval = setInterval(() => {
-            fuelWarningSound.currentTime = 0;
-            fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (interval).", e); });
-        }, 10000); // 10 detik
+        fuelWarningInterval = setInterval(playLowFuelSoundTwice, 10000); // 10 detik
         
         currentFuelWarningType = 'low';
 
@@ -116,12 +124,12 @@ function setFuel(fuel) {
     const displayValue = `${Math.round(fuel * 100)}%`;
     if (elements.fuel) elements.fuel.innerText = displayValue;
 
-    // Logika Peringatan Bahan Bakar
-    if (fuel <= 0.04) { // 4% ke bawah -> SEKART.MP3
+    // Logika Peringatan Bahan Bakar (10%-5% untuk bensin.mp3, <=4% untuk sekarat.mp3)
+    if (fuel <= 0.04) { 
         toggleFuelWarning('critical');
-    } else if (fuel <= 0.1) { // 10% sampai 4.01% -> BENSIN.MP3
+    } else if (fuel <= 0.1) { 
         toggleFuelWarning('low');
-    } else { // >10%
+    } else { 
         toggleFuelWarning(null); 
     }
 }
@@ -229,9 +237,10 @@ function startSimulation() {
         const currentRPM = currentSpeed > 0 ? Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05)) : 0.1;
         setRPM(currentRPM);
         
-        // LOGIKA GEAR STABIL
+        // 🚨 LOGIKA GEAR STABIL KRITIS
         let targetGear = 0; 
         
+        // Tentukan Gear ideal berdasarkan kecepatan saat ini
         if (currentSpeed >= 20) { 
             targetGear = 3;
         } else if (currentSpeed >= 10) {
@@ -241,14 +250,17 @@ function startSimulation() {
         } 
         
         if (currentSpeed > 0) {
-            // Gunakan Gear tertinggi yang pernah dicapai atau targetGear saat ini.
+            // Gear akan selalu mengikuti yang terbesar antara maxGearAchieved dan targetGear.
+            // Ini mencegah gear turun karena fluktuasi minor pada kecepatan tinggi.
             let finalGear = Math.max(maxGearAchieved, targetGear);
             
-            // Logic downshift terpaksa (hanya jika kecepatan benar-benar anjlok)
+            // Downshift Terpaksa: Hanya turunkan maxGearAchieved jika speed benar-benar anjlok.
             if (finalGear === 3 && currentSpeed < 10) {
-                finalGear = 2; // Speed < 10, paksa turun ke Gear 2
+                maxGearAchieved = 2; // Paksa turun maxGear untuk iterasi berikutnya
+                finalGear = 2;
             } else if (finalGear === 2 && currentSpeed < 5) {
-                finalGear = 1; // Speed < 5, paksa turun ke Gear 1
+                maxGearAchieved = 1; // Paksa turun maxGear
+                finalGear = 1;
             }
             
             setGear(finalGear);
@@ -256,7 +268,7 @@ function startSimulation() {
         } else {
             // Jika kendaraan diam (Speed = 0)
             setGear(0); // Netral
-            maxGearAchieved = 0; 
+            maxGearAchieved = 0; // Reset
         }
         
     }, 3000); 
