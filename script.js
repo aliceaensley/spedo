@@ -2,10 +2,9 @@ let elements = {};
 let speedMode = 0; // 0=KMH,1=MPH,2=Knots
 let indicators = 0;
 
-// utility
 const onOrOff = state => state ? 'On' : 'Off';
 
-// data update functions
+// update functions
 function setEngine(state){ elements.engine.innerText = onOrOff(state); }
 function setGear(gear){ elements.gear.innerText = gear===0?'N':gear; }
 function setHeadlights(state){ elements.headlights.innerText = state===1?'On':state===2?'High Beam':'Off'; }
@@ -43,9 +42,9 @@ function setRPM(rpm){
 function setFuel(fuel){ elements.fuel.innerText = (fuel*100).toFixed(1)+'%'; }
 function setHealth(health){ elements.health.innerText = (health*100).toFixed(1)+'%'; }
 
-// simulate real-time update
+// real-time loop (replace with vehicle data in game)
 function updateHUD(){
-    // simulasikan data kendaraan
+    // simulation
     const speed = Math.random()*50;  // m/s
     const rpm = Math.random();        // 0-1
     const fuel = Math.random();
@@ -81,5 +80,5 @@ document.addEventListener('DOMContentLoaded', ()=>{
         rpmCircle: document.getElementById('rpm-circle')
     };
 
-    updateHUD(); // start update loop
+    updateHUD(); // start
 });
