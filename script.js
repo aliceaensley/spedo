@@ -105,7 +105,7 @@ function setSpeedMode(mode) {
 function setSpeed(speed) {
     let speedValue;
     
-    // Kecepatan diubah menjadi nilai positif untuk tampilan speedometer (bahkan saat mundur)
+    // Pastikan speed selalu positif untuk tampilan (Simulasi ini hanya maju)
     const absSpeed = Math.abs(speed); 
     
     switch(speedMode)
@@ -148,7 +148,7 @@ function setGear(gear) {
     if (gear > 0) {
         gearText = String(gear);
     } else if (gear < 0) {
-        gearText = 'R'; // Gear = -1 untuk Reverse
+        gearText = 'R'; // Hanya digunakan jika Anda mengaktifkan logika Mundur
     }
     if (elements.gear) elements.gear.innerText = gearText;
     
@@ -221,53 +221,31 @@ function startSimulation() {
     maxGearAchieved = 0; 
 
     simulationInterval = setInterval(() => {
-        // Logika pergerakan
+        // Logika pergerakan (HANYA MAJU)
         let speedChange = (Math.random() - 0.5) * 0.5;
         currentSpeed = currentSpeed + speedChange;
 
-        // Tentukan apakah akan Mundur (probabilitas 2% jika speed 0)
-        let isReversing = false;
-        if (Math.abs(currentSpeed) < 0.5 && Math.random() < 0.02) { 
-            // Kendaraan diam dan probabilitas mundur (2%)
-            isReversing = true;
-            speedChange = -(Math.random() * 2 + 1); // Deselerasi ke Mundur
-        }
+        // Pastikan kecepatan tidak negatif (tidak ada mundur)
+        currentSpeed = Math.max(0, currentSpeed);
         
         // Fix Speed Stabil di 0
-        if (Math.abs(currentSpeed) < 0.5 && Math.sign(speedChange) !== Math.sign(currentSpeed) && Math.abs(speedChange) > 0.1) {
-             // Jika kecepatan sangat rendah dan ada perubahan arah/deselerasi, paksa ke 0
-             if (Math.abs(currentSpeed) < 0.5) {
-                 currentSpeed = 0;
-                 speedChange = 0;
-             }
-        }
+        if (currentSpeed < 0.5 && speedChange < 0) { 
+            currentSpeed = 0; 
+            speedChange = 0; 
+        } 
         
-        // Perbarui kecepatan
-        currentSpeed = currentSpeed + speedChange;
-        
-        // Batasi kecepatan: Mundur max 5 m/s, Maju max 40 m/s
-        if (currentSpeed < 0) {
-            currentSpeed = Math.max(-5, currentSpeed); // Max Mundur -5 m/s
-        } else {
-            currentSpeed = Math.min(40, currentSpeed); // Max Maju 40 m/s (~144 KMH)
-        }
+        // Batasi kecepatan Maju max 40 m/s (~144 KMH)
+        currentSpeed = Math.min(40, currentSpeed); 
         
         setSpeed(currentSpeed);
         
-        // RPM Logic (Lebih tinggi saat Mundur atau Maju)
+        // RPM Logic
         const absSpeed = Math.abs(currentSpeed);
         let baseRPM = absSpeed > 5 ? 0.4 : 0.1;
         const currentRPM = absSpeed > 0 ? Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05)) : 0.1;
         setRPM(currentRPM);
         
-        // 🚨 LOGIKA GEAR STABIL KRITIS (Final):
-        
-        if (currentSpeed < 0) {
-            // Gear Mundur
-            setGear(-1); 
-            maxGearAchieved = 0; // Reset maxGearAchieved saat mundur
-            return;
-        } 
+        // 🚨 LOGIKA GEAR SANGAT STABIL (Final):
         
         if (currentSpeed === 0) {
             // Gear Netral saat diam
@@ -288,15 +266,15 @@ function startSimulation() {
             targetGear = 2; // Gear 2 (Speed > 36 KMH)
         } 
         
-        // Up-shifting: Jika targetGear lebih besar dari yang pernah dicapai, naik gear.
+        // 1. Up-shifting: Jika targetGear lebih besar dari yang pernah dicapai, naik gear.
         if (targetGear > maxGearAchieved) {
             setGear(targetGear);
         } else {
-            // Maintaining: Jika tidak perlu naik, pertahankan Gear tertinggi yang pernah dicapai.
-            // Ini adalah kunci stabilitas gear pada kecepatan tinggi/fluktuasi minor.
+            // 2. Maintaining/Down-shifting:
+            // Pertahankan Gear tertinggi yang pernah dicapai (maxGearAchieved).
             let finalGear = maxGearAchieved;
             
-            // Downshift Terpaksa (Realistis): Hanya turun jika speed benar-benar anjlok.
+            // Downshift Terpaksa (Hanya untuk skenario deselerasi ekstrem)
             if (maxGearAchieved === 4 && currentSpeed < 25) { 
                 finalGear = 3;
             } else if (maxGearAchieved === 3 && currentSpeed < 15) { 
@@ -305,6 +283,12 @@ function startSimulation() {
                 finalGear = 1;
             }
             
+            // Perbarui maxGearAchieved jika terjadi downshift paksa
+            // (Ini penting agar tidak langsung lompat kembali ke gear tinggi pada fluktuasi berikutnya)
+            if (finalGear < maxGearAchieved) {
+                maxGearAchieved = finalGear;
+            }
+
             setGear(finalGear);
         }
         
