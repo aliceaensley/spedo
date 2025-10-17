@@ -8,7 +8,6 @@
 }
 
 body {
-    /* Base setting agar UI muncul di tengah/atas tampilan */
     background: #000; 
     display: flex;
     justify-content: center;
@@ -18,7 +17,6 @@ body {
 }
 
 .hidden {
-    /* Kelas krusial untuk menyembunyikan elemen */
     display: none !important;
 }
 
@@ -31,7 +29,6 @@ body {
     right: 20px;
     bottom: 20px;
     width: 280px;
-    /* Ganti warna gradient sesuai kebutuhan Anda */
     background: linear-gradient(145deg, rgba(255, 140, 0, 0.95), rgba(255, 100, 0, 0.95)); 
     border-radius: 15px;
     padding: 15px;
@@ -106,19 +103,13 @@ body {
     opacity: 0.7;
 }
 
-/* Tombol YouTube Toggle */
+/* WIB (Sekarang hanya menampilkan jam, bukan tombol) */
 #time-wib {
-    cursor: pointer;
+    font-size: 1.2em;
     font-weight: bold;
-    font-size: 0.9em;
-    background: rgba(255, 255, 255, 0.1); 
-    padding: 5px 0;
-    transition: background 0.2s;
+    /* Cukup pastikan teksnya terlihat bagus tanpa styling tombol */
 }
 
-#time-wib:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
 
 /* Gear */
 .label-gear {
@@ -148,7 +139,6 @@ body {
     position: fixed;
     top: 50%;
     left: 50%;
-    /* Atur transform awal agar tidak terlihat */
     transform: translate(-50%, -50%) scale(0.8); 
     width: 800px;
     height: 480px;
@@ -163,7 +153,6 @@ body {
 
 #tablet-ui.active {
     opacity: 1;
-    /* Transform final saat aktif */
     transform: translate(-50%, -50%) scale(1);
 }
 
