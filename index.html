@@ -3,39 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic HUD</title>
+<title>Compact HUD</title>
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <main class="hud-container">
     <!-- Speedometer -->
     <section class="meter-section">
-        <canvas id="speedometerCanvas" width="160" height="160"></canvas>
-        <div id="speed" class="dd-neon">0 KMH</div>
+        <canvas id="speedometerCanvas" width="120" height="120"></canvas>
+        <div id="speed" class="meter-label">0 KMH</div>
     </section>
 
     <!-- RPM -->
     <section class="meter-section">
-        <canvas id="rpmCanvas" width="160" height="160"></canvas>
-        <div id="rpm" class="dd-neon">0 RPM</div>
+        <canvas id="rpmCanvas" width="120" height="120"></canvas>
+        <div id="rpm" class="meter-label">0 RPM</div>
     </section>
 
     <!-- Status Panel -->
     <section class="status-section">
         <div class="status-bar">
-            <canvas id="fuelCanvas" width="90" height="90"></canvas>
-            <div id="fuel" class="dd-neon">100%</div>
+            <canvas id="fuelCanvas" width="70" height="70"></canvas>
+            <div id="fuel" class="meter-label">100%</div>
         </div>
         <div class="status-bar">
-            <canvas id="healthCanvas" width="90" height="90"></canvas>
-            <div id="health" class="dd-neon">100%</div>
+            <canvas id="healthCanvas" width="70" height="70"></canvas>
+            <div id="health" class="meter-label">100%</div>
         </div>
         <div class="gear-display">
-            <div id="gear" class="dd-neon">N</div>
+            <div id="gear" class="meter-label">N</div>
             <div>Gear</div>
         </div>
         <div class="engine-display">
-            <div id="engine" class="dd-neon">Off</div>
+            <div id="engine" class="meter-label">Off</div>
             <div>Engine</div>
         </div>
     </section>
