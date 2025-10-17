@@ -65,7 +65,7 @@ function toggleFuelWarning(type) {
         currentFuelWarningType = 'low';
 
     } else if (type === 'critical') {
-        // Status Kritis (Di bawah 5%): sekarat.mp3 setiap 5 detik
+        // Status Kritis (Di bawah 4%): sekarat.mp3 setiap 5 detik
         
         criticalFuelSound.currentTime = 0; 
         criticalFuelSound.play().catch(e => { console.warn("Gagal memutar sekarat.mp3.", e); });
@@ -115,12 +115,12 @@ function setFuel(fuel) {
     const displayValue = `${Math.round(fuel * 100)}%`;
     if (elements.fuel) elements.fuel.innerText = displayValue;
 
-    // Logika Peringatan Bahan Bakar
-    if (fuel < 0.05) { 
+    // Logika Peringatan Bahan Bakar (Fix Issue 3: Gap Suara 5% ke 4%)
+    if (fuel <= 0.04) { // 4% ke bawah -> SEKART.MP3
         toggleFuelWarning('critical');
-    } else if (fuel <= 0.1) { 
+    } else if (fuel > 0.04 && fuel <= 0.1) { // 10% sampai 5% (tepat di atas 4%) -> BENSIN.MP3
         toggleFuelWarning('low');
-    } else { 
+    } else { // >10%
         toggleFuelWarning(null); 
     }
 }
@@ -150,10 +150,10 @@ function setEngine(state) {
         engineState = state;
         toggleActive(elements.engineIcon, state);
         if (state) {
-            startSimulation(); // Mulai simulasi pergerakan
+            startSimulation(); 
         } else {
-            stopSimulation(); // Hentikan simulasi pergerakan
-            toggleFuelWarning(null); // Matikan suara bensin saat mesin mati
+            stopSimulation(); 
+            toggleFuelWarning(null); 
         }
     }
 }
@@ -188,7 +188,6 @@ function stopSimulation() {
         simulationInterval = null;
     }
     
-    // HANYA reset data yang terkait dengan pergerakan
     setSpeed(0);
     setRPM(0);
     setGear(0); 
@@ -202,18 +201,27 @@ function startSimulation() {
     setGear(0); 
 
     simulationInterval = setInterval(() => {
-        // Logika pergerakan (Speed, RPM, Gear)
-        currentSpeed = Math.min(25, currentSpeed + (Math.random() - 0.5) * 0.5); 
-        currentSpeed = Math.max(0, currentSpeed); 
+        // Logika pergerakan
+        let speedChange = (Math.random() - 0.5) * 0.5;
+        currentSpeed = currentSpeed + speedChange;
+
+        // Fix Issue 1: Speed Jittering - Clamp speed menjadi 0 jika mendekati 0
+        if (currentSpeed < 0.1) { 
+            currentSpeed = 0; 
+        }
+        
+        // Limit max speed
+        currentSpeed = Math.min(25, currentSpeed); 
         setSpeed(currentSpeed);
         
         let baseRPM = currentSpeed > 5 ? 0.3 : 0.1;
         const currentRPM = Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
         setRPM(currentRPM);
         
-        if (currentSpeed > 20) {
+        // Fix Issue 2: Gear - Memastikan gear tetap di angka tertinggi saat speed max
+        if (currentSpeed >= 20) { // Jika speed 20 atau lebih (termasuk max speed 25)
             setGear(3);
-        } else if (currentSpeed > 10) {
+        } else if (currentSpeed >= 10) {
             setGear(2);
         } else if (currentSpeed > 0) {
             setGear(1);
@@ -229,40 +237,24 @@ function startSimulation() {
 function startVitalUpdates() {
     if (vitalInterval !== null) return;
     
-    // Inisiasi nilai awal Fuel/Health
     const initialFuel = 0.49;
     const initialHealth = 1.0;
     setHealth(initialHealth); 
     setFuel(initialFuel); 
 
     vitalInterval = setInterval(() => {
-        // Simulasi pengurangan bahan bakar
-        // Jika mesin hidup, kurangi lebih cepat
         const fuelReductionRate = engineState ? 0.005 : 0.001; 
         
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
         
-        // Kurangi fuel. Batas aman minimum set ke 5% (0.05).
-        setFuel(Math.max(0.05, currentFuel - fuelReductionRate)); 
+        setFuel(Math.max(0.04, currentFuel - fuelReductionRate)); // Batas aman minimum di set 4%
         
-    }, 3000); // Update Fuel/Health setiap 3 detik
+    }, 3000); 
 }
 
 // --- FUNGSI YOUTUBE API ---
-
-function toggleYoutubeSearchUI(show) {
-    if (elements.youtubeSearchUI) {
-        elements.youtubeSearchUI.classList.toggle('hidden', !show);
-    }
-    if (elements.youtubeResults) {
-        elements.youtubeResults.classList.toggle('hidden', !show);
-    }
-    if (!show && elements.youtubeResults) {
-        elements.youtubeResults.innerHTML = '';
-    }
-}
-
+// ... (searchYoutube, showVideo, toggleYoutubeSearchUI, toggleYoutubeUI tidak berubah)
 async function searchYoutube(query) {
     if (!query || YOUTUBE_API_KEY === 'GANTI_DENGAN_API_KEY_ANDA_DI_SINI') {
         alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
@@ -329,6 +321,18 @@ function showVideo(url) {
     }
 }
 
+function toggleYoutubeSearchUI(show) {
+    if (elements.youtubeSearchUI) {
+        elements.youtubeSearchUI.classList.toggle('hidden', !show);
+    }
+    if (elements.youtubeResults) {
+        elements.youtubeResults.classList.toggle('hidden', !show);
+    }
+    if (!show && elements.youtubeResults) {
+        elements.youtubeResults.innerHTML = '';
+    }
+}
+
 
 // --- LOGIC TOGGLE YOUTUBE ---
 
@@ -343,7 +347,6 @@ function toggleYoutubeUI(state) {
     isYoutubeOpen = state;
     
     if (state) {
-        // Logika saat membuka YouTube
         speedometer.classList.add('youtube-active');
         youtubeWrapper.classList.remove('hidden');
         toggleActive(elements.youtubeToggleIcon, true);
@@ -352,7 +355,6 @@ function toggleYoutubeUI(state) {
         if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
         
     } else {
-        // Logika saat menutup/menyembunyikan YouTube (musik/video tetap berjalan)
         speedometer.classList.remove('youtube-active');
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
@@ -443,14 +445,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 6. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
-    setHealth(1.0); // Set nilai awal Health
-    setFuel(0.49);  // Set nilai awal Fuel
+    setHealth(1.0); 
+    setFuel(0.49); 
     
     setEngine(false); 
     setHeadlights(1);
     setSeatbelts(true);
     
-    // 🚨 KRITIS: Mulai pembaruan data vital segera! (Fuel, Health akan mulai berkurang/diperbarui)
+    // Mulai pembaruan data vital segera!
     startVitalUpdates(); 
 
     if (elements.engineIcon) {
@@ -472,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Nyalakan mesin setelah 2 detik untuk memulai startSimulation (Speed, RPM, Gear)
+    // Nyalakan mesin setelah 2 detik untuk memulai startSimulation
     setTimeout(() => {
         setEngine(true);
     }, 2000);
