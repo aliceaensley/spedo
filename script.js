@@ -1,10 +1,11 @@
 let elements = {};
 let speedMode = 1; 
 
-// ... (Semua fungsi set tetap sama) ...
+// ... (Semua fungsi set dan toggleActive tetap sama) ...
 
 /**
  * Toggles the visibility and "expand up" animation of the Head Unit/Tablet UI.
+ * SPEEDOMETER TIDAK disembunyikan.
  */
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
@@ -19,34 +20,35 @@ function toggleHeadUnit(state) {
         tablet.classList.remove('hidden');
         footerTrigger.style.display = 'none'; // Sembunyikan trigger
 
-        // Timeout 10ms untuk memastikan browser merender elemen sebelum menerapkan transisi
+        // Timeout 10ms untuk memicu transisi setelah elemen dirender
         setTimeout(() => {
             tablet.classList.add('active'); 
         }, 10);
         
-        console.log(`[HEAD UNIT] Status: OPENED (Menu mengembang ke atas)`);
+        console.log(`[HEAD UNIT] Status: OPENED (Speedometer terlihat)`);
     } else {
         // CLOSE Tablet: Hilangkan active untuk memicu animasi kembali (turun & mengecil)
         tablet.classList.remove('active'); 
         
-        // Sembunyikan sepenuhnya (tambahkan class hidden) setelah animasi selesai (0.5s)
+        // Sembunyikan sepenuhnya setelah animasi selesai (0.5s)
         const transitionDuration = 500; 
         setTimeout(() => {
             tablet.classList.add('hidden'); 
             footerTrigger.style.display = 'block'; // Tampilkan trigger footer lagi
         }, transitionDuration); 
         
-        console.log(`[HEAD UNIT] Status: CLOSED (Menu mengecil)`);
+        console.log(`[HEAD UNIT] Status: CLOSED`);
     }
 }
 
-// ... (Semua fungsi updateTimeWIB dan event listener di DOMContentLoaded) ...
+// ... (Semua fungsi set dan updateTimeWIB tetap sama) ...
 
+// Wait for the DOM to be fully loaded and map elements
 document.addEventListener('DOMContentLoaded', () => {
     elements = {
         // UI Containers
-        speedometerUI: document.getElementById('speedometer-ui'),
-        headunitFooter: document.getElementById('headunit-footer'), 
+        speedometerUI: document.getElementById('speedometer-ui'), // SPEEDOMETER UTAMA
+        headunitFooter: document.getElementById('headunit-footer'), // TRIGGER TENGAH
         tabletUI: document.getElementById('tablet-ui'),
         
         // Visible Elements (Speedometer)
@@ -84,5 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial setup and example values 
-    // ... (Initial setup tetap sama) ...
+    // Untuk memastikan speedometer terlihat dan berfungsi saat pertama kali dimuat
+    // setSpeedMode, setEngine, setSpeed, dll. harus dipanggil di sini.
 });
