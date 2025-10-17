@@ -9,8 +9,6 @@ const toggleActive = (element, state) => {
         element.forEach(el => toggleActive(el, state));
         return;
     }
-    
-    // Perkuat: Pastikan elemen ada sebelum diakses
     if (element) {
         if (state) {
             element.classList.add('active');
@@ -158,13 +156,30 @@ function startSimulation() {
 }
 
 
-// --- FUNGSI HEAD UNIT (Perkuat: Pastikan elemen ada) ---
+// --- LOGIC BARU: KONTROL TAMPILAN HEAD UNIT ---
+
+function showAppGrid() {
+    if (elements.appGrid) elements.appGrid.classList.remove('hidden');
+    if (elements.iframeView) elements.iframeView.classList.add('hidden');
+    
+    // Bersihkan iFrame saat kembali ke menu aplikasi
+    if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; 
+}
+
+function showBrowser(url) {
+    if (elements.appGrid) elements.appGrid.classList.add('hidden');
+    if (elements.iframeView) elements.iframeView.classList.remove('hidden');
+    if (elements.browserIframe) elements.browserIframe.src = url; 
+}
+
+
+// --- FUNGSI HEAD UNIT ---
 
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
     const footerTrigger = elements.headunitFooter;
     
-    if (!tablet) return; // Keluar jika tablet tidak ada
+    if (!tablet) return;
 
     if (state === undefined) {
         state = tablet.classList.contains('hidden');
@@ -173,6 +188,9 @@ function toggleHeadUnit(state) {
     if (state) {
         tablet.classList.remove('hidden');
         if (footerTrigger) footerTrigger.style.display = 'none'; 
+        
+        // Selalu mulai dari App Grid saat menu dibuka
+        showAppGrid(); 
 
         setTimeout(() => {
             tablet.classList.add('active'); 
@@ -185,12 +203,14 @@ function toggleHeadUnit(state) {
         setTimeout(() => {
             tablet.classList.add('hidden'); 
             if (footerTrigger) footerTrigger.style.display = 'block'; 
+            // Bersihkan iFrame saat headunit ditutup
+            showAppGrid(); 
         }, transitionDuration); 
     }
 }
 
 
-// --- INISIALISASI DAN EVENT LISTENERS (DIPERKUAT) ---
+// --- INISIALISASI DAN EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
@@ -214,7 +234,12 @@ document.addEventListener('DOMContentLoaded', () => {
         headunitTimeWIB: document.getElementById('headunit-time-wib'), 
         closeTablet: document.getElementById('close-tablet'),
         
-        browserApp: document.getElementById('browser-app') // ID Aplikasi Browser
+        // Elemen Head Unit Internal
+        appGrid: document.getElementById('app-grid'),
+        iframeView: document.getElementById('iframe-view'),
+        browserApp: document.getElementById('browser-app'),
+        browserIframe: document.getElementById('browser-iframe'),
+        backToApps: document.getElementById('back-to-apps')
     };
     
     // 2. SETUP CLOCK WIB
@@ -240,16 +265,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 4. LOGIC PERBAIKAN FINAL: BROWSER APP (membuka link dan menutup Head Unit setelah jeda)
+    // 4. LOGIC INTI: KLIK BROWSER & KEMBALI
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
-            // 1. Aksi utama: Buka link
-            window.open('https://nekopoi.care/', '_blank'); 
-            
-            // 2. Aksi penutup: Diberi jeda 500ms
-            setTimeout(() => {
-                 toggleHeadUnit(false); 
-            }, 500); // Menu Head Unit akan ditutup setelah 0.5 detik.
+            // Mengganti tampilan Head Unit dengan iFrame yang memuat link
+            showBrowser('https://nekopoi.care/'); 
+        });
+    }
+    
+    if (elements.backToApps) {
+        elements.backToApps.addEventListener('click', () => {
+            // Kembali ke tampilan App Grid
+            showAppGrid(); 
         });
     }
 
@@ -268,7 +295,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Memulai simulasi mesin ON
     setTimeout(() => {
         setEngine(true);
     }, 2000);
