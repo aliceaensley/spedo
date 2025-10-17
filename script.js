@@ -1,19 +1,19 @@
 let elements = {};
 let speedMode = 1; 
-let engineState = true; 
-let headlightsState = 1; 
-let seatbeltState = true; 
+let engineState = true; // STATIS: Mesin ON
+let headlightsState = 1; // STATIS: Lampu ON
+let seatbeltState = true; // STATIS: Seatbelt ON
 let simulationInterval = null; 
 let activeMediaInHeadUnit = null; 
-let isYoutubeHidden = false; 
+let isYoutubeHidden = false; // Status apakah YouTube sedang berjalan di background (disembunyikan)
 
 // *****************************************************************
-// ⚠️ PENTING: API KEY YOUTUBE
+// ⚠️ PENTING: GANTI DENGAN API KEY YOUTUBE ANDA YANG VALID
 // *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
 // *****************************************************************
 
-// --- FUNGSI UTILITY & TOGGLE (TIDAK BERUBAH) ---
+// --- FUNGSI UTILITY & TOGGLE ---
 const toggleActive = (element, state) => {
     if (Array.isArray(element)) {
         element.forEach(el => toggleActive(el, state));
@@ -28,7 +28,7 @@ const toggleActive = (element, state) => {
     }
 };
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER (STATIS) ---
+// --- FUNGSI PEMBARUAN DATA SPEEDOMETER (STATIS/AWAL) ---
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -42,8 +42,9 @@ function setSpeedMode(mode) {
 }
 
 function setSpeed(speed) {
+    // Simulasi data
     const speedValue = String(Math.round(speed * 3.6)).padStart(3, '0');
-    if (elements.speed) elements.speed.innerText = displayValue;
+    if (elements.speed) elements.speed.innerText = speedValue;
 }
 
 function setRPM(rpm) {
@@ -66,7 +67,7 @@ function setGear(gear) {
     if (elements.gear) elements.gear.innerText = gearText;
 }
 
-// *** INDIKATOR: TETAP MENYALA DAN STATIS ***
+// *** INDIKATOR: Fungsi hanya mengontrol tampilan sesuai status statis di atas ***
 function setHeadlights(state) {
     headlightsState = state;
     toggleActive(elements.headlightsIcon, state > 0);
@@ -82,7 +83,7 @@ function setSeatbelts(state) {
     toggleActive(elements.seatbeltIcon, state); 
 }
 
-// --- FUNGSI JAM WIB (Dipertahankan untuk Head Unit saja) ---
+// --- FUNGSI JAM WIB (Hanya untuk Head Unit) ---
 function updateTimeWIB() {
     const now = new Date();
     const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' };
@@ -94,22 +95,14 @@ function updateTimeWIB() {
         timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     }
     
-    // Hapus pembaruan elemen.timeWIB agar bisa digantikan tombol
-    // if (elements.timeWIB) {
-    //     elements.timeWIB.innerText = timeString;
-    // } 
-    
     if (elements.headunitTimeWIB) {
         elements.headunitTimeWIB.innerText = timeString;
     }
 }
 // ---------------------------------------------------------------------
 
-// --- FUNGSI KONTROL SIMULASI (DINONAKTIFKAN TOTAL) ---
-function stopSimulation() {}
-function startSimulation() {}
 
-// --- FUNGSI YOUTUBE API (Perubahan URL Embed) ---
+// --- FUNGSI YOUTUBE API ---
 
 function toggleYoutubeSearchUI(show) {
     if (elements.youtubeSearchUI) {
@@ -124,7 +117,7 @@ function toggleYoutubeSearchUI(show) {
 }
 
 async function searchYoutube(query) {
-    if (!query || YOUTUBE_API_KEY === 'GANTI_DENGAN_API_KEY_ANDA_DI_SINI') {
+    if (!query || YOUTUBE_API_KEY === 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs') {
         alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
         return;
     }
@@ -158,18 +151,14 @@ async function searchYoutube(query) {
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
                 resultItem.addEventListener('click', () => {
+                    // PERBAIKAN URL ABSOLUT UNTUK MENGHINDARI 404
                     const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&enablejsapi=1&modestbranding=1`; 
                     showBrowser(embedUrl, 'youtube'); 
                     elements.youtubeResults.classList.add('hidden'); 
                     
-                    // Sembunyikan tombol Show/Hide di Head Unit dulu, kontrol ada di hideYoutube/showYoutube
-                    elements.youtubeHideShowWrapper.classList.add('hidden'); 
-
                     isYoutubeHidden = false; 
-                    
-                    // Sembunyikan tombol Hide/Show utama di speedometer di awal
-                    elements.speedometerYoutubeToggle.classList.add('hidden');
-                    
+                    // Pastikan tombol di speedometer tersembunyi saat YouTube dibuka
+                    elements.speedometerYoutubeToggle.classList.add('hidden'); 
                 });
 
                 elements.youtubeResults.appendChild(resultItem);
@@ -207,10 +196,9 @@ function showAppGrid() {
     
     // Logika pengosongan iframe hanya jika bukan YouTube yang sedang tersembunyi
     if (activeMediaInHeadUnit === 'youtube' && isYoutubeHidden) {
-        // Biarkan iframe YouTube tetap di DOM dan SRC-nya tidak diubah
+        // YouTube berjalan di background, tidak perlu diapa-apakan
     } else {
-         // Kosongkan iframe dan sembunyikan tombol di speedometer
-         elements.speedometerYoutubeToggle.classList.add('hidden');
+         elements.speedometerYoutubeToggle.classList.add('hidden'); 
          iframe.src = 'about:blank'; 
          activeMediaInHeadUnit = null;
     }
@@ -232,8 +220,6 @@ function showBrowser(url, mediaType = 'browser') {
     }
 }
 
-// --- FUNGSI HEAD UNIT (LOGIKA CLOSE MENU) ---
-
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
     const footerTrigger = elements.headunitFooter;
@@ -250,19 +236,17 @@ function toggleHeadUnit(state) {
         tablet.classList.remove('hidden');
         if (footerTrigger) footerTrigger.style.display = 'none'; 
         
-        // Cek status terakhir
         if (activeMediaInHeadUnit === 'youtube' && isYoutubeHidden) {
              // YouTube sedang hidden, tampilkan App Grid
              if (elements.appGrid) elements.appGrid.classList.remove('hidden');
              if (elements.iframeView) elements.iframeView.classList.add('hidden');
-             // Tombol Show/Hide di speedometer sudah aktif
              
         } else if (iframe.src !== 'about:blank' && iframe.src !== '') {
              // Ada konten aktif (YouTube/Browser), tampilkan iframe view
              if (elements.appGrid) elements.appGrid.classList.add('hidden');
              if (elements.iframeView) elements.iframeView.classList.remove('hidden');
              
-             // Jika YouTube sedang aktif, pastikan tombol utama disembunyikan
+             // Jika YouTube aktif, sembunyikan tombol di speedometer
              if (activeMediaInHeadUnit === 'youtube') elements.speedometerYoutubeToggle.classList.add('hidden');
              
              isYoutubeHidden = false;
@@ -279,19 +263,17 @@ function toggleHeadUnit(state) {
     } else {
         // --- KONDISI: HEAD UNIT DITUTUP (BACKGROUND PLAYBACK) ---
         
-        // Jika YouTube sedang diputar (baik terlihat/hidden), biarkan statusnya.
         if (activeMediaInHeadUnit === 'youtube') {
-            // Jika belum di-hide saat menutup, anggap saja langsung di-hide
+            // Jika YouTube aktif, sembunyikan view dan munculkan tombol di speedometer
             if (!isYoutubeHidden) hideYoutubeToSpeedometer();
             
         } else if (iframe.src !== 'about:blank') {
-            // Jika konten lain aktif, kosongkan
+            // Jika konten lain aktif, kosongkan dan sembunyikan tombol
             iframe.src = 'about:blank';
             elements.speedometerYoutubeToggle.classList.add('hidden');
             activeMediaInHeadUnit = null;
         } 
         
-        // Animasi penutupan
         tablet.classList.remove('active'); 
         
         const transitionDuration = 500; 
@@ -303,58 +285,53 @@ function toggleHeadUnit(state) {
     }
 }
 
-// --- FUNGSI BARU: HIDE/SHOW YOUTUBE DARI HEAD UNIT ---
+// --- FUNGSI HIDE/SHOW DARI HEAD UNIT ---
 
 function hideYoutubeFromHeadUnit() {
     if (activeMediaInHeadUnit === 'youtube') {
-        if (elements.iframeView) elements.iframeView.classList.add('hidden'); // Sembunyikan iframe view
-        if (elements.appGrid) elements.appGrid.classList.remove('hidden'); // Tampilkan App Grid
+        if (elements.iframeView) elements.iframeView.classList.add('hidden'); 
+        if (elements.appGrid) elements.appGrid.classList.remove('hidden'); 
         
-        // Tampilkan tombol di speedometer
+        // Munculkan tombol di speedometer
         elements.speedometerYoutubeToggle.classList.remove('hidden');
         elements.speedometerYoutubeToggle.innerText = 'SHOW YOUTUBE';
         
-        isYoutubeHidden = true; // Set status tersembunyi
+        isYoutubeHidden = true; 
     }
 }
 
-// --- FUNGSI BARU: HIDE YOUTUBE SAAT CLOSE MENU ---
 function hideYoutubeToSpeedometer() {
     if (activeMediaInHeadUnit === 'youtube') {
         if (elements.iframeView) elements.iframeView.classList.add('hidden');
         
-        // Tampilkan tombol di speedometer
+        // Munculkan tombol di speedometer
         elements.speedometerYoutubeToggle.classList.remove('hidden');
         elements.speedometerYoutubeToggle.innerText = 'SHOW YOUTUBE';
         
-        isYoutubeHidden = true; // Set status tersembunyi
+        isYoutubeHidden = true; 
     }
 }
 
-
-// --- FUNGSI BARU: HIDE/SHOW YOUTUBE DARI SPEEDOMETER ---
+// --- FUNGSI TOMBOL TOGGLE SPEEDOMETER ---
 function toggleYoutubeFromSpeedometer() {
-    const tablet = elements.tabletUI;
-    if (!tablet || tablet.classList.contains('active')) return; // Jangan berinteraksi saat head unit aktif
-    
     if (activeMediaInHeadUnit === 'youtube') {
         if (isYoutubeHidden) {
-            // Tampilkan YouTube (Buka Head Unit ke tampilan YouTube)
-            elements.speedometerYoutubeToggle.innerText = 'HIDE YOUTUBE';
-            
-            // Buka Head Unit ke tampilan YouTube
+            // Jika tersembunyi, Tampilkan (Buka HU ke tampilan YouTube)
             toggleHeadUnit(true); 
-            
             isYoutubeHidden = false;
-            
         } else {
-            // Sembunyikan YouTube (Tutup Head Unit, biarkan YouTube di background)
-            elements.speedometerYoutubeToggle.innerText = 'SHOW YOUTUBE';
+            // Jika terlihat (hanya bisa terjadi saat HU terbuka), Sembunyikan (Tutup HU)
+            // Namun, karena kita hanya ingin tombol berfungsi saat HU tertutup, logika ini harus diperbaiki.
+            // Paling aman: jika tombol diklik, hanya buka/tutup HU, dan biarkan fungsi toggleHeadUnit yang menangani status isYoutubeHidden.
             
-            // Tutup Head Unit
-            toggleHeadUnit(false); 
-            
-            isYoutubeHidden = true;
+            // Logika Sederhana: Klik tombol selalu membuka HU jika hidden, atau tutup HU jika terlihat.
+            if (elements.tabletUI.classList.contains('active')) {
+                // Head Unit aktif (YouTube terlihat), tutup HU
+                toggleHeadUnit(false); 
+            } else {
+                // Head Unit tidak aktif (YouTube tersembunyi), buka HU
+                toggleHeadUnit(true);
+            }
         }
     }
 }
@@ -363,7 +340,7 @@ function toggleYoutubeFromSpeedometer() {
 // --- INISIALISASI DAN EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pemetaan Elemen (PERUBAHAN: Mengganti timeWIB dengan tombol speedometer)
+    // 1. Pemetaan Elemen
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
         headunitFooter: document.getElementById('headunit-footer'), 
@@ -373,7 +350,10 @@ document.addEventListener('DOMContentLoaded', () => {
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
-        timeWIB: document.getElementById('time-wib'), // Ini sekarang adalah tombol Show/Hide
+        
+        // PENTING: timeWIB sekarang adalah tombol toggle
+        speedometerYoutubeToggle: document.getElementById('time-wib'), 
+        
         gear: document.getElementById('gear'),
         speedMode: document.getElementById('speed-mode'),
 
@@ -393,9 +373,6 @@ document.addEventListener('DOMContentLoaded', () => {
         browserIframe: document.getElementById('browser-iframe'),
         backToApps: document.getElementById('back-to-apps'),
         
-        // Elemen BARU untuk Show/Hide di Speedometer
-        speedometerYoutubeToggle: document.getElementById('time-wib'), // Menggunakan ID time-wib
-        
         // Elemen BARU untuk YouTube Search
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
         youtubeSearchInput: document.getElementById('youtube-search-input'),
@@ -407,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimeWIB();
     setInterval(updateTimeWIB, 60000); 
     
-    // 3. SETUP INTERAKSI CLICK (Head Unit & Close)
+    // 3. SETUP INTERAKSI CLICK
     if (elements.headunitFooter) {
         elements.headunitFooter.addEventListener('click', () => {
             toggleHeadUnit(true); 
@@ -426,15 +403,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // *** LISTENERS BARU UNTUK TOMBOL SPEEDOMETER ***
+    // *** LISTENERS TOMBOL SPEEDOMETER ***
     if (elements.speedometerYoutubeToggle) {
          elements.speedometerYoutubeToggle.addEventListener('click', toggleYoutubeFromSpeedometer);
-         // Sembunyikan di awal
          elements.speedometerYoutubeToggle.classList.add('hidden'); 
     }
 
     // 4. LOGIC KLIK APLIKASI
-    
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
             toggleYoutubeSearchUI(false); 
@@ -451,7 +426,6 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleYoutubeSearchUI(true); 
             elements.youtubeResults.innerHTML = '';
             
-            // Logika sederhana: jika ada konten non-YouTube, kosongkan
             if (activeMediaInHeadUnit !== 'youtube' && elements.browserIframe.src !== 'about:blank') {
                  elements.browserIframe.src = 'about:blank';
             }
@@ -460,23 +434,21 @@ document.addEventListener('DOMContentLoaded', () => {
             activeMediaInHeadUnit = 'youtube'; 
             isYoutubeHidden = false; 
             
-            // Pastikan tombol di speedometer tersembunyi saat YouTube dibuka di head unit
             elements.speedometerYoutubeToggle.classList.add('hidden');
         });
     }
 
     if (elements.backToApps) {
         elements.backToApps.addEventListener('click', () => {
-            // Jika YouTube aktif, ini akan menyembunyikan view, kalau tidak, akan mengosongkan iframe.
             if (activeMediaInHeadUnit === 'youtube') {
-                 hideYoutubeFromHeadUnit(); // Menyembunyikan dan menampilkan tombol di speedometer
+                 hideYoutubeFromHeadUnit(); 
             } else {
                  showAppGrid(); 
             }
         });
     }
     
-    // LOGIC INTERAKSI PENCARIAN YOUTUBE (Sama)
+    // LOGIC INTERAKSI PENCARIAN YOUTUBE
     const handleSearch = () => {
         const query = elements.youtubeSearchInput.value;
         if (query.trim() !== '') {
@@ -510,6 +482,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setHeadlights(1); 
     setSeatbelts(true); 
     
-    // Set teks default untuk tombol speedometer (jika terlihat)
     if (elements.speedometerYoutubeToggle) elements.speedometerYoutubeToggle.innerText = 'SHOW YOUTUBE';
 });
