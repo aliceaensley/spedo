@@ -2,46 +2,59 @@ let elements = {};
 let speedMode = 0; // 0: KMH, 1: MPH, 2: Knots
 let indicators = 0;
 
-function onOrOff(state) { return state ? 'On' : 'Off'; }
+// helper
+const onOrOff = state => state ? 'On' : 'Off';
 
+// Engine
 function setEngine(state) { elements.engine.innerText = onOrOff(state); }
 
-function setSpeed(speed) {
+// Speed
+function setSpeed(speed){
     let val;
-    switch(speedMode) {
+    switch(speedMode){
         case 1: val = Math.round(speed * 2.236936) + ' MPH'; break;
         case 2: val = Math.round(speed * 1.943844) + ' Knots'; break;
         default: val = Math.round(speed * 3.6) + ' KMH';
     }
-    elements.speed.innerText = val;
-    elements.speedDisplay.textContent = val;
+    elements.speed.innerText = val;       // panel
+    elements.speedDisplay.textContent = val; // dial
 }
 
-function setRPM(rpm) {
+// RPM
+function setRPM(rpm){
     let val = Math.round(rpm * 8000) + ' RPM';
-    elements.rpm.innerText = val;
-    elements.rpmDisplay.textContent = val;
+    elements.rpm.innerText = val;       // panel
+    elements.rpmDisplay.textContent = val; // dial
 }
 
-function setFuel(fuel) { elements.fuel.innerText = (fuel*100).toFixed(1)+'%'; }
-function setHealth(health) { elements.health.innerText = (health*100).toFixed(1)+'%'; }
-function setGear(gear) { elements.gear.innerText = gear===0?'N':gear; }
-function setHeadlights(state) { elements.headlights.innerText = state===1?'On':state===2?'High Beam':'Off'; }
+// Fuel & Health
+function setFuel(fuel){ elements.fuel.innerText = (fuel*100).toFixed(1) + '%'; }
+function setHealth(health){ elements.health.innerText = (health*100).toFixed(1) + '%'; }
 
+// Gear
+function setGear(gear){ elements.gear.innerText = gear===0?'N':gear; }
+
+// Headlights
+function setHeadlights(state){ 
+    elements.headlights.innerText = state===1?'On':state===2?'High Beam':'Off'; 
+}
+
+// Indicators
 function setLeftIndicator(state){
-    indicators=(indicators&0b10)|(state?0b01:0);
+    indicators = (indicators & 0b10) | (state?0b01:0);
     elements.indicators.innerText = `${indicators&0b01?'On':'Off'} / ${indicators&0b10?'On':'Off'}`;
 }
-
 function setRightIndicator(state){
-    indicators=(indicators&0b01)|(state?0b10:0);
+    indicators = (indicators & 0b01) | (state?0b10:0);
     elements.indicators.innerText = `${indicators&0b01?'On':'Off'} / ${indicators&0b10?'On':'Off'}`;
 }
 
+// Seatbelts
 function setSeatbelts(state){ elements.seatbelts.innerText = onOrOff(state); }
 
+// Speed Mode
 function setSpeedMode(mode){
-    speedMode=mode;
+    speedMode = mode;
     elements.speedMode.innerText = mode===1?'MPH':mode===2?'Knots':'KMH';
 }
 
