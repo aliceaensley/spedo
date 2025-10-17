@@ -1,43 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Speedometer Circular HUD</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speedometer HUD</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="hud-container">
-    <!-- Speedometer -->
-    <section class="meter-section">
-        <canvas id="speedometerCanvas" width="110" height="110"></canvas>
-    </section>
-
-    <!-- RPM -->
-    <section class="meter-section">
-        <canvas id="rpmCanvas" width="110" height="110"></canvas>
-    </section>
-
-    <!-- Status -->
-    <section class="status-section">
-        <div class="status-bar">
-            <canvas id="fuelCanvas" width="50" height="50"></canvas>
-            <div id="fuel" class="meter-label">100%</div>
-        </div>
-        <div class="status-bar">
-            <canvas id="healthCanvas" width="50" height="50"></canvas>
-            <div id="health" class="meter-label">100%</div>
-        </div>
-        <div class="gear-display">
-            <div id="gear" class="meter-label">N</div>
-            <div>Gear</div>
-        </div>
-        <div class="engine-display">
-            <div id="engine" class="meter-label">Off</div>
-            <div>Engine</div>
-        </div>
-    </section>
-</main>
-<script src="script.js"></script>
+  <div class="hud">
+    <canvas id="speedometer" width="180" height="180"></canvas>
+    <canvas id="rpm" width="180" height="180"></canvas>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
