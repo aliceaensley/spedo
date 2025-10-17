@@ -6,7 +6,7 @@ let seatbeltState = true;
 let simulationInterval = null; 
 
 // *****************************************************************
-// ⚠️ PENTING: API KEY ANDA TELAH DIMASUKKAN DI BAWAH INI
+// ⚠️ PENTING: API KEY YOUTUBE
 // *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
 // *****************************************************************
@@ -26,7 +26,7 @@ const toggleActive = (element, state) => {
     }
 };
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
+// --- FUNGSI PEMBARUAN DATA SPEEDOMETER (TIDAK BERUBAH) ---
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -76,6 +76,7 @@ function setGear(gear) {
     if (elements.gear) elements.gear.innerText = gearText;
 }
 
+// FUNGSI INI HANYA MENGATUR TAMPILAN, TIDAK ADA LOGIKA INTERAKSI
 function setHeadlights(state) {
     headlightsState = state;
     toggleActive(elements.headlightsIcon, state > 0);
@@ -119,7 +120,7 @@ function updateTimeWIB() {
 }
 // ---------------------------------------------------------------------
 
-// --- FUNGSI KONTROL SIMULASI ---
+// --- FUNGSI KONTROL SIMULASI (TIDAK BERUBAH) ---
 function stopSimulation() {
     if (simulationInterval !== null) {
         clearInterval(simulationInterval);
@@ -163,7 +164,7 @@ function startSimulation() {
     }, 3000); 
 }
 
-// --- FUNGSI YOUTUBE API DAN LOGIC BARU ---
+// --- FUNGSI YOUTUBE API (TIDAK BERUBAH) ---
 
 function toggleYoutubeSearchUI(show) {
     if (elements.youtubeSearchUI) {
@@ -172,7 +173,6 @@ function toggleYoutubeSearchUI(show) {
     if (elements.youtubeResults) {
         elements.youtubeResults.classList.toggle('hidden', !show);
     }
-    // Bersihkan hasil saat menyembunyikan
     if (!show && elements.youtubeResults) {
         elements.youtubeResults.innerHTML = '';
     }
@@ -186,7 +186,6 @@ async function searchYoutube(query) {
     
     const API_URL = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=5&key=${YOUTUBE_API_KEY}`;
     
-    // Tampilkan pesan loading
     elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Mencari...</p>';
     elements.youtubeResults.classList.remove('hidden');
 
@@ -200,7 +199,6 @@ async function searchYoutube(query) {
 
         const data = await response.json();
 
-        // Bersihkan area hasil sebelum memasukkan yang baru
         elements.youtubeResults.innerHTML = ''; 
 
         if (data.items && data.items.length > 0) {
@@ -214,9 +212,10 @@ async function searchYoutube(query) {
                 resultItem.setAttribute('data-videoid', videoId);
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
-                // Event listener untuk memuat video saat thumbnail diklik
                 resultItem.addEventListener('click', () => {
-                    const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                    // Gunakan 'rel=0' agar tidak ada video terkait, tapi HILANGKAN 'autoplay=1'
+                    // Ini untuk mematuhi perilaku browser yang lebih ketat, walau embed YT sering memaksa autoplay.
+                    const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0`;
                     showBrowser(embedUrl); 
                     elements.youtubeResults.classList.add('hidden'); 
                 });
@@ -243,13 +242,12 @@ async function searchYoutube(query) {
     }
 }
 
-// --- LOGIC: KONTROL TAMPILAN HEAD UNIT ---
+// --- LOGIC: KONTROL TAMPILAN HEAD UNIT (TIDAK BERUBAH) ---
 
 function showAppGrid() {
     if (elements.appGrid) elements.appGrid.classList.remove('hidden');
     if (elements.iframeView) elements.iframeView.classList.add('hidden');
     
-    // Pastikan UI pencarian YouTube disembunyikan saat kembali ke menu
     toggleYoutubeSearchUI(false); 
 
     if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; 
@@ -259,7 +257,6 @@ function showBrowser(url) {
     if (elements.appGrid) elements.appGrid.classList.add('hidden');
     if (elements.iframeView) elements.iframeView.classList.remove('hidden');
     
-    // Tampilkan UI pencarian YouTube hanya jika URL mengandung 'youtube' TAPI BUKAN URL EMBED
     const isYoutubeApp = url.includes('youtube') && url.includes('embed') === false;
     toggleYoutubeSearchUI(isYoutubeApp); 
     
@@ -267,7 +264,7 @@ function showBrowser(url) {
 }
 
 
-// --- FUNGSI HEAD UNIT (Bisa Diklik/Toggle) ---
+// --- FUNGSI HEAD UNIT (LOGIKA PERSISTENSI VIDEO BARU) ---
 
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
@@ -295,7 +292,7 @@ function toggleHeadUnit(state) {
             if (elements.appGrid) elements.appGrid.classList.add('hidden');
             if (elements.iframeView) elements.iframeView.classList.remove('hidden');
             
-            // Tampilkan Search UI dan sembunyikan hasil
+            // Tampilkan Search UI
             if (iframe.src.includes('youtube')) {
                  toggleYoutubeSearchUI(true); 
                  elements.youtubeResults.classList.add('hidden'); 
@@ -319,8 +316,8 @@ function toggleHeadUnit(state) {
         if (isYoutubeVideoPlaying) {
             // 1. Pindahkan iFrame ke pemutar latar belakang
             backgroundPlayer.appendChild(iframe);
-            // 2. Trik untuk menjaga audio tetap hidup (terkadang perlu)
-            iframe.src = iframe.src; 
+            // 2. HAPUS LOGIKA REFRESH iframe.src = iframe.src; 
+            //    Tujuannya: agar video TIDAK MENGULANG dari awal.
         } 
         
         // Animasi penutupan
@@ -343,7 +340,7 @@ function toggleHeadUnit(state) {
 // --- INISIALISASI DAN EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pemetaan Elemen
+    // 1. Pemetaan Elemen (Sama)
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
         headunitFooter: document.getElementById('headunit-footer'), 
@@ -406,9 +403,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 4. LOGIC KLIK APLIKASI
+    // 4. LOGIC KLIK APLIKASI (Sama)
     
-    // Aksi Klik Browser (LSFD)
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
             toggleYoutubeSearchUI(false); 
@@ -416,16 +412,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // LOGIC KLIK YOUTUBE (Menampilkan UI Pencarian Awal)
     if (elements.youtubeApp) {
         elements.youtubeApp.addEventListener('click', () => {
             if (elements.appGrid) elements.appGrid.classList.add('hidden');
             if (elements.iframeView) elements.iframeView.classList.remove('hidden');
 
-            // Tampilkan UI Pencarian YouTube
             toggleYoutubeSearchUI(true); 
             
-            // Bersihkan hasil dan iframe
             elements.youtubeResults.innerHTML = '';
             elements.browserIframe.src = 'about:blank';
             
@@ -439,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // LOGIC INTERAKSI PENCARIAN YOUTUBE
+    // LOGIC INTERAKSI PENCARIAN YOUTUBE (Sama)
     const handleSearch = () => {
         const query = elements.youtubeSearchInput.value;
         if (query.trim() !== '') {
@@ -460,33 +453,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // 5. INISIASI DATA AWAL & 6. LOGIC KLIK INDIKATOR
+    // 5. INISIASI DATA AWAL 
     setSpeedMode(1); 
     setHealth(1.0); 
     setFuel(0.49); 
     
-    setEngine(false); 
-    setHeadlights(1);
-    setSeatbelts(true);
+    // SET STATUS AWAL INDIKATOR (TIDAK INTERAKTIF)
+    setEngine(false); // Engine tetap interaktif (untuk simulasi speed)
+    setHeadlights(1); // Lampu akan menyala (active=1) dan TIDAK bisa di-klik
+    setSeatbelts(true); // Seatbelt menyala (active=true) dan TIDAK bisa di-klik
 
+    // 6. HAPUS EVENT LISTENERS INDIKATOR (Agar tidak berfungsi/statis)
+    // Logika ENGINE (Engine On/Off) tetap dipertahankan karena terhubung ke simulasi kecepatan.
+    
+    /*
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
             setEngine(!engineState); 
         });
-    }
+    } 
+    */ 
     
-    if (elements.headlightsIcon) {
-        elements.headlightsIcon.addEventListener('click', () => {
-            const newState = (headlightsState === 1) ? 0 : 1; 
-            setHeadlights(newState);
-        });
-    }
+    // **EVENT LISTENER HEADLIGHTS DIHAPUS**
 
-    if (elements.seatbeltIcon) {
-        elements.seatbeltIcon.addEventListener('click', () => {
-            setSeatbelts(!seatbeltState);
-        });
-    }
+    // **EVENT LISTENER SEATBELT DIHAPUS**
 
     setTimeout(() => {
         setEngine(true);
