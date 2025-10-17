@@ -9,29 +9,29 @@ let currentRPM = 0;
 let currentGear = "P";
 let currentFuel = 100;
 
-// ==== DRAW FUNCTION ====
+// === DRAW FUNCTION ===
 function drawMeter(ctx, value, max, color, labels, labelText) {
   const cx = ctx.canvas.width / 2;
   const cy = ctx.canvas.height / 2;
-  const radius = cx - 10;
+  const radius = cx - 8;
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  // Base arc
+  // Background arc
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0.75 * Math.PI, 0.25 * Math.PI, false);
   ctx.strokeStyle = "rgba(0,255,255,0.2)";
-  ctx.lineWidth = 5;
+  ctx.lineWidth = 3;
   ctx.stroke();
 
   // Numbers around
-  ctx.font = "10px Arial";
+  ctx.font = "9px Arial";
   ctx.fillStyle = "cyan";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   for (let i = 0; i < labels.length; i++) {
     const angle = 0.75 * Math.PI + (i / (labels.length - 1)) * (1.5 * Math.PI);
-    const x = cx + Math.cos(angle) * (radius - 12);
-    const y = cy + Math.sin(angle) * (radius - 12);
+    const x = cx + Math.cos(angle) * (radius - 10);
+    const y = cy + Math.sin(angle) * (radius - 10);
     ctx.fillText(labels[i], x, y);
   }
 
@@ -41,21 +41,21 @@ function drawMeter(ctx, value, max, color, labels, labelText) {
   ctx.moveTo(cx, cy);
   ctx.lineTo(cx + radius * Math.cos(needleAngle), cy + radius * Math.sin(needleAngle));
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2.5;
+  ctx.lineWidth = 2;
   ctx.shadowBlur = 8;
   ctx.shadowColor = color;
   ctx.stroke();
 
-  // Center text
+  // Center Text
   ctx.shadowBlur = 0;
   ctx.fillStyle = color;
-  ctx.font = "bold 16px Arial";
-  ctx.fillText(`${labelText}`, cx, cy + 20);
-  ctx.font = "bold 22px Arial";
-  ctx.fillText(`${Math.round(value)}`, cx, cy - 10);
+  ctx.font = "bold 13px Arial";
+  ctx.fillText(`${labelText}`, cx, cy + 15);
+  ctx.font = "bold 18px Arial";
+  ctx.fillText(`${Math.round(value)}`, cx, cy - 5);
 }
 
-// ==== UPDATE LOOP ====
+// === UPDATE LOOP ===
 function updateHUD() {
   const speedLabels = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200];
   const rpmLabels = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -69,7 +69,7 @@ function updateHUD() {
 
 setInterval(updateHUD, 50);
 
-// ==== FUNCTIONS FOR RAGEMODE ====
+// === FUNGSI UNTUK GAME ===
 function setEngine(state) {
   engineOn = state;
   if (!engineOn) {
@@ -94,9 +94,9 @@ function setFuel(fuel) {
   currentFuel = fuel;
 }
 
-// ==== FOR TEST ONLY ====
+// === TEST MODE (hapus di game) ===
 setEngine(true);
 setInterval(() => {
-  currentSpeed = (currentSpeed + 2) % 200;
-  currentRPM = ((currentRPM + 200) % 8000);
-}, 150);
+  currentSpeed = (currentSpeed + 1) % 200;
+  currentRPM = ((currentRPM + 150) % 8000);
+}, 100);
