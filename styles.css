@@ -16,134 +16,143 @@ body {
     color: white;
 }
 
-/* --- Container Utama Speedometer (Disembunyikan saat tablet aktif) --- */
+/* --- Container Utama Speedometer --- */
 .speedometer-container {
     position: fixed;
-    bottom: 45px; 
+    bottom: 15px; /* Dikembalikan ke posisi awal */
     right: 15px;
     width: 320px; 
     
     /* Neon border/background - ORANGE */
-    background: linear-gradient(135deg, #FFA500, #FF4500); 
+    background: linear-gradient(135deg, #FFA500, #FF4500); /* Bright Orange to Orange-Red */
     padding: 3px;
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); /* Neon glow effect (Orange) */
     z-index: 1000; 
 }
 
-/* ... (Styling di dalam speedometer-container tetap sama: .speed-gauge, .speed-header, .info-panels, .info-grid, .bottom-panel, .gear-display, .status-indicators, dll.) ... */
-
-/* --- HEAD UNIT FOOTER BAR (Trigger utama) --- */
-/* --- HEAD UNIT FOOTER BAR --- */
-.headunit-footer {
-    position: fixed;
-    bottom: 15px; 
-    right: 15px;
-    width: 320px;
-    
-    background: linear-gradient(90deg, #FFA500, #FF4500); 
-    color: white;
-    text-align: center;
-    font-size: 10pt;
-    font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
-    cursor: pointer; 
-    z-index: 1000;
-}
-
-.headunit-footer .key-bind {
-    color: black;
-    background-color: white;
-    padding: 2px 4px;
-    border-radius: 3px;
-    margin: 0 2px;
-}
-
-/* --- TABLET UI (Perbaikan Tampilan) --- */
-.tablet-container {
-    position: fixed;
-    /* Posisikan di kanan bawah, di atas footer trigger */
-    bottom: 45px;
-    right: 15px;
-    width: 250px; 
-    
-    /* Perubahan Kunci: Hapus background gradient di sini. Gunakan hanya untuk border */
-    background-color: rgba(0, 0, 0, 0.75); /* Pastikan background UTAMA gelap */
-    padding: 3px; /* Jarak untuk bingkai */
-    border-radius: 15px;
-    
-    /* Gunakan BORDER murni, bukan background + padding */
-    border: 3px solid transparent; 
-    border-image: linear-gradient(135deg, #FFA500, #FF4500) 1; /* Efek neon border */
-    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7);
-    
-    color: white;
-    font-family: 'Digital', Arial, sans-serif;
-    z-index: 2000; 
-}
-
-.tablet-container.hidden {
-    display: none;
-}
-
-.tablet-content {
-    /* Perbaikan Kunci: Jadikan INNER content berwarna orange solid */
-    background: linear-gradient(135deg, #FFA500, #FF4500); /* Isi tablet (sesuai gambar) */
-    padding: 10px 15px;
+.speedometer-container > div {
+    background-color: rgba(0, 0, 0, 0.75); 
     border-radius: 12px;
-    color: black; /* Ubah warna teks menjadi hitam agar kontras dengan latar belakang orange */
 }
 
-.tablet-stat-line {
-    font-size: 11pt;
-    font-weight: bold;
-    color: white; /* Label Putih agar terlihat di latar orange */
-    margin-top: 5px;
-    display: block; /* Memastikan setiap label di baris baru */
-}
-
-.tablet-stat-value {
-    font-size: 14pt;
-    font-weight: 900;
+/* --- Speed Gauge (Bagian Kecepatan Utama) --- */
+.speed-gauge {
+    padding: 10px 15px;
     margin-bottom: 5px;
-    /* Hilangkan indentasi agar menempel di kiri seperti di gambar */
+    text-align: right;
 }
 
-.tablet-icon-status {
+.speed-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14pt;
+    font-weight: bold;
+    color: #FFA500; /* Orange Cerah */
+}
+
+.speed-value-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.speed-value {
+    font-size: 48pt; 
+    font-weight: 900;
+    line-height: 1;
+    color: white;
+    text-shadow: 0 0 10px #FFA500; /* Neon text effect (Orange) */
+}
+
+.speed-gauge-image {
+    width: 60px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24pt; 
+}
+
+/* --- Info Panels (Grid Stats) --- */
+.info-panels {
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: transparent; 
+}
+
+.info-grid {
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    text-align: center;
+}
+
+.stat-item {
+    padding: 5px;
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    border-radius: 8px;
+}
+
+.stat-label {
+    color: #FFA500; /* Orange Cerah */
+    font-size: 9pt;
+}
+
+.stat-value {
+    font-size: 12pt;
+    font-weight: bold;
+    color: white;
+}
+
+/* --- Bottom Panel (Gear, Indicators) --- */
+.bottom-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.gear-display {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.gear-label {
+    color: #FFD700; /* Gold/Kuning untuk Gear Label */
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+.gear-value {
+    font-size: 32pt;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    text-shadow: 0 0 8px #FFD700; /* Neon text effect (Gold) */
+    margin-right: 15px;
+}
+
+.status-indicators {
     display: flex;
     gap: 10px;
-    margin: 10px 0;
-    padding-left: 0; /* Hilangkan padding */
-}
-
-.tablet-indicator-icon {
     font-size: 18pt;
-    opacity: 0.7;
-    color: black; /* Pastikan ikon terlihat di latar orange */
 }
 
-.tablet-indicator-icon.active {
-    opacity: 1;
-    text-shadow: 0 0 5px white; /* Efek glow putih di latar orange */
-}
-
-/* Styling Footer Head Unit di dalam Tablet */
-.tablet-headunit-footer {
-    margin-top: 15px;
-    background-color: black; /* Ubah footer tablet menjadi hitam agar kontras */
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    border-radius: 5px;
+.indicator-icon {
+    opacity: 0.4;
     cursor: pointer;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
-    font-size: 10pt;
 }
 
-.tablet-headunit-footer .key-bind {
-    color: #FFA500; /* Warna Orange */
-    background-color: transparent;
-    padding: 0;
+.indicator-icon.active {
+    opacity: 1;
+    text-shadow: 0 0 5px yellow; 
 }
+
+/* Hidden elements from old code */
+#headlights, #indicators, #seatbelts, #engine, #speed-mode-display {
+    display: none; 
+}
+/* Styling Tablet UI dan Footer telah dihapus */
