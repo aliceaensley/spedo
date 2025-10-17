@@ -4,6 +4,7 @@ let engineState = false;
 let headlightsState = 1; 
 let seatbeltState = true; 
 let simulationInterval = null; 
+let isYoutubeOpen = false; // Status baru untuk toggle YouTube
 
 // *****************************************************************
 // ⚠️ PENTING: API KEY ANDA TELAH DIMASUKKAN DI BAWAH INI
@@ -27,6 +28,7 @@ const toggleActive = (element, state) => {
 };
 
 // --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
+// ... (setSpeedMode, setSpeed, setRPM, setFuel, setHealth, setGear, setHeadlights, setEngine, setSeatbelts tidak berubah)
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -113,14 +115,12 @@ function updateTimeWIB() {
         elements.timeWIB.innerText = timeString;
     }
     
-    // LOGIC WIB DI HEAD UNIT DIKEMBALIKAN
-    if (elements.headunitTimeWIB) {
-        elements.headunitTimeWIB.innerText = timeString;
-    }
+    // HEAD UNIT TELAH DIHAPUS, HEADUNIT TIME WIB JUGA DIHAPUS
 }
 // ---------------------------------------------------------------------
 
 // --- FUNGSI KONTROL SIMULASI ---
+// ... (stopSimulation dan startSimulation tidak berubah)
 function stopSimulation() {
     if (simulationInterval !== null) {
         clearInterval(simulationInterval);
@@ -164,7 +164,7 @@ function startSimulation() {
     }, 3000); 
 }
 
-// --- FUNGSI YOUTUBE API DAN LOGIC BARU ---
+// --- FUNGSI YOUTUBE API BARU (Diadaptasi) ---
 
 function toggleYoutubeSearchUI(show) {
     if (elements.youtubeSearchUI) {
@@ -196,13 +196,10 @@ async function searchYoutube(query) {
         const response = await fetch(API_URL);
         
         if (!response.ok) {
-            // Tangkap status non-200
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
-
-        // Bersihkan area hasil sebelum memasukkan yang baru
         elements.youtubeResults.innerHTML = ''; 
 
         if (data.items && data.items.length > 0) {
@@ -219,16 +216,13 @@ async function searchYoutube(query) {
                 // Event listener untuk memuat video saat thumbnail diklik
                 resultItem.addEventListener('click', () => {
                     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-                    showBrowser(embedUrl); 
-                    // Sembunyikan hasil pencarian (hanya results container yang hidden)
+                    showVideo(embedUrl); 
                     elements.youtubeResults.classList.add('hidden'); 
                 });
 
                 elements.youtubeResults.appendChild(resultItem);
             });
             elements.youtubeResults.classList.remove('hidden');
-            
-            // Scroll ke awal hasil jika ada
             elements.youtubeResults.scrollLeft = 0;
 
         } else {
@@ -247,59 +241,46 @@ async function searchYoutube(query) {
     }
 }
 
-// --- LOGIC: KONTROL TAMPILAN HEAD UNIT ---
 
-function showAppGrid() {
-    if (elements.appGrid) elements.appGrid.classList.remove('hidden');
-    if (elements.iframeView) elements.iframeView.classList.add('hidden');
-    
-    toggleYoutubeSearchUI(false); 
+// --- FUNGSI KONTROL VIDEO (MIRIP showBrowser lama) ---
 
-    if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; 
-}
-
-function showBrowser(url) {
-    if (elements.appGrid) elements.appGrid.classList.add('hidden');
-    if (elements.iframeView) elements.iframeView.classList.remove('hidden');
-    
-    const isYoutubeApp = url.includes('youtube') && url.includes('embed') === false;
-    toggleYoutubeSearchUI(isYoutubeApp); 
-    
-    if (elements.browserIframe) elements.browserIframe.src = url; 
+function showVideo(url) {
+    if (elements.browserIframe) {
+        elements.browserIframe.src = url; 
+    }
 }
 
 
-// --- FUNGSI HEAD UNIT (Bisa Diklik/Toggle) ---
+// --- LOGIC TOGGLE YOUTUBE BARU ---
 
-function toggleHeadUnit(state) {
-    const tablet = elements.tabletUI;
-    const footerTrigger = elements.headunitFooter;
+function toggleYoutubeUI(state) {
+    const speedometer = elements.speedometerUI;
+    const youtubeWrapper = elements.youtubeUIWrapper;
     
-    if (!tablet) return;
-
     if (state === undefined) {
-        state = tablet.classList.contains('hidden');
+        state = !isYoutubeOpen;
     }
 
+    isYoutubeOpen = state;
+    
     if (state) {
-        tablet.classList.remove('hidden');
-        if (footerTrigger) footerTrigger.style.display = 'none'; 
+        speedometer.classList.add('youtube-active');
+        youtubeWrapper.classList.remove('hidden');
+        toggleActive(elements.youtubeToggleIcon, true);
         
-        showAppGrid(); 
-
-        setTimeout(() => {
-            tablet.classList.add('active'); 
-        }, 10);
+        // Pastikan UI pencarian aktif saat dibuka
+        toggleYoutubeSearchUI(true);
+        if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
         
     } else {
-        tablet.classList.remove('active'); 
+        // Mode kembali ke Speedometer murni
+        speedometer.classList.remove('youtube-active');
+        youtubeWrapper.classList.add('hidden');
+        toggleActive(elements.youtubeToggleIcon, false);
         
-        const transitionDuration = 500; 
-        setTimeout(() => {
-            tablet.classList.add('hidden'); 
-            if (footerTrigger) footerTrigger.style.display = 'block'; 
-            showAppGrid(); 
-        }, transitionDuration); 
+        // Hentikan video dan bersihkan iframe
+        if (elements.browserIframe) elements.browserIframe.src = 'about:blank';
+        toggleYoutubeSearchUI(false);
     }
 }
 
@@ -310,8 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
-        headunitFooter: document.getElementById('headunit-footer'), 
-        tabletUI: document.getElementById('tablet-ui'),
+        youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), // BARU
         
         speed: document.getElementById('speed'),
         rpm: document.getElementById('rpm'),
@@ -325,84 +305,28 @@ document.addEventListener('DOMContentLoaded', () => {
         headlightsIcon: document.getElementById('headlights-icon'),
         engineIcon: document.getElementById('engine-icon'), 
         seatbeltIcon: document.getElementById('seatbelt-icon'),
+        youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), // BARU
         
-        // Elemen jam WIB di Head Unit
-        headunitTimeWIB: document.getElementById('headunit-time-wib'), 
-        // headunitHideButton dihapus
-        closeTablet: document.getElementById('close-tablet'),
-        
-        // Elemen Head Unit Internal
-        appGrid: document.getElementById('app-grid'),
-        iframeView: document.getElementById('iframe-view'),
-        browserApp: document.getElementById('browser-app'),
-        youtubeApp: document.getElementById('youtube-app'), 
-        browserIframe: document.getElementById('browser-iframe'),
-        backToApps: document.getElementById('back-to-apps'),
-        
-        // Elemen BARU untuk YouTube Search
+        // Elemen YouTube Internal
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
         youtubeSearchInput: document.getElementById('youtube-search-input'),
         youtubeSearchButton: document.getElementById('youtube-search-button'),
-        youtubeResults: document.getElementById('youtube-results')
+        youtubeResults: document.getElementById('youtube-results'),
+        browserIframe: document.getElementById('browser-iframe'), // Tetap menggunakan ID lama
     };
     
     // 2. SETUP CLOCK WIB
     updateTimeWIB();
     setInterval(updateTimeWIB, 60000); 
     
-    // 3. SETUP INTERAKSI CLICK (Head Unit & Close)
-    if (elements.headunitFooter) {
-        elements.headunitFooter.addEventListener('click', () => {
-            toggleHeadUnit(true); 
+    // 3. SETUP INTERAKSI CLICK YOUTUBE TOGGLE
+    if (elements.youtubeToggleIcon) {
+        elements.youtubeToggleIcon.addEventListener('click', () => {
+            toggleYoutubeUI(); 
         });
     }
     
-    if (elements.closeTablet) {
-        elements.closeTablet.addEventListener('click', () => {
-            toggleHeadUnit(false); 
-        });
-    }
-    
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && elements.tabletUI && !elements.tabletUI.classList.contains('hidden')) {
-            toggleHeadUnit(false);
-        }
-    });
-
-    // 4. LOGIC KLIK APLIKASI
-    
-    // Aksi Klik Browser (LSFD)
-    if (elements.browserApp) {
-        elements.browserApp.addEventListener('click', () => {
-            toggleYoutubeSearchUI(false); 
-            showBrowser('https://lsfd.jg-rp.com/index.php'); 
-        });
-    }
-    
-    // LOGIC KLIK YOUTUBE (Menampilkan UI Pencarian Awal)
-    if (elements.youtubeApp) {
-        elements.youtubeApp.addEventListener('click', () => {
-            if (elements.appGrid) elements.appGrid.classList.add('hidden');
-            if (elements.iframeView) elements.iframeView.classList.remove('hidden');
-
-            // Tampilkan UI Pencarian YouTube
-            toggleYoutubeSearchUI(true); 
-            
-            // Bersihkan hasil dan iframe
-            elements.youtubeResults.innerHTML = '';
-            elements.browserIframe.src = 'about:blank';
-            
-            if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
-        });
-    }
-
-    if (elements.backToApps) {
-        elements.backToApps.addEventListener('click', () => {
-            showAppGrid(); 
-        });
-    }
-    
-    // LOGIC INTERAKSI PENCARIAN YOUTUBE
+    // 4. LOGIC INTERAKSI PENCARIAN YOUTUBE
     const handleSearch = () => {
         const query = elements.youtubeSearchInput.value;
         if (query.trim() !== '') {
@@ -421,9 +345,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
+    // LOGIC ESCAPE UNTUK MENUTUP YOUTUBE
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isYoutubeOpen) {
+            toggleYoutubeUI(false);
+        }
+    });
 
 
-    // 5. INISIASI DATA AWAL & 6. LOGIC KLIK INDIKATOR
+    // 5. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
     setHealth(1.0); 
     setFuel(0.49); 
