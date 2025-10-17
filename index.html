@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern Digital HUD</title>
+<title>Digital Speedometer HUD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="hud">
-  <!-- Digital Panels -->
+  <!-- Speed & RPM Digital Panels -->
   <div class="digital-panels">
     <div class="panel" id="speed-panel">
       <div class="label">SPEED</div>
-      <div class="value"><span id="speed-value">0</span> <span id="speed-unit">KMH</span></div>
+      <div class="value"><span id="speed">0</span> <span id="speed-unit">KMH</span></div>
     </div>
     <div class="panel" id="rpm-panel">
       <div class="label">RPM</div>
-      <div class="value"><span id="rpm-value">0</span> <span id="rpm-unit">RPM</span></div>
+      <div class="value"><span id="rpm">0</span></div>
     </div>
   </div>
 
@@ -24,11 +24,11 @@
   <div class="bars">
     <div class="bar-container">
       <div class="bar-label">Fuel</div>
-      <div class="bar-bg"><div id="fuel-bar" class="bar-fill"></div></div>
+      <div class="bar-bg"><div id="fuel" class="bar-fill"></div></div>
     </div>
     <div class="bar-container">
       <div class="bar-label">Health</div>
-      <div class="bar-bg"><div id="health-bar" class="bar-fill"></div></div>
+      <div class="bar-bg"><div id="health" class="bar-fill"></div></div>
     </div>
   </div>
 
