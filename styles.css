@@ -1,41 +1,210 @@
-body {
-    margin: 0;
-    font-family: 'Orbitron', sans-serif;
-    background: transparent;
-    color: #0ff;
+/* Basic Reset and Font */
+* {
+    user-select: none;
+    user-drag: none;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
-.speedometer {
+@font-face {
+    font-family: 'Digital';
+    /* Ganti dengan font bergaya digital/retro jika ada */
+    /* Contoh: src: url('digital-font.woff') format('woff'); */
+}
+
+body {
+    background-color: transparent !important;
+    font-family: 'Digital', Arial, sans-serif; /* Menggunakan font Digital jika tersedia */
+    color: white;
+}
+
+/* --- Container Utama --- */
+.speedometer-container {
     position: fixed;
     bottom: 15px;
     right: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background: rgba(10,10,30,0.6);
-    padding: 15px 20px;
+    width: 320px; /* Ukuran yang lebih besar untuk menampung semua elemen */
+    
+    /* Neon border/background - Meniru desain gambar */
+    background: linear-gradient(135deg, #FF69B4, #DA70D6); /* Pink to Orchid/Purple */
+    padding: 3px; /* Untuk menciptakan efek bingkai */
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.7); /* Neon glow effect */
+}
+
+.speedometer-container > div {
+    background-color: rgba(0, 0, 0, 0.75); /* Background dalam yang lebih gelap */
     border-radius: 12px;
-    box-shadow: 0 0 12px #0ff;
-    min-width: 180px;
 }
 
-.speed-display #speed {
-    font-size: 36px;
+/* --- Speed Gauge (Bagian Kecepatan Utama) --- */
+.speed-gauge {
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    text-align: right;
+}
+
+.speed-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14pt;
     font-weight: bold;
-    text-align: center;
-    color: #0ff;
-    text-shadow: 0 0 6px #0ff;
+    color: #FF69B4; /* Pink */
 }
 
-.rpm-display {
+.speed-value-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.speed-value {
+    font-size: 48pt; /* Kecepatan besar */
+    font-weight: 900;
+    line-height: 1;
+    color: white;
+    text-shadow: 0 0 10px #FF69B4; /* Neon text effect */
+}
+
+.speed-gauge-image {
+    width: 60px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24pt; /* Ukuran ikon mobil */
+}
+
+/* --- Info Panels (Radio & Grid Stats) --- */
+.info-panels {
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: transparent; /* Hilangkan background kontainer luar */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 4px;
+    gap: 5px;
 }
 
-#rpm-text {
-    font-size: 14px;
+.info-panel, .info-grid {
+    padding: 10px;
+}
+
+.info-label {
+    font-size: 10pt;
     font-weight: bold;
-    color: #0ff;
+    color: #DA70D6; /* Ungu */
+    margin-bottom: 5px;
+}
+
+/* Radio Panel */
+.radio-panel {
+    text-align: center;
+}
+
+.radio-station {
+    font-size: 14pt;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 5px #DA70D6;
+}
+
+.radio-controls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.control-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #8A2BE2; /* Biru Ungu */
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+.control-dot.active {
+    background-color: #FF69B4;
+    opacity: 1;
+    box-shadow: 0 0 5px #FF69B4;
+}
+
+.radio-extra-text {
+    font-size: 8pt;
+    color: #8A2BE2;
+}
+
+/* Stats Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    text-align: center;
+}
+
+.stat-item {
+    padding: 5px;
+    border: 1px solid rgba(255, 105, 180, 0.3);
+    border-radius: 8px;
+}
+
+.stat-label {
+    font-size: 9pt;
+    color: #FF69B4;
+}
+
+.stat-value {
+    font-size: 12pt;
+    font-weight: bold;
+    color: white;
+}
+
+/* --- Bottom Panel (Gear, Indicators) --- */
+.bottom-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.gear-display {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.gear-label {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #DA70D6;
+}
+
+.gear-value {
+    font-size: 32pt;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    text-shadow: 0 0 8px #DA70D6;
+    margin-right: 15px;
+}
+
+.status-indicators {
+    display: flex;
+    gap: 10px;
+    font-size: 18pt; /* Ukuran ikon status */
+}
+
+.indicator-icon {
+    /* Atur opacity/warna di JS untuk menunjukkan ON/OFF */
+    opacity: 0.4;
+    cursor: pointer;
+}
+
+.indicator-icon.active {
+    opacity: 1;
+    text-shadow: 0 0 5px yellow; /* Efek menyala */
+}
+
+/* Hidden elements from old code */
+#headlights, #indicators, #seatbelts, #engine, #speed-mode-display {
+    display: none; /* Menyembunyikan elemen lama yang digantikan oleh ikon/struktur baru */
 }
