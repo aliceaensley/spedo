@@ -183,7 +183,7 @@ body {
     display: none !important;
 }
 
-/* --- STYLING BARU UNTUK YOUTUBE SEARCH --- */
+/* --- STYLING YOUTUBE SEARCH --- */
 
 .search-bar-container {
     display: flex;
@@ -214,7 +214,7 @@ body {
 /* Area Hasil Pencarian */
 .search-results-container {
     height: 150px; 
-    overflow-x: scroll; /* Scroll horizontal */
+    overflow-x: scroll; 
     overflow-y: hidden;
     display: flex;
     flex-wrap: nowrap; 
@@ -222,6 +222,7 @@ body {
     padding: 10px 15px;
     background-color: #1a1a1a;
     border-bottom: 1px solid #444;
+    cursor: grab;
 }
 
 .search-result-item {
@@ -244,4 +245,15 @@ body {
     height: 30px; 
     overflow: hidden; 
     text-overflow: ellipsis; 
+}
+
+/* --- STYLING BARU UNTUK BACKGROUND PLAYER --- */
+.background-player {
+    position: fixed;
+    top: -1000px; /* Pindahkan jauh di luar layar */
+    left: -1000px;
+    width: 1px; /* Ukuran sangat kecil */
+    height: 1px;
+    overflow: hidden;
+    z-index: 1; /* Di bawah semua UI lain */
 }
