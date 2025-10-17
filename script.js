@@ -3,9 +3,8 @@ const rpmCanvas = document.getElementById("rpmMeter");
 const speedCtx = speedCanvas.getContext("2d");
 const rpmCtx = rpmCanvas.getContext("2d");
 
-// --- State ---
 let engineOn = false;
-let speedMode = 0; // 0=KMH,1=MPH
+let speedMode = 0;
 let currentSpeed = 0;
 let displayedSpeed = 0;
 let currentRPM = 0;
@@ -15,9 +14,8 @@ let currentFuel = 1;
 let currentHealth = 1;
 let headlightsState = 0;
 let seatbeltsState = false;
-let indicatorsState = 0; // bitmask L/R
+let indicatorsState = 0;
 
-// --- Draw circular gauge ---
 function drawGauge(ctx, value, max, color1, color2, labels, unit, healthPercent=null){
   const cx = ctx.canvas.width/2;
   const cy = ctx.canvas.height/2;
@@ -27,32 +25,29 @@ function drawGauge(ctx, value, max, color1, color2, labels, unit, healthPercent=
   // Background arc
   ctx.beginPath();
   ctx.arc(cx,cy,radius,0.75*Math.PI,0.25*Math.PI,false);
-  ctx.strokeStyle = "rgba(255,0,0,0.2)";
+  ctx.strokeStyle = "#444";
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  // Health ring only for speedometer
+  // Health ring (speedometer only)
   if(healthPercent!==null){
     ctx.beginPath();
     const endAngle = 0.75*Math.PI + (healthPercent/100)*1.5*Math.PI;
     ctx.arc(cx,cy,radius-5,0.75*Math.PI,endAngle,false);
-    ctx.strokeStyle = "red";
+    ctx.strokeStyle = "#f00";
     ctx.lineWidth = 4;
-    ctx.shadowBlur = 6;
-    ctx.shadowColor = "red";
     ctx.stroke();
-    ctx.shadowBlur = 0;
   }
 
   // Numbers
-  ctx.font = "10px Arial";
+  ctx.font = "9px Helvetica";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   for(let i=0;i<labels.length;i++){
     const angle = 0.75*Math.PI + (i/(labels.length-1))*1.5*Math.PI;
     const x = cx + Math.cos(angle)*(radius-12);
     const y = cy + Math.sin(angle)*(radius-12);
-    ctx.fillStyle = i%2===0 ? color1 : color2;
+    ctx.fillStyle = "#fff";
     ctx.fillText(labels[i],x,y);
   }
 
@@ -63,34 +58,27 @@ function drawGauge(ctx, value, max, color1, color2, labels, unit, healthPercent=
   ctx.moveTo(cx,cy);
   ctx.lineTo(cx + radius*Math.cos(angle), cy + radius*Math.sin(angle));
   ctx.strokeStyle = color1;
-  ctx.lineWidth = 2.5;
-  ctx.shadowBlur = 8;
-  ctx.shadowColor = color1;
+  ctx.lineWidth = 2;
   ctx.stroke();
-  ctx.shadowBlur = 0;
 
   // Center text
-  ctx.fillStyle = color2;
-  ctx.font = "bold 14px Arial";
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 12px Helvetica";
   ctx.fillText(Math.round(value), cx, cy-5);
-  ctx.font = "10px Arial";
+  ctx.font = "9px Helvetica";
   ctx.fillText(unit, cx, cy+12);
 }
 
-// --- Update HUD ---
 function updateHUD(){
   const speedLabels = [0,20,40,60,80,100,120,140,160,180,200];
   const rpmLabels = [0,1000,2000,3000,4000,5000,6000,7000];
 
-  // Smooth animation
   displayedSpeed += (currentSpeed-displayedSpeed)*0.15;
   displayedRPM += (currentRPM-displayedRPM)*0.15;
 
-  // Draw gauges
-  drawGauge(speedCtx, displayedSpeed,200,"red","cyan",speedLabels,"KMH", currentHealth);
-  drawGauge(rpmCtx, displayedRPM,7000,"lime","blue",rpmLabels,"RPM"); // Max RPM 7000
+  drawGauge(speedCtx, displayedSpeed,200,"#0f0","#fff",speedLabels,"KMH", currentHealth);
+  drawGauge(rpmCtx, displayedRPM,7000,"#0ff","#fff",rpmLabels,"RPM");
 
-  // Update info text
   document.getElementById("gear").innerText = currentGear;
   document.getElementById("fuel").innerText = `Fuel: ${(currentFuel*100).toFixed(0)}%`;
   document.getElementById("health").innerText = `Health: ${(currentHealth*100).toFixed(0)}%`;
@@ -107,7 +95,7 @@ updateHUD();
 // --- Functional API ---
 function setEngine(state){ engineOn=state; if(!state){currentSpeed=0;currentRPM=0;} }
 function setSpeed(speed){ if(!engineOn){ currentSpeed=0; return; } currentSpeed = speedMode===1?Math.round(speed*2.236936):Math.round(speed*3.6); }
-function setRPM(rpm){ currentRPM = rpm; } // selalu update RPM
+function setRPM(rpm){ currentRPM = rpm; }
 function setGear(gear){ currentGear = gear; }
 function setFuel(fuel){ currentFuel = fuel; }
 function setHealth(health){ currentHealth = health; }
