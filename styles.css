@@ -1,37 +1,43 @@
 * {
-  user-select: none;
-  user-drag: none;
   box-sizing: border-box;
+  user-select: none;
 }
 
 body {
-  background-color: transparent !important;
+  margin: 0;
   font-family: 'Orbitron', sans-serif;
   font-size: 12px;
+  background: transparent;
   color: #0ff;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 
-main.speedometer {
+.speedometer {
   position: fixed;
   bottom: 15px;
   right: 15px;
-  width: 280px;
   display: flex;
   flex-direction: row;
+  width: 300px;
   gap: 10px;
-  background-color: rgba(0,0,0,0.6);
-  padding: 10px;
+  background: rgba(0,0,0,0.6);
+  padding: 12px;
   border-radius: 12px;
   box-shadow: 0 0 10px #0ff, 0 0 15px #0ff inset;
 }
 
-section.digital-panel {
+.panel {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+}
+
+.panel-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .panel-label {
@@ -51,7 +57,7 @@ section.digital-panel {
 }
 
 .panel-value.digital {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   background: rgba(0,255,255,0.1);
   box-shadow: 0 0 6px #0ff inset, 0 0 10px #0ff;
