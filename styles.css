@@ -8,35 +8,51 @@ body {
   position: fixed;
   right: 20px;
   bottom: 20px;
+  width: 240px;
   background: rgba(0,0,0,0.75);
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 12px;
   color: #0ff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 120px;
+  box-shadow: 0 0 15px rgba(0,255,255,0.3);
 }
 
 #digital-meters {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 8px;
 }
 
-#speed-display, #rpm-display, #gear-display {
-  font-size: 18px;
+#speed-display, #rpm-display {
   font-weight: bold;
+  text-align: center;
+}
+
+#speed-display {
+  font-size: 28px;
+}
+
+#rpm-display {
+  font-size: 24px;
 }
 
 #speed-unit, #rpm-unit {
-  font-size: 10px;
+  font-size: 12px;
   color: #aaa;
 }
 
-#engine-display {
+#info {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   font-size: 12px;
-  margin-top: 5px;
-  text-align: center;
+  gap: 3px;
+}
+
+#info div {
+  display: flex;
+  justify-content: space-between;
 }
