@@ -2,7 +2,7 @@ body {
   margin: 0;
   overflow: hidden;
   background: transparent;
-  font-family: Arial, sans-serif;
+  font-family: 'Helvetica', sans-serif;
 }
 
 #hud {
@@ -10,25 +10,26 @@ body {
   right: 20px;
   bottom: 20px;
   display: flex;
-  gap: 15px;
+  gap: 10px;
   align-items: flex-end;
-  transform: scale(0.85);
+  transform: scale(0.8);
 }
 
 canvas {
-  background: rgba(0,0,0,0.25);
+  background: #111;
   border-radius: 50%;
-  box-shadow: 0 0 12px rgba(255,0,0,0.4), 0 0 8px rgba(0,0,255,0.4);
 }
 
 #info {
   position: absolute;
   bottom: 180px;
   right: 25px;
-  color: cyan;
-  text-shadow: 0 0 6px cyan, 0 0 3px red;
+  color: #fff;
   text-align: right;
   font-size: 12px;
 }
 
-#info div { margin-bottom: 3px; font-weight: bold; }
+#info div {
+  margin-bottom: 2px;
+  font-weight: normal;
+}
