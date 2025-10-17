@@ -1,5 +1,5 @@
 let elements = {};
-let speedMode = 0; // 0 KMH, 1 MPH
+let speedMode = 0;
 let indicators = 0;
 let engineOn = false;
 let currentSpeed = 0;
