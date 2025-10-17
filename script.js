@@ -1,8 +1,8 @@
 let elements = {};
 let speedMode = 1; 
-let engineState = true; 
-let headlightsState = 1; 
-let seatbeltState = true; 
+let engineState = true; // Status default
+let headlightsState = 1; // Status default
+let seatbeltState = true; // Status default
 let simulationInterval = null; 
 let activeMediaInHeadUnit = null; 
 
@@ -65,6 +65,7 @@ function setGear(gear) {
     if (elements.gear) elements.gear.innerText = gearText;
 }
 
+// FUNGSI INI SEKARANG MENGONTROL Ikon Indikator di bagian bawah speedometer
 function setHeadlights(state) {
     headlightsState = state;
     toggleActive(elements.headlightsIcon, state > 0);
@@ -155,7 +156,6 @@ async function searchYoutube(query) {
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
                 resultItem.addEventListener('click', () => {
-                    // PERBAIKAN URL ABSOLUT DENGAN HTTPS://
                     const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&enablejsapi=1&modestbranding=1`; 
                     showBrowser(embedUrl, 'youtube'); 
                     elements.youtubeResults.classList.add('hidden');                     
@@ -186,19 +186,16 @@ async function searchYoutube(query) {
 // --- LOGIC: KONTROL TAMPILAN HEAD UNIT ---
 
 function showAppGrid() {
-    // Tampilkan App Grid, sembunyikan tampilan iframe
     if (elements.appGrid) elements.appGrid.classList.remove('hidden');
     if (elements.iframeView) elements.iframeView.classList.add('hidden');
     
     toggleYoutubeSearchUI(false); 
 
-    // Kosongkan iframe saat kembali ke app grid (Menghentikan YouTube)
     if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; 
     activeMediaInHeadUnit = null;
 }
 
 function showBrowser(url, mediaType = 'browser') {
-    // Tampilkan tampilan iframe, sembunyikan App Grid
     if (elements.appGrid) elements.appGrid.classList.add('hidden');
     if (elements.iframeView) elements.iframeView.classList.remove('hidden');
     
@@ -212,10 +209,10 @@ function showBrowser(url, mediaType = 'browser') {
 
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
-    const footerTrigger = elements.headunitFooter;
+    const interactButton = elements.headunitInteractButton; // Menggunakan tombol baru
     const iframe = elements.browserIframe;
     
-    if (!tablet || !iframe) return;
+    if (!tablet || !iframe || !interactButton) return;
 
     if (state === undefined) {
         state = tablet.classList.contains('hidden');
@@ -224,15 +221,13 @@ function toggleHeadUnit(state) {
     if (state) {
         // --- KONDISI: HEAD UNIT DIBUKA ---
         tablet.classList.remove('hidden');
-        if (footerTrigger) footerTrigger.style.display = 'none'; 
+        if (interactButton) interactButton.style.display = 'none'; // Sembunyikan tombol saat HU terbuka
         
         if (iframe.src !== 'about:blank' && iframe.src !== '') {
-             // Ada konten aktif (YouTube/Browser), tampilkan iframe view
              if (elements.appGrid) elements.appGrid.classList.add('hidden');
              if (elements.iframeView) elements.iframeView.classList.remove('hidden');
              
         } else {
-            // Tidak ada konten, tampilkan App Grid
             showAppGrid(); 
         }
 
@@ -251,7 +246,7 @@ function toggleHeadUnit(state) {
         const transitionDuration = 500; 
         setTimeout(() => {
             tablet.classList.add('hidden'); 
-            if (footerTrigger) footerTrigger.style.display = 'block'; 
+            if (interactButton) interactButton.style.display = 'block'; // Tampilkan tombol kembali
             
         }, transitionDuration); 
     }
@@ -263,7 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
-        headunitFooter: document.getElementById('headunit-footer'), 
+        // Mengubah ID referensi untuk tombol interaksi
+        headunitInteractButton: document.getElementById('headunit-interact-button'), 
         tabletUI: document.getElementById('tablet-ui'),
         
         speed: document.getElementById('speed'),
@@ -271,13 +267,12 @@ document.addEventListener('DOMContentLoaded', () => {
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
         
-        // Elemen WIB yang dikembalikan
         timeWIB: document.getElementById('time-wib'), 
         
         gear: document.getElementById('gear'),
         speedMode: document.getElementById('speed-mode'),
 
-        // Indikator
+        // Indikator (sekarang berada di dalam speedometer utama)
         headlightsIcon: document.getElementById('headlights-icon'),
         engineIcon: document.getElementById('engine-icon'), 
         seatbeltIcon: document.getElementById('seatbelt-icon'),
@@ -305,8 +300,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateTimeWIB, 60000); 
     
     // 3. SETUP INTERAKSI CLICK (Head Unit & Close)
-    if (elements.headunitFooter) {
-        elements.headunitFooter.addEventListener('click', () => {
+    if (elements.headunitInteractButton) { // Menggunakan tombol baru
+        elements.headunitInteractButton.addEventListener('click', () => {
             toggleHeadUnit(true); 
         });
     }
