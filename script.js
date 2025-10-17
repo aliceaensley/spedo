@@ -1,17 +1,8 @@
 let elements = {};
 let speedMode = 1; 
-let indicators = 0; 
-
-const onOrOff = state => state ? 'On' : 'Off';
 
 // Helper function for toggling active state
 const toggleActive = (element, state) => {
-    // Fungsi ini sekarang juga menerima array elemen
-    if (Array.isArray(element)) {
-        element.forEach(el => toggleActive(el, state));
-        return;
-    }
-    
     if (state) {
         element.classList.add('active');
     } else {
@@ -20,31 +11,91 @@ const toggleActive = (element, state) => {
 };
 
 /**
- * Toggles the visibility of the Head Unit/Tablet UI.
- * Speedometer TIDAK akan disembunyikan.
+ * Updates the display of the engine state and its icon.
  */
-function toggleHeadUnit(state) {
-    const tablet = elements.tabletUI;
-    const mediaButton = elements.mediaButton;
-    
-    if (state === undefined) {
-        state = tablet.classList.contains('hidden');
-    }
-
-    if (state) {
-        // OPEN Tablet
-        tablet.classList.remove('hidden');
-        mediaButton.classList.add('hidden'); // Sembunyikan tombol media saat tablet terbuka
-        console.log(`[HEAD UNIT] Status: OPENED (Speedometer Tetap Aktif)`);
-    } else {
-        // CLOSE Tablet
-        tablet.classList.add('hidden');
-        mediaButton.classList.remove('hidden'); // Tampilkan tombol media
-        console.log(`[HEAD UNIT] Status: CLOSED`);
-    }
+function setEngine(state) {
+    toggleActive(elements.engineIcon, state);
 }
 
-// ... (Semua fungsi set tetap sama, hanya memengaruhi elemen speedometer utama) ...
+/**
+ * Updates the speed display based on the current speed mode.
+ */
+function setSpeed(speed) {
+    let speedValue;
+    switch(speedMode)
+    {
+        case 1: speedValue = Math.round(speed * 2.236936); break; 
+        case 2: speedValue = Math.round(speed * 1.943844); break; 
+        default: speedValue = Math.round(speed * 3.6); 
+    }
+    const displayValue = String(speedValue).padStart(3, '0');
+    elements.speed.innerText = displayValue;
+}
+
+/**
+ * Updates the RPM display.
+ */
+function setRPM(rpm) {
+    const displayValue = `${Math.round(rpm * 10000)}`;
+    elements.rpm.innerText = displayValue;
+}
+
+/**
+ * Updates the fuel level display as a percentage (number only).
+ */
+function setFuel(fuel) {
+    const displayValue = `${Math.round(fuel * 100)}%`;
+    elements.fuel.innerText = displayValue;
+}
+
+/**
+ * Updates the vehicle health display as a percentage (number only).
+ */
+function setHealth(health) {
+    const displayValue = `${Math.round(health * 100)}%`;
+    elements.health.innerText = displayValue;
+}
+
+/**
+ * Updates the current gear display.
+ */
+function setGear(gear) {
+    let gearText = 'N';
+    if (gear > 0) {
+        gearText = String(gear);
+    } else if (gear < 0) {
+        gearText = 'R';
+    }
+    elements.gear.innerText = gearText;
+}
+
+/**
+ * Updates the headlights status display and icon.
+ */
+function setHeadlights(state) {
+    toggleActive(elements.headlightsIcon, state > 0);
+}
+
+/**
+ * Updates the seatbelt status display and icon.
+ */
+function setSeatbelts(state) {
+    toggleActive(elements.seatbeltIcon, state);
+}
+
+/**
+ * Sets the speed display mode and updates the speed unit display.
+ */
+function setSpeedMode(mode) {
+    speedMode = mode;
+    let unit = 'KMH';
+    switch(mode)
+    {
+        case 1: unit = 'MPH'; break;
+        case 2: unit = 'Knots'; break;
+    }
+    elements.speedMode.innerText = unit;
+}
 
 /**
  * Updates the time display to current WIB.
@@ -52,7 +103,10 @@ function toggleHeadUnit(state) {
 function updateTimeWIB() {
     const now = new Date();
     const options = {
-        hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: false, 
+        timeZone: 'Asia/Jakarta' 
     };
     
     let timeString;
@@ -70,10 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
     elements = {
         // UI Containers
         speedometerUI: document.getElementById('speedometer-ui'),
-        mediaButton: document.getElementById('media-button'),
-        tabletUI: document.getElementById('tablet-ui'),
         
-        // Visible Elements (Speedometer)
+        // Visible Elements
         speed: document.getElementById('speed'),
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
@@ -85,32 +137,20 @@ document.addEventListener('DOMContentLoaded', () => {
         headlightsIcon: document.getElementById('headlights-icon'),
         engineIcon: document.getElementById('engine-icon'),
         seatbeltIcon: document.getElementById('seatbelt-icon'),
-        
-        // Tablet Close Element
-        closeTablet: document.getElementById('close-tablet'),
     };
     
     // --- SETUP WIB ---
     updateTimeWIB();
     setInterval(updateTimeWIB, 60000); 
     
-    // --- SETUP INTERAKSI CLICK ---
-    elements.mediaButton.addEventListener('click', () => {
-        toggleHeadUnit(true); // Buka tablet
-    });
-    
-    elements.closeTablet.addEventListener('click', () => {
-        toggleHeadUnit(false); // Tutup tablet
-    });
-    
-    // Tombol ESCAPE untuk menutup
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !elements.tabletUI.classList.contains('hidden')) {
-            toggleHeadUnit(false);
-        }
-    });
-
     // Initial setup and example values 
-    // Untuk memastikan speedometer terlihat dan berfungsi saat pertama kali dimuat
-    // setSpeedMode, setEngine, setSpeed, dll. harus dipanggil di sini.
+    setSpeedMode(1); 
+    setEngine(true);
+    setSpeed(22.35); // Approx 50 MPH
+    setRPM(0.5821);
+    setFuel(0.49);
+    setHealth(1.0); 
+    setGear(2);
+    setHeadlights(1);
+    setSeatbelts(true);
 });
