@@ -3,12 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Speedometer & Head Unit</title>
+    <title>Neon Speedometer & YouTube</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     
     <main class="speedometer-container" id="speedometer-ui">
+        
+        <div class="youtube-integrated-container hidden" id="youtube-ui-wrapper">
+            
+            <div class="search-bar-container" id="youtube-search-ui">
+                <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
+                <button id="youtube-search-button">Cari</button>
+            </div>
+            
+            <div class="search-results-container hidden" id="youtube-results">
+                </div>
+
+            <iframe id="browser-iframe" src="about:blank"></iframe>
+        </div>
         
         <div class="panel speed-panel">
             <div class="speed-header">
@@ -37,53 +50,13 @@
                 <div class="indicator-icon" id="headlights-icon">💡</div> 
                 <div class="indicator-icon" id="engine-icon">⚙️</div> 
                 <div class="indicator-icon" id="seatbelt-icon">💺</div> 
+                
+                <div class="indicator-icon youtube-toggle" id="youtube-toggle-icon">▶️</div> 
             </div>
         </div>
         
     </main>
     
-    <div class="headunit-floating-trigger" id="headunit-footer">
-        Head Unit System (<span class="key-bind">CLICK</span> TO INTERACT)
-    </div>
-    
-    <div id="tablet-ui" class="headunit-menu-container hidden">
-        <div class="headunit-header">
-            <img src="https://bit.ly/signalice" alt="Logo Hak Cipta" class="headunit-copyright-logo">
-            Head Unit 
-            <span class="headunit-time" id="headunit-time-wib">00:00</span>
-        </div>
-        
-        <div class="headunit-app-grid" id="app-grid">
-            <div class="app-icon"><span class="icon">🎵</span>Music</div>
-            <div class="app-icon"><span class="icon">🗺️</span>Maps</div>
-            <div class="app-icon"><span class="icon">🧮</span>Calculator</div>
-            <div class="app-icon"><span class="icon">⚙️</span>Settings</div>
-            <div class="app-icon"><span class="icon">☀️</span>Weather</div>
-            <div class="app-icon" id="browser-app"><span class="icon">🌐</span>Browser</div> 
-            <div class="app-icon" id="youtube-app"><span class="icon">▶️</span>Youtube</div> 
-            <div class="app-icon"><span class="icon">📻</span>Radio</div>
-        </div>
-        
-        <div class="iframe-container hidden" id="iframe-view">
-            
-            <div class="search-bar-container hidden" id="youtube-search-ui">
-                <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
-                <button id="youtube-search-button">Cari</button>
-            </div>
-            
-            <div class="search-results-container hidden" id="youtube-results">
-                </div>
-
-            <iframe id="browser-iframe" src="about:blank"></iframe>
-            
-            <div class="iframe-back-button" id="back-to-apps">← Back to Apps</div>
-        </div>
-        
-        <div class="headunit-footer-close" id="close-tablet">
-             <span class="close-text">CLOSE MENU</span>
-        </div>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
