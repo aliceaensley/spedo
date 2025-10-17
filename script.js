@@ -1,153 +1,102 @@
-let elements = {};
-let speedMode = 0;
+const speedCanvas = document.getElementById("speedMeter");
+const rpmCanvas = document.getElementById("rpmMeter");
+const speedCtx = speedCanvas.getContext("2d");
+const rpmCtx = rpmCanvas.getContext("2d");
+
 let engineOn = false;
-
 let currentSpeed = 0;
-let targetSpeed = 0;
 let currentRPM = 0;
-let targetRPM = 0;
+let currentGear = "P";
+let currentFuel = 100;
 
-const speedCanvas = document.getElementById("speedometer");
-const rpmCanvas = document.getElementById("rpm");
-const hud = document.getElementById("hud");
-
-const sctx = speedCanvas.getContext("2d");
-const rctx = rpmCanvas.getContext("2d");
-
-// DRAW METER FUNCTION
-function drawMeter(ctx, value, maxValue, label, step, colorFn, active) {
+// ==== DRAW FUNCTION ====
+function drawMeter(ctx, value, max, color, labels, labelText) {
   const cx = ctx.canvas.width / 2;
   const cy = ctx.canvas.height / 2;
-  const radius = 65;
-
+  const radius = cx - 10;
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  // Background arc
+  // Base arc
   ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0.75 * Math.PI, 0.25 * Math.PI);
-  ctx.strokeStyle = active ? "rgba(255,255,255,0.15)" : "rgba(150,150,150,0.05)";
-  ctx.lineWidth = 4;
+  ctx.arc(cx, cy, radius, 0.75 * Math.PI, 0.25 * Math.PI, false);
+  ctx.strokeStyle = "rgba(0,255,255,0.2)";
+  ctx.lineWidth = 5;
   ctx.stroke();
 
-  // Number marks
+  // Numbers around
   ctx.font = "10px Arial";
-  ctx.fillStyle = active ? "#aaa" : "#555";
+  ctx.fillStyle = "cyan";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  for (let i = 0; i <= maxValue; i += step) {
-    const angle = 0.75 * Math.PI + (i / maxValue) * 1.5 * Math.PI;
+  for (let i = 0; i < labels.length; i++) {
+    const angle = 0.75 * Math.PI + (i / (labels.length - 1)) * (1.5 * Math.PI);
     const x = cx + Math.cos(angle) * (radius - 12);
     const y = cy + Math.sin(angle) * (radius - 12);
-    ctx.fillText(i, x, y);
+    ctx.fillText(labels[i], x, y);
   }
 
   // Needle
-  const angle = 0.75 * Math.PI + (value / maxValue) * 1.5 * Math.PI;
-  const color = active ? colorFn(value / maxValue) : "#666";
-
+  const needleAngle = 0.75 * Math.PI + (value / max) * (1.5 * Math.PI);
   ctx.beginPath();
   ctx.moveTo(cx, cy);
-  ctx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
+  ctx.lineTo(cx + radius * Math.cos(needleAngle), cy + radius * Math.sin(needleAngle));
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2.8;
-  ctx.shadowBlur = active ? 10 : 0;
+  ctx.lineWidth = 2.5;
+  ctx.shadowBlur = 8;
   ctx.shadowColor = color;
   ctx.stroke();
+
+  // Center text
   ctx.shadowBlur = 0;
-
-  // Center dot
-  ctx.beginPath();
-  ctx.arc(cx, cy, 4, 0, Math.PI * 2);
   ctx.fillStyle = color;
-  ctx.fill();
-
-  // Value text
-  ctx.font = "bold 13px Arial";
-  ctx.fillStyle = active ? "#fff" : "#777";
-  ctx.fillText(`${Math.round(value)} ${label}`, cx, cy + 32);
+  ctx.font = "bold 16px Arial";
+  ctx.fillText(`${labelText}`, cx, cy + 20);
+  ctx.font = "bold 22px Arial";
+  ctx.fillText(`${Math.round(value)}`, cx, cy - 10);
 }
 
-// BASIC FUNCTIONS
-const onOrOff = (s) => (s ? "On" : "Off");
+// ==== UPDATE LOOP ====
+function updateHUD() {
+  const speedLabels = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200];
+  const rpmLabels = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
+  drawMeter(speedCtx, currentSpeed, 200, "cyan", speedLabels, "KMH");
+  drawMeter(rpmCtx, currentRPM / 1000, 8, "lime", rpmLabels, "RPM");
+
+  document.getElementById("gear").innerText = currentGear;
+  document.getElementById("fuel").innerText = `Fuel: ${Math.round(currentFuel)}%`;
+}
+
+setInterval(updateHUD, 50);
+
+// ==== FUNCTIONS FOR RAGEMODE ====
 function setEngine(state) {
   engineOn = state;
-  elements.engine.innerText = onOrOff(state);
-  hud.classList.toggle("off", !state);
   if (!engineOn) {
-    targetSpeed = 0;
-    targetRPM = 0;
+    currentRPM = 0;
+    currentSpeed = 0;
   }
 }
 
 function setSpeed(speed) {
-  if (!engineOn) return;
-  switch (speedMode) {
-    case 1:
-      targetSpeed = Math.min(speed * 2.236936, 240);
-      break;
-    case 2:
-      targetSpeed = Math.min(speed * 1.943844, 240);
-      break;
-    default:
-      targetSpeed = Math.min(speed * 3.6, 240);
-  }
+  currentSpeed = engineOn ? speed : 0;
 }
 
 function setRPM(rpm) {
-  if (!engineOn) return;
-  targetRPM = Math.min(rpm * 8000, 8000);
-}
-
-function setFuel(fuel) {
-  elements.fuel.innerText = `${(fuel * 100).toFixed(1)}%`;
-}
-
-function setHealth(health) {
-  elements.health.innerText = `${(health * 100).toFixed(1)}%`;
+  currentRPM = engineOn ? rpm : 0;
 }
 
 function setGear(gear) {
-  elements.gear.innerText = gear === 0 ? "N" : gear;
+  currentGear = gear;
 }
 
-function setSeatbelts(state) {
-  elements.seatbelts.innerText = onOrOff(state);
+function setFuel(fuel) {
+  currentFuel = fuel;
 }
 
-function setSpeedMode(mode) {
-  speedMode = mode;
-}
-
-// ANIMATION LOOP
-function animate() {
-  const ease = 0.08;
-  currentSpeed += (targetSpeed - currentSpeed) * ease;
-  currentRPM += (targetRPM - currentRPM) * ease;
-
-  const speedColor = (ratio) => `hsl(${190 - ratio * 60}, 100%, ${40 + ratio * 30}%)`;
-  const rpmColor = (ratio) => {
-    const hue = 120 - ratio * 120; // green → red
-    return `hsl(${hue}, 100%, 50%)`;
-  };
-
-  drawMeter(sctx, currentSpeed, 240, "KMH", 20, speedColor, engineOn);
-  drawMeter(rctx, currentRPM, 8000, "RPM", 1000, rpmColor, engineOn);
-
-  requestAnimationFrame(animate);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  elements = {
-    engine: document.getElementById("engine"),
-    fuel: document.getElementById("fuel"),
-    health: document.getElementById("health"),
-    gear: document.getElementById("gear"),
-    seatbelts: document.getElementById("seatbelts"),
-  };
-
-  drawMeter(sctx, 0, 240, "KMH", 20, () => "#0ff", false);
-  drawMeter(rctx, 0, 8000, "RPM", 1000, () => "#f33", false);
-
-  animate();
-});
+// ==== FOR TEST ONLY ====
+setEngine(true);
+setInterval(() => {
+  currentSpeed = (currentSpeed + 2) % 200;
+  currentRPM = ((currentRPM + 200) % 8000);
+}, 150);
