@@ -2,6 +2,7 @@ body {
   margin: 0;
   overflow: hidden;
   background: transparent;
+  font-family: Arial, sans-serif;
 }
 
 #hud {
@@ -15,9 +16,9 @@ body {
 }
 
 canvas {
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0,0,0,0.25);
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 12px rgba(255,0,0,0.4), 0 0 8px rgba(0,0,255,0.4);
 }
 
 #info {
@@ -25,8 +26,7 @@ canvas {
   bottom: 165px;
   right: 35px;
   color: cyan;
-  text-shadow: 0 0 10px cyan;
-  font-family: Arial, sans-serif;
+  text-shadow: 0 0 10px cyan, 0 0 5px red;
   text-align: right;
 }
 
