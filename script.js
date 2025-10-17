@@ -4,133 +4,124 @@ let engineState = false;
 let headlightsState = 1; 
 let seatbeltState = true; 
 let simulationInterval = null; 
+let vitalInterval = null; // BARU: Interval untuk data vital (Fuel, Health, dll.)
 let isYoutubeOpen = false; 
-let fuelWarningInterval = null; // Menampung ID interval untuk suara peringatan
-let currentFuelWarningType = null; // BARU: 'low' atau 'critical'
+let fuelWarningInterval = null; 
+let currentFuelWarningType = null; 
 
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
-const criticalFuelSound = new Audio('sekarat.mp3'); // BARU: Suara Kritis
+const criticalFuelSound = new Audio('sekarat.mp3'); 
 
-// *****************************************************************
-// ⚠️ PENTING: API KEY YOUTUBE
-// *****************************************************************
-const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
-// *****************************************************************
+// ... (Kode API Key dan Fungsi Utility lainnya tidak berubah)
 
-// --- FUNGSI UTILITY & TOGGLE ---
-const toggleActive = (element, state) => {
-    if (Array.isArray(element)) {
-        element.forEach(el => toggleActive(el, state));
-        return;
-    }
-    if (element) {
-        if (state) {
-            element.classList.add('active');
-        } else {
-            element.classList.remove('active');
-        }
-    }
-};
 
-// MODIFIKASI TOTAL: Fungsi untuk mengontrol dua tingkat peringatan suara
-function toggleFuelWarning(type) {
-    if (currentFuelWarningType === type) {
-        return; // Tidak ada perubahan status
-    }
+// --- FUNGSI KONTROL SIMULASI BERKENDARA (DIHENTIKAN SAAT MESIN MATI) ---
 
-    // 1. Bersihkan semua interval dan hentikan semua suara yang aktif
-    if (fuelWarningInterval !== null) {
-        clearInterval(fuelWarningInterval);
-        fuelWarningInterval = null;
+function stopSimulation() {
+    if (simulationInterval !== null) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
     }
-    fuelWarningSound.pause();
-    criticalFuelSound.pause();
-    currentFuelWarningType = null;
     
+    // HANYA reset data yang terkait dengan pergerakan
+    setSpeed(0);
+    setRPM(0);
+    setGear(0); 
+}
 
-    // 2. Tentukan status baru
-    if (type === 'low') {
-        // Status Rendah (10% - 5%): bensin.mp3 setiap 10 detik
-        
-        fuelWarningSound.currentTime = 0; 
-        fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3.", e); });
-        
-        fuelWarningInterval = setInterval(() => {
-            fuelWarningSound.currentTime = 0;
-            fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (interval).", e); });
-        }, 10000); // 10 detik
-        
-        currentFuelWarningType = 'low';
+function startSimulation() {
+    if (simulationInterval !== null) return;
 
-    } else if (type === 'critical') {
-        // Status Kritis (Di bawah 5%): sekarat.mp3 setiap 5 detik
+    let currentSpeed = 0;
+    setRPM(0.1); 
+    setGear(0); 
+
+    simulationInterval = setInterval(() => {
+        // ... (Logika Speed, RPM, Gear tidak berubah) ...
+        currentSpeed = Math.min(25, currentSpeed + (Math.random() - 0.5) * 0.5); 
+        currentSpeed = Math.max(0, currentSpeed); 
+        setSpeed(currentSpeed);
         
-        criticalFuelSound.currentTime = 0; 
-        criticalFuelSound.play().catch(e => { console.warn("Gagal memutar sekarat.mp3.", e); });
+        let baseRPM = currentSpeed > 5 ? 0.3 : 0.1;
+        const currentRPM = Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
+        setRPM(currentRPM);
         
-        fuelWarningInterval = setInterval(() => {
-            criticalFuelSound.currentTime = 0;
-            criticalFuelSound.play().catch(e => { console.warn("Gagal memutar sekarat.mp3 (interval).", e); });
-        }, 5000); // 5 detik
+        if (currentSpeed > 20) {
+            setGear(3);
+        } else if (currentSpeed > 10) {
+            setGear(2);
+        } else if (currentSpeed > 0) {
+            setGear(1);
+        } else {
+            setGear(0); 
+        }
         
-        currentFuelWarningType = 'critical';
-    }
+        // CATATAN: Pengurangan Fuel dipindahkan ke startVitalUpdates
+        
+    }, 3000); 
+}
+
+// --- BARU: FUNGSI KONTROL DATA VITAL (SELALU AKTIF) ---
+
+function startVitalUpdates() {
+    if (vitalInterval !== null) return;
+    
+    // Inisiasi nilai awal Fuel/Health jika belum ada
+    setHealth(1.0); 
+    setFuel(0.49); 
+
+    vitalInterval = setInterval(() => {
+        // Simulasi pengurangan bahan bakar
+        // Jika mesin hidup, kurangi lebih cepat
+        const fuelReductionRate = engineState ? 0.005 : 0.001; 
+        
+        const currentFuelText = elements.fuel.innerText.replace('%', '');
+        const currentFuel = currentFuelText / 100;
+
+        // Kurangi fuel. Batas aman minimum set ke 5%.
+        setFuel(Math.max(0.05, currentFuel - fuelReductionRate)); 
+        
+        // Simulasikan pengurangan Health perlahan jika tidak ada kerusakan
+        // const currentHealthText = elements.health.innerText.replace('%', '');
+        // setHealth(Math.max(0.01, currentHealthText / 100 - 0.0001)); 
+        
+    }, 3000); // Update setiap 3 detik
 }
 
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
-// ... (setSpeedMode, setSpeed, setRPM tidak berubah)
-
-function setFuel(fuel) {
-    // Tampilkan nilai Fuel seperti biasa
-    const displayValue = `${Math.round(fuel * 100)}%`;
-    if (elements.fuel) elements.fuel.innerText = displayValue;
-
-    // 🚨 LOGIC BARU: Tentukan jenis peringatan
-    if (fuel < 0.05) { // DIBAWAH 5% (Kritis)
-        toggleFuelWarning('critical');
-    } else if (fuel <= 0.1) { // 10% sampai 5% (Rendah)
-        toggleFuelWarning('low');
-    } else { // Di atas 10% (Normal)
-        toggleFuelWarning(null); // Matikan semua peringatan
-    }
-}
-
-// ... (setHealth, setGear, setHeadlights, setEngine, setSeatbelts, updateTimeWIB tidak berubah)
+// --- FUNGSI setEngine (DIMODIFIKASI) ---
 
 function setEngine(state) {
     if (engineState !== state) {
         engineState = state;
         toggleActive(elements.engineIcon, state);
         if (state) {
-            startSimulation();
+            startSimulation(); // Mulai simulasi berkendara
         } else {
-            stopSimulation();
-            // PENTING: Jika mesin mati, hentikan semua suara peringatan
+            stopSimulation(); // Hentikan simulasi berkendara
             toggleFuelWarning(null); 
         }
     }
 }
 
-// ... (startSimulation, fungsi YouTube, toggleYoutubeUI tidak berubah)
 
-
-// --- INISIALISASI DAN EVENT LISTENERS ---
+// --- INISIALISASI DAN EVENT LISTENERS (DIMODIFIKASI) ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (Pemetaan Elemen tidak berubah)
-    
-    // ... (Listener lainnya tidak berubah)
+    // ... (Pemetaan Elemen, Setup Clock, dan Listener lainnya tidak berubah) ...
 
     // 6. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
-    setHealth(1.0); 
-    setFuel(0.49); // Mulai dari 49%
+    // setHealth(1.0); // Dihapus, dipindahkan ke startVitalUpdates
+    // setFuel(0.49); // Dihapus, dipindahkan ke startVitalUpdates
     
     setEngine(false); 
     setHeadlights(1);
     setSeatbelts(true);
+    
+    // 🚨 BARU: Mulai pembaruan data vital segera!
+    startVitalUpdates();
 
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
@@ -138,18 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    if (elements.headlightsIcon) {
-        elements.headlightsIcon.addEventListener('click', () => {
-            const newState = (headlightsState === 1) ? 0 : 1; 
-            setHeadlights(newState);
-        });
-    }
-
-    if (elements.seatbeltIcon) {
-        elements.seatbeltIcon.addEventListener('click', () => {
-            setSeatbelts(!seatbeltState);
-        });
-    }
+    // ... (Listener Headlights dan Seatbelts tidak berubah) ...
 
     setTimeout(() => {
         setEngine(true);
