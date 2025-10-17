@@ -5,8 +5,8 @@
     --text-light: #FFFFFF;
     --text-muted: #CCC;
     --danger-red: #FF4136;
-    --success-green: #2ECC40;
-    --card-bg: rgba(255, 255, 255, 0.15); /* Background card semi-transparan */
+    --warning-yellow: #FFC107;
+    --card-bg: rgba(0, 0, 0, 0.4); /* Background card semi-transparan */
     --outline-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -27,6 +27,7 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    font-size: 11pt; /* Dipertahankan dari template awal */
 }
 
 /* --- Speedometer Container --- */
@@ -36,9 +37,9 @@ body {
     right: 30px;     
     
     width: 350px;    
-    height: 480px;   /* Dibuat lebih tinggi untuk menampung semua info */
+    height: 480px;   
     
-    background-color: var(--card-bg); /* Background utama transparan */
+    background-color: rgba(0, 0, 0, 0.8); /* Background utama gelap */
     border-radius: 10px;
     box-shadow: 0 0 25px rgba(255, 0, 255, 0.3);
     padding: 10px;
@@ -47,9 +48,6 @@ body {
     justify-content: space-between;
     overflow: hidden;
     border: 2px solid var(--outline-color);
-    /* Efek scanline tipis (opsional) */
-    background-image: linear-gradient(0deg, transparent 50%, rgba(0,0,0,0.15) 50%);
-    background-size: 100% 4px;
 }
 
 /* --- Header Graphic (Top Area) --- */
@@ -65,32 +63,16 @@ body {
     overflow: hidden;
     border-bottom: 2px solid var(--outline-color);
 }
-
-/* Langit dan Pohon Palem */
-.sun {
-    position: absolute;
-    width: 150px; height: 150px; border-radius: 50%;
-    background: radial-gradient(circle, #FFC107 0%, #FFA000 60%, transparent 100%);
-    top: -50px; left: 50%; transform: translateX(-50%);
-    box-shadow: 0 0 30px #FFC107;
-    opacity: 0.8;
-}
-.palm-tree { /* Sederhana untuk mencocokkan siluet gambar */
-    position: absolute; bottom: -10px; 
-    width: 0; height: 0;
-    border-left: 20px solid transparent; border-right: 20px solid transparent;
-    border-bottom: 70px solid rgba(0, 0, 0, 0.4);
-    border-radius: 50%;
-}
+/* Visual elemen (Sun/Palm trees) */
+.sun { position: absolute; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #FFC107 0%, #FFA000 60%, transparent 100%); top: -50px; left: 50%; transform: translateX(-50%); box-shadow: 0 0 30px #FFC107; opacity: 0.8; }
+.palm-tree { position: absolute; bottom: -10px; width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 70px solid rgba(0, 0, 0, 0.4); border-radius: 50%; }
 .palm-tree.left { left: 15%; transform: rotate(-10deg); }
 .palm-tree.right { right: 15%; transform: rotate(10deg); }
-
 
 /* SPEED DISPLAY dalam header */
 #speed-display {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     line-height: 1;
@@ -104,10 +86,7 @@ body {
     margin-bottom: 5px;
     text-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
-.speed-value-group {
-    display: flex;
-    align-items: flex-end;
-}
+.speed-value-group { display: flex; align-items: flex-end; }
 .big-value {
     font-family: 'Major Mono Display', monospace;
     font-size: 4.5em; 
@@ -125,21 +104,23 @@ body {
     padding-bottom: 8px;
 }
 
-/* --- Status Grid (RPM, Fuel, Health) --- */
+/* --- Status Grid (RPM, Fuel, Health, Icons) --- */
 #status-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     padding: 10px 0;
+    flex-grow: 1;
 }
 
 .stat-card {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: var(--card-bg);
     padding: 8px;
     border-radius: 5px;
     text-align: center;
     border: 1px solid var(--outline-color);
     box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    height: 80px;
 }
 
 .stat-card .label {
@@ -156,9 +137,10 @@ body {
     font-size: 1.3em;
     font-weight: bold;
     display: block;
+    line-height: 1.2;
 }
 
-/* Ikon Status */
+/* Ikon Status Area */
 #icon-status-area {
     grid-column: 1 / span 2;
     display: flex;
@@ -190,9 +172,8 @@ body {
     margin-top: 10px;
 }
 
-#gear-display {
-    text-align: left;
-}
+#gear-display { text-align: left; }
+
 .label-bottom {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1em;
@@ -230,7 +211,7 @@ body {
     50% { opacity: 0.3; }
 }
 
-/* HIDDEN ELEMENTS */
+/* HIDDEN ELEMENTS (Penting untuk compatibility JS) */
 dd[id] {
     display: none !important;
 }
