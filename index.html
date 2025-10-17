@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Speedometer Circular</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedometer</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="hud">
-    <canvas id="speedometer" width="180" height="180"></canvas>
-    <canvas id="rpm" width="180" height="180"></canvas>
-    <div class="info">
-      <p>Engine: <span id="engine">Off</span></p>
-      <p>Fuel: <span id="fuel">0%</span></p>
-      <p>Health: <span id="health">0%</span></p>
-      <p>Gear: <span id="gear">N</span></p>
-      <p>Seatbelt: <span id="seatbelts">Off</span></p>
-    </div>
-  </main>
+    <main class="hud">
+        <canvas id="speedometer" width="160" height="160"></canvas>
+        <canvas id="rpm" width="160" height="160"></canvas>
 
-  <script src="script.js"></script>
+        <div class="info">
+            <div>Engine: <span id="engine">Off</span></div>
+            <div>Fuel: <span id="fuel">100%</span></div>
+            <div>Health: <span id="health">100%</span></div>
+            <div>Gear: <span id="gear">N</span></div>
+            <div>Seatbelt: <span id="seatbelts">Off</span></div>
+        </div>
+    </main>
+    <script src="script.js"></script>
 </body>
 </html>
