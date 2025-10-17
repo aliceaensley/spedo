@@ -11,54 +11,52 @@
 
     <div id="speedometer-ui">
         
-        <div class="indicators">
-            <i id="headlights-icon" class="fas fa-lightbulb icon active"></i>
-            <i id="engine-icon" class="fas fa-engine icon active"></i> 
-            <i id="seatbelt-icon" class="fas fa-user-slash icon active"></i> 
+        <div class="speed-section">
+            <div class="speed-header">
+                <span>Speed</span>
+                <span id="speed-mode">MPH</span>
+            </div>
+            <div class="speed-display">
+                <span id="speed">000</span>
+                <span class="small-text">S/g</span> </div>
         </div>
 
-        <div id="headunit-footer">
-            <i class="fas fa-grip-horizontal"></i>
-            <span>OPEN MENU</span>
-        </div>
-
-        <div class="data-display">
-            <span id="speed">000</span>
-            <span id="speed-mode">KMH</span>
-        </div>
-
-        <div class="extra-info">
-            
+        <div class="info-grid">
             <div class="info-group">
+                <span>RPM</span>
                 <span id="rpm">0000</span>
-                <span class="label">RPM</span>
             </div>
             <div class="info-group">
+                <span>Fuel</span>
                 <span id="fuel">49%</span>
-                <span class="label">FUEL</span>
             </div>
-            
             <div class="info-group">
+                <span>Health</span>
                 <span id="health">100%</span>
-                <span class="label">HEALTH</span>
             </div>
             <div class="info-group">
-                <span id="time-wib">00:00</span>
-                <span class="label">WIB</span>
+                <span>WIB</span>
+                <span id="time-wib">18:29</span>
             </div>
-            
-            <div class="info-group">
-                <span id="gear" class="label-gear">N</span>
-                <span class="label">GEAR</span>
+        </div>
+
+        <div class="bottom-section">
+            <div class="gear-display">
+                <span id="gear">N</span>
+                <span>Gear</span>
             </div>
-            <div class="info-group icon-group">
-                <i class="fas fa-lightbulb"></i>
-                <i class="fas fa-cog"></i>
-                <i class="fas fa-briefcase"></i>
+            <div class="indicator-icons">
+                <i id="headlights-icon" class="fas fa-lightbulb icon active"></i>
+                <i id="engine-icon" class="fas fa-cog icon active"></i> 
+                <i id="seatbelt-icon" class="fas fa-chair icon active"></i> 
             </div>
-            
         </div>
     </div>
+
+    <button id="headunit-interact-button">
+        Head Unit System (CLICK TO INTERACT)
+    </button>
+
 
     <div id="tablet-ui" class="hidden">
         
@@ -81,7 +79,7 @@
                 <i class="fab fa-youtube"></i>
                 <p>YouTube</p>
             </div>
-            </div>
+        </div>
 
         <div id="iframe-view" class="hidden">
             
@@ -91,7 +89,7 @@
             </div>
             
             <div id="youtube-results" class="hidden">
-                </div>
+            </div>
             
             <div class="iframe-container">
                 <iframe id="browser-iframe" src="about:blank"></iframe>
