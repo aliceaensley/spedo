@@ -3,52 +3,71 @@ body { background-color: transparent !important; margin:0; font-family: 'Orbitro
 
 .hud-container {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 15px;
+    right: 15px;
     display: flex;
-    flex-direction: row;
     align-items: flex-end;
     background: rgba(0,0,0,0.5);
-    padding:16px 20px;
-    border-radius:50px;
-    box-shadow: 0 0 30px rgba(0,255,255,0.8), inset 0 0 20px rgba(0,255,255,0.3);
-    backdrop-filter: blur(6px);
+    padding: 10px 12px;
+    border-radius: 40px;
+    box-shadow: 0 0 20px rgba(0,255,255,0.6), inset 0 0 12px rgba(0,255,255,0.2);
+    backdrop-filter: blur(4px);
     color: #0ff;
+    gap: 8px;
 }
 
 /* Meter Sections */
 .meter-section {
     position: relative;
-    width:160px;
-    height:160px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    margin-right:16px;
+    width: 120px;
+    height: 120px;
 }
-#speed,#rpm { margin-top:-14px; font-weight:bold; text-shadow:0 0 8px #0ff,0 0 16px #0ff; }
+
+.meter-section canvas { display: block; }
+
+.meter-label {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: 10px;
+    font-weight: bold;
+    color: #0ff;
+    text-shadow: 0 0 6px #0ff, 0 0 12px #0ff;
+    pointer-events: none;
+}
 
 /* Status Section */
 .status-section {
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    align-items:center;
-    height:160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 120px;
+    gap: 6px;
 }
-.status-bar { display:flex; flex-direction:column; align-items:center; margin-bottom:12px; }
-.gear-display,.engine-display { display:flex; flex-direction:column; align-items:center; margin-bottom:8px; }
 
-/* Neon Text */
-.dd-neon {
-    font-weight:bold;
-    text-shadow:0 0 6px #0ff,0 0 14px #0ff;
+.status-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gear-display, .engine-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Neon text */
+.meter-label {
+    font-size: 12px;
     animation: neonPulse 1s ease-in-out infinite alternate;
 }
+
 @keyframes neonPulse {
-    0% { text-shadow:0 0 6px #0ff,0 0 14px #0ff; }
-    50% { text-shadow:0 0 14px #0ff,0 0 28px #0ff; }
-    100% { text-shadow:0 0 6px #0ff,0 0 14px #0ff; }
+    0% { text-shadow: 0 0 4px #0ff, 0 0 8px #0ff; }
+    50% { text-shadow: 0 0 8px #0ff, 0 0 16px #0ff; }
+    100% { text-shadow: 0 0 4px #0ff, 0 0 8px #0ff; }
 }
 
 /* Responsive */
