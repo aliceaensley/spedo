@@ -1,123 +1,53 @@
 let elements = {};
-let speedMode = 1;
+let speedMode = 0; // 0 KMH, 1 MPH
 let indicators = 0;
+let engineOn = false;
+let currentSpeed = 0;
+let currentRPM = 0;
+let currentFuel = 1;
+let currentHealth = 1;
+let currentGear = "N";
+let headlightsState = 0;
+let seatbeltsState = false;
 
+// Utility
 const onOrOff = state => state ? 'On' : 'Off';
 
-/**
- * Updates the display of the engine state.
- *
- * @param {boolean} state If true, the engine is on; otherwise, it is off.
- * @description Sets the engine state display based on the provided boolean state.
- */
-function setEngine(state) {
-    elements.engine.innerText = onOrOff(state);
+// Update HUD
+function updateHUD() {
+    elements.speed.innerText = speedMode===1?Math.round(currentSpeed*2.236936):Math.round(currentSpeed*3.6);
+    elements.speedUnit.innerText = speedMode===1?"MPH":"KMH";
+    elements.rpm.innerText = Math.round(currentRPM);
+    elements.engine.innerText = `Engine: ${engineOn?"On":"Off"}`;
+    elements.fuel.style.width = `${(currentFuel*100).toFixed(0)}%`;
+    elements.health.style.width = `${(currentHealth*100).toFixed(0)}%`;
+    elements.gear.innerText = `Gear: ${currentGear}`;
+    elements.headlights.innerText = `Headlights: ${headlightsState===1?"On":headlightsState===2?"High":"Off"}`;
+    elements.seatbelts.innerText = `Seatbelts: ${seatbeltsState?"On":"Off"}`;
+    elements.indicators.innerText = `${indicators & 0b01?"On":"Off"}/${indicators & 0b10?"On":"Off"}`;
+    elements.speedMode.innerText = `Speed Mode: ${speedMode===1?"MPH":"KMH"}`;
+    requestAnimationFrame(updateHUD);
 }
 
-/**
- * Updates the speed display based on the current speed mode.
- * @param {number} speed - The speed value in meters per second (m/s).
- * @description Converts the speed value to the current speed mode and updates the display.
- */
-function setSpeed(speed) {
-    switch(speedMode)
-    {
-        case 1: speed = elements.speed.innerText = `${Math.round(speed * 2.236936)} MPH`; break; // MPH
-        case 2: speed = elements.speed.innerText = `${Math.round(speed * 1.943844)} Knots`; break; // Knots
-        default: speed = elements.speed.innerText = `${Math.round(speed * 3.6)} KMH`; // KMH
-    }
-}
+// API Functions
+function setEngine(state){ engineOn=state; if(!state){currentSpeed=0;currentRPM=0;} }
+function setSpeed(speed){ if(!engineOn){currentSpeed=0; return;} currentSpeed=speed; }
+function setRPM(rpm){ currentRPM = rpm; }
+function setFuel(fuel){ currentFuel = fuel; }
+function setHealth(health){ currentHealth = health; }
+function setGear(gear){ currentGear = gear; }
+function setHeadlights(state){ headlightsState = state; }
+function setSeatbelts(state){ seatbeltsState = state; }
+function setLeftIndicator(state){ indicators = (indicators & 0b10)|(state?0b01:0b00); }
+function setRightIndicator(state){ indicators = (indicators & 0b01)|(state?0b10:0b00); }
+function setSpeedMode(mode){ speedMode = mode; }
 
-/**
- * Updates the RPM (Revolutions Per Minute) display.
- * @param {number} rpm - The RPM value to display. (0 to 1).
- */
-function setRPM(rpm) {
-    elements.rpm.innerText = `${rpm.toFixed(4)} RPM`;
-}
-
-/**
- * Updates the fuel level display as a percentage.
- * @param {number} fuel - The fuel level (0 to 1).
- */
-function setFuel(fuel) {
-    elements.fuel.innerText = `${(fuel * 100).toFixed(1)}%`;
-}
-
-/**
- * Updates the vehicle health display as a percentage.
- * @param {number} health - The vehicle health level (0 to 1).
- */
-function setHealth(health) {
-    elements.health.innerText = `${(health * 100).toFixed(1)}%`;
-}
-
-/**
- * Updates the current gear display.
- * @param {number} gear - The current gear to display. 0 represents neutral/reverse.
- */
-function setGear(gear) {
-    elements.gear.innerText = String(gear);
-}
-
-/**
- * Updates the headlights status display.
- * @param {number} state - The headlight state (0: Off, 1: On, 2: High Beam).
- */
-function setHeadlights(state) {
-    switch(state)
-    {
-        case 1: elements.headlights.innerText = 'On'; break;
-        case 2: elements.headlights.innerText = 'High Beam'; break;
-        default: elements.headlights.innerText = 'Off';
-    }
-}
-
-/**
- * Sets the state of the left turn indicator and updates the display.
- * @param {boolean} state - If true, turns the left indicator on; otherwise, turns it off.
- */
-function setLeftIndicator(state) {
-    indicators = (indicators & 0b10) | (state ? 0b01 : 0b00);
-    elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
-}
-
-/**
- * Sets the state of the right turn indicator and updates the display.
- * @param {boolean} state - If true, turns the right indicator on; otherwise, turns it off.
- */
-function setRightIndicator(state) {
-    indicators = (indicators & 0b01) | (state ? 0b10 : 0b00);
-    elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
-}
-
-/**
- * Updates the seatbelt status display.
- * @param {boolean} state - If true, indicates seatbelts are fastened; otherwise, indicates they are not.
- */
-function setSeatbelts(state) {
-    elements.seatbelts.innerText = onOrOff(state);
-}
-
-/**
- * Sets the speed display mode and updates the speed unit display.
- * @param {number} mode - The speed mode to set (0: KMH, 1: MPH, 2: Knots).
- */
-function setSpeedMode(mode) {
-    speedMode = mode;
-    switch(mode)
-    {
-        case 1: elements.speedMode.innerText = 'MPH'; break;
-        case 2: elements.speedMode.innerText = 'Knots'; break;
-        default: elements.speedMode.innerText = 'KMH';
-    }
-}
-
-// Wait for the DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', () => {
+// Init
+document.addEventListener('DOMContentLoaded',()=>{
     elements = {
         engine: document.getElementById('engine'),
         speed: document.getElementById('speed'),
+        speedUnit: document.getElementById('speed-unit'),
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
@@ -125,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headlights: document.getElementById('headlights'),
         indicators: document.getElementById('indicators'),
         seatbelts: document.getElementById('seatbelts'),
-        speedMode: document.getElementById('speed-mode'),
+        speedMode: document.getElementById('speed-mode')
     };
+    updateHUD();
 });
