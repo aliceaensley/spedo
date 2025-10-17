@@ -1,48 +1,222 @@
-* {
-    user-select: none;
-    user-drag: none;
+/* --- Global & Variables --- */
+:root {
+    --main-bg-dark: rgba(10, 10, 10, 0.8);
+    --secondary-bg-dark: #2c2c2c;
+    --accent-blue: #00bcd4; /* Cyan - Warna utama keren */
+    --text-light: #f0f0f0;
+    --text-muted: #888;
+    --danger-red: #ff5252;
+    --success-green: #4CAF50;
+    --warning-yellow: #FFC107;
 }
 
 body {
     background-color: transparent !important;
-    font-family: Arial, sans-serif;
-    font-size: 11pt;
-}
-
-main {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-
-    width: 250px;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-light);
     display: flex;
-    flex-direction: row;
-    background-color: #000000AA;
-    color: white;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-section {
-    width: 125px
-}
-
-dl {
+    justify-content: flex-end; 
+    align-items: flex-end;   
+    min-height: 100vh;
     margin: 0;
+    padding: 0;
+    overflow: hidden;
+    /* Hilangkan seleksi teks default */
+    user-select: none;
+    user-drag: none;
 }
 
-dt {
+/* --- Main Container (POSISI & UKURAN) --- */
+#speedometer-container {
+    position: fixed;
+    bottom: 30px;    
+    right: 30px;     
+    
+    width: 350px;    /* UKURAN BARU (Agak besar) */
+    height: 350px;   
+    
+    background: var(--main-bg-dark);
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0, 188, 212, 0.4); 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 188, 212, 0.2);
+}
+
+/* --- RPM Ring (Gauge) --- */
+#rpm-ring-bg {
+    position: absolute;
+    top: 5px;
+    width: 95%;
+    height: 95%;
+    border-radius: 50%;
+    border: 15px solid var(--secondary-bg-dark); 
+    box-sizing: border-box;
+    opacity: 0.5;
+}
+
+#rpm-ring-fill {
+    position: absolute;
+    top: 5px;
+    width: 95%;
+    height: 95%;
+    border-radius: 50%;
+    border: 15px solid transparent; 
+    border-top-color: var(--accent-blue);
+    border-right-color: var(--accent-blue);
+    transform: rotate(45deg); /* Posisi awal RPM 0 */
+    box-sizing: border-box;
+    transition: transform 0.1s linear, border-color 0.3s;
+    filter: drop-shadow(0 0 7px var(--accent-blue)); 
+}
+
+/* --- Center Display (Speed & Gear) --- */
+#center-display {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#speed-value {
+    font-family: 'Aldrich', sans-serif;
+    font-size: 5.5em; 
+    font-weight: bold;
+    color: var(--text-light);
+    line-height: 1;
+    text-shadow: 0 0 15px rgba(0, 188, 212, 0.9);
+}
+
+#speed-unit {
+    font-size: 1em;
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+#gear-display {
+    background: var(--accent-blue);
+    padding: 5px 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #000;
+    box-shadow: 0 0 10px rgba(0, 188, 212, 0.7);
+}
+
+#gear-display .label {
+    font-size: 0.7em;
     font-weight: bold;
 }
 
-dt::after {
-    content: ":";
+#gear-value {
+    font-family: 'Aldrich', sans-serif;
+    font-size: 1.8em; 
+    font-weight: bold;
+    line-height: 1;
 }
 
-dd {
-    margin: 0;
+
+/* --- Bottom Status Bar (Health, Fuel, Indicators) --- */
+#bottom-status-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding-bottom: 10px;
+    z-index: 20; /* Pastikan di atas ring */
 }
 
-dd:not(:last-child) {
-    margin-bottom: 5px;
+/* Status Bar Item (Fuel/Health) */
+.bar-status-item {
+    width: 35%;
+    text-align: center;
+}
+
+.bar-status-item .label {
+    font-size: 0.7em;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+    display: block;
+}
+
+.bar-bg {
+    width: 100%;
+    height: 8px; 
+    background-color: var(--secondary-bg-dark);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease-out, background-color 0.3s;
+}
+
+.bar-fill.fuel {
+    background-color: var(--success-green);
+}
+
+.bar-fill.health {
+    background-color: var(--accent-blue);
+}
+
+/* Indicator Wrapper (Icons) */
+#indicators-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 30%;
+    font-size: 1.2em;
+}
+
+.icon-status {
+    cursor: default;
+    transition: color 0.2s;
+    color: var(--text-muted);
+}
+
+.icon-status.on {
+    color: var(--warning-yellow);
+    filter: drop-shadow(0 0 5px var(--warning-yellow));
+}
+
+/* Engine Status */
+#engine-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-weight: bold;
+    color: var(--success-green);
+}
+#engine-status.off {
+    color: var(--danger-red);
+}
+
+/* Indicators Arrows */
+.indicator-arrow {
+    font-size: 1.5em;
+    color: var(--text-muted);
+    transition: color 0.1s;
+}
+
+.indicator-arrow.blinking {
+    color: var(--warning-yellow);
+    filter: drop-shadow(0 0 5px var(--warning-yellow));
+    animation: blink 0.5s step-start infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
 }
