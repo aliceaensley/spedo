@@ -48,10 +48,24 @@ body {
     display: flex; justify-content: space-between; font-size: 10pt; font-weight: bold; 
     color: #FFA500; margin-bottom: 5px;
 }
-.speed-value-wrapper { text-align: right; }
+.speed-value-wrapper { 
+    text-align: right; 
+    display: flex; 
+    align-items: flex-end; 
+    justify-content: flex-end; 
+    gap: 5px; 
+}
+
 .speed-value { 
     font-size: 48pt; font-weight: 900; line-height: 1; color: white; 
     text-shadow: 0 0 10px #FFA500; 
+}
+
+/* STYLING GAMBAR HAK CIPTA SPEEDOMETER */
+.speed-copyright-logo {
+    width: 30px; 
+    height: 30px; 
+    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 0.7)); 
 }
 
 /* Info Grid (Stats) */
@@ -85,9 +99,6 @@ body {
     padding: 5px 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
     cursor: pointer; z-index: 9000; 
 }
-.headunit-floating-trigger .key-bind {
-    color: black; background-color: white; padding: 2px 4px; border-radius: 3px; margin: 0 2px;
-}
 
 /* --- TABLET UI (HEAD UNIT MENU) --- */
 .headunit-menu-container {
@@ -109,9 +120,16 @@ body {
 }
 
 .headunit-header {
-    display: flex; justify-content: space-between; padding: 10px 15px;
-    font-size: 14pt; font-weight: bold; color: #FFA500; 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 10px 15px; font-size: 14pt; font-weight: bold; color: #FFA500; 
     border-bottom: 1px solid rgba(255, 165, 0, 0.2);
+}
+
+/* STYLING GAMBAR HAK CIPTA HEAD UNIT */
+.headunit-copyright-logo {
+    width: 30px; 
+    height: 30px; 
+    margin-right: 10px;
 }
 
 .headunit-app-grid {
@@ -138,27 +156,15 @@ body {
 
 /* iFrame View Styling */
 .iframe-container {
-    flex-grow: 1; 
-    display: flex;
-    flex-direction: column;
-    padding: 0;
+    flex-grow: 1; display: flex; flex-direction: column; padding: 0;
     background-color: white;
 }
-
 #browser-iframe {
-    width: 100%;
-    flex-grow: 1;
-    border: none;
-    background-color: white;
+    width: 100%; flex-grow: 1; border: none; background-color: white;
 }
-
 .iframe-back-button {
-    background-color: #FF4500;
-    color: white;
-    text-align: center;
-    padding: 8px;
-    cursor: pointer;
-    font-weight: bold;
+    background-color: #FF4500; color: white; text-align: center; padding: 8px;
+    cursor: pointer; font-weight: bold;
 }
 
 .hidden {
