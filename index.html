@@ -1,55 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Speedometer</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Speedometer</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<main class="speedometer">
+    <main class="speedometer">
+        <div class="circular-panel">
+            <div class="dial">
+                <svg class="bg-ring" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45"/>
+                </svg>
+                <svg class="progress-ring" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="283"/>
+                </svg>
+                <text class="dial-text" id="speed-display" x="50" y="55">0 KMH</text>
+            </div>
+            <div class="dial">
+                <svg class="bg-ring" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45"/>
+                </svg>
+                <svg class="progress-ring" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="283"/>
+                </svg>
+                <text class="dial-text" id="rpm-display" x="50" y="55">0 RPM</text>
+            </div>
+        </div>
 
-  <div class="circular-panel">
-    <div class="dial">
-      <svg width="120" height="120">
-        <circle class="bg-ring" cx="60" cy="60" r="50"></circle>
-        <circle id="speed-ring" class="progress-ring" cx="60" cy="60" r="50"></circle>
-        <text x="60" y="60" class="dial-text" id="speed">0 KMH</text>
-      </svg>
-    </div>
-    <div class="dial">
-      <svg width="120" height="120">
-        <circle class="bg-ring" cx="60" cy="60" r="50"></circle>
-        <circle id="rpm-ring" class="progress-ring" cx="60" cy="60" r="50"></circle>
-        <text x="60" y="60" class="dial-text" id="rpm">0 RPM</text>
-      </svg>
-    </div>
-  </div>
+        <div class="info-panel">
+            <div class="panel-row"><span>Engine</span><span id="engine">Off</span></div>
+            <div class="panel-row"><span>Fuel</span><span id="fuel">0%</span></div>
+            <div class="panel-row"><span>Health</span><span id="health">0%</span></div>
+            <div class="panel-row"><span>Gear</span><span id="gear">N</span></div>
+            <div class="panel-row"><span>Headlights</span><span id="headlights">Off</span></div>
+            <div class="panel-row"><span>Indicators</span><span id="indicators">Off / Off</span></div>
+            <div class="panel-row"><span>Seatbelts</span><span id="seatbelts">Off</span></div>
+            <div class="panel-row"><span>Speed Mode</span><span id="speed-mode">KMH</span></div>
+        </div>
+    </main>
 
-  <div class="circular-bars">
-    <div class="bar-label">Fuel</div>
-    <svg>
-      <circle class="bg-ring" cx="40" cy="40" r="30"></circle>
-      <circle id="fuel" class="progress-ring" cx="40" cy="40" r="30"></circle>
-    </svg>
-
-    <div class="bar-label">Health</div>
-    <svg>
-      <circle class="bg-ring" cx="40" cy="40" r="30"></circle>
-      <circle id="health" class="progress-ring" cx="40" cy="40" r="30"></circle>
-    </svg>
-  </div>
-
-  <div class="info-panel">
-    <div class="panel-row">Engine: <span id="engine">&nbsp;</span></div>
-    <div class="panel-row">Gear: <span id="gear">&nbsp;</span></div>
-    <div class="panel-row">Headlights: <span id="headlights">&nbsp;</span></div>
-    <div class="panel-row">Indicators: <span id="indicators">&nbsp;</span></div>
-    <div class="panel-row">Seatbelts: <span id="seatbelts">&nbsp;</span></div>
-    <div class="panel-row">Speed Mode: <span id="speed-mode">&nbsp;</span></div>
-  </div>
-
-</main>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
