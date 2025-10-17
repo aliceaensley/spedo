@@ -1,4 +1,3 @@
-// --- State ---
 let engineOn = false;
 let speedMode = 0; // 0=KMH,1=MPH
 let currentSpeed = 0;
@@ -12,7 +11,6 @@ let headlightsState = 0;
 let seatbeltsState = false;
 let indicatorsState = 0;
 
-// --- Update HUD ---
 function updateHUD(){
   displayedSpeed += (currentSpeed-displayedSpeed)*0.2;
   displayedRPM += (currentRPM-displayedRPM)*0.2;
