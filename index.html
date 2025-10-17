@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital HUD</title>
+<title>Compact Digital HUD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,11 +16,19 @@
     <div class="panel-label">RPM</div>
     <div class="panel-value"><span id="rpm-value">0</span> <span id="rpm-unit">RPM</span></div>
   </div>
+  <div class="bars">
+    <div class="bar-container">
+      <div class="bar-label">Fuel</div>
+      <div class="bar-bg"><div id="fuel-bar" class="bar-fill"></div></div>
+    </div>
+    <div class="bar-container">
+      <div class="bar-label">Health</div>
+      <div class="bar-bg"><div id="health-bar" class="bar-fill"></div></div>
+    </div>
+  </div>
   <div id="info">
     <div id="engine">Engine: Off</div>
     <div id="gear">Gear: N</div>
-    <div id="fuel">Fuel: 100%</div>
-    <div id="health">Health: 100%</div>
     <div id="headlights">Headlights: Off</div>
     <div id="seatbelts">Seatbelts: Off</div>
     <div id="indicators">Indicators: Off/Off</div>
