@@ -1,10 +1,15 @@
 let elements = {};
 let speedMode = 1; 
 let engineState = false; 
-// Tambahkan state untuk indikator lain agar bisa di-toggle
-let headlightsState = 1; // 0=Off, 1=Low (kita asumsikan hanya Low/Off untuk kesederhanaan)
-let seatbeltState = true; // true=terpasang, false=belum terpasang
+let headlightsState = 1; 
+let seatbeltState = true; 
 let simulationInterval = null; 
+
+// *****************************************************************
+// PENTING: GANTI DENGAN KUNCI API YOUTUBE ANDA YANG VALID!
+// *****************************************************************
+const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
+// *****************************************************************
 
 // --- FUNGSI UTILITY & TOGGLE ---
 const toggleActive = (element, state) => {
@@ -71,18 +76,14 @@ function setGear(gear) {
     if (elements.gear) elements.gear.innerText = gearText;
 }
 
-// FUNGSI INI DIPERBAIKI UNTUK MENGAKTIFKAN INDIKATOR KLIK
 function setHeadlights(state) {
     headlightsState = state;
-    // Ikon aktif jika state > 0 (Lampu On)
     toggleActive(elements.headlightsIcon, state > 0);
 }
 
-// FUNGSI INI DIPERBAIKI UNTUK MENGAKTIFKAN INDIKATOR KLIK
 function setEngine(state) {
     if (engineState !== state) {
         engineState = state;
-        // Ikon aktif jika engineState TRUE
         toggleActive(elements.engineIcon, state);
         if (state) {
             startSimulation();
@@ -92,10 +93,8 @@ function setEngine(state) {
     }
 }
 
-// FUNGSI INI DIPERBAIKI UNTUK MENGAKTIFKAN INDIKATOR KLIK
 function setSeatbelts(state) {
     seatbeltState = state;
-    // Ikon aktif jika seatbelt TERPASANG (TRUE)
     toggleActive(elements.seatbeltIcon, state); 
 }
 
@@ -164,23 +163,98 @@ function startSimulation() {
     }, 3000); 
 }
 
+// --- FUNGSI YOUTUBE API BARU ---
+
+function toggleYoutubeSearchUI(show) {
+    if (elements.youtubeSearchUI) {
+        elements.youtubeSearchUI.classList.toggle('hidden', !show);
+    }
+    if (elements.youtubeResults) {
+        elements.youtubeResults.classList.toggle('hidden', !show);
+    }
+    // Bersihkan hasil saat menyembunyikan
+    if (!show && elements.youtubeResults) {
+        elements.youtubeResults.innerHTML = '';
+    }
+}
+
+async function searchYoutube(query) {
+    if (!query || YOUTUBE_API_KEY === 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs') {
+        alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
+        return;
+    }
+    
+    const API_URL = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=5&key=${YOUTUBE_API_KEY}`;
+    
+    elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px;">Mencari...</p>';
+    elements.youtubeResults.classList.remove('hidden');
+
+
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        elements.youtubeResults.innerHTML = ''; 
+
+        if (data.items && data.items.length > 0) {
+            data.items.forEach(item => {
+                const videoId = item.id.videoId;
+                const title = item.snippet.title;
+                const thumbnailUrl = item.snippet.thumbnails.default.url; 
+
+                const resultItem = document.createElement('div');
+                resultItem.classList.add('search-result-item');
+                resultItem.setAttribute('data-videoid', videoId);
+                resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
+                
+                // Event listener untuk memuat video saat thumbnail diklik
+                resultItem.addEventListener('click', () => {
+                    const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                    showBrowser(embedUrl); 
+                    // Hide search results but keep search bar visible
+                    elements.youtubeResults.classList.add('hidden'); 
+                });
+
+                elements.youtubeResults.appendChild(resultItem);
+            });
+            elements.youtubeResults.classList.remove('hidden');
+        } else {
+            elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px;">Tidak ditemukan video.</p>';
+            elements.youtubeResults.classList.remove('hidden');
+        }
+
+    } catch (error) {
+        console.error('Error fetching YouTube data:', error);
+        elements.youtubeResults.innerHTML = '<p style="color:red; padding: 10px;">Gagal terhubung ke API. Cek API Key dan koneksi Anda.</p>';
+        elements.youtubeResults.classList.remove('hidden');
+    }
+}
+
 // --- LOGIC: KONTROL TAMPILAN HEAD UNIT ---
+
 function showAppGrid() {
     if (elements.appGrid) elements.appGrid.classList.remove('hidden');
     if (elements.iframeView) elements.iframeView.classList.add('hidden');
     
-    // Bersihkan iFrame saat kembali
+    // Pastikan UI pencarian YouTube disembunyikan saat kembali ke menu
+    toggleYoutubeSearchUI(false); 
+
     if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; 
 }
 
 function showBrowser(url) {
     if (elements.appGrid) elements.appGrid.classList.add('hidden');
     if (elements.iframeView) elements.iframeView.classList.remove('hidden');
+    
+    // Tampilkan UI pencarian YouTube hanya jika URL mengandung 'youtube'
+    toggleYoutubeSearchUI(url.includes('youtube') && url.includes('embed') === false); 
+    
     if (elements.browserIframe) elements.browserIframe.src = url; 
 }
 
 
 // --- FUNGSI HEAD UNIT (Bisa Diklik/Toggle) ---
+
 function toggleHeadUnit(state) {
     const tablet = elements.tabletUI;
     const footerTrigger = elements.headunitFooter;
@@ -245,7 +319,13 @@ document.addEventListener('DOMContentLoaded', () => {
         browserApp: document.getElementById('browser-app'),
         youtubeApp: document.getElementById('youtube-app'), 
         browserIframe: document.getElementById('browser-iframe'),
-        backToApps: document.getElementById('back-to-apps')
+        backToApps: document.getElementById('back-to-apps'),
+        
+        // Elemen BARU untuk YouTube Search
+        youtubeSearchUI: document.getElementById('youtube-search-ui'),
+        youtubeSearchInput: document.getElementById('youtube-search-input'),
+        youtubeSearchButton: document.getElementById('youtube-search-button'),
+        youtubeResults: document.getElementById('youtube-results')
     };
     
     // 2. SETUP CLOCK WIB
@@ -276,17 +356,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Aksi Klik Browser (LSFD)
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
+            // Memuat LSFD - Sembunyikan UI Pencarian YouTube
+            toggleYoutubeSearchUI(false); 
             showBrowser('https://lsfd.jg-rp.com/index.php'); 
         });
     }
     
-    // LOGIC KLIK YOUTUBE (Memuat VIDEO YouTube EMBED)
+    // LOGIC KLIK YOUTUBE (Menampilkan UI Pencarian Awal)
     if (elements.youtubeApp) {
         elements.youtubeApp.addEventListener('click', () => {
-            const YOUTUBE_VIDEO_ID = 'dQw4w9WgXcQ'; // GANTI ID ini dengan video yang Anda inginkan!
-            const YOUTUBE_EMBED_URL = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&rel=0`;
+            if (elements.appGrid) elements.appGrid.classList.add('hidden');
+            if (elements.iframeView) elements.iframeView.classList.remove('hidden');
+
+            // Tampilkan UI Pencarian YouTube
+            toggleYoutubeSearchUI(true); 
             
-            showBrowser(YOUTUBE_EMBED_URL); 
+            // Bersihkan hasil dan iframe
+            elements.youtubeResults.innerHTML = '';
+            elements.browserIframe.src = 'about:blank';
+            
+            if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
         });
     }
 
@@ -295,8 +384,30 @@ document.addEventListener('DOMContentLoaded', () => {
             showAppGrid(); 
         });
     }
+    
+    // LOGIC INTERAKSI PENCARIAN YOUTUBE
+    const handleSearch = () => {
+        const query = elements.youtubeSearchInput.value;
+        if (query.trim() !== '') {
+            // Memuat video yang diklik akan memanggil showBrowser(embedUrl) dari fungsi searchYoutube
+            searchYoutube(query.trim());
+        }
+    };
+    
+    if (elements.youtubeSearchButton) {
+        elements.youtubeSearchButton.addEventListener('click', handleSearch);
+    }
+    
+    if (elements.youtubeSearchInput) {
+        elements.youtubeSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        });
+    }
 
-    // 5. INISIASI DATA AWAL
+
+    // 5. INISIASI DATA AWAL & 6. LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
     setHealth(1.0); 
     setFuel(0.49); 
@@ -305,32 +416,25 @@ document.addEventListener('DOMContentLoaded', () => {
     setHeadlights(1);
     setSeatbelts(true);
 
-    // 6. LOGIC BARU: INTERAKSI KLIK INDIKATOR
-
-    // Logika Klik: MESIN (⚙️)
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
             setEngine(!engineState); 
         });
     }
     
-    // Logika Klik: LAMPU (💡)
     if (elements.headlightsIcon) {
         elements.headlightsIcon.addEventListener('click', () => {
-            // Toggle antara On (1) dan Off (0)
             const newState = (headlightsState === 1) ? 0 : 1; 
             setHeadlights(newState);
         });
     }
 
-    // Logika Klik: SEATBELT (💺)
     if (elements.seatbeltIcon) {
         elements.seatbeltIcon.addEventListener('click', () => {
-            setSeatbelts(!seatbeltState); // Toggle antara Terpasang (true) dan Lepas (false)
+            setSeatbelts(!seatbeltState);
         });
     }
 
-    // Mulai simulasi Mesin ON secara otomatis setelah 2 detik
     setTimeout(() => {
         setEngine(true);
     }, 2000);
