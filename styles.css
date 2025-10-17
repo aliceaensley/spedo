@@ -6,36 +6,36 @@ body {
 
 #hud {
   position: fixed;
-  right: 30px;
-  bottom: 30px;
+  right: 20px;
+  bottom: 20px;
   display: flex;
-  gap: 40px;
+  gap: 25px;
   align-items: flex-end;
-  transform: scale(0.9);
+  transform: scale(0.8);
 }
 
 canvas {
-  background: rgba(10, 10, 10, 0.2);
+  background: rgba(5, 5, 5, 0.3);
   border-radius: 50%;
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
 
 #info {
   position: absolute;
-  bottom: 210px;
-  right: 50px;
+  bottom: 165px;
+  right: 25px;
   color: cyan;
   text-shadow: 0 0 10px cyan;
-  font-family: Arial, sans-serif;
-  font-weight: bold;
+  font-family: "Arial", sans-serif;
   text-align: right;
 }
 
 #gear {
-  font-size: 26px;
-  margin-bottom: 5px;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 4px;
 }
 
 #fuel {
-  font-size: 16px;
+  font-size: 14px;
 }
