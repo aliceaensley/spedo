@@ -1,81 +1,58 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 
 body {
-  margin:0;
-  font-family: 'Orbitron', sans-serif;
-  background: transparent;
-  color: #0ff;
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: #111; /* ubah agar ada kontras */
+    color: #0ff;
 }
 
 .speedometer {
-  position: fixed;
-  bottom: 15px;
-  right: 15px;
-  display: flex;
-  gap: 15px;
-  align-items: flex-end;
-}
-
-.circular-panel, .circular-bars, .info-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-}
-
-.dial {
-  position: relative;
-  width: 120px;
-  height: 120px;
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    background: rgba(10,10,30,0.8); /* semi-transparent dark blue */
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #0ff;
 }
 
 .bg-ring {
-  fill: none;
-  stroke: rgba(0,255,255,0.1);
-  stroke-width: 8;
+    fill: none;
+    stroke: rgba(0,255,255,0.1);
+    stroke-width: 8;
 }
 
 .progress-ring {
-  fill: none;
-  stroke: #0ff;
-  stroke-width: 8;
-  stroke-linecap: round;
-  transform: rotate(-90deg);
-  transform-origin: 50% 50%;
-  transition: stroke-dashoffset 0.2s ease, stroke 0.3s ease;
+    fill: none;
+    stroke: #0ff; /* neon cyan */
+    stroke-width: 8;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 0.2s ease, stroke 0.3s ease;
+    filter: drop-shadow(0 0 6px #0ff);
 }
 
 .dial-text {
-  font-size: 18px;
-  fill: #0ff;
-  font-weight: bold;
-  text-anchor: middle;
-  dominant-baseline: middle;
-}
-
-.circular-bars svg {
-  width: 80px;
-  height: 80px;
-}
-
-.bar-label {
-  font-size: 10px;
-  text-align: center;
-}
-
-.info-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+    font-size: 18px;
+    fill: #0ff;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    text-shadow: 0 0 4px #0ff;
 }
 
 .panel-row {
-  display: flex;
-  justify-content: space-between;
-  background: rgba(0,0,0,0.4);
-  padding: 4px 6px;
-  border-radius: 6px;
-  border: 1px solid #0ff;
-  text-shadow: 0 0 3px #0ff;
-  width: 120px;
+    display: flex;
+    justify-content: space-between;
+    background: rgba(0,0,50,0.5);
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid #0ff;
+    text-shadow: 0 0 3px #0ff;
+    width: 120px;
 }
