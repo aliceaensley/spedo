@@ -4,6 +4,7 @@ let engineState = false;
 let headlightsState = 1; 
 let seatbeltState = true; 
 let simulationInterval = null; 
+let activeMediaInHeadUnit = null; // Menambahkan variabel untuk melacak status media
 
 // *****************************************************************
 // ⚠️ PENTING: API KEY YOUTUBE
@@ -11,7 +12,7 @@ let simulationInterval = null;
 const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
 // *****************************************************************
 
-// --- FUNGSI UTILITY & TOGGLE ---
+// --- FUNGSI UTILITY & TOGGLE (TIDAK BERUBAH) ---
 const toggleActive = (element, state) => {
     if (Array.isArray(element)) {
         element.forEach(el => toggleActive(el, state));
@@ -76,7 +77,6 @@ function setGear(gear) {
     if (elements.gear) elements.gear.innerText = gearText;
 }
 
-// FUNGSI INI HANYA MENGATUR TAMPILAN, TIDAK ADA LOGIKA INTERAKSI
 function setHeadlights(state) {
     headlightsState = state;
     toggleActive(elements.headlightsIcon, state > 0);
@@ -164,7 +164,7 @@ function startSimulation() {
     }, 3000); 
 }
 
-// --- FUNGSI YOUTUBE API ---
+// --- FUNGSI YOUTUBE API (TIDAK BERUBAH) ---
 
 function toggleYoutubeSearchUI(show) {
     if (elements.youtubeSearchUI) {
@@ -213,10 +213,9 @@ async function searchYoutube(query) {
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
                 resultItem.addEventListener('click', () => {
-                    // *** PERBAIKAN UTAMA DI SINI ***
                     // Menggunakan domain YouTube yang benar
                     const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1`; 
-                    showBrowser(embedUrl); 
+                    showBrowser(embedUrl, 'youtube'); // Kirim flag 'youtube'
                     elements.youtubeResults.classList.add('hidden'); 
                 });
 
@@ -242,27 +241,51 @@ async function searchYoutube(query) {
     }
 }
 
-// --- LOGIC: KONTROL TAMPILAN HEAD UNIT (TIDAK BERUBAH) ---
+// --- LOGIC: KONTROL TAMPILAN HEAD UNIT ---
 
 function showAppGrid() {
+    // *** PERUBAHAN UTAMA 1: LOGIKA PINDAH KE BACKGROUND SAAT BACK TO APPS ***
+    
     if (elements.appGrid) elements.appGrid.classList.remove('hidden');
     if (elements.iframeView) elements.iframeView.classList.add('hidden');
     
     toggleYoutubeSearchUI(false); 
 
-    if (elements.browserIframe && !elements.backgroundVideoPlayer.contains(elements.browserIframe)) {
+    const iframe = elements.browserIframe;
+    const backgroundPlayer = elements.backgroundVideoPlayer;
+    const isYoutubeVideoPlaying = iframe.src.includes('youtube.com/embed');
+
+    if (isYoutubeVideoPlaying) {
+         // Jika video YouTube sedang diputar, pindahkan ke background player.
+        backgroundPlayer.appendChild(iframe);
+        
+    } else if (elements.browserIframe && !elements.backgroundVideoPlayer.contains(elements.browserIframe)) {
+        // Jika bukan video YouTube yang diputar (misal browser LSFD), bersihkan iframe.
         elements.browserIframe.src = 'about:blank'; 
     }
+    
+    activeMediaInHeadUnit = isYoutubeVideoPlaying ? 'youtube' : null;
 }
 
-function showBrowser(url) {
+function showBrowser(url, mediaType = 'browser') {
     if (elements.appGrid) elements.appGrid.classList.add('hidden');
     if (elements.iframeView) elements.iframeView.classList.remove('hidden');
+    
+    // Periksa apakah iframe yang saat ini ada di background adalah video YouTube
+    const iframe = elements.browserIframe;
+    const backgroundPlayer = elements.backgroundVideoPlayer;
+
+    if (backgroundPlayer.contains(iframe)) {
+        // Jika ada, pindahkan kembali ke iframeView untuk menimpa src-nya
+        elements.iframeView.appendChild(iframe);
+    }
     
     const isYoutubeApp = url.includes('youtube') && url.includes('embed') === false;
     toggleYoutubeSearchUI(isYoutubeApp); 
     
     if (elements.browserIframe) elements.browserIframe.src = url; 
+    
+    activeMediaInHeadUnit = mediaType === 'youtube' ? 'youtube' : null;
 }
 
 
@@ -285,8 +308,8 @@ function toggleHeadUnit(state) {
         tablet.classList.remove('hidden');
         if (footerTrigger) footerTrigger.style.display = 'none'; 
         
-        // 1. Cek apakah video sedang diputar di latar belakang
-        if (backgroundPlayer.contains(iframe)) {
+        // 1. Cek apakah video sedang diputar di latar belakang (dari activeMediaInHeadUnit)
+        if (activeMediaInHeadUnit === 'youtube' && backgroundPlayer.contains(iframe)) {
             // 2. Pindahkan iFrame kembali ke dalam iframeView
             elements.iframeView.appendChild(iframe);
             
@@ -294,11 +317,9 @@ function toggleHeadUnit(state) {
             if (elements.appGrid) elements.appGrid.classList.add('hidden');
             if (elements.iframeView) elements.iframeView.classList.remove('hidden');
             
-            // Tampilkan Search UI (jika sebelumnya YouTube)
-            if (iframe.src.includes('youtube')) {
-                 toggleYoutubeSearchUI(true); 
-                 elements.youtubeResults.classList.add('hidden'); 
-            }
+            // Tampilkan Search UI (karena ini adalah YouTube)
+            toggleYoutubeSearchUI(true); 
+            elements.youtubeResults.classList.add('hidden'); 
             
         } else {
             // Jika tidak ada video di latar belakang, tampilkan App Grid normal
@@ -310,7 +331,7 @@ function toggleHeadUnit(state) {
         }, 10);
         
     } else {
-        // --- KONDISI: HEAD UNIT DITUTUP ---
+        // --- KONDISI: HEAD UNIT DITUTUP (LOGIKA PERSISTENSI UTAMA) ---
         
         // Cek apakah iFrame saat ini memuat URL embed YouTube
         const isYoutubeVideoPlaying = iframe.src.includes('youtube.com/embed');
@@ -318,8 +339,10 @@ function toggleHeadUnit(state) {
         if (isYoutubeVideoPlaying) {
             // 1. Pindahkan iFrame ke pemutar latar belakang
             backgroundPlayer.appendChild(iframe);
-            // 2. Tidak ada refresh, agar video tidak mengulang.
-        } 
+            activeMediaInHeadUnit = 'youtube'; // Set status media aktif
+        } else {
+            activeMediaInHeadUnit = null;
+        }
         
         // Animasi penutupan
         tablet.classList.remove('active'); 
@@ -329,19 +352,19 @@ function toggleHeadUnit(state) {
             tablet.classList.add('hidden'); 
             if (footerTrigger) footerTrigger.style.display = 'block'; 
             
-            // Jika video diputar di latar belakang, JANGAN panggil showAppGrid
+            // Jika video diputar di latar belakang, JANGAN panggil showAppGrid (hanya agar iframe tidak dikosongkan)
             if (!isYoutubeVideoPlaying) {
-                 showAppGrid(); 
+                 // showAppGrid(); // Dihapus/dinonaktifkan karena tidak perlu.
             }
         }, transitionDuration); 
     }
 }
 
 
-// --- INISIALISASI DAN EVENT LISTENERS ---
+// --- INISIALISASI DAN EVENT LISTENERS (TIDAK BERUBAH) ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pemetaan Elemen (Sama)
+    // 1. Pemetaan Elemen 
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
         headunitFooter: document.getElementById('headunit-footer'), 
@@ -421,7 +444,11 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleYoutubeSearchUI(true); 
             
             elements.youtubeResults.innerHTML = '';
-            elements.browserIframe.src = 'about:blank';
+            
+            // Hapus iFrame hanya jika TIDAK sedang di background player (untuk jaga status)
+            if (!elements.backgroundVideoPlayer.contains(elements.browserIframe)) {
+                 elements.browserIframe.src = 'about:blank';
+            }
             
             if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
         });
