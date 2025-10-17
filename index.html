@@ -3,22 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Speedometer</title>
-    <link rel="stylesheet" href="/styles.css">
+    <title>Neon Speedometer</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <main class="speedometer">
-        <div class="speed-display">
-            <div id="speed">0 KMH</div>
+    <main class="speedometer-container">
+        <div class="speed-gauge">
+            <div class="speed-header">
+                <span class="speed-title">Speed</span>
+                <span class="speed-unit" id="speed-mode">MPH</span>
+            </div>
+            <div class="speed-value-wrapper">
+                <div class="speed-value" id="speed">050</div>
+                <div class="speed-gauge-image">
+                                    </div>
+            </div>
         </div>
-        <div class="rpm-display">
-            <svg id="rpm-gauge" width="100" height="40">
-                <rect x="0" y="10" width="100" height="20" fill="#222" rx="5" ry="5"/>
-                <rect id="rpm-bar" x="0" y="10" width="0" height="20" fill="#0ff" rx="5" ry="5"/>
-            </svg>
-            <div id="rpm-text">0 RPM</div>
+
+        <div class="info-panels">
+            <div class="info-panel radio-panel">
+                <div class="info-label">Radio</div>
+                <div class="radio-station">
+                    <span id="radio-station">Salsa Station</span>
+                </div>
+                <div class="radio-controls">
+                    <div class="control-dot"></div>
+                    <div class="control-dot active"></div>
+                    <div class="control-dot"></div>
+                </div>
+                <div class="radio-extra-text">(E) TO INTERACT</div>
+            </div>
+
+            <div class="info-grid">
+                <div class="stat-item">
+                    <div class="stat-label">RPM</div>
+                    <div class="stat-value" id="rpm">5821</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Fuel</div>
+                    <div class="stat-value" id="fuel">49%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Health</div>
+                    <div class="stat-value" id="health">100%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">V.Out</div>
+                    <div class="stat-value" id="vehicle-damage">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-panel">
+            <div class="gear-display" id="gear-container">
+                <span class="gear-label">Gear</span>
+                <span class="gear-value" id="gear">2</span>
+            </div>
+            <div class="status-indicators">
+                <div class="indicator-icon" id="headlights-icon">💡</div> <div class="indicator-icon" id="engine-icon">⚙️</div> <div class="indicator-icon" id="seatbelt-icon">💺</div> </div>
         </div>
     </main>
-    <script src="/script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
