@@ -3,19 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Futuristic Digital HUD</title>
+<title>Modern Digital HUD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<canvas id="hudCanvas" width="300" height="300"></canvas>
-<div class="info-panel">
-  <div id="engine">Engine: Off</div>
-  <div id="gear">Gear: N</div>
-  <div id="headlights">Headlights: Off</div>
-  <div id="seatbelts">Seatbelts: Off</div>
-  <div id="indicators">Indicators: Off/Off</div>
-  <div id="speed-mode">Speed Mode: KMH</div>
-</div>
+<main class="speedometer">
+  <section class="digital-panel">
+    <div class="panel-label">Engine</div>
+    <div class="panel-value" id="engine">&nbsp;</div>
+
+    <div class="panel-label">Speed</div>
+    <div class="panel-value digital" id="speed">&nbsp;</div>
+
+    <div class="panel-label">RPM</div>
+    <div class="panel-value digital" id="rpm">&nbsp;</div>
+
+    <div class="panel-label">Fuel</div>
+    <div class="bar-bg"><div id="fuel" class="bar-fill"></div></div>
+
+    <div class="panel-label">Health</div>
+    <div class="bar-bg"><div id="health" class="bar-fill"></div></div>
+  </section>
+
+  <section class="digital-panel">
+    <div class="panel-label">Gear</div>
+    <div class="panel-value" id="gear">&nbsp;</div>
+
+    <div class="panel-label">Headlights</div>
+    <div class="panel-value" id="headlights">&nbsp;</div>
+
+    <div class="panel-label">Indicators</div>
+    <div class="panel-value" id="indicators">&nbsp;</div>
+
+    <div class="panel-label">Seatbelts</div>
+    <div class="panel-value" id="seatbelts">&nbsp;</div>
+
+    <div class="panel-label">Speed Mode</div>
+    <div class="panel-value" id="speed-mode">&nbsp;</div>
+  </section>
+</main>
 <script src="script.js"></script>
 </body>
 </html>
