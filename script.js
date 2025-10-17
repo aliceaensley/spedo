@@ -1,10 +1,6 @@
-const speedCanvas = document.getElementById("speedMeter");
-const rpmCanvas = document.getElementById("rpmMeter");
-const speedCtx = speedCanvas.getContext("2d");
-const rpmCtx = rpmCanvas.getContext("2d");
-
+// State
 let engineOn = false;
-let speedMode = 0;
+let speedMode = 0; // 0=KMH, 1=MPH
 let currentSpeed = 0;
 let displayedSpeed = 0;
 let currentRPM = 0;
@@ -16,79 +12,22 @@ let headlightsState = 0;
 let seatbeltsState = false;
 let indicatorsState = 0;
 
-function drawGauge(ctx, value, max, color1, color2, labels, unit, healthPercent=null){
-  const cx = ctx.canvas.width/2;
-  const cy = ctx.canvas.height/2;
-  const radius = cx-8;
-  ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+// Update digital display
+function updateHUD() {
+  // Smooth animation
+  displayedSpeed += (currentSpeed-displayedSpeed)*0.2;
+  displayedRPM += (currentRPM-displayedRPM)*0.2;
 
-  // Background arc
-  ctx.beginPath();
-  ctx.arc(cx,cy,radius,0.75*Math.PI,0.25*Math.PI,false);
-  ctx.strokeStyle = "rgba(255,255,255,0.2)";
-  ctx.lineWidth = 3;
-  ctx.stroke();
+  document.getElementById("speed-value").innerText = Math.round(displayedSpeed);
+  document.getElementById("rpm-value").innerText = Math.round(displayedRPM);
 
-  // Health ring (speedometer only)
-  if(healthPercent!==null){
-    ctx.beginPath();
-    const endAngle = 0.75*Math.PI + (healthPercent/100)*1.5*Math.PI;
-    ctx.arc(cx,cy,radius-5,0.75*Math.PI,endAngle,false);
-    ctx.strokeStyle = "#f00";
-    ctx.lineWidth = 4;
-    ctx.shadowBlur = 5;
-    ctx.shadowColor = "#f00";
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-  }
+  document.getElementById("speed-unit").innerText = speedMode===1?"MPH":"KMH";
+  document.getElementById("rpm-unit").innerText = "RPM";
 
-  // Numbers
-  ctx.font = "10px Arial";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  for(let i=0;i<labels.length;i++){
-    const angle = 0.75*Math.PI + (i/(labels.length-1))*1.5*Math.PI;
-    const x = cx + Math.cos(angle)*(radius-12);
-    const y = cy + Math.sin(angle)*(radius-12);
-    ctx.fillStyle = "#0ff";
-    ctx.fillText(labels[i],x,y);
-  }
-
-  // Needle
-  const val = Math.min(Math.max(value,0),max);
-  const angle = 0.75*Math.PI + (val/max)*1.5*Math.PI;
-  ctx.beginPath();
-  ctx.moveTo(cx,cy);
-  ctx.lineTo(cx + radius*Math.cos(angle), cy + radius*Math.sin(angle));
-  const grad = ctx.createLinearGradient(cx,cy,cx + radius*Math.cos(angle), cy + radius*Math.sin(angle));
-  grad.addColorStop(0,"#0ff");
-  grad.addColorStop(1,"#f00");
-  ctx.strokeStyle = grad;
-  ctx.lineWidth = 2.5;
-  ctx.stroke();
-
-  // Center text
-  ctx.fillStyle = "#fff";
-  ctx.font = "bold 14px Arial";
-  ctx.fillText(Math.round(value), cx, cy-5);
-  ctx.font = "10px Arial";
-  ctx.fillText(unit, cx, cy+12);
-}
-
-function updateHUD(){
-  const speedLabels = [0,20,40,60,80,100,120,140,160,180,200];
-  const rpmLabels = [0,1000,2000,3000,4000,5000,6000,7000];
-
-  displayedSpeed += (currentSpeed-displayedSpeed)*0.15;
-  displayedRPM += (currentRPM-displayedRPM)*0.15;
-
-  drawGauge(speedCtx, displayedSpeed,200,"#0f0","#fff",speedLabels,"KMH", currentHealth);
-  drawGauge(rpmCtx, displayedRPM,7000,"#0ff","#fff",rpmLabels,"RPM");
-
-  document.getElementById("gear").innerText = currentGear;
+  document.getElementById("engine").innerText = `Engine: ${engineOn?"On":"Off"}`;
+  document.getElementById("gear").innerText = `Gear: ${currentGear}`;
   document.getElementById("fuel").innerText = `Fuel: ${(currentFuel*100).toFixed(0)}%`;
   document.getElementById("health").innerText = `Health: ${(currentHealth*100).toFixed(0)}%`;
-  document.getElementById("engine").innerText = `Engine: ${engineOn?"On":"Off"}`;
   document.getElementById("headlights").innerText = `Headlights: ${headlightsState===1?"On":headlightsState===2?"High":"Off"}`;
   document.getElementById("seatbelts").innerText = `Seatbelts: ${seatbeltsState?"On":"Off"}`;
   document.getElementById("indicators").innerText = `Indicators: ${indicatorsState&0b01?"On":"Off"}/${indicatorsState&0b10?"On":"Off"}`;
