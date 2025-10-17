@@ -3,29 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Animated Neon Speedometer</title>
+<title>Analog Neon HUD</title>
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <main class="speedometer">
-    <section class="status-left">
-        <dl>
-            <dt>Engine</dt>
-            <dd id="engine">&nbsp;</dd>
-            <dt>Speed</dt>
-            <dd id="speed" class="dd-neon">&nbsp;</dd>
-            <dt>RPM</dt>
-            <dd id="rpm" class="dd-neon">&nbsp;</dd>
-        </dl>
+    <section class="meter-section">
+        <canvas id="speedometerCanvas" width="120" height="120"></canvas>
+        <div id="speed" class="dd-neon">0 KMH</div>
     </section>
-    <section class="status-right">
+    <section class="meter-section">
+        <canvas id="rpmCanvas" width="120" height="120"></canvas>
+        <div id="rpm" class="dd-neon">0 RPM</div>
+    </section>
+    <section class="status-section">
         <dl>
             <dt>Fuel</dt>
-            <dd id="fuel" class="dd-fuel">&nbsp;</dd>
+            <dd id="fuel" class="dd-fuel">100%</dd>
             <dt>Health</dt>
-            <dd id="health" class="dd-health">&nbsp;</dd>
+            <dd id="health" class="dd-health">100%</dd>
             <dt>Gear</dt>
-            <dd id="gear" class="dd-neon">&nbsp;</dd>
+            <dd id="gear" class="dd-neon">N</dd>
         </dl>
     </section>
 </main>
