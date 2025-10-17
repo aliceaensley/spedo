@@ -1,217 +1,90 @@
-/* --- Global & Variables --- */
-:root {
-    --primary-pink: #FF00FF; /* Fuchia Bright */
-    --secondary-teal: #00FFFF; /* Cyan Bright */
-    --text-light: #FFFFFF;
-    --text-muted: #CCC;
-    --danger-red: #FF4136;
-    --warning-yellow: #FFC107;
-    --card-bg: rgba(0, 0, 0, 0.4); /* Background card semi-transparan */
-    --outline-color: rgba(255, 255, 255, 0.3);
-}
-
 * {
     user-select: none;
     user-drag: none;
     box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 
 body {
     background-color: transparent !important;
-    font-family: 'Orbitron', sans-serif;
-    color: var(--text-light);
-    display: flex;
-    justify-content: flex-end; 
-    align-items: flex-end;   
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-size: 11pt; /* Dipertahankan dari template awal */
+    font-family: 'Orbitron', Arial, sans-serif;
+    font-size: 12pt;
+    color: #fff;
 }
 
-/* --- Speedometer Container --- */
-#speedometer-container {
+/* Container utama */
+main.speedometer {
     position: fixed;
-    bottom: 30px;    
-    right: 30px;     
-    
-    width: 350px;    
-    height: 480px;   
-    
-    background-color: rgba(0, 0, 0, 0.8); /* Background utama gelap */
-    border-radius: 10px;
-    box-shadow: 0 0 25px rgba(255, 0, 255, 0.3);
-    padding: 10px;
+    bottom: 15px;
+    right: 15px;
+    width: 280px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
-    border: 2px solid var(--outline-color);
+    flex-direction: row;
+    background: linear-gradient(145deg, #0f0c29, #302b63, #24243e);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 40px rgba(0, 255, 255, 0.2) inset;
+    border: 2px solid #00ffff88;
 }
 
-/* --- Header Graphic (Top Area) --- */
-#header-graphic {
-    width: calc(100% + 20px);
-    margin: -10px -10px 0 -10px;
-    height: 150px;
-    background: linear-gradient(135deg, var(--primary-pink) 0%, var(--secondary-teal) 100%);
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
-    position: relative;
-    overflow: hidden;
-    border-bottom: 2px solid var(--outline-color);
+/* Section kiri & kanan */
+section {
+    flex: 1;
+    padding: 0 10px;
 }
-/* Visual elemen (Sun/Palm trees) */
-.sun { position: absolute; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #FFC107 0%, #FFA000 60%, transparent 100%); top: -50px; left: 50%; transform: translateX(-50%); box-shadow: 0 0 30px #FFC107; opacity: 0.8; }
-.palm-tree { position: absolute; bottom: -10px; width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 70px solid rgba(0, 0, 0, 0.4); border-radius: 50%; }
-.palm-tree.left { left: 15%; transform: rotate(-10deg); }
-.palm-tree.right { right: 15%; transform: rotate(10deg); }
 
-/* SPEED DISPLAY dalam header */
-#speed-display {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    line-height: 1;
+/* List style */
+dl {
+    margin: 0;
 }
-.label-small {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.2em;
-    color: var(--text-light);
-    letter-spacing: 2px;
-    display: block;
-    margin-bottom: 5px;
-    text-shadow: 0 0 5px rgba(0,0,0,0.8);
-}
-.speed-value-group { display: flex; align-items: flex-end; }
-.big-value {
-    font-family: 'Major Mono Display', monospace;
-    font-size: 4.5em; 
-    color: var(--text-light);
-    text-shadow: 0 0 15px var(--secondary-teal);
-    line-height: 0.9;
+
+dt {
     font-weight: bold;
-}
-.unit-text {
-    font-family: 'Major Mono Display', monospace;
-    font-size: 1.2em;
-    color: var(--primary-pink);
-    text-shadow: 0 0 8px var(--primary-pink);
-    margin-left: 5px;
-    padding-bottom: 8px;
+    font-size: 0.9em;
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff;
 }
 
-/* --- Status Grid (RPM, Fuel, Health, Icons) --- */
-#status-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    padding: 10px 0;
-    flex-grow: 1;
+dt::after {
+    content: ":";
 }
 
-.stat-card {
-    background-color: var(--card-bg);
-    padding: 8px;
+dd {
+    margin: 0 0 8px 0;
+    font-weight: bold;
+    padding: 3px 6px;
     border-radius: 5px;
+    background: linear-gradient(90deg, #ff6a00, #ee0979);
+    color: #fff;
     text-align: center;
-    border: 1px solid var(--outline-color);
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    height: 80px;
-}
-
-.stat-card .label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.8em;
-    color: var(--text-muted);
-    letter-spacing: 1px;
-    display: block;
-    margin-bottom: 3px;
-}
-
-.value-text {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.3em;
-    font-weight: bold;
-    display: block;
-    line-height: 1.2;
 }
 
-/* Ikon Status Area */
-#icon-status-area {
-    grid-column: 1 / span 2;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 0;
-    margin-top: 10px;
-    border-top: 1px solid var(--outline-color);
+/* Warna untuk status tertentu */
+#engine.dd-on { background: linear-gradient(90deg, #00ff00, #00cc00); }
+#engine.dd-off { background: linear-gradient(90deg, #ff0000, #cc0000); }
+
+#headlights.dd-on { background: linear-gradient(90deg, #ffff00, #ffaa00); }
+#headlights.dd-highbeam { background: linear-gradient(90deg, #ffffff, #cccccc); }
+#headlights.dd-off { background: linear-gradient(90deg, #555555, #222222); }
+
+#seatbelts.dd-on { background: linear-gradient(90deg, #00ffcc, #009988); }
+#seatbelts.dd-off { background: linear-gradient(90deg, #ff0033, #cc0011); }
+
+/* Gear highlight */
+#gear { background: linear-gradient(90deg, #ff00ff, #660066); }
+
+/* Speed mode */
+#speed-mode { background: linear-gradient(90deg, #00ffff, #006666); }
+
+/* Fuel & health */
+#fuel, #health {
+    background: linear-gradient(90deg, #ffff00, #ffaa00);
 }
 
-.fas {
-    font-size: 1.8em;
-    color: var(--text-muted);
-    transition: color 0.2s;
-}
-
-.icon-on {
-    color: var(--secondary-teal);
-    text-shadow: 0 0 10px var(--secondary-teal);
-}
-
-/* --- Bottom Bar (Gear & Indicators) --- */
-#bottom-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-top: 2px solid var(--outline-color);
-    margin-top: 10px;
-}
-
-#gear-display { text-align: left; }
-
-.label-bottom {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1em;
-    color: var(--text-muted);
-    letter-spacing: 1px;
-    display: block;
-}
-.big-value-gear {
-    font-family: 'Major Mono Display', monospace;
-    font-size: 3em;
-    color: var(--primary-pink);
-    text-shadow: 0 0 10px var(--primary-pink);
-    line-height: 1;
-}
-
-/* Indicators */
-#indicator-arrows {
-    display: flex;
-    gap: 20px;
-}
-
-.indicator-arrow {
-    font-size: 2.5em;
-    color: var(--text-muted);
-    transition: color 0.1s;
-}
-
-.indicator-arrow.arrow-on {
-    color: var(--primary-pink);
-    text-shadow: 0 0 10px var(--primary-pink);
-    animation: blink 0.5s step-start infinite;
-}
-
-@keyframes blink {
-    50% { opacity: 0.3; }
-}
-
-/* HIDDEN ELEMENTS (Penting untuk compatibility JS) */
-dd[id] {
-    display: none !important;
+/* Hover efek */
+dd:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px #00ffff, 0 0 25px rgba(255,255,255,0.2);
 }
