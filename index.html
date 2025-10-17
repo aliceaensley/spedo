@@ -3,43 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Compact HUD</title>
-<link rel="stylesheet" href="/styles.css">
+<title>Speedometer Circular HUD</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <main class="hud-container">
     <!-- Speedometer -->
     <section class="meter-section">
-        <canvas id="speedometerCanvas" width="100" height="100"></canvas>
-        <div id="speed" class="meter-label-center">0 KMH</div>
+        <canvas id="speedometerCanvas" width="110" height="110"></canvas>
     </section>
 
     <!-- RPM -->
     <section class="meter-section">
-        <canvas id="rpmCanvas" width="100" height="100"></canvas>
-        <div id="rpm" class="meter-label-center">0 RPM</div>
+        <canvas id="rpmCanvas" width="110" height="110"></canvas>
     </section>
 
-    <!-- Status Panel -->
+    <!-- Status -->
     <section class="status-section">
         <div class="status-bar">
-            <canvas id="fuelCanvas" width="60" height="60"></canvas>
-            <div id="fuel" class="meter-label-center">100%</div>
+            <canvas id="fuelCanvas" width="50" height="50"></canvas>
+            <div id="fuel" class="meter-label">100%</div>
         </div>
         <div class="status-bar">
-            <canvas id="healthCanvas" width="60" height="60"></canvas>
-            <div id="health" class="meter-label-center">100%</div>
+            <canvas id="healthCanvas" width="50" height="50"></canvas>
+            <div id="health" class="meter-label">100%</div>
         </div>
         <div class="gear-display">
-            <div id="gear" class="meter-label-center">N</div>
+            <div id="gear" class="meter-label">N</div>
             <div>Gear</div>
         </div>
         <div class="engine-display">
-            <div id="engine" class="meter-label-center">Off</div>
+            <div id="engine" class="meter-label">Off</div>
             <div>Engine</div>
         </div>
     </section>
 </main>
-<script src="/script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
