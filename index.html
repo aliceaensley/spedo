@@ -3,100 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Car Head Unit & Speedometer UI</title>
-    <link rel="stylesheet" href="style.css"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Neon Speedometer & Head Unit</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <div id="speedometer-ui">
+    
+    <main class="speedometer-container" id="speedometer-ui">
         
-        <div class="speed-section">
+        <div class="panel speed-panel">
             <div class="speed-header">
-                <span>Speed</span>
-                <span id="speed-mode">MPH</span>
+                <span class="speed-title">Speed</span>
+                <span class="speed-unit" id="speed-mode">MPH</span>
             </div>
-            <div class="speed-display">
-                <span id="speed">000</span>
-                <span class="small-text">S/g</span> </div>
-        </div>
-
-        <div class="info-grid">
-            <div class="info-group">
-                <span>RPM</span>
-                <span id="rpm">0000</span>
-            </div>
-            <div class="info-group">
-                <span>Fuel</span>
-                <span id="fuel">49%</span>
-            </div>
-            <div class="info-group">
-                <span>Health</span>
-                <span id="health">100%</span>
-            </div>
-            <div class="info-group">
-                <span>WIB</span>
-                <span id="time-wib">18:29</span>
+            <div class="speed-value-wrapper">
+                <div class="speed-value" id="speed">000</div>
+                <img src="copyright_logo.png" alt="Logo Hak Cipta" class="speed-copyright-logo">
             </div>
         </div>
 
-        <div class="bottom-section">
+        <div class="panel info-panels-grid">
+            <div class="stat-item"><div class="stat-label">RPM</div><div class="stat-value" id="rpm">0000</div></div>
+            <div class="stat-item"><div class="stat-label">Fuel</div><div class="stat-value" id="fuel">0%</div></div>
+            <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value" id="health">100%</div></div>
+            <div class="stat-item"><div class="stat-label">WIB</div><div class="stat-value" id="time-wib">00:00</div></div>
+        </div>
+
+        <div class="panel bottom-panel">
             <div class="gear-display">
-                <span id="gear">N</span>
-                <span>Gear</span>
+                <span class="gear-label">Gear</span>
+                <span class="gear-value" id="gear">N</span>
             </div>
-            <div class="indicator-icons">
-                <i id="headlights-icon" class="fas fa-lightbulb icon active"></i>
-                <i id="engine-icon" class="fas fa-cog icon active"></i> 
-                <i id="seatbelt-icon" class="fas fa-chair icon active"></i> 
+            <div class="status-indicators">
+                <div class="indicator-icon" id="headlights-icon">💡</div> 
+                <div class="indicator-icon" id="engine-icon">⚙️</div> 
+                <div class="indicator-icon" id="seatbelt-icon">💺</div> 
             </div>
         </div>
-    </div>
-
-    <button id="headunit-interact-button">
-        Head Unit System (CLICK TO INTERACT)
-    </button>
-
-
-    <div id="tablet-ui" class="hidden">
         
-        <div class="headunit-header">
-            <button id="back-to-apps">
-                <i class="fas fa-th-large"></i> <span id="back-to-apps-text">Apps</span>
-            </button>
-            <span id="headunit-time-wib">06:18</span>
-            <button id="close-tablet">
-                &times;
-            </button>
-        </div>
-
-        <div id="app-grid">
-            <div id="browser-app" class="app-icon">
-                <i class="fas fa-globe"></i>
-                <p>Browser</p>
-            </div>
-            <div id="youtube-app" class="app-icon">
-                <i class="fab fa-youtube"></i>
-                <p>YouTube</p>
-            </div>
-        </div>
-
-        <div id="iframe-view" class="hidden">
-            
-            <div id="youtube-search-ui" class="hidden">
-                <input type="text" id="youtube-search-input" placeholder="Search YouTube...">
-                <button id="youtube-search-button">Search</button>
-            </div>
-            
-            <div id="youtube-results" class="hidden">
-            </div>
-            
-            <div class="iframe-container">
-                <iframe id="browser-iframe" src="about:blank"></iframe>
-            </div>
-        </div>
+    </main>
+    
+    <div class="headunit-floating-trigger" id="headunit-footer">
+        Head Unit System (<span class="key-bind">CLICK</span> TO INTERACT)
     </div>
     
-    <script src="script.js"></script> 
+    <div id="tablet-ui" class="headunit-menu-container hidden">
+        <div class="headunit-header">
+            <img src="copyright_logo.png" alt="Logo Hak Cipta" class="headunit-copyright-logo">
+            Head Unit 
+            <span class="headunit-time" id="headunit-time-wib">00:00</span>
+        </div>
+        
+        <div class="headunit-app-grid" id="app-grid">
+            <div class="app-icon"><span class="icon">🎵</span>Music</div>
+            <div class="app-icon"><span class="icon">🗺️</span>Maps</div>
+            <div class="app-icon"><span class="icon">🧮</span>Calculator</div>
+            <div class="app-icon"><span class="icon">⚙️</span>Settings</div>
+            <div class="app-icon"><span class="icon">☀️</span>Weather</div>
+            <div class="app-icon" id="browser-app"><span class="icon">🌐</span>Browser</div> 
+            <div class="app-icon" id="youtube-app"><span class="icon">▶️</span>Youtube</div> 
+            <div class="app-icon"><span class="icon">📻</span>Radio</div>
+        </div>
+        
+        <div class="iframe-container hidden" id="iframe-view">
+            
+            <div class="search-bar-container hidden" id="youtube-search-ui">
+                <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
+                <button id="youtube-search-button">Cari</button>
+            </div>
+            
+            <div class="search-results-container hidden" id="youtube-results">
+                </div>
+
+            <iframe id="browser-iframe" src="about:blank"></iframe>
+            
+            <div class="iframe-back-button" id="back-to-apps">← Back to Apps</div>
+        </div>
+        
+        <div class="headunit-footer-close" id="close-tablet">
+             <span class="close-text">CLOSE MENU</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
