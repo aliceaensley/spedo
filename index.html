@@ -3,68 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synthwave Speedometer</title>
+    <title>Vaporwave Speedometer</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Bebas+Neue&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Bebas+Neue&family=Major+Mono+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     
     <div id="speedometer-container">
+
         <div id="header-graphic">
             <div class="sun"></div>
             <div class="palm-tree left"></div>
             <div class="palm-tree right"></div>
-        </div>
-
-        <div id="main-content">
-            <div id="left-column">
-                <div class="stat-block speed-block">
-                    <span class="label">SPEED</span>
+            
+            <div id="speed-display">
+                <span class="label-small">Speed</span>
+                <div class="speed-value-group">
                     <span id="speed-value" class="big-value">050</span>
                     <span id="speed-unit" class="unit-text">MPH</span>
-                    <dd id="speed" style="display:none;"></dd> <dd id="speed-mode" style="display:none;"></dd> </div>
-                <div class="stat-block rpm-block">
-                    <span class="label">RPM</span>
-                    <span id="rpm-value" class="value-small">5821</span>
-                    <dd id="rpm" style="display:none;"></dd> </div>
-            </div>
-
-            <div id="right-column">
-                <div class="stat-block">
-                    <span class="label">Fuel</span>
-                    <div class="bar-container">
-                        <div id="fuel-bar-fill" class="bar-fill"></div>
-                    </div>
-                    <span id="fuel-percent" class="value-small">49%</span>
-                    <dd id="fuel" style="display:none;"></dd> </div>
-                <div class="stat-block">
-                    <span class="label">Health</span>
-                    <div class="bar-container">
-                        <div id="health-bar-fill" class="bar-fill"></div>
-                    </div>
-                    <span id="health-percent" class="value-small">100%</span>
-                    <dd id="health" style="display:none;"></dd> </div>
-                
-                <div class="stat-block gear-block">
-                    <span class="label">Gear</span>
-                    <span id="gear-value" class="big-value-gear">2</span>
-                    <dd id="gear" style="display:none;"></dd> </div>
-
-                <div id="status-icons">
-                    <i id="headlights-icon" class="fas fa-lightbulb icon-off"></i>
-                    <i id="seatbelt-icon" class="fas fa-chair icon-off"></i>
-                    <div id="indicator-arrows">
-                        <i id="left-indicator" class="fas fa-chevron-left arrow-off"></i>
-                        <i id="right-indicator" class="fas fa-chevron-right arrow-off"></i>
-                    </div>
-                    <dd id="headlights" style="display:none;"></dd> <dd id="seatbelts" style="display:none;"></dd> <dd id="indicators" style="display:none;"></dd> </div>
+                </div>
             </div>
         </div>
-        
-        <dd id="engine" style="display:none;"></dd> 
+
+        <div id="status-grid">
+            
+            <div class="stat-card">
+                <span class="label">RPM</span>
+                <span id="rpm-value" class="value-text">5821</span>
+            </div>
+
+            <div class="stat-card">
+                <span class="label">Fuel</span>
+                <span id="fuel-percent" class="value-text">49%</span>
+            </div>
+
+            <div class="stat-card">
+                <span class="label">Health</span>
+                <span id="health-percent" class="value-text">100%</span>
+            </div>
+
+            <div id="icon-status-area">
+                <i id="headlights-icon" class="fas fa-lightbulb icon-off"></i>
+                <i id="seatbelt-icon" class="fas fa-user-lock icon-off"></i>
+            </div>
+        </div>
+
+        <div id="bottom-bar">
+            <div id="gear-display">
+                <span class="label-bottom">Gear</span>
+                <span id="gear-value" class="big-value-gear">2</span>
+            </div>
+
+            <div id="indicator-arrows">
+                <i id="left-indicator" class="fas fa-chevron-left indicator-arrow"></i>
+                <i id="right-indicator" class="fas fa-chevron-right indicator-arrow"></i>
+            </div>
+        </div>
+
+        <dd id="engine" style="display:none;"></dd>
+        <dd id="speed" style="display:none;"></dd> 
+        <dd id="rpm" style="display:none;"></dd> 
+        <dd id="fuel" style="display:none;"></dd> 
+        <dd id="health" style="display:none;"></dd> 
+        <dd id="gear" style="display:none;"></dd> 
+        <dd id="headlights" style="display:none;"></dd> 
+        <dd id="seatbelts" style="display:none;"></dd> 
+        <dd id="indicators" style="display:none;"></dd> 
+        <dd id="speed-mode" style="display:none;"></dd> 
     </div>
 
     <script src="script.js"></script>
