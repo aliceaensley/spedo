@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.browserApp) {
         elements.browserApp.addEventListener('click', () => {
             // URL yang diminta (memuat ke dalam iFrame)
-            showBrowser('https://lsfd.jg-rp.com/index.php'); 
+            showBrowser('https://www.google.com'); 
         });
     }
     
