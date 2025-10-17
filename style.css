@@ -3,7 +3,7 @@
 body {
     margin: 0;
     font-family: 'Orbitron', sans-serif;
-    background: #111; /* ubah agar ada kontras */
+    background: #111;
     color: #0ff;
 }
 
@@ -14,10 +14,23 @@ body {
     display: flex;
     gap: 15px;
     align-items: flex-end;
-    background: rgba(10,10,30,0.8); /* semi-transparent dark blue */
+    background: rgba(10,10,30,0.85);
     padding: 12px;
     border-radius: 12px;
-    box-shadow: 0 0 15px #0ff;
+    box-shadow: 0 0 20px #0ff;
+}
+
+.circular-panel, .circular-bars, .info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.dial {
+    position: relative;
+    width: 120px;
+    height: 120px;
 }
 
 .bg-ring {
@@ -28,13 +41,13 @@ body {
 
 .progress-ring {
     fill: none;
-    stroke: #0ff; /* neon cyan */
+    stroke: #0ff;
     stroke-width: 8;
     stroke-linecap: round;
     transform: rotate(-90deg);
     transform-origin: 50% 50%;
     transition: stroke-dashoffset 0.2s ease, stroke 0.3s ease;
-    filter: drop-shadow(0 0 6px #0ff);
+    filter: drop-shadow(0 0 8px #0ff);
 }
 
 .dial-text {
@@ -43,13 +56,29 @@ body {
     font-weight: bold;
     text-anchor: middle;
     dominant-baseline: middle;
-    text-shadow: 0 0 4px #0ff;
+    text-shadow: 0 0 5px #0ff;
+}
+
+.circular-bars svg {
+    width: 80px;
+    height: 80px;
+}
+
+.bar-label {
+    font-size: 10px;
+    text-align: center;
+}
+
+.info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .panel-row {
     display: flex;
     justify-content: space-between;
-    background: rgba(0,0,50,0.5);
+    background: rgba(0,0,50,0.6);
     padding: 4px 6px;
     border-radius: 6px;
     border: 1px solid #0ff;
