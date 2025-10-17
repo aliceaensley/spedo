@@ -1,6 +1,7 @@
 let elements = {};
 let speedMode = 0; // 0: KMH, 1: MPH
 let maxSpeed = 240, maxRPM = 8000;
+let engineOn = false; // status mesin
 
 // Canvas
 let speedCanvas, rpmCanvas, fuelCanvas, healthCanvas;
@@ -36,7 +37,7 @@ function drawAnalogMeter(ctx, value, maxValue){
     ctx.stroke();
 }
 
-// Draw circular bar
+// Circular Bar
 function drawCircularBar(ctx, percent, color){
     const cx = ctx.canvas.width/2;
     const cy = ctx.canvas.height/2;
@@ -60,41 +61,50 @@ function drawCircularBar(ctx, percent, color){
     ctx.stroke();
 }
 
-// Set Speed
+// Setters
+function setEngine(state){
+    engineOn = state;
+    elements.engine.innerText = state ? "On" : "Off";
+
+    if(!engineOn){
+        setSpeed(0);
+        setRPM(0);
+        setGear("N");
+    }
+}
+
 function setSpeed(speed){
-    let val = speedMode==1 ? Math.round(speed*2.236936) : Math.round(speed*3.6);
-    elements.speed.innerText = val + (speedMode==1 ? ' MPH' : ' KMH');
+    const val = engineOn ? (speedMode==1? Math.round(speed*2.236936): Math.round(speed*3.6)) : 0;
+    elements.speed.innerText = val + (speedMode==1?' MPH':' KMH');
     drawAnalogMeter(speedCtx, val, maxSpeed);
 }
 
-// Set RPM
 function setRPM(rpm){
-    elements.rpm.innerText = Math.round(rpm);
-    drawAnalogMeter(rpmCtx, rpm, maxRPM);
+    const val = engineOn ? rpm : 0;
+    elements.rpm.innerText = Math.round(val);
+    drawAnalogMeter(rpmCtx, val, maxRPM);
 }
 
-// Fuel
 function setFuel(fuel){
     elements.fuel.innerText = `${(fuel*100).toFixed(0)}%`;
     let color = fuel>0.7?"#0f0":fuel>0.3?"#ff0":"#f00";
-    drawCircularBar(fuelCtx, fuel, color);
+    drawCircularBar(fuelCtx,fuel,color);
 }
 
-// Health
 function setHealth(health){
     elements.health.innerText = `${(health*100).toFixed(0)}%`;
     let color = health>0.7?"#0f0":health>0.3?"#ff0":"#f00";
-    drawCircularBar(healthCtx, health, color);
+    drawCircularBar(healthCtx,health,color);
 }
 
-// Gear
 function setGear(gear){
-    elements.gear.innerText = String(gear);
+    elements.gear.innerText = engineOn ? String(gear) : "N";
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', ()=>{
+// Init
+document.addEventListener('DOMContentLoaded',()=>{
     elements = {
+        engine: document.getElementById('engine'),
         speed: document.getElementById('speed'),
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
@@ -111,14 +121,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
     fuelCtx = fuelCanvas.getContext('2d');
     healthCtx = healthCanvas.getContext('2d');
 
-    // Demo update loop (replace with real data)
+    // Demo loop
     let speedVal=0, rpmVal=0, fuelVal=1, healthVal=1, gearVal=1;
+    setEngine(false); // start off
     setInterval(()=>{
-        speedVal = (speedVal+1)%maxSpeed;
-        rpmVal = (rpmVal+50)%maxRPM;
+        // Contoh: update hanya jika engine on
+        if(engineOn){
+            speedVal = (speedVal+1)%maxSpeed;
+            rpmVal = (rpmVal+50)%maxRPM;
+            gearVal = Math.floor(Math.random()*6)+1;
+        }
         fuelVal = Math.random();
         healthVal = Math.random();
-        gearVal = Math.floor(Math.random()*6)+1;
 
         setSpeed(speedVal);
         setRPM(rpmVal);
