@@ -22,8 +22,7 @@ function setSpeed(speed_ms) {
     // 1. Update Jarum (Needle)
     const angle = mapSpeedToGaugeAngle(speed_kmh);
     if (elements.speedNeedle) {
-        // Rotasi + Transformasi penempatan jarum (dibuat agar cocok dengan posisi di CSS)
-        const needleBaseOffset = 100 - 10; // Radius - 10px (needle height)
+        const needleBaseOffset = 100 - 10; 
         elements.speedNeedle.style.transform = `translateX(-50%) translateY(calc(100px - ${needleBaseOffset}px)) rotate(${angle}deg)`;
     }
     
