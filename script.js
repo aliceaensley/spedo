@@ -190,7 +190,7 @@ function startClock() {
 
 // --- FUNGSI KONTROL SIMULASI BERKENDARA ---
 
-const IDLE_RPM_VALUE = 0.16; // 1600 RPM (dinyatakan sebagai 0.16 dari 10000 RPM)
+const IDLE_RPM_VALUE = 0.16; // 1600 RPM
 const IDLE_TOLERANCE_MS = 0.2; // Batas kecepatan di mana simulasi dianggap bergerak (m/s)
 
 function stopSimulation() {
@@ -208,6 +208,10 @@ function startSimulation() {
     if (simulationInterval !== null) return;
 
     let currentSpeed = 0;
+    
+    // **Variabel Simulasi Baru untuk Kontrol Lebih Baik**
+    let accelerationRate = 0.5; // Maksimum percepatan per interval (m/s)
+    let decelerationRate = 0.1; // Deselerasi saat rem/gas dilepas (m/s)
 
     // Set nilai awal idle (000 dan 1600)
     setSpeed(0);
@@ -215,23 +219,40 @@ function startSimulation() {
 
     simulationInterval = setInterval(() => {
         
-        // **PERBAIKAN 1: Tambahkan Drag/Perlambatan Alami**
-        if (currentSpeed > 0) {
-             currentSpeed *= 0.95; // Kurangi kecepatan sebesar 5% di setiap interval
-        }
+        let targetSpeedChange = 0;
         
-        // **PERBAIKAN 2: Sesuaikan Random SpeedChange**
-        // Nilai sekarang berkisar antara -0.4 hingga +0.5 (memungkinkan akselerasi dan deselerasi)
-        let speedChange = (Math.random() - 0.45) * 1.5; 
-        currentSpeed = currentSpeed + speedChange;
+        // Simulasikan input user: 
+        // 1. Peluang 50% untuk mencoba menambah kecepatan (Akselerasi)
+        // 2. Peluang 30% untuk mengurangi kecepatan (Deselerasi/Rem)
+        // 3. Peluang 20% untuk mempertahankan kecepatan (Cruising/Inertia)
+        let action = Math.random();
+        
+        if (action < 0.5) { 
+            // 50%: Akselerasi/Tambah kecepatan (seperti gas ditekan)
+            targetSpeedChange = accelerationRate * Math.random(); 
+        } else if (action < 0.8) { 
+            // 30%: Deselerasi (seperti rem ditekan pelan)
+            targetSpeedChange = -decelerationRate * Math.random() * 2; 
+        } else {
+            // 20%: Cruising (Perubahan sangat kecil)
+            targetSpeedChange = (Math.random() - 0.5) * 0.1;
+        }
 
-        // Jika kecepatan sangat rendah atau negatif, paksa ke 0 (Idle)
+        // Terapkan perubahan kecepatan
+        currentSpeed += targetSpeedChange;
+        
+        // Perlambatan alami (Drag) - Terapkan hanya jika tidak akselerasi kuat
+        if (targetSpeedChange < 0.1 && currentSpeed > 0) {
+            currentSpeed *= 0.98; // Kurangi kecepatan 2% per interval
+        }
+
+
+        // Jika kecepatan sangat rendah, paksa ke 0 (Idle)
         if (currentSpeed < IDLE_TOLERANCE_MS) { 
             currentSpeed = 0; 
         } 
         
         currentSpeed = Math.max(0, currentSpeed);
-        // ✅ BATAS KECEPATAN TETAP DIHAPUS (Hanya dibatasi oleh *drag* dan *speedChange* acak)
         
         // Cek status Idle
         isVehicleIdle = (currentSpeed === 0);
@@ -245,14 +266,21 @@ function startSimulation() {
             setSpeed(currentSpeed); 
             
             const absSpeed = Math.abs(currentSpeed);
-            // Logika naik turun RPM saat bergerak
-            let baseRPM = Math.min(0.95, absSpeed / 100 + IDLE_RPM_VALUE); 
-            // RPM saat bergerak sekarang akan memiliki sedikit variasi acak
-            let currentRPM = Math.max(IDLE_RPM_VALUE + 0.05, Math.min(0.99, baseRPM + (Math.random() - 0.5) * 0.05));
+            
+            // Logika RPM (Proporsional dengan Speed, tapi dengan lantai IDLE_RPM)
+            // RPM Max 9000 (0.9) jika Speed ~ 100 m/s (~360 KMH)
+            let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.007); // 0.007 adalah faktor transmisi
+            
+            // Batasi RPM agar tidak melewati batas (misal 9900 atau 0.99)
+            let currentRPM = Math.min(0.99, baseRPM);
+            
+            // Tambahkan sedikit noise hanya saat bergerak
+            currentRPM += (Math.random() - 0.5) * 0.02; 
+            
             setRPM(currentRPM);
         }
         
-    }, 300); 
+    }, 100); // ✅ Interval dipercepat menjadi 100ms agar simulasi lebih mulus
 }
 
 
