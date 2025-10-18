@@ -3,24 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Speedometer Mini</title>
+    <title>GPS Speedometer Mini Rapi</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="speedometer-ui" class="speedometer-ui">
         
-        <div class="header-section">
-            <span class="app-title">GPS Speedometer</span>
-            <div class="gps-info">
-                <span class="gps-connectivity">GPS Connectivity : <span id="gps-connectivity-val">57%</span></span>
-                <span class="satellite-info">Satellite : <span id="satellite-count-val">4/15</span></span>
-            </div>
-        </div>
-
         <div class="main-content">
             <div class="left-panel">
                 <div class="gauge-display-area">
                     <div class="gauge-wrapper">
+                        
                         <div class="indicator-lights">
                             <span class="indicator-light engine-light">🔴</span>
                             <span class="indicator-light handbrake-light">🚷</span>
@@ -28,8 +21,7 @@
                         
                         <div id="speed-needle" class="speed-needle"></div>
                         
-                        <div class="gauge-marks-overlay">
-                            </div>
+                        <div class="gauge-marks-overlay"></div>
                     </div>
                     <div class="total-km-display">
                         <span class="label">TOTAL</span>
@@ -38,9 +30,9 @@
                 </div>
 
                 <div class="bottom-nav">
-                    <span class="nav-item active"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmktc3BlZWRvbWV0ZXIyIiB2aWV3Qm94PSIwIDAgMTYgMTYiPgogIDxwYXRoIGQ9Ik04IDRhLjUuNSAwIDAgMSAuNS41djJhLjUuNSAwIDAgMS0xIDB2LTJhLjUuNSAwIDAgMSAuNS0uNVoiLz4KICA8cGF0aCBkPSJNMy43MzIgMy43MzJhLjUuNSAwIDAgMSAuNzAzLS4xNzNsMS41NTkgMS41NTlhLjUuNSAwIDEgMS0uNzAyLjcwM0wzLjYxMiA0LjI2NWEuNS41IDAgMCAxLS4xNzMtLjcwMloiLz4KICA8cGF0aCBkPSJNMTIgOGEuNS41IDAgMCAxLS41LS41di0yYS41LjUuMCAwIDEtMSAwdiJhLjg1Mi44NTIgMCAwIDEtMSAuNVoiLz4KICA8cGF0aCBkPSJNNCA4YS41LjUgayAgICAwIDAgMS0uNS0uNXYtMiBhLjUuNSAwIDAgMS0xIDB2MmEuNS41IDAgMCAxIC0uNS0uNVoiLz4KPC9zdmc+" class="icon-analog"> Analog</span>
+                    <span class="nav-item active">⊙ Analog</span>
                     <span class="nav-item digital-nav-item"><span id="digital-speed-val" class="digital-speed-display">087</span> Digital</span>
-                    <span class="nav-item"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAB2AAAAcQB+V+D0wAAABl0RVh0U29mdHdhcmUAd3d3LmFkaW9iZS5jb20vY3M2cml1jAAAAARtZXBsb3QgRWxpdGUgUm9tZXMgaVp2AAAAAElEQVRYU+2XTY4jORRGP//P03Q9z6p9lC23b+7M3e3b3L2zH+xN2vM2jN/M2oD/zF3Zg/8zdtZf23sAAAAgq0F4AAAAAElFTkSuQmCC" class="icon-map"> Map</span>
+                    <span class="nav-item">🗺️ Map</span>
                 </div>
             </div>
 
