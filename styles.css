@@ -42,6 +42,8 @@ body {
     color: var(--primary-text);
     overflow: hidden; 
 }
+
+/* --- MAIN CONTENT LAYOUT --- */
 .main-content {
     display: flex;
     flex-grow: 1;
@@ -59,7 +61,7 @@ body {
 }
 
 
-/* --- GAUGE DISPLAY AREA (HILANGKAN OVERFLOW) --- */
+/* --- GAUGE DISPLAY AREA (Kontainer yang menampung Gauge) --- */
 .gauge-display-area {
     width: 100%;
     height: 180px; 
@@ -68,47 +70,44 @@ body {
     justify-content: center;
     align-items: flex-end; 
     flex-shrink: 0; 
-    /* HILANGKAN OVERFLOW: HIDDEN YANG MENYEBABKAN GARIS */
 }
 
 .gauge-wrapper {
-    /* Ukuran Lingkaran Penuh */
-    width: calc(var(--gauge-radius) * 2); /* 200px */
-    height: calc(var(--gauge-radius) * 2); /* 200px */
+    /* Ukuran Lingkaran Penuh (200px x 200px) */
+    width: calc(var(--gauge-radius) * 2); 
+    height: calc(var(--gauge-radius) * 2); 
     position: relative;
     
-    /* Posisikan ke atas, setengah lingkaran berada di atas area */
-    margin-bottom: -100px; 
+    /* Posisikan ke atas: Diubah menjadi -70px agar skala terlihat sempurna */
+    margin-bottom: -70px; 
     
-    /* Busur Solid Biru (Background + Box Shadow) */
+    /* Busur Solid (Latar belakang gelap + Border-radius) */
     background-color: var(--dark-bg); 
-    border-radius: 50%; /* Lingkaran penuh */
+    border-radius: 50%; 
     
-    /* === PENTING: CLIPPING DENGAN CLIP-PATH === */
-    /* Memotong bagian bawah lingkaran, meninggalkan setengah bagian atas */
+    /* === PENTING: CLIPPING DENGAN CLIP-PATH untuk busur rapi === */
+    /* Memotong bagian bawah lingkaran, menyisakan setengah bagian atas */
     clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
     
-    /* Outline Biru Tebal dan Glow (Harus disesuaikan agar cocok dengan clip-path) */
+    /* Outline Biru dan Glow */
     box-shadow: 
-        0 0 0 5px var(--accent-blue), /* Outline solid biru */
-        0 0 20px rgba(0, 191, 255, 0.6); /* Glow biru */
+        0 0 0 5px var(--accent-blue), 
+        0 0 20px rgba(0, 191, 255, 0.6); 
     
     z-index: 10;
 }
 
-/* Jarum, Angka, Indikator, dan Total KM semuanya harus diposisikan relatif terhadap PUSAT lingkaran (50% dari atas/kiri) */
-
 /* --- JARUM SPEEDOMETER --- */
 .speed-needle {
     position: absolute;
-    bottom: 50%; 
+    bottom: 50%; /* Pusat vertikal lingkaran */
     left: 50%;
     transform-origin: 50% 100%; 
     width: 3px;
     height: calc(var(--gauge-radius) - 10px); 
     background-color: var(--accent-red); 
     z-index: 15;
-    /* Penyesuaian agar pangkal jarum berada di tengah lingkaran (100px) */
+    /* Transformasi untuk menempatkan pangkal jarum di pusat lingkaran */
     transform: translateX(-50%) translateY(calc(var(--gauge-radius) - 100px)) rotate(var(--gauge-start-angle)); 
     box-shadow: 0 0 10px var(--accent-red);
     transition: transform 0.3s ease-out;
@@ -131,7 +130,7 @@ body {
 /* --- SKALA ANGKA GAUGE --- */
 .gauge-scale-numbers {
     position: absolute;
-    top: 50%; 
+    top: 50%; /* Pusat vertikal lingkaran */
     left: 50%; 
     width: 0;
     height: 0;
@@ -147,9 +146,10 @@ body {
     --angle: 0deg;
     --radius: calc(var(--gauge-radius) - 15px);
     transform-origin: 50% 50%;
+    /* Rotasi agar angka tegak di sepanjang busur */
     transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle)));
     margin-left: -15px; 
-    margin-top: -10px; 
+    margin-top: -8px; /* Disesuaikan agar pas dengan busur */
 }
 .label-0   { --angle: -135deg; }
 .label-20  { --angle: -108deg; } 
@@ -174,7 +174,7 @@ body {
     gap: 20px; 
     width: calc(var(--gauge-radius) * 2 - 80px); 
     justify-content: space-around;
-    margin-top: -30px; 
+    margin-top: -10px; /* Posisikan lampu sedikit lebih rendah */
 }
 .indicator-light {
     font-size: 18pt;
@@ -197,7 +197,7 @@ body {
     text-align: center;
     z-index: 12;
     width: 100%;
-    margin-top: 10px; 
+    margin-top: 50px; /* Disesuaikan agar teks total berada di tengah bawah busur */
 }
 .total-km-display .label {
     font-size: 8pt;
