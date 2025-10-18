@@ -1,6 +1,6 @@
 let elements = {};
 let totalDistanceTraveled = 0; // KM
-let maxSpeedReached = 0; // KMH
+let maxSpeedReached = 0; // KMH (meskipun tidak ditampilkan, tetap dihitung)
 let avgSpeedSum = 0; 
 let tripDurationSeconds = 0;
 let simulationInterval = null;
@@ -32,8 +32,10 @@ function setSpeed(speed_ms) {
         elements.digitalSpeedVal.innerText = String(speed_kmh).padStart(3, '0');
     }
     
-    // Note: Max Speed data box sudah dihapus, jadi tidak ada update max speed di sini.
-    // Namun, kita tetap menghitung total distance untuk display 'TOTAL'
+    // Menghitung max speed meskipun tidak ditampilkan
+    if (speed_kmh > maxSpeedReached) {
+        maxSpeedReached = speed_kmh;
+    }
     
     return speed_kmh;
 }
@@ -56,10 +58,11 @@ function startSimulation() {
     
     // Reset data trip
     totalDistanceTraveled = 0;
+    maxSpeedReached = 0;
     
     // Set nilai awal
     setSpeed(0);
-    updateTripData(0); // Hanya total distance
+    updateTripData(0); 
 
     simulationInterval = setInterval(() => {
         
@@ -96,8 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Bottom Nav
         digitalSpeedVal: document.getElementById('digital-speed-val'),
-
-        // Right Panel Data - SEMUA DIHAPUS
     };
     
     // 2. Mulai Simulasi
