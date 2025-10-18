@@ -3,63 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Speedometer & YouTube</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Advanced Car Speedometer</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
-    <main class="speedometer-container" id="speedometer-ui">
-        
-        <div class="youtube-integrated-container hidden" id="youtube-ui-wrapper">
+    <div id="speedometer-ui" class="speedometer-container">
+        <div class="speedometer-dial">
+            <div class="needle"></div>
+            <div class="center-cap"></div>
             
-            <div class="search-bar-container" id="youtube-search-ui">
-                <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
-                <button id="youtube-search-button">Cari</button>
-            </div>
-            
-            <div class="search-results-container hidden" id="youtube-results">
-                </div>
-
-            <iframe id="browser-iframe" src="about:blank"></iframe>
-            
-            <div class="youtube-close-button" id="youtube-hide-button">
-                HIDE YOUTUBE [ESC]
-            </div>
-        </div>
-        
-        <div class="panel speed-panel">
-            <div class="speed-header">
-                <span class="speed-title">Speed</span>
-                <span class="speed-unit" id="speed-mode">MPH</span>
-            </div>
-            <div class="speed-value-wrapper">
-                <div class="speed-value" id="speed">000</div>
-                <img src="https://bit.ly/signalice" alt="Logo Hak Cipta" class="speed-copyright-logo">
-            </div>
+            <div class="speed-label deg-225">0</div>
+            <div class="speed-label deg-247">20</div>
+            <div class="speed-label deg-270">40</div>
+            <div class="speed-label deg-292">60</div>
+            <div class="speed-label deg-315">80</div>
+            <div class="speed-label deg-337">100</div>
+            <div class="speed-label deg-0">120</div>
+            <div class="speed-label deg-22">140</div>
+            <div class="speed-label deg-45">160</div>
+            <div class="speed-label deg-67">180</div>
+            <div class="speed-label deg-90">200</div>
+            <div class="speed-label deg-112">220</div>
         </div>
 
-        <div class="panel info-panels-grid">
-            <div class="stat-item"><div class="stat-label">RPM</div><div class="stat-value" id="rpm">0000</div></div>
-            <div class="stat-item"><div class="stat-label">Fuel</div><div class="stat-value" id="fuel">0%</div></div>
-            <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value" id="health">100%</div></div>
-            <div class="stat-item"><div class="stat-label">Time</div><div class="stat-value" id="time-wib">00:00</div></div>
+        <div class="display-panel">
+            <div class="data-row">
+                <span id="speed" class="speed-value">000</span>
+                <span id="speed-mode" class="speed-unit">KMH</span>
+            </div>
+            <div class="data-row-small">
+                RPM <span id="rpm">0000</span>
+            </div>
+            <div class="indicator-group">
+                <span id="engine-icon" class="indicator icon-engine"></span>
+                <span id="headlights-icon" class="indicator icon-headlights"></span>
+                <span id="seatbelt-icon" class="indicator icon-seatbelt"></span>
+                <span id="youtube-toggle-icon" class="indicator icon-youtube"></span>
+            </div>
         </div>
 
-        <div class="panel bottom-panel">
-            <div class="gear-display">
-                <span class="gear-label">Gear</span>
-                <span class="gear-value" id="gear">N</span>
-            </div>
-            <div class="status-indicators">
-                <div class="indicator-icon" id="headlights-icon">💡</div> 
-                <div class="indicator-icon" id="engine-icon">⚙️</div> 
-                <div class="indicator-icon" id="seatbelt-icon">💺</div> 
-                
-                <div class="indicator-icon youtube-toggle" id="youtube-toggle-icon">▶️</div> 
-            </div>
+        <div class="turn-signal-area">
+            <span id="turn-signal-left" class="indicator turn-signal icon-turn-left"></span>
+            <span id="hazard-icon" class="indicator icon-hazard"></span> 
+            <span id="turn-signal-right" class="indicator turn-signal icon-turn-right"></span>
         </div>
-        
-    </main>
+        <div class="bottom-panel">
+            <div class="fuel-health">
+                Fuel <span id="fuel">50%</span> | Health <span id="health">100%</span>
+            </div>
+            <div id="time-wib" class="time-wib">00:00</div>
+        </div>
+    </div>
+
+    <div id="youtube-ui-wrapper" class="youtube-ui-wrapper hidden">
+        <div class="youtube-controls">
+            <input type="text" id="youtube-search-input" placeholder="Cari YouTube...">
+            <button id="youtube-search-button">Cari</button>
+            <button id="youtube-hide-button">X</button>
+        </div>
+        <div id="youtube-results" class="youtube-results"></div>
+        <iframe id="browser-iframe" class="youtube-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
 
     <script src="script.js"></script>
 </body>
