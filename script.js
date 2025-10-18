@@ -22,14 +22,12 @@ function setSpeed(speed_ms) {
     // 1. Update Jarum (Needle)
     const angle = mapSpeedToGaugeAngle(speed_kmh);
     if (elements.speedNeedle) {
-        const needleBaseOffset = 100 - 10; 
-        elements.speedNeedle.style.transform = `translateX(-50%) translateY(calc(100px - ${needleBaseOffset}px)) rotate(${angle}deg)`;
+        // Radius 90px
+        const needleBaseOffset = 90 - 10; 
+        elements.speedNeedle.style.transform = `translateX(-50%) translateY(calc(90px - ${needleBaseOffset}px)) rotate(${angle}deg)`;
     }
     
-    // 2. Update digital speed di nav
-    if (elements.digitalSpeedVal) {
-        elements.digitalSpeedVal.innerText = String(speed_kmh).padStart(3, '0');
-    }
+    // Angka digital di nav tidak lagi diperbarui
     
     if (speed_kmh > maxSpeedReached) {
         maxSpeedReached = speed_kmh;
@@ -61,14 +59,17 @@ function startSimulation() {
 
     simulationInterval = setInterval(() => {
         
+        // Simulasikan kecepatan yang berfluktuasi
         currentSpeed_ms += (Math.random() - 0.5) * 1; 
-        currentSpeed_ms = Math.max(0, Math.min(60, currentSpeed_ms)); 
+        currentSpeed_ms = Math.max(0, Math.min(60, currentSpeed_ms)); // Batasi hingga 60 m/s (~216 km/h)
         const speed_kmh = setSpeed(currentSpeed_ms);
         
+        // Hitung jarak
         totalDistanceTraveled += (speed_kmh / 3600); 
         
         updateTripData(totalDistanceTraveled);
         
+        // Simulasikan indikator (berkedip jika kondisi terpenuhi)
         toggleIndicator(elements.engineLight, speed_kmh > 100 && Math.random() < 0.1); 
         toggleIndicator(elements.handbrakeLight, speed_kmh < 5 && Math.random() < 0.2); 
         toggleIndicator(elements.seatbeltLight, speed_kmh > 10 && Math.random() < 0.05);
@@ -86,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handbrakeLight: document.querySelector('.handbrake-light'),
         seatbeltLight: document.querySelector('.seatbelt-light'),
         totalDistance: document.getElementById('total-distance'), 
-        digitalSpeedVal: document.getElementById('digital-speed-val'),
+        // digitalSpeedVal sudah dihapus dari pemetaan
     };
     
     // 2. Mulai Simulasi
