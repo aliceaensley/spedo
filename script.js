@@ -97,6 +97,7 @@ function setSpeed(speed) {
     
     switch(speedMode)
     {
+        // 1 m/s = 2.236936 mph | 1 m/s = 1.943844 knot | 1 m/s = 3.6 kmh
         case 1: speedValue = Math.round(absSpeed * 2.236936); break; 
         case 2: speedValue = Math.round(absSpeed * 1.943844); break; 
         default: speedValue = Math.round(absSpeed * 3.6); 
@@ -155,7 +156,7 @@ function setEngine(state) {
 }
 
 function setSeatbelts(state) {
-    // ✅ Logika Suara Seatbelt: Putar ahh.mp3 jika sabuk baru dipasang (dari false ke true)
+    // Logika Suara Seatbelt: Putar ahh.mp3 jika sabuk baru dipasang (dari false ke true)
     if (state === true && seatbeltState === false) {
         seatbeltSound.currentTime = 0;
         seatbeltSound.play().catch(e => { 
@@ -189,8 +190,8 @@ function startClock() {
 
 // --- FUNGSI KONTROL SIMULASI BERKENDARA ---
 
-const IDLE_RPM_VALUE = 0.16; // 1600 RPM
-const IDLE_TOLERANCE_MS = 0.2; // Batas kecepatan di mana simulasi dianggap bergerak
+const IDLE_RPM_VALUE = 0.16; // 1600 RPM (dinyatakan sebagai 0.16 dari 10000 RPM)
+const IDLE_TOLERANCE_MS = 0.2; // Batas kecepatan di mana simulasi dianggap bergerak (m/s)
 
 function stopSimulation() {
     if (simulationInterval !== null) {
@@ -198,7 +199,7 @@ function stopSimulation() {
         simulationInterval = null;
     }
     setSpeed(0);
-    // Atur RPM ke 0.0000 saat mesin dimatikan
+    // Atur RPM ke 0000 saat mesin dimatikan
     if (elements.rpm) elements.rpm.innerText = '0000'; 
     isVehicleIdle = false; 
 }
@@ -210,11 +211,11 @@ function startSimulation() {
 
     // Set nilai awal idle (000 dan 1600)
     setSpeed(0);
-    setRPM(IDLE_RPM_VALUE); 
+    if (elements.rpm) elements.rpm.innerText = '1600'; 
 
     simulationInterval = setInterval(() => {
         
-        let speedChange = (Math.random() - 0.5) * 0.5;
+        let speedChange = (Math.random() - 0.4) * 0.9; // ✅ Diperbesar agar kecepatan lebih tinggi
         currentSpeed = currentSpeed + speedChange;
 
         // Jika kecepatan sangat rendah atau negatif, paksa ke 0 (Idle)
@@ -223,17 +224,14 @@ function startSimulation() {
         } 
         
         currentSpeed = Math.max(0, currentSpeed);
-        currentSpeed = Math.min(40, currentSpeed); 
+        // ✅ BATAS KECEPATAN DIHAPUS, kendaraan bisa ngebut (tapi tetap dikontrol oleh kecepatan simulasinya)
         
         // Cek status Idle
         isVehicleIdle = (currentSpeed === 0);
         
-        let currentRPM;
-        
         if (isVehicleIdle) {
-            // ✅ Kunci Nilai: Jika idle, Speed = 000, RPM = 1600 (nilai tetap)
+            // ✅ Kunci Nilai: Jika idle, Speed = 000, RPM = 1600 (nilai TEPAT dan STABIL)
             setSpeed(0);
-            // setRPM(IDLE_RPM_VALUE) tidak perlu dipanggil karena sudah dilakukan di luar loop
             if (elements.rpm) elements.rpm.innerText = '1600'; 
         } else {
             // ✅ Simulasi normal jika bergerak
@@ -241,8 +239,8 @@ function startSimulation() {
             
             const absSpeed = Math.abs(currentSpeed);
             // Logika naik turun RPM saat bergerak
-            let baseRPM = Math.min(0.8, absSpeed / 50 + IDLE_RPM_VALUE); 
-            currentRPM = Math.max(IDLE_RPM_VALUE + 0.05, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
+            let baseRPM = Math.min(0.95, absSpeed / 100 + IDLE_RPM_VALUE); // Skala disesuaikan
+            let currentRPM = Math.max(IDLE_RPM_VALUE + 0.05, Math.min(0.99, baseRPM + (Math.random() - 0.5) * 0.05));
             setRPM(currentRPM);
         }
         
@@ -384,13 +382,10 @@ function toggleYoutubeUI(state) {
 function hideWelcomeOverlay(durationMs) {
     if (!elements.welcomeOverlay) return;
 
-    // Durasi total tampilan overlay adalah Durasi Audio + Buffer
     const totalDisplayTime = durationMs; 
-
-    // Durasi Fade-out CSS adalah 1000ms (1 detik)
     const fadeOutDuration = 1000;
 
-    // Mulai animasi fade-out tepat setelah durasi audio (atau sedikit sebelum akhir jika durasi sangat singkat)
+    // Mulai animasi fade-out tepat setelah durasi audio
     const fadeOutStartDelay = Math.max(0, totalDisplayTime - fadeOutDuration);
 
     setTimeout(() => {
