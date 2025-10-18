@@ -20,7 +20,7 @@ body {
     --accent-blue: #00BFFF; 
     --dark-bg: #1A1A1A;
     --medium-dark-bg: #2C2C2C;
-    --gauge-radius: 90px; /* Radius 90px (Diameter 180px) */
+    --gauge-radius: 90px; /* Radius 90px (Diameter 180px) untuk proporsi yang pas */
     --gauge-text-color: #E0E0E0;
     --gauge-start-angle: -135deg; 
     --gauge-end-angle: 135deg; 
@@ -32,7 +32,7 @@ body {
     bottom: 15px;
     right: 15px;
     width: 220px; 
-    height: 300px; /* Ditingkatkan kembali dari 280px ke 300px untuk memberi ruang di atas */
+    height: 300px; 
     background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%);
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
@@ -40,7 +40,7 @@ body {
     display: flex;
     flex-direction: column;
     color: var(--primary-text);
-    /* overflow: hidden dihapus di sini jika ada, agar shadow luar terlihat */
+    overflow: hidden; 
 }
 
 /* --- MAIN CONTENT LAYOUT --- */
@@ -63,7 +63,6 @@ body {
 
 /* --- GAUGE DISPLAY AREA (Kontainer yang menampung lingkaran) --- */
 .gauge-display-area {
-    /* Tinggi 180px agar lingkaran (diameter 180px) pas vertikal */
     width: 100%;
     height: 180px; 
     position: relative;
@@ -71,8 +70,7 @@ body {
     justify-content: center;
     align-items: flex-start; /* Posisikan lingkaran di bagian atas wadah */
     flex-shrink: 0; 
-    /* Hilangkan overflow: hidden di sini agar lingkaran penuh terlihat */
-    padding-top: 5px; /* Sedikit padding atas agar angka 100 punya ruang */
+    padding-top: 5px; /* Memberi ruang agar angka 100 tidak terpotong */
 }
 
 .gauge-wrapper {
@@ -99,10 +97,9 @@ body {
     left: 50%;
     transform-origin: 50% 100%; 
     width: 3px;
-    height: calc(var(--gauge-radius) - 10px); 
+    height: calc(var(--gauge-radius) - 10px); /* 80px */
     background-color: var(--accent-red); 
     z-index: 15;
-    /* Penempatan pangkal jarum di pusat lingkaran (90px) */
     transform: translateX(-50%) translateY(calc(var(--gauge-radius) - 90px)) rotate(var(--gauge-start-angle)); 
     box-shadow: 0 0 10px var(--accent-red);
     transition: transform 0.3s ease-out;
@@ -139,11 +136,11 @@ body {
     text-align: center;
     font-weight: bold; 
     --angle: 0deg;
-    --radius: calc(var(--gauge-radius) - 10px);
+    --radius: calc(var(--gauge-radius) - 10px); /* 80px */
     transform-origin: 50% 50%;
     transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle)));
     margin-left: -15px; 
-    margin-top: -10px; /* Posisi relatif pusat lingkaran */
+    margin-top: -10px; 
 }
 .label-0   { --angle: -135deg; }
 .label-20  { --angle: -108deg; } 
@@ -168,7 +165,7 @@ body {
     gap: 20px; 
     width: calc(var(--gauge-radius) * 2 - 80px); 
     justify-content: space-around;
-    margin-top: -30px; /* Posisikan lampu ke atas di dalam lingkaran */
+    margin-top: -30px; 
 }
 .indicator-light {
     font-size: 18pt;
@@ -191,7 +188,7 @@ body {
     text-align: center;
     z-index: 12;
     width: 100%;
-    margin-top: 25px; /* Disesuaikan agar teks total berada di tengah bawah */
+    margin-top: 25px; 
 }
 .total-km-display .label {
     font-size: 8pt;
@@ -216,7 +213,6 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
 }
-/* ... (Sisa styling Bottom Controls dan Navigasi tetap sama) ... */
 
 .bottom-nav {
     display: flex;
@@ -239,10 +235,7 @@ body {
     background-color: var(--accent-blue);
     color: white;
 }
-.digital-speed-display {
-    font-weight: bold;
-    color: var(--accent-blue);
-}
+/* digital-speed-display class dihapus di HTML, jadi tidak perlu styling di sini */
 
 
 /* --- ACTION BUTTONS BAR --- */
