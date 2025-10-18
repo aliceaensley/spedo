@@ -16,9 +16,9 @@ const fuelWarningSound = new Audio('bensin.mp3');
 const criticalFuelSound = new Audio('sekarat.mp3'); 
 
 // *****************************************************************
-// ⚠️ PERBAIKAN UTAMA: GANTI DENGAN KUNCI API YOUTUBE ANDA YANG ASLI 
+// ⚠️ PERBAIKAN: Kunci API YouTube Diperbarui
 // *****************************************************************
-const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; // <--- HARUS DIGANTI!
+const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; 
 // *****************************************************************
 
 // --- FUNGSI UTILITY & TOGGLE ---
@@ -122,7 +122,6 @@ function setFuel(fuel) {
     }
 }
 
-// Logic setHealth disederhanakan
 function setHealth(health) {
     const displayValue = `${Math.round(health * 100)}%`;
     if (elements.health) elements.health.innerText = displayValue;
@@ -234,7 +233,7 @@ function startVitalUpdates() {
     vitalInterval = setInterval(() => {
         const fuelReductionRate = engineState ? 0.005 : 0.000; 
         
-        // Logika Health dinonaktifkan (hanya inisiasi)
+        // Logika Health dinonaktifkan
 
         // Logika Fuel
         const currentFuelText = elements.fuel.innerText.replace('%', '');
@@ -246,11 +245,10 @@ function startVitalUpdates() {
 }
 
 
-// --- FUNGSI YOUTUBE API (Sudah Benar, tinggal API Keynya) ---
+// --- FUNGSI YOUTUBE API ---
 async function searchYoutube(query) {
-    if (!query || YOUTUBE_API_KEY === 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs') {
-        alert("PERINGATAN: YouTube API Key Anda adalah kunci contoh dan TIDAK AKAN BERFUNGSI. Harap ganti dengan kunci yang valid.");
-        elements.youtubeResults.innerHTML = '<p style="color:red; padding: 10px; width: 300px;">API Key GAGAL! Ganti kunci contoh di script.js.</p>';
+    if (!query) {
+        elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Harap masukkan kata kunci.</p>';
         elements.youtubeResults.classList.remove('hidden');
         return;
     }
@@ -300,10 +298,7 @@ async function searchYoutube(query) {
     } catch (error) {
         console.error('Error fetching YouTube data:', error);
         
-        let errorMessage = 'Gagal terhubung ke API.';
-        if (error.message.includes('403')) {
-              errorMessage = 'API Key GAGAL. Cek apakah kunci Anda sudah valid atau kuota habis.';
-        }
+        let errorMessage = 'Gagal melakukan pencarian YouTube. (Kemungkinan: API Key salah/kuota habis).';
         
         elements.youtubeResults.innerHTML = `<p style="color:red; padding: 10px; width: 300px;">${errorMessage}</p>`;
     }
@@ -311,7 +306,6 @@ async function searchYoutube(query) {
 
 function showVideo(url) {
     if (elements.browserIframe) {
-        // Tambahkan allow='autoplay' agar iframe bisa langsung play
         elements.browserIframe.src = url; 
     }
 }
@@ -353,7 +347,6 @@ function toggleYoutubeUI(state) {
         toggleActive(elements.youtubeToggleIcon, false);
         
         toggleYoutubeSearchUI(false);
-        // Hentikan pemutaran video saat ditutup
         if (elements.browserIframe) elements.browserIframe.src = 'about:blank';
     }
 }
@@ -382,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
         seatbeltIcon: document.getElementById('seatbelt-icon'),
         youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
         
-        // Elemen YouTube Internal (Semua ID sudah benar dan sinkron dengan HTML)
+        // Elemen YouTube Internal
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
         youtubeSearchInput: document.getElementById('youtube-search-input'),
         youtubeSearchButton: document.getElementById('youtube-search-button'),
@@ -440,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 6. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
-    setHealth(1.0); // Diinisiasi normal (tanpa warning)
+    setHealth(1.0); 
     setFuel(0.49); 
     
     setEngine(false); 
