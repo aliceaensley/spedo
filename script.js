@@ -1,27 +1,30 @@
 let elements = {};
-let speedMode = 1;
-let indicators = 0;
-let engineState = false; // Tambahkan state untuk engine
-let seatbeltState = false; // Tambahkan state untuk seatbelt
+let speedMode = 1; // 1: MPH (default)
+let engineState = false; 
+let headlightsState = 0; 
+let seatbeltState = false; 
+let isYoutubeOpen = false;
+let simulationInterval = null; 
+let timeInterval = null; 
 
-const onOrOff = state => state ? 'On' : 'Off';
+// *****************************************************************
+// Kunci API YouTube - HARUS DIGANTI!
+// *****************************************************************
+const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; // Kunci Contoh, TIDAK AKAN BERFUNGSI!
+// *****************************************************************
 
-// --- FUNGSI UTILITY BARU ---
+// --- KONSTANTA SIMULASI STABIL ---
+const IDLE_RPM_VALUE = 1000; // RPM Idle yang ditampilkan di UI
+const IDLE_SPEED_MS = 0.2; // Batas kecepatan (m/s) di mana mobil dianggap berhenti.
 
-/**
- * Toggles the 'active' class on an element (for icons).
- * @param {HTMLElement} element - The element to toggle.
- * @param {boolean} state - The desired state.
- */
+// --- FUNGSI UTILITY ---
+
 const toggleIconActive = (element, state) => {
     if (element) {
         element.classList.toggle('active', state);
     }
 };
 
-/**
- * Updates the time display (HH:MM).
- */
 function updateTime() {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
@@ -32,122 +35,59 @@ function updateTime() {
     }
 }
 
+
 // --- FUNGSI PEMBARUAN DATA ---
 
-/**
- * Updates the display of the engine state.
- * @param {boolean} state If true, the engine is on; otherwise, it is off.
- */
 function setEngine(state) {
     engineState = state;
-    // Update ikon mesin
     toggleIconActive(elements.engineIcon, state);
-    // Kita tidak menampilkan teks 'On/Off' di UI baru, cukup ikon
+    if (state) {
+        startSimulation();
+    } else {
+        stopSimulation();
+    }
 }
 
-/**
- * Updates the speed display based on the current speed mode.
- * @param {number} speed - The speed value in meters per second (m/s).
- */
 function setSpeed(speed) {
     let speedValue;
     const absSpeed = Math.abs(speed); 
     
     switch(speedMode)
     {
-        case 1: speedValue = Math.round(absSpeed * 2.236936); break; // MPH
-        case 2: speedValue = Math.round(absSpeed * 1.943844); break; // Knots
-        default: speedValue = Math.round(absSpeed * 3.6); // KMH
+        case 1: speedValue = Math.round(absSpeed * 2.236936); break; 
+        case 2: speedValue = Math.round(absSpeed * 1.943844); break; 
+        default: speedValue = Math.round(absSpeed * 3.6); 
     }
     
-    // Speed selalu ditampilkan 3 digit
     const displayValue = String(speedValue).padStart(3, '0');
     if (elements.speed) elements.speed.innerText = displayValue;
 }
 
-/**
- * Updates the RPM (Revolutions Per Minute) display.
- * @param {number} rpm - The RPM value to display. (0 to 1).
- */
 function setRPM(rpm) {
-    // RPM ditampilkan sebagai nilai 4 digit di kotak kecil
+    // RPM masuk sebagai 0.0-1.0 (skala 0-10000)
     const rpmValue = Math.round(rpm * 10000);
-    elements.rpm.innerText = `${rpmValue} RPM`;
+    elements.rpm.innerText = `${rpmValue}`;
 }
 
-/**
- * Updates the fuel level display as a percentage.
- * @param {number} fuel - The fuel level (0 to 1).
- */
 function setFuel(fuel) {
-    elements.fuel.innerText = `${(fuel * 100).toFixed(1)}%`;
+    // Simulasi penuaan data vital
+    if (elements.fuel) elements.fuel.innerText = `${Math.round(fuel * 100)}%`;
 }
 
-/**
- * Updates the vehicle health display as a percentage.
- * @param {number} health - The vehicle health level (0 to 1).
- */
 function setHealth(health) {
-    elements.health.innerText = `${(health * 100).toFixed(1)}%`;
+    if (elements.health) elements.health.innerText = `${Math.round(health * 100)}%`;
 }
 
-/**
- * Updates the current gear display (menggunakan ikon gear di bar).
- * @param {number} gear - The current gear to display. 0 represents neutral/reverse.
- */
-function setGear(gear) {
-    let gearText;
-    if (gear === 0) {
-        gearText = 'N';
-    } else if (gear < 0) {
-        gearText = 'R';
-    } else {
-        gearText = String(gear);
-    }
-    
-    if (elements.gearDisplay) elements.gearDisplay.innerText = gearText;
-}
-
-/**
- * Updates the headlights status display (menggunakan ikon lampu).
- * @param {number} state - The headlight state (0: Off, 1: On, 2: High Beam).
- */
 function setHeadlights(state) {
-    const isActive = (state > 0);
-    toggleIconActive(elements.headlightsIcon, isActive);
+    headlightsState = state;
+    toggleIconActive(elements.headlightsIcon, state > 0);
 }
 
-/**
- * Sets the state of the left turn indicator and updates the display.
- */
-function setLeftIndicator(state) {
-    indicators = (indicators & 0b10) | (state ? 0b01 : 0b00);
-    // Ikon indikator aktif jika salah satu atau keduanya aktif
-    toggleIconActive(elements.indicatorsIcon, indicators > 0);
-}
-
-/**
- * Sets the state of the right turn indicator and updates the display.
- */
-function setRightIndicator(state) {
-    indicators = (indicators & 0b01) | (state ? 0b10 : 0b00);
-    // Ikon indikator aktif jika salah satu atau keduanya aktif
-    toggleIconActive(elements.indicatorsIcon, indicators > 0);
-}
-
-/**
- * Updates the seatbelt status display (menggunakan ikon seatbelt).
- * @param {boolean} state - If true, indicates seatbelts are fastened; otherwise, indicates they are not.
- */
 function setSeatbelts(state) {
     seatbeltState = state;
     toggleIconActive(elements.seatbeltsIcon, state);
 }
 
-/**
- * Sets the speed display mode and updates the speed unit display.
- * @param {number} mode - The speed mode to set (0: KMH, 1: MPH, 2: Knots).
- */
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -160,74 +100,177 @@ function setSpeedMode(mode) {
     if (elements.speedMode) elements.speedMode.innerText = unit;
 }
 
-// Wait for the DOM to be fully loaded
+
+// --- KONTROL SIMULASI ---
+
+function stopSimulation() {
+    if (simulationInterval !== null) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+    }
+    setSpeed(0);
+    // RPM di set ke 0000 saat mesin dimatikan
+    setRPM(0.0); 
+}
+
+function startSimulation() {
+    if (simulationInterval !== null) return;
+
+    let currentSpeed = 0;
+    const RPM_BASE_FLOAT = IDLE_RPM_VALUE / 10000; // 0.10 untuk 1000 RPM
+    
+    setSpeed(0);
+    setRPM(RPM_BASE_FLOAT); // RPM awal 1000
+    
+    let accelerationRate = 0.5; 
+    let decelerationRate = 0.1; 
+
+    simulationInterval = setInterval(() => {
+        
+        let targetSpeedChange = 0;
+        let action = Math.random();
+        
+        // Logika Dinamis: (50% Aksel, 30% Desel, 20% Cruising)
+        if (action < 0.5) { 
+            targetSpeedChange = accelerationRate * Math.random(); 
+        } else if (action < 0.8) { 
+            targetSpeedChange = -decelerationRate * Math.random() * 2; 
+        } else {
+            targetSpeedChange = (Math.random() - 0.5) * 0.1;
+        }
+
+        currentSpeed += targetSpeedChange;
+        
+        // Drag dan Batas Bawah
+        if (currentSpeed > 0) currentSpeed *= 0.98;
+        if (currentSpeed < IDLE_SPEED_MS) currentSpeed = 0; 
+        currentSpeed = Math.max(0, currentSpeed);
+        
+        const isIdle = (currentSpeed === 0);
+        
+        if (isIdle) {
+            setSpeed(0);
+            setRPM(RPM_BASE_FLOAT); // Kunci di 1000
+        } else {
+            setSpeed(currentSpeed);
+            
+            // Logika RPM: Proporsional dengan speed, minimum di IDLE
+            let currentRPM = RPM_BASE_FLOAT + (currentSpeed * 0.007);
+            currentRPM = Math.min(0.99, currentRPM); 
+            currentRPM += (Math.random() - 0.5) * 0.02; // Noise
+            
+            setRPM(currentRPM);
+        }
+        
+    }, 100); 
+}
+
+
+// --- FUNGSI YOUTUBE ---
+
+function toggleYoutubeUI(state) {
+    const wrapper = elements.youtubeUIWrapper;
+    
+    if (state === undefined) {
+        state = !isYoutubeOpen;
+    }
+
+    isYoutubeOpen = state;
+    
+    if (wrapper) {
+        wrapper.classList.toggle('hidden', !state);
+        toggleIconActive(elements.youtubeToggleIcon, state);
+        if (state) {
+            elements.youtubeSearchInput.focus();
+        } else {
+            // Optional: Hentikan video saat ditutup
+            elements.browserIframe.src = "";
+        }
+    }
+}
+
+async function searchYoutube(query) {
+    if (!query || !YOUTUBE_API_KEY || YOUTUBE_API_KEY === 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw') {
+         elements.youtubeWarning.classList.remove('hidden');
+         return;
+    }
+    
+    // Logika pencarian YouTube...
+    elements.youtubeWarning.classList.add('hidden');
+    elements.youtubeResults.innerHTML = '<p style="color:#ffaa00; text-align: center;">Mencari...</p>';
+    
+    // (Implementasi fetch API dihilangkan karena membutuhkan kunci valid)
+    // Asumsi: Jika berhasil, results ditampilkan, jika gagal, warning muncul.
+    
+    // Simulasi kegagalan karena kunci contoh
+    setTimeout(() => {
+        elements.youtubeResults.innerHTML = '';
+        elements.youtubeWarning.classList.remove('hidden');
+    }, 1500);
+}
+
+
+// --- INISIALISASI ---
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
     elements = {
-        // Data Utama
         speed: document.getElementById('speed'),
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
-        time: document.getElementById('time'), // BARU
+        time: document.getElementById('time'), 
         speedMode: document.getElementById('speed-mode'),
-        
-        // Ikon (Interaksi/Status)
-        engineIcon: document.getElementById('engine-icon'), // BARU
-        headlightsIcon: document.getElementById('headlights-icon'), // BARU
-        seatbeltsIcon: document.getElementById('seatbelts-icon'), // BARU
-        indicatorsIcon: document.getElementById('indicators-icon'), // BARU
-        gearDisplay: document.getElementById('gear-display'), // BARU
 
-        // Elemen lama yang tetap ada di HTML tapi diabaikan/disembunyikan
-        engine: document.getElementById('engine'), // Dibiarkan saja
-        indicators: document.getElementById('indicators'), // Dibiarkan saja
-        seatbelts: document.getElementById('seatbelts'), // Dibiarkan saja
-        headlights: document.getElementById('headlights'), // Dibiarkan saja
-        gear: document.getElementById('gear'), // Dibiarkan saja
+        // Ikon
+        engineIcon: document.getElementById('engine-icon'), 
+        headlightsIcon: document.getElementById('headlights-icon'), 
+        seatbeltsIcon: document.getElementById('seatbelts-icon'), 
+        youtubeToggleIcon: document.getElementById('youtube-toggle-icon'),
+
+        // YouTube UI
+        youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'),
+        youtubeSearchInput: document.getElementById('youtube-search-input'),
+        youtubeSearchButton: document.getElementById('youtube-search-button'),
+        youtubeWarning: document.getElementById('youtube-warning'),
+        youtubeResults: document.getElementById('youtube-results'),
+        browserIframe: document.getElementById('browser-iframe'),
+        youtubeHideButton: document.getElementById('youtube-hide-button'),
     };
     
-    // 2. Inisiasi dan Simulasi Sederhana
-    setSpeedMode(1); // Default MPH
-    setEngine(false); 
-    setHeadlights(0); // Off
-    setSeatbelts(false); 
-    setGear(0); // Neutral
-    setRPM(0.10); // Nilai RPM awal rendah
+    // 2. Setup Jam
+    updateTime(); 
+    timeInterval = setInterval(updateTime, 1000); 
+    
+    // 3. Inisialisasi Data Awal
+    setSpeedMode(1); // MPH
+    setEngine(false); // Mesin Mati
     setFuel(0.49); 
     setHealth(1.0); 
-    
-    // Update Time setiap detik
-    updateTime(); 
-    setInterval(updateTime, 1000); 
 
-    // --- LOGIC SIMULASI DASAR (Anda dapat mengganti ini dengan simulasi kompleks jika perlu) ---
+    // 4. Setup Interaksi (Ikon Klik)
+    if (elements.engineIcon) elements.engineIcon.addEventListener('click', () => setEngine(!engineState));
+    if (elements.headlightsIcon) elements.headlightsIcon.addEventListener('click', () => setHeadlights(!headlightsState ? 1 : 0));
+    if (elements.seatbeltsIcon) elements.seatbeltsIcon.addEventListener('click', () => setSeatbelts(!seatbeltState));
     
-    let currentSpeed = 0;
+    // YouTube
+    if (elements.youtubeToggleIcon) elements.youtubeToggleIcon.addEventListener('click', () => toggleYoutubeUI());
+    if (elements.youtubeHideButton) elements.youtubeHideButton.addEventListener('click', () => toggleYoutubeUI(false));
+    if (elements.youtubeSearchButton) elements.youtubeSearchButton.addEventListener('click', () => searchYoutube(elements.youtubeSearchInput.value));
     
-    // Set engine ON dan mulai simulasi setelah 1 detik
+    if (elements.youtubeSearchInput) {
+        elements.youtubeSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') searchYoutube(elements.youtubeSearchInput.value);
+        });
+    }
+
+    // Tampilkan peringatan API Key di awal (sama seperti gambar 97f51c.png)
+    if (YOUTUBE_API_KEY === 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw') {
+        alert("PERINGATAN: YouTube API Key Anda adalah kunci contoh dan TIDAK AKAN BERFUNGSI. Harap ganti dengan kunci yang valid.");
+    }
+    
+    // 5. Mulai Mesin setelah 1 detik (Simulasi)
     setTimeout(() => {
         setEngine(true);
-        currentSpeed = 1; // Mulai bergerak
-        setRPM(0.20); // Naikkan RPM
-        
-        // Simulasi Loop
-        setInterval(() => {
-            // Naikkan/turunkan speed secara acak
-            currentSpeed += (Math.random() - 0.5) * 2; 
-            currentSpeed = Math.max(0, Math.min(100, currentSpeed)); // Batasi 0-100 m/s
-            
-            // Set speed dan RPM proporsional
-            setSpeed(currentSpeed);
-            setRPM(0.15 + (currentSpeed / 100) * 0.8);
-
-        }, 500); // Update setiap 0.5 detik
-        
-    }, 1000); 
-
-    // --- LOGIC KLIK ICON (Simulasi Toggle) ---
-    if (elements.engineIcon) elements.engineIcon.addEventListener('click', () => setEngine(!engineState));
-    if (elements.headlightsIcon) elements.headlightsIcon.addEventListener('click', () => setHeadlights(1));
-    if (elements.seatbeltsIcon) elements.seatbeltsIcon.addEventListener('click', () => setSeatbelts(!seatbeltState));
-    if (elements.indicatorsIcon) elements.indicatorsIcon.addEventListener('click', () => setLeftIndicator(true));
+    }, 1000);
 });
