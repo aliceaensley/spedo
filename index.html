@@ -1,52 +1,56 @@
-<div id="welcome-overlay" class="welcome-overlay">
-    </div>
-
-<div id="speedometer-ui" class="speedometer-ui">
-    
-    <div id="gauge-container" class="gauge-container">
-        <div id="speed-display" class="speed-display">
-            <span id="speed" class="speed-value">000</span>
-            <span id="speed-mode" class="speed-unit">MPH</span>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedometer Digital</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="speedometer-digital">
+        <div class="header-box">
+            <span class="label">Speed</span>
+            <span id="speed-mode" class="unit">MPH</span>
         </div>
         
-        <div id="rpm-bar-wrapper" class="rpm-bar-wrapper">
-            <div id="rpm-bar" class="rpm-bar"></div>
-        </div>
+        <div class="speed-value-box">
+            <span id="speed" class="speed-large">000</span>
+            <span class="speed-unit-mini">Sly</span> </div>
 
-        <div class="indicators-bottom">
-            <i id="headlights-icon" class="icon-light off">💡</i>
-            <i id="engine-icon" class="icon-engine off">⚙️</i>
-            <i id="seatbelt-icon" class="icon-seatbelt off">💺</i>
-            <i id="youtube-toggle-icon" class="icon-youtube">▶️</i>
-        </div>
-    </div>
-    
-    <div id="digital-panel" class="digital-panel">
-        
-        <div class="digital-box digital-vitals">
-            <p>Health</p>
-            <span id="health">100%</span>
-        </div>
-        <div class="digital-box digital-vitals">
-            <p>Fuel</p>
-            <span id="fuel">49%</span>
-        </div>
-
-        <div class="digital-box digital-time">
-            <p>Time (WIB)</p>
-            <span id="time-wib">14:52:38</span>
-        </div>
-
-        <div id="youtube-ui-wrapper" class="youtube-ui-wrapper hidden">
-            <iframe id="browser-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            
-            <div id="youtube-search-ui" class="youtube-search-ui">
-                <input type="text" id="youtube-search-input" placeholder="Cari YouTube...">
-                <button id="youtube-search-button">Cari</button>
-                <button id="youtube-hide-button" class="hide-button">X</button>
+        <div class="vitals-grid">
+            <div class="data-box">
+                <span class="label">RPM</span>
+                <span id="rpm" class="value">0.0000</span>
             </div>
-            
-            <div id="youtube-results" class="youtube-results hidden"></div>
+            <div class="data-box">
+                <span class="label">Fuel</span>
+                <span id="fuel" class="value">49.0%</span>
+            </div>
+            <div class="data-box">
+                <span class="label">Health</span>
+                <span id="health" class="value">100.0%</span>
+            </div>
+            <div class="data-box">
+                <span class="label">Time</span>
+                <span id="time" class="value">14:52</span>
+            </div>
         </div>
-    </div>
-</div>
+
+        <div class="indicators-bar">
+            <i id="headlights-icon" class="icon icon-light off">💡</i>
+            <i id="engine-icon" class="icon icon-engine off">⚙️</i>
+            <i id="seatbelts-icon" class="icon icon-seatbelt off">💺</i>
+            <i id="indicators-icon" class="icon icon-indicators off">◀▶</i> 
+            <i id="gear-display" class="icon icon-gear">N</i>
+        </div>
+        
+        <dd id="indicators" style="display: none;">&nbsp;</dd> 
+        <dd id="gear" style="display: none;">&nbsp;</dd> 
+        <dd id="engine" style="display: none;">&nbsp;</dd>
+        <dd id="headlights" style="display: none;">&nbsp;</dd>
+        <dd id="seatbelts" style="display: none;">&nbsp;</dd>
+        
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
