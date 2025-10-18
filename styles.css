@@ -21,7 +21,7 @@ body {
     --accent-green: #00FF00;
     --dark-bg: #1A1A1A;
     --medium-dark-bg: #2C2C2C;
-    --gauge-fill-color: #00BFFF; /* Warna fill gauge */
+    --gauge-fill-color: #FF0000; /* Warna fill gauge */
     --gauge-red-zone: #FF0000;
 
     /* Mini Widget Size Adjustments */
@@ -33,7 +33,7 @@ body {
     --nav-font-size: 9pt;
     --icon-size: 14pt;
     --action-icon-size: 16pt;
-    --gauge-radius: 100px; /* Radius untuk perhitungan skala */
+    --gauge-radius: 100px; 
 }
 
 /* --- MAIN WIDGET CONTAINER --- */
@@ -94,15 +94,17 @@ body {
     width: calc(var(--gauge-radius) * 2);
     height: var(--gauge-radius);
     border-radius: var(--gauge-radius) var(--gauge-radius) 0 0; 
-    /* Gunakan background transparan dan pseudo-elemen untuk visualisasi */
     background: transparent;
     position: relative;
-    overflow: visible; /* Penting agar angka terlihat */
+    overflow: hidden; 
     transform: rotate(180deg); 
     margin-bottom: 5px;
+    /* Efek Glow Biru/Cyan di sekitar Gauge */
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+    border: 1px solid var(--accent-blue);
 }
 
-/* Base untuk area gauge yang terisi (skala visual) */
+/* Fill Gauge (Background Merah/Gradient) */
 .gauge-wrapper::before {
     content: '';
     position: absolute;
@@ -111,14 +113,12 @@ body {
     width: 100%;
     height: 100%;
     border-radius: var(--gauge-radius) var(--gauge-radius) 0 0;
-    /* Gradien untuk mereplikasi warna fill (Biru ke Merah) */
-    background: linear-gradient(to right, var(--gauge-fill-color) 0%, var(--gauge-fill-color) 70%, var(--gauge-red-zone) 100%);
+    /* Warna Fill Merah Sesuai Gambar (Meskipun Jarumnya Merah) */
+    background: var(--dark-bg); 
     z-index: 1;
-    /* Masking untuk area yang belum tercapai */
-    mask: radial-gradient(circle at bottom center, transparent var(--gauge-radius), black var(--gauge-radius));
 }
 
-/* Masking untuk area yang belum terisi (background gelap) */
+/* Area Masking (Membuat Seperempat Lingkaran Kiri Bawah menjadi kotak) */
 .gauge-wrapper::after {
     content: '';
     position: absolute;
@@ -127,17 +127,16 @@ body {
     width: 100%;
     height: 100%;
     border-radius: var(--gauge-radius) var(--gauge-radius) 0 0;
-    background: var(--dark-bg); /* Warna gelap untuk area kosong */
-    z-index: 2; /* Di atas warna fill */
+    background: var(--dark-bg);
+    z-index: 2; 
     transform-origin: center top;
-    /* Initial state: Menutupi seluruh fill. JS akan memutar ini. */
     transform: rotate(0deg); 
     transition: transform 0.3s ease-out;
     border-bottom: none;
-}
-/* Masking untuk lubang tengah (opsional, tapi membuat jarum terlihat lebih baik) */
-.gauge-wrapper .speed-needle::before {
-    z-index: 6; /* Jarum di atas semua */
+    /* Tambahkan efek tiks/garis pada bagian ini */
+    background-image: repeating-linear-gradient(90deg, transparent 0, transparent 4px, var(--secondary-text) 4px, var(--secondary-text) 5px);
+    background-size: 100% 50%;
+    background-position: 0 0;
 }
 
 /* --- JARUM SPEEDOMETER --- */
@@ -148,13 +147,13 @@ body {
     transform-origin: 50% 100%; 
     width: 3px;
     height: calc(var(--gauge-radius) - 10px); 
-    background-color: white;
+    background-color: var(--accent-red); /* Jarum Merah */
     z-index: 5;
     transform: translateX(-50%) rotate(225deg); 
-    box-shadow: 0 0 10px white;
+    box-shadow: 0 0 10px var(--accent-red);
     transition: transform 0.3s ease-out;
 }
-/* Titik pusat jarum */
+/* Titik pusat jarum (Warna Merah/Putih) */
 .speed-needle::before {
     content: '';
     position: absolute;
@@ -163,156 +162,44 @@ body {
     transform: translateX(-50%);
     width: 18px;
     height: 18px;
-    background-color: white;
+    background-color: var(--accent-red);
     border-radius: 50%;
-    border: 3px solid var(--dark-bg);
+    border: 3px solid white;
     z-index: 6; 
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* --- SKALA ANGKA GAUGE (Perbaikan utama) --- */
+/* --- SKALA ANGKA GAUGE (Menggunakan positioning absolut, tidak sempurna tapi lebih baik) --- */
 .gauge-scale-numbers {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1px;
-    height: 1px;
-    transform-origin: top left;
+    width: 200%; 
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    z-index: 4;
 }
 
 .speed-label {
     position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 10pt;
+    font-size: 9pt;
+    color: var(--secondary-text);
     font-weight: bold;
-    color: var(--primary-text);
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-    /* Pindah ke titik pusat gauge */
-    transform-origin: 0 0; 
-    /* Offset Radius: (jarak dari pusat) */
-    --offset-x: calc(var(--gauge-radius) + 5px); 
-    --offset-y: calc(var(--gauge-radius) + 5px); 
+    /* Memposisikan angka dengan perkiraan */
+    /* Posisi Pusat: top: 50%; left: 50%; */
 }
-
-/* FUNGSI ROTASI UNTUK POSISI ANGKA */
-/* Sudut Awal: 225 deg (0 KMH) */
-/* Sudut Akhir: 495 deg (200 KMH) */
-/* Total Range: 270 deg */
-/* Setiap 20 KMH = 270 / 10 = 27 deg */
-
-/* MENGHITUNG POSISI (ROTATE + TRANSLATE) */
-.speed-0 {
-    transform: rotate(-45deg) translate(0, var(--offset-y));
-}
-.speed-20 {
-    /* 225 + 27 = 252 deg, atau -45 + 27 = -18 deg rotasi angka */
-    transform: rotate(-18deg) translate(0, var(--offset-y));
-}
-.speed-40 {
-    /* 225 + 54 = 279 deg, atau -45 + 54 = 9 deg rotasi angka */
-    transform: rotate(9deg) translate(0, var(--offset-y));
-}
-.speed-60 {
-    /* 225 + 81 = 306 deg, atau -45 + 81 = 36 deg rotasi angka */
-    transform: rotate(36deg) translate(0, var(--offset-y));
-}
-.speed-80 {
-    /* 225 + 108 = 333 deg, atau -45 + 108 = 63 deg rotasi angka */
-    transform: rotate(63deg) translate(0, var(--offset-y));
-}
-.speed-100 {
-    /* 225 + 135 = 360 deg, atau -45 + 135 = 90 deg rotasi angka (Tepat di atas) */
-    transform: rotate(90deg) translate(0, var(--offset-y));
-}
-.speed-120 {
-    /* 225 + 162 = 387 deg, atau -45 + 162 = 117 deg rotasi angka */
-    transform: rotate(117deg) translate(0, var(--offset-y));
-}
-.speed-140 {
-    /* 225 + 189 = 414 deg, atau -45 + 189 = 144 deg rotasi angka */
-    transform: rotate(144deg) translate(0, var(--offset-y));
-}
-.speed-160 {
-    /* 225 + 216 = 441 deg, atau -45 + 216 = 171 deg rotasi angka */
-    transform: rotate(171deg) translate(0, var(--offset-y));
-}
-.speed-180 {
-    /* 225 + 243 = 468 deg, atau -45 + 243 = 198 deg rotasi angka */
-    transform: rotate(198deg) translate(0, var(--offset-y));
-}
-.speed-200 {
-    /* 225 + 270 = 495 deg, atau -45 + 270 = 225 deg rotasi angka */
-    transform: rotate(225deg) translate(0, var(--offset-y));
-}
-/* Koreksi: Putar kembali label agar tegak */
-.speed-label {
-    transform: translate(calc(var(--offset-x) * -1), calc(var(--offset-y) * -1)) rotate(var(--rotation)) translate(var(--offset-x), var(--offset-y)) rotate(calc(-1 * var(--rotation)));
-    /* Karena CSS murni sulit, saya akan menggunakan posisi tetap dengan perkiraan radius */
-    /* Menggunakan transform yang lebih sederhana (dan kurang akurat) */
-    transform: rotate(var(--rotation)) translate(var(--gauge-radius)) rotate(calc(-1 * var(--rotation)));
-    left: var(--gauge-radius);
-    top: var(--gauge-radius);
-    color: var(--secondary-text); /* Warna angka skala */
-}
+/* Hanya untuk simulasi posisi angka, tidak bisa akurat tanpa SVG atau banyak DIV */
+.speed-0 { top: 75%; left: 5%; color: var(--accent-blue); }
+.speed-40 { top: 20%; left: 0%; }
+.speed-80 { top: -25%; left: 30%; }
+.speed-120 { top: -25%; left: 60%; }
+.speed-160 { top: 20%; left: 95%; }
+.speed-200 { top: 75%; left: 85%; color: var(--accent-red); }
 
 
-/* --- DATA BOXES GRID (Diperbaiki) --- */
-.data-boxes-grid {
-    display: grid;
-    /* Karena satu kotak dihapus, buat 3 baris yang terbagi rata */
-    grid-template-rows: 1fr 1fr 2fr; /* Data 1, Data 2, Large Box */
-    gap: 8px;
-    width: 100%;
-    height: 100%; /* Penting agar grid mengisi ruang */
-    padding-right: 35px; /* Kompensasi untuk tombol aksi */
-}
-
-.data-box-item {
-    background-color: var(--medium-dark-bg);
-    border-radius: 8px;
-    padding: 8px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.data-max-speed.large-value-box {
-    /* Agar Max Speed Box mengisi dua baris */
-    grid-row: span 2; 
-    /* Konten di tengah vertikal */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 5px; 
-}
-
-/* Kotak kecil (Distance, Avg Speed) */
-.data-distance, .data-avg-speed {
-    height: auto; /* Disesuaikan oleh grid */
-}
-
-
-/* ... (Gaya elemen lain tetap sama) ... */
-.indicator-lights {
-    position: absolute;
-    top: 30%; 
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 4; 
-    display: flex;
-    gap: 10px;
-}
-.indicator-light {
-    font-size: 16pt;
-    opacity: 0.8;
-}
-
-/* Total KM Display */
+/* Total KM Display (Pindah ke bawah gauge) */
 .total-km-display {
     position: absolute;
-    bottom: 55px; /* Di bawah gauge */
+    bottom: 55px; 
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
@@ -324,59 +211,40 @@ body {
 }
 
 
-/* Styling untuk angka skala (memerlukan positioning absolut) */
-.gauge-scale-numbers {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1px;
-    height: 1px;
-    z-index: 4;
+/* --- DATA BOXES GRID (Dihapus satu box) --- */
+.data-boxes-grid {
+    display: grid;
+    /* Grid diubah: Distance dan Avg Speed di atas, Large Box di bawah mengisi sisa ruang */
+    grid-template-rows: repeat(2, 1fr) 2fr; 
+    gap: 8px;
+    width: 100%;
+    height: 100%; 
+    padding-right: 35px;
 }
 
-/* Menggunakan SCSS/LESS untuk menghitung posisi angka lebih disarankan, 
-   tapi untuk CSS murni kita gunakan manual. */
-.speed-label {
-    position: absolute;
-    top: calc(-1 * var(--gauge-radius) - 5px);
-    left: 0;
-    font-size: 9pt;
-    color: var(--secondary-text);
-    /* Transformasi kompleks untuk memposisikan di busur */
-    transform-origin: 0 calc(var(--gauge-radius) + 5px);
-    
-    /* GAUGE ANGLE: 225 deg (0) ke 495 deg (200) */
+.data-box-item {
+    background-color: var(--medium-dark-bg);
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    height: 100%; /* Penting untuk grid */
 }
 
-/* Angka Skala Manual Positioning */
-/* 0 KMH: 225 deg */ .speed-0 { transform: rotate(225deg); }
-/* 20 KMH: 252 deg */ .speed-20 { transform: rotate(252deg); }
-/* 40 KMH: 279 deg */ .speed-40 { transform: rotate(279deg); }
-/* 60 KMH: 306 deg */ .speed-60 { transform: rotate(306deg); }
-/* 80 KMH: 333 deg */ .speed-80 { transform: rotate(333deg); }
-/* 100 KMH: 360 deg */ .speed-100 { transform: rotate(360deg); }
-/* 120 KMH: 387 deg */ .speed-120 { transform: rotate(387deg); }
-/* 140 KMH: 414 deg */ .speed-140 { transform: rotate(414deg); }
-/* 160 KMH: 441 deg */ .speed-160 { transform: rotate(441deg); }
-/* 180 KMH: 468 deg */ .speed-180 { transform: rotate(468deg); }
-/* 200 KMH: 495 deg */ .speed-200 { transform: rotate(495deg); }
-
-
-/* Mengkompensasi rotasi label agar tidak terbalik */
-.speed-label > span {
-    display: inline-block;
-    /* Putar kembali label sebesar 45 derajat agar terbaca tegak */
-    transform: rotate(-45deg); 
+/* Membuat Max Speed Besar mengisi dua baris di sisa ruang */
+.data-max-speed.large-value-box {
+    grid-row: 3 / span 1; /* Baris ke-3, hanya 1 baris (karena 2 baris atas sudah 1fr/1fr) */
+    /* Konten di tengah vertikal */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px; 
 }
-/* Khusus untuk yang di sebelah kanan */
-.speed-label:nth-child(n+6) > span {
-    transform: rotate(45deg); /* Rotasi sebaliknya */
+/* Karena hanya ada 3 kotak sekarang, kita perlu memastikan kotak kecil tidak terlalu besar */
+.data-distance, .data-avg-speed {
+    min-height: 40px; 
 }
-/* Menghapus span dari HTML agar lebih bersih, menggunakan konten */
-.gauge-scale-numbers { display: none; } /* Menonaktifkan metode span/konten karena terlalu rumit */
-/* --- Metode paling efektif untuk CSS murni adalah DIV BOX ROTASI: */
 
-/* Saya akan memasukkan div angka langsung di dalam gauge-wrapper */
-/* Ini adalah metode yang paling sulit dengan CSS murni. Saya akan kembali ke metode Jarum & Background untuk fungsionalitas */
-
-/* KEMBALI KE METODE GAUGE SIMPLE dengan perbaikan pada jarum dan titik tengah */
+/* ... (Gaya elemen lain tetap sama) ... */
