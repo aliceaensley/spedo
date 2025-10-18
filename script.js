@@ -118,7 +118,9 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    const displayValue = `${Math.round(rpm * 10000)}`;
+    // Pastikan RPM minimal 0.1 (1000) saat mesin menyala
+    const safeRPM = Math.max(0.1, rpm);
+    const displayValue = `${Math.round(safeRPM * 10000)}`;
     if (elements.rpm) elements.rpm.innerText = displayValue;
 }
 
@@ -191,23 +193,15 @@ function stopSimulation() {
     }
     
     setSpeed(0);
-    setRPM(0.1); 
+    setRPM(0.0); // RPM 0 saat mesin mati
 }
 
 function startSimulation() {
     if (simulationInterval !== null) return;
 
-    // Ambil kecepatan awal dari nilai yang ditampilkan saat ini (jika ada)
     let currentSpeed = 0;
-    try {
-        const currentSpeedDisplay = elements.speed.innerText;
-        currentSpeed = parseFloat(currentSpeedDisplay) / 3.6; // Konversi kembali ke m/s (asumsi KMH)
-        if (isNaN(currentSpeed) || currentSpeed < 0) currentSpeed = 0;
-    } catch (e) {
-        currentSpeed = 0;
-    }
-
-    // Set RPM awal ke idle
+    
+    // RPM awal saat mesin dinyalakan
     setRPM(0.1); 
 
     simulationInterval = setInterval(() => {
@@ -216,14 +210,13 @@ function startSimulation() {
         let speedChange = (Math.random() - 0.5) * 0.5;
         currentSpeed = currentSpeed + speedChange;
 
-        // Ambil batas toleransi kecepatan diam (e.g., 0.1 m/s)
+        // Toleransi kecepatan diam (0.1 m/s)
         const idleTolerance = 0.1; 
 
         // 🟢 PERBAIKAN STABILITAS KECEPATAN:
         // Jika kecepatan saat ini sangat rendah DAN trennya menurun, set langsung ke 0.
         if (currentSpeed < idleTolerance && speedChange < 0) { 
             currentSpeed = 0; 
-            speedChange = 0; 
         } 
         
         // Pastikan kecepatan tidak negatif
@@ -236,14 +229,19 @@ function startSimulation() {
         
         // RPM Logic
         const absSpeed = Math.abs(currentSpeed);
-        let baseRPM = absSpeed > 0 ? 0.4 : 0.1; // RPM lebih tinggi jika bergerak, idle jika diam
         
-        // Stabilkan RPM saat Speed = 0, tetapi tambahkan sedikit fluktuasi saat bergerak.
         let currentRPM;
         if (currentSpeed === 0) {
-            currentRPM = 0.1; // RPM Idle stabil
+            // 🎯 Solusi Final: RPM Idle Stabil (0.1 atau 1000)
+            currentRPM = 0.1; 
         } else {
-            currentRPM = Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
+            // Logika RPM saat bergerak (didasarkan pada kecepatan, dengan fluktuasi acak)
+            
+            // Base RPM akan naik seiring kecepatan. Gunakan faktor minimal 0.2 saat bergerak.
+            let baseRPM = Math.min(0.8, absSpeed / 50 + 0.2); 
+            
+            // Tambahkan fluktuasi kecil
+            currentRPM = Math.max(0.15, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
         }
 
         setRPM(currentRPM);
@@ -263,13 +261,13 @@ function startVitalUpdates() {
     setFuel(initialFuel); 
 
     vitalInterval = setInterval(() => {
-        const fuelReductionRate = engineState ? 0.005 : 0.001; 
+        // Reduksi bensin hanya terjadi jika mesin menyala
+        const fuelReductionRate = engineState ? 0.005 : 0.000; // Dikurangi menjadi 0 saat mesin mati
         
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
         
-        // Batas aman minimum di set ke 0.01 (1%) agar bisa turun sampai 0%
-        setFuel(Math.max(0.01, currentFuel - fuelReductionRate)); 
+        setFuel(Math.max(0.00, currentFuel - fuelReductionRate)); // Batas minimum 0%
         
     }, 3000); 
 }
