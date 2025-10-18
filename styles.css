@@ -20,7 +20,7 @@ body {
     --accent-blue: #00BFFF; 
     --dark-bg: #1A1A1A;
     --medium-dark-bg: #2C2C2C;
-    --gauge-radius: 90px; /* Radius 90px (Diameter 180px) */
+    --gauge-radius: 90px; 
     --gauge-text-color: #E0E0E0;
     --gauge-start-angle: -135deg; 
     --gauge-end-angle: 135deg; 
@@ -31,15 +31,14 @@ body {
     display: none !important;
 }
 
-/* --- MAIN WIDGET CONTAINER --- */
+/* --- MAIN WIDGET CONTAINER (Kembali Solid) --- */
 .speedometer-ui {
     position: fixed;
     bottom: 15px;
     right: 15px;
     width: 220px; 
     height: 300px; 
-    /* Latar Belakang Transparan */
-    background: transparent; 
+    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%); /* Solid Gradient */
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); 
     padding: 10px;
@@ -77,7 +76,7 @@ body {
     align-items: flex-start; 
     flex-shrink: 0; 
     padding-top: 5px; 
-    background-color: transparent; /* Area ini transparan */
+    background-color: transparent; /* Tetap transparan di sini agar terlihat background widget */
 }
 
 /* Kontainer untuk Analog View dan Digital View */
@@ -115,12 +114,11 @@ body {
 
 /* --- GAUGE WRAPPER (ANALOG) --- */
 .gauge-wrapper {
-    /* Lingkaran Penuh (180px x 180px) */
     width: calc(var(--gauge-radius) * 2); 
     height: calc(var(--gauge-radius) * 2); 
     position: relative;
     
-    background-color: var(--dark-bg); /* Latar belakang lingkaran tetap solid gelap */
+    background-color: var(--dark-bg); 
     border-radius: 50%; 
     
     box-shadow: 
@@ -159,50 +157,105 @@ body {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* --- SKALA ANGKA GAUGE (Angka di sisi kiri vertikal) --- */
+/* --- SKALA ANGKA GAUGE (Kembali Melingkar) --- */
 .gauge-scale-numbers {
     position: absolute;
     top: 50%; 
-    left: 0; /* Posisikan ke kiri wadah display */
-    width: 100%; 
-    height: 100%;
-    display: flex; 
-    flex-direction: column;
-    justify-content: space-between; /* Distribusi vertikal merata */
-    align-items: flex-start; 
-    padding: 0px 0 0 0px; 
+    left: 50%; 
+    width: 0;
+    height: 0;
     z-index: 12;
+    /* Hapus flexbox styling untuk kembali ke layout mutlak */
+    display: block; 
+    padding: 0;
 }
 
 .speed-label {
-    position: relative; 
+    position: absolute;
     font-size: 10pt;
     color: var(--gauge-text-color);
-    width: auto; 
-    text-align: left; 
+    width: 30px; 
+    text-align: center;
     font-weight: bold; 
-    transform: none; 
-    margin-left: 0;
-    margin-top: 0;
-    line-height: 1; 
-    padding-left: 5px; 
+    --angle: 0deg;
+    --radius: calc(var(--gauge-radius) - 10px); 
+    transform-origin: 50% 50%;
+    /* Gunakan transform untuk menempatkan di sepanjang busur */
+    transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle)));
+    margin-left: -15px; 
+    margin-top: -10px; 
+    line-height: initial;
+    padding-left: 0;
 }
-
-/* Override untuk angka 0, 100, 200 */
+/* Kembalikan styling normal untuk label */
 .label-0, .label-100, .label-200 {
-    font-size: 11pt;
-    color: white;
+    font-size: 10pt;
+    color: var(--gauge-text-color);
 }
 .label-200 { color: var(--accent-red); }
 
+/* Aturan Sudut untuk penempatan Melingkar */
+.label-0   { --angle: -135deg; }
+.label-20  { --angle: -108deg; } 
+.label-40  { --angle: -81deg; }  
+.label-60  { --angle: -54deg; }  
+.label-80  { --angle: -27deg; }  
+.label-100 { --angle: 0deg; }    
+.label-120 { --angle: 27deg; }
+.label-140 { --angle: 54deg; }
+.label-160 { --angle: 81deg; }
+.label-180 { --angle: 108deg; }
+.label-200 { --angle: 135deg; color: var(--accent-red); }
 
-/* --- INDIKATOR LAMPU & TOTAL KM (Disembunyikan) --- */
-.indicator-lights, .total-km-display {
-    display: none !important; 
+/* --- INDIKATOR LAMPU & TOTAL KM (Kembali ditampilkan) --- */
+.indicator-lights {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    z-index: 12; 
+    display: flex !important; /* Kembali ditampilkan */
+    gap: 20px; 
+    width: calc(var(--gauge-radius) * 2 - 80px); 
+    justify-content: space-around;
+    margin-top: -30px; 
+}
+.indicator-light {
+    font-size: 18pt;
+    opacity: 0.2; 
+    transition: opacity 0.3s;
+}
+.indicator-light.active {
+    opacity: 1; 
+    text-shadow: 0 0 5px white;
+}
+.seatbelt-light { font-size: 14pt; }
+
+.total-km-display {
+    position: absolute;
+    bottom: 50%; 
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 12;
+    width: 100%;
+    margin-top: 25px; 
+    display: block !important; /* Kembali ditampilkan */
+}
+.total-km-display .label {
+    font-size: 8pt;
+    color: var(--secondary-text);
+    display: block;
+}
+.total-km-display .value {
+    font-size: 16pt;
+    font-weight: bold;
+    color: var(--accent-blue);
+    text-shadow: 0 0 5px var(--accent-blue);
 }
 
 
-/* --- BOTTOM CONTROLS (Latar belakang tetap solid) --- */
+/* --- BOTTOM CONTROLS (Latar belakang sudah dihandle oleh .speedometer-ui) --- */
 .bottom-controls {
     width: 100%;
     display: flex;
@@ -212,8 +265,8 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
     
-    /* Latar belakang solid gelap */
-    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%);
+    /* Hapus background eksplisit di sini karena sudah dihandle oleh wadah utama */
+    background: transparent; 
     border-radius: 0 0 15px 15px; 
     
     z-index: 100; 
