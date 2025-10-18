@@ -21,8 +21,7 @@ body {
     --accent-green: #00FF00;
     --dark-bg: #1A1A1A;
     --medium-dark-bg: #2C2C2C;
-    --gauge-fill-color: #FF0000; /* Warna fill gauge */
-    --gauge-red-zone: #FF0000;
+    --gauge-line-color: rgba(0, 191, 255, 0.4); /* Garis Cyan Transparan */
 
     /* Mini Widget Size Adjustments */
     --widget-width: 450px; 
@@ -31,7 +30,6 @@ body {
     --data-value-font: 14pt;
     --large-data-value-font: 30pt;
     --nav-font-size: 9pt;
-    --icon-size: 14pt;
     --action-icon-size: 16pt;
     --gauge-radius: 100px; 
 }
@@ -94,31 +92,24 @@ body {
     width: calc(var(--gauge-radius) * 2);
     height: var(--gauge-radius);
     border-radius: var(--gauge-radius) var(--gauge-radius) 0 0; 
-    background: transparent;
+    background: var(--dark-bg);
     position: relative;
     overflow: hidden; 
-    transform: rotate(180deg); 
+    transform: rotate(180deg); /* Balik agar buka ke atas */
     margin-bottom: 5px;
-    /* Efek Glow Biru/Cyan di sekitar Gauge */
+    
+    /* === EFEK GARIS VERTIKAL (Seperti di gambar 8a50fe) === */
+    background-image: repeating-linear-gradient(90deg, 
+                        var(--gauge-line-color) 0, 
+                        var(--gauge-line-color) 1px, 
+                        transparent 1px, 
+                        transparent 6px);
+    background-size: 100% 100%;
+    border-bottom: 3px solid var(--accent-blue);
     box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
-    border: 1px solid var(--accent-blue);
 }
 
-/* Fill Gauge (Background Merah/Gradient) */
-.gauge-wrapper::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: var(--gauge-radius) var(--gauge-radius) 0 0;
-    /* Warna Fill Merah Sesuai Gambar (Meskipun Jarumnya Merah) */
-    background: var(--dark-bg); 
-    z-index: 1;
-}
-
-/* Area Masking (Membuat Seperempat Lingkaran Kiri Bawah menjadi kotak) */
+/* Garis Border Biru Bawah yang melengkung */
 .gauge-wrapper::after {
     content: '';
     position: absolute;
@@ -127,19 +118,13 @@ body {
     width: 100%;
     height: 100%;
     border-radius: var(--gauge-radius) var(--gauge-radius) 0 0;
-    background: var(--dark-bg);
-    z-index: 2; 
-    transform-origin: center top;
-    transform: rotate(0deg); 
-    transition: transform 0.3s ease-out;
+    border: 3px solid var(--accent-blue);
     border-bottom: none;
-    /* Tambahkan efek tiks/garis pada bagian ini */
-    background-image: repeating-linear-gradient(90deg, transparent 0, transparent 4px, var(--secondary-text) 4px, var(--secondary-text) 5px);
-    background-size: 100% 50%;
-    background-position: 0 0;
+    z-index: 2; 
 }
 
-/* --- JARUM SPEEDOMETER --- */
+
+/* --- JARUM SPEEDOMETER (Jarum Merah di Tengah) --- */
 .speed-needle {
     position: absolute;
     bottom: 0; 
@@ -147,13 +132,13 @@ body {
     transform-origin: 50% 100%; 
     width: 3px;
     height: calc(var(--gauge-radius) - 10px); 
-    background-color: var(--accent-red); /* Jarum Merah */
+    background-color: var(--accent-red); 
     z-index: 5;
     transform: translateX(-50%) rotate(225deg); 
     box-shadow: 0 0 10px var(--accent-red);
     transition: transform 0.3s ease-out;
 }
-/* Titik pusat jarum (Warna Merah/Putih) */
+/* Titik pusat jarum */
 .speed-needle::before {
     content: '';
     position: absolute;
@@ -169,53 +154,71 @@ body {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* --- SKALA ANGKA GAUGE (Menggunakan positioning absolut, tidak sempurna tapi lebih baik) --- */
-.gauge-scale-numbers {
+/* --- Teks TOTAL KM di Tengah Gauge --- */
+.gauge-center-text {
     position: absolute;
-    width: 200%; 
-    height: 200%;
-    top: -50%;
-    left: -50%;
-    z-index: 4;
-}
-
-.speed-label {
-    position: absolute;
-    font-size: 9pt;
-    color: var(--secondary-text);
-    font-weight: bold;
-    /* Memposisikan angka dengan perkiraan */
-    /* Posisi Pusat: top: 50%; left: 50%; */
-}
-/* Hanya untuk simulasi posisi angka, tidak bisa akurat tanpa SVG atau banyak DIV */
-.speed-0 { top: 75%; left: 5%; color: var(--accent-blue); }
-.speed-40 { top: 20%; left: 0%; }
-.speed-80 { top: -25%; left: 30%; }
-.speed-120 { top: -25%; left: 60%; }
-.speed-160 { top: 20%; left: 95%; }
-.speed-200 { top: 75%; left: 85%; color: var(--accent-red); }
-
-
-/* Total KM Display (Pindah ke bawah gauge) */
-.total-km-display {
-    position: absolute;
-    bottom: 55px; 
+    bottom: 5px; /* Posisikan di bagian bawah tengah gauge */
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) rotate(-180deg); /* Putar kembali agar teks terbaca tegak */
     text-align: center;
-    z-index: 10;
+    z-index: 7;
 }
-.total-km-display .value {
+.gauge-center-text .label {
+    font-size: var(--data-label-font);
+    color: var(--secondary-text);
+    display: block;
+    line-height: 1;
+}
+.gauge-center-text .value {
     font-size: 18pt;
+    font-weight: bold;
     color: var(--accent-blue);
+    text-shadow: 0 0 5px var(--accent-blue);
+    line-height: 1.2;
 }
 
 
-/* --- DATA BOXES GRID (Dihapus satu box) --- */
+/* --- BOTTOM NAVIGATION --- */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around; /* Ganti space-between agar rapi */
+    align-items: center;
+    width: 100%;
+    padding: 8px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 5px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: var(--nav-font-size);
+    color: var(--secondary-text);
+    cursor: pointer;
+    padding: 3px 5px;
+    border-radius: 5px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-item.active {
+    background-color: var(--accent-blue);
+    color: white;
+    text-shadow: 0 0 5px var(--accent-blue);
+}
+.digital-speed-display {
+    font-size: var(--nav-font-size);
+    font-weight: bold;
+    color: var(--accent-blue);
+    text-shadow: 0 0 3px var(--accent-blue);
+}
+
+
+/* --- DATA BOXES GRID --- */
 .data-boxes-grid {
     display: grid;
-    /* Grid diubah: Distance dan Avg Speed di atas, Large Box di bawah mengisi sisa ruang */
-    grid-template-rows: repeat(2, 1fr) 2fr; 
+    /* Grid 3 baris: Distance, Avg Speed, Max Speed */
+    grid-template-rows: 1fr 1fr 2fr; 
     gap: 8px;
     width: 100%;
     height: 100%; 
@@ -229,22 +232,70 @@ body {
     text-align: center;
     position: relative;
     overflow: hidden;
-    height: 100%; /* Penting untuk grid */
+    height: 100%; 
 }
 
-/* Membuat Max Speed Besar mengisi dua baris di sisa ruang */
+.data-box-item .label {
+    font-size: var(--data-label-font);
+    color: var(--secondary-text);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.data-box-item .value {
+    font-size: var(--data-value-font);
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    line-height: 1.1;
+}
+.data-box-item .value.large {
+    font-size: var(--large-data-value-font);
+    color: var(--accent-blue);
+    text-shadow: 0 0 10px var(--accent-blue);
+}
+
 .data-max-speed.large-value-box {
-    grid-row: 3 / span 1; /* Baris ke-3, hanya 1 baris (karena 2 baris atas sudah 1fr/1fr) */
-    /* Konten di tengah vertikal */
+    grid-row: 3 / span 1; 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 5px; 
 }
-/* Karena hanya ada 3 kotak sekarang, kita perlu memastikan kotak kecil tidak terlalu besar */
-.data-distance, .data-avg-speed {
-    min-height: 40px; 
-}
 
-/* ... (Gaya elemen lain tetap sama) ... */
+
+/* Warna khusus */
+.data-distance .value { color: var(--accent-blue); text-shadow: 0 0 5px var(--accent-blue); }
+.data-avg-speed .value { color: var(--accent-green); text-shadow: 0 0 5px var(--accent-green); }
+
+
+/* --- ACTION BUTTONS BAR --- */
+.action-buttons-bar {
+    position: absolute;
+    top: 0px; 
+    right: 0px;
+    width: 30px; 
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;
+}
+.action-icon {
+    background-color: var(--medium-dark-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--action-icon-size);
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+.action-icon:hover {
+    background-color: var(--accent-blue);
+    box-shadow: 0 0 8px var(--accent-blue);
+}
