@@ -26,7 +26,7 @@ function setSpeed(speed_ms) {
         elements.speedNeedle.style.transform = `translateX(-50%) translateY(calc(90px - ${needleBaseOffset}px)) rotate(${angle}deg)`;
     }
     
-    // 2. Update Large Digital Display (BARU)
+    // 2. Update Large Digital Display
     if (elements.digitalSpeedLarge) {
         elements.digitalSpeedLarge.innerText = String(speed_kmh).padStart(3, '0');
     }
@@ -49,7 +49,7 @@ function toggleIndicator(lightElement, isActive) {
 }
 
 
-// --- FUNGSI TOGGLE VIEW BARU ---
+// --- FUNGSI TOGGLE VIEW ---
 function toggleView(viewId) {
     const isAnalog = viewId === 'analog-nav';
     
@@ -60,7 +60,6 @@ function toggleView(viewId) {
     // 2. Toggle Nav Button States
     elements.analogNav.classList.toggle('active', isAnalog);
     elements.digitalNav.classList.toggle('active', !isAnalog);
-    // Pastikan Map tidak aktif saat Analog/Digital dipilih
     elements.mapNav.classList.remove('active');
 }
 
@@ -104,10 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
         seatbeltLight: document.querySelector('.seatbelt-light'),
         totalDistance: document.getElementById('total-distance'), 
         
-        // Elemen View Baru
+        // Elemen View
         analogView: document.getElementById('analog-view'),
         digitalView: document.getElementById('digital-view'),
-        digitalSpeedLarge: document.getElementById('digital-speed-large'), // BARU
+        digitalSpeedLarge: document.getElementById('digital-speed-large'), 
         
         // Elemen Navigasi
         analogNav: document.querySelector('.analog-nav-item'),
@@ -116,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // 2. Setup Awal
-    // Pastikan Analog View aktif secara default dan Digital View tersembunyi
     elements.analogView.classList.remove('hidden-view');
     elements.digitalView.classList.add('hidden-view');
 
@@ -132,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleView('digital-nav');
     });
 
-    // Logika klik untuk tombol Map (misalnya, menyembunyikan kedua tampilan dan mengaktifkan tombol Map)
     elements.mapNav.addEventListener('click', function() {
         elements.analogView.classList.add('hidden-view');
         elements.digitalView.classList.add('hidden-view');
