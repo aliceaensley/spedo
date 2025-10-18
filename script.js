@@ -16,7 +16,7 @@ const fuelWarningSound = new Audio('bensin.mp3');
 const criticalFuelSound = new Audio('sekarat.mp3'); 
 
 // *****************************************************************
-// ✅ Kunci API YouTube FINAL (Ganti jika masih gagal/kuota habis)
+// ✅ Kunci API YouTube FINAL
 // *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; 
 // *****************************************************************
@@ -344,8 +344,7 @@ function toggleYoutubeUI(state) {
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
         
-        // ✅ Perbaikan: Video TIDAK DIHENTIKAN saat disembunyikan
-        // if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; // Baris ini dihilangkan
+        // Video tetap berjalan saat disembunyikan (tidak mereset iframe.src)
     }
 }
 
@@ -380,45 +379,45 @@ document.addEventListener('DOMContentLoaded', () => {
         youtubeResults: document.getElementById('youtube-results'),
         browserIframe: document.getElementById('browser-iframe'), 
 
-        // ✅ BARU: Elemen Overlay Selamat Datang
+        // Elemen Overlay Selamat Datang
         welcomeOverlay: document.getElementById('welcome-overlay'),
         
         // Tombol Hide/Close YouTube
         youtubeHideButton: document.getElementById('youtube-hide-button'),
     };
     
-    // ✅ BARU: Tampilkan dan sembunyikan Overlay Selamat Datang
+    // 2. Tampilkan dan sembunyikan Overlay Selamat Datang
     if (elements.welcomeOverlay) {
         // Biarkan overlay terlihat selama 2 detik, lalu fade out
         setTimeout(() => {
             elements.welcomeOverlay.classList.add('fade-out');
-            // Hapus overlay sepenuhnya setelah transisi selesai (misal 1 detik setelah fade-out dimulai)
+            // Hapus overlay sepenuhnya setelah transisi selesai
             setTimeout(() => {
                 elements.welcomeOverlay.style.display = 'none';
-                document.body.style.overflow = ''; // Mengaktifkan scroll lagi jika diperlukan
+                document.body.style.overflow = ''; 
             }, 1000); 
         }, 2000); // Overlay muncul selama 2 detik
     }
 
 
-    // 2. SETUP CLOCK WIB
+    // 3. SETUP CLOCK WIB
     startClock(); 
     
-    // 3. SETUP INTERAKSI KLIK YOUTUBE TOGGLE
+    // 4. SETUP INTERAKSI KLIK YOUTUBE TOGGLE
     if (elements.youtubeToggleIcon) {
         elements.youtubeToggleIcon.addEventListener('click', () => {
             toggleYoutubeUI(); 
         });
     }
     
-    // 4. Listener untuk Tombol HIDE/CLOSE
+    // 5. Listener untuk Tombol HIDE/CLOSE
     if (elements.youtubeHideButton) {
         elements.youtubeHideButton.addEventListener('click', () => {
             toggleYoutubeUI(false); 
         });
     }
 
-    // 5. LOGIC INTERAKSI PENCARIAN YOUTUBE
+    // 6. LOGIC INTERAKSI PENCARIAN YOUTUBE
     const handleSearch = () => {
         const query = elements.youtubeSearchInput.value;
         if (query.trim() !== '') {
@@ -446,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // 6. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
+    // 7. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
     setHealth(1.0); 
     setFuel(0.49); 
@@ -458,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mulai pembaruan data vital segera!
     startVitalUpdates(); 
 
-    // 7. EVENT KLIK FUNGSI LAIN
+    // 8. EVENT KLIK FUNGSI LAIN
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
             setEngine(!engineState); 
