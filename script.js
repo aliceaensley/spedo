@@ -14,6 +14,8 @@ let timeInterval = null;
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
 const criticalFuelSound = new Audio('sekarat.mp3'); 
+// ✅ BARU: Objek Audio Selamat Datang
+const welcomeSound = new Audio('selebew.mp3'); 
 
 // *****************************************************************
 // ✅ Kunci API YouTube FINAL
@@ -388,6 +390,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 2. Tampilkan dan sembunyikan Overlay Selamat Datang
     if (elements.welcomeOverlay) {
+        
+        // ✅ BARU: Putar suara Selebew saat overlay muncul
+        welcomeSound.currentTime = 0;
+        welcomeSound.play().catch(e => {
+            console.warn("Gagal memutar selebew.mp3. Pastikan file ada di direktori yang sama.");
+        });
+        
         // Biarkan overlay terlihat selama 2 detik, lalu fade out
         setTimeout(() => {
             elements.welcomeOverlay.classList.add('fade-out');
@@ -395,6 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 elements.welcomeOverlay.style.display = 'none';
                 document.body.style.overflow = ''; 
+                welcomeSound.pause(); // Hentikan suara jika masih berjalan
             }, 1000); 
         }, 2000); // Overlay muncul selama 2 detik
     }
