@@ -9,18 +9,19 @@ let isYoutubeOpen = false;
 let fuelWarningInterval = null; 
 let currentFuelWarningType = null; 
 let isVehicleIdle = false; 
-let timeInterval = null; 
+let timeInterval = null; // 🚩 Deklarasi interval baru untuk jam
 
 // Objek Audio Peringatan Bensin
-// Catatan: Pastikan file audio 'bensin.mp3' dan 'sekarat.mp3' ada
 const fuelWarningSound = new Audio('bensin.mp3'); 
 const criticalFuelSound = new Audio('sekarat.mp3'); 
 
 // *****************************************************************
+// ⚠️ PENTING: API KEY YOUTUBE
+// *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
 // *****************************************************************
 
-// --- FUNGSI UTILITY & TOGGLE ---
+// --- FUNGSI UTILITY & TOGGLE (TIDAK BERUBAH) ---
 const toggleActive = (element, state) => {
     if (Array.isArray(element)) {
         element.forEach(el => toggleActive(el, state));
@@ -37,8 +38,7 @@ const toggleActive = (element, state) => {
 
 function playLowFuelSoundTwice() {
     fuelWarningSound.currentTime = 0;
-    // Menggunakan .catch untuk mencegah error jika audio gagal diputar (misalnya: karena autoplay diblokir)
-    fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (1).", e); }); 
+    fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (1).", e); });
     
     setTimeout(() => {
         fuelWarningSound.currentTime = 0;
@@ -104,7 +104,7 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    // RPM minimum 0.2 (2000 RPM)
+    // RPM minimum sekarang 0.2 (2000 RPM) saat mesin menyala
     const safeRPM = Math.max(0.2, rpm); 
     const displayValue = `${Math.round(safeRPM * 10000)}`;
     if (elements.rpm) elements.rpm.innerText = displayValue;
@@ -123,29 +123,10 @@ function setFuel(fuel) {
     }
 }
 
-// 🚨 FUNGSI HEALTH YANG DIMODIFIKASI
 function setHealth(health) {
     const displayValue = `${Math.round(health * 100)}%`;
     if (elements.health) elements.health.innerText = displayValue;
-
-    // Pastikan elemen Health Box sudah dipetakan
-    const healthBox = elements.healthBox; 
-    if (!healthBox) return;
-
-    // 1. Bersihkan semua kelas warning
-    healthBox.classList.remove('health-low', 'health-critical');
-
-    const healthPercent = health * 100;
-    
-    if (healthPercent <= 25) {
-        // Kritis: Hitam
-        healthBox.classList.add('health-critical');
-    } else if (healthPercent <= 50) {
-        // Rendah: Merah Menyala
-        healthBox.classList.add('health-low');
-    }
 }
-
 
 function setHeadlights(state) {
     headlightsState = state;
@@ -170,14 +151,16 @@ function setSeatbelts(state) {
     toggleActive(elements.seatbeltIcon, state); 
 }
 
-// 🚨 Fungsi Waktu dengan Detik
+// 🚩 FUNGSI UTAMA YANG DIMODIFIKASI
 function updateTimeWIB() {
     const now = new Date();
     
+    // Ambil Jam, Menit, Detik dan pastikan selalu 2 digit (padding)
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
     
+    // Format baru: HH:MM:SS
     const timeString = `${hours}:${minutes}:${seconds}`; 
     
     if (elements.timeWIB) {
@@ -186,18 +169,20 @@ function updateTimeWIB() {
 }
 
 function startClock() {
+    // Jalankan pertama kali
     updateTimeWIB();
     
+    // Hentikan interval lama jika ada
     if (timeInterval) {
         clearInterval(timeInterval);
     }
     
-    // Pembaruan setiap 1 detik
+    // 🚩 Set interval baru untuk pembaruan SETIAP DETIK (1000ms)
     timeInterval = setInterval(updateTimeWIB, 1000); 
 }
 // ---------------------------------------------------------------------
 
-// --- FUNGSI KONTROL SIMULASI BERKENDARA ---
+// --- FUNGSI KONTROL SIMULASI BERKENDARA (TIDAK BERUBAH) ---
 
 function stopSimulation() {
     if (simulationInterval !== null) {
@@ -215,7 +200,7 @@ function startSimulation() {
 
     let currentSpeed = 0;
     
-    const IDLE_RPM = 0.2; // 2000 RPM
+    const IDLE_RPM = 0.2; 
     const IDLE_TOLERANCE_MS = 0.2; 
 
     setRPM(IDLE_RPM); 
@@ -225,7 +210,6 @@ function startSimulation() {
         let speedChange = (Math.random() - 0.5) * 0.5;
         currentSpeed = currentSpeed + speedChange;
 
-        // Kunci Kecepatan ke Nol Mutlak
         if (currentSpeed < IDLE_TOLERANCE_MS && speedChange < 0) { 
             currentSpeed = 0; 
         } 
@@ -240,10 +224,8 @@ function startSimulation() {
         let currentRPM;
         
         if (isVehicleIdle) {
-            // RPM Kunci Stabil di 0.2 (2000 RPM)
             currentRPM = IDLE_RPM + (Math.random() - 0.5) * 0.002; 
         } else {
-            // Logika RPM saat bergerak
             const absSpeed = Math.abs(currentSpeed);
             let baseRPM = Math.min(0.8, absSpeed / 50 + IDLE_RPM); 
             currentRPM = Math.max(IDLE_RPM + 0.05, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
@@ -255,7 +237,7 @@ function startSimulation() {
 }
 
 
-// --- FUNGSI KONTROL DATA VITAL ---
+// --- FUNGSI KONTROL DATA VITAL (TIDAK BERUBAH) ---
 
 function startVitalUpdates() {
     if (vitalInterval !== null) return;
@@ -266,28 +248,17 @@ function startVitalUpdates() {
     setFuel(initialFuel); 
 
     vitalInterval = setInterval(() => {
-        // Logika Health: Menurun 1% setiap 10 detik simulasi saat bergerak
-        let currentHealth = parseFloat(elements.health.innerText.replace('%', '')) / 100;
-        let healthReduction = 0;
-
-        // Health hanya berkurang jika mesin menyala DAN kendaraan bergerak
-        if (engineState && !isVehicleIdle) { 
-            healthReduction = 0.01; // Turun 1% (0.01)
-        }
-        
-        setHealth(Math.max(0.00, currentHealth - healthReduction)); 
-        
-        // Logika Fuel
         const fuelReductionRate = engineState ? 0.005 : 0.000; 
+        
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
         
         setFuel(Math.max(0.00, currentFuel - fuelReductionRate)); 
         
-    }, 10000); // Interval 10 detik untuk Vital Updates (Fuel & Health)
+    }, 3000); 
 }
 
-// --- FUNGSI YOUTUBE API, TOGGLE, DLL. (Tidak Berubah) ---
+// --- FUNGSI YOUTUBE API, TOGGLE, DLL. (TIDAK BERUBAH) ---
 async function searchYoutube(query) {
     if (!query || YOUTUBE_API_KEY === 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs') {
         alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
@@ -409,9 +380,6 @@ document.addEventListener('DOMContentLoaded', () => {
         health: document.getElementById('health'),
         timeWIB: document.getElementById('time-wib'), 
         speedMode: document.getElementById('speed-mode'),
-        
-        // 🚨 Pemetaan Elemen Kotak Health (PENTING untuk pewarnaan)
-        healthBox: document.getElementById('health-box'), 
 
         // Indikator
         headlightsIcon: document.getElementById('headlights-icon'),
@@ -430,8 +398,8 @@ document.addEventListener('DOMContentLoaded', () => {
         youtubeHideButton: document.getElementById('youtube-hide-button'),
     };
     
-    // 2. SETUP CLOCK WIB (HH:MM:SS)
-    startClock(); 
+    // 2. SETUP CLOCK WIB
+    startClock(); // 🚨 Menggantikan updateTimeWIB() dan setInterval lama
     
     // 3. SETUP INTERAKSI KLIK YOUTUBE TOGGLE
     if (elements.youtubeToggleIcon) {
