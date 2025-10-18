@@ -5,11 +5,11 @@ let avgSpeedSum = 0; // Untuk perhitungan rata-rata
 let tripDurationSeconds = 0;
 let simulationInterval = null;
 
-// --- GAUGE PARAMETERS ---
+// --- GAUGE PARAMETERS (Sudut harus sesuai dengan CSS) ---
 const GAUGE_MAX_SPEED = 200; 
-const GAUGE_MIN_ANGLE = 225; // Sudut 0 KMH
-const GAUGE_MAX_ANGLE = 495; // Sudut 200 KMH
-const GAUGE_ANGLE_RANGE = GAUGE_MAX_ANGLE - GAUGE_MIN_ANGLE;
+const GAUGE_MIN_ANGLE = -135; // Sudut 0 KMH
+const GAUGE_MAX_ANGLE = 135; // Sudut 200 KMH
+const GAUGE_ANGLE_RANGE = GAUGE_MAX_ANGLE - GAUGE_MIN_ANGLE; // 270
 
 // --- FUNGSI GAUGE ---
 function mapSpeedToGaugeAngle(speed_kmh) {
@@ -24,6 +24,7 @@ function setSpeed(speed_ms) {
     // 1. Update Jarum (Needle)
     const angle = mapSpeedToGaugeAngle(speed_kmh);
     if (elements.speedNeedle) {
+        // Rotasi harus digabungkan dengan translateX karena jarum diposisikan di tengah
         elements.speedNeedle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
     }
     
@@ -32,7 +33,7 @@ function setSpeed(speed_ms) {
         elements.digitalSpeedVal.innerText = String(speed_kmh).padStart(3, '0');
     }
 
-    // 3. Update Max Speed (Hanya yang besar di bawah)
+    // 3. Update Max Speed 
     if (speed_kmh > maxSpeedReached) {
         maxSpeedReached = speed_kmh;
         if (elements.largeMaxSpeedVal) elements.largeMaxSpeedVal.innerText = maxSpeedReached;
@@ -42,11 +43,15 @@ function setSpeed(speed_ms) {
 }
 
 function updateTripData(distance_km, avgSpeed_kmh) {
-    // Memperbarui nilai TOTAL KM (di tengah gauge) dan Distance
     if (elements.totalDistance) elements.totalDistance.innerText = `${distance_km.toFixed(3)}KM`;
-    
     if (elements.distanceVal) elements.distanceVal.innerText = distance_km.toFixed(1); 
     if (elements.avgSpeedVal) elements.avgSpeedVal.innerText = Math.round(avgSpeed_kmh);
+}
+
+function toggleIndicator(lightElement, isActive) {
+    if (lightElement) {
+        lightElement.classList.toggle('active', isActive);
+    }
 }
 
 
@@ -69,7 +74,8 @@ function startSimulation() {
         tripDurationSeconds += 1;
 
         // 1. Simulasi Speed (m/s)
-        currentSpeed_ms += (Math.random() - 0.5) * 2; 
+        // Pergerakan acak yang lebih kecil untuk stabilitas
+        currentSpeed_ms += (Math.random() - 0.5) * 1; 
         currentSpeed_ms = Math.max(0, Math.min(60, currentSpeed_ms)); 
         const speed_kmh = setSpeed(currentSpeed_ms);
         
@@ -83,6 +89,11 @@ function startSimulation() {
         // 4. Update Trip Data
         updateTripData(totalDistanceTraveled, currentAvgSpeed);
         
+        // 5. Simulasi Indikator Lampu (Ditambahkan lagi sesuai gambar asli)
+        toggleIndicator(elements.engineLight, speed_kmh > 100 && Math.random() < 0.1); 
+        toggleIndicator(elements.handbrakeLight, speed_kmh < 5 && Math.random() < 0.2); 
+        toggleIndicator(elements.seatbeltLight, speed_kmh > 10 && Math.random() < 0.05);
+
     }, 1000); 
 }
 
@@ -93,7 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
     elements = {
         // Gauge
         speedNeedle: document.getElementById('speed-needle'),
-        totalDistance: document.getElementById('total-distance'), // Pindah ke gauge center text
+        engineLight: document.querySelector('.engine-light'),
+        handbrakeLight: document.querySelector('.handbrake-light'),
+        seatbeltLight: document.querySelector('.seatbelt-light'),
+        totalDistance: document.getElementById('total-distance'), 
 
         // Bottom Nav
         digitalSpeedVal: document.getElementById('digital-speed-val'),
@@ -107,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Mulai Simulasi
     startSimulation(); 
     
-    // 3. Tambahkan event listener untuk tombol navigasi dan aksi (tetap sama)
+    // 3. Tambahkan event listener 
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function() {
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
@@ -118,17 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.action-icon').forEach(icon => {
         icon.addEventListener('click', function() {
-            if (this.classList.contains('play-icon')) {
-                console.log("Play / Start Recording clicked!");
-            } else if (this.classList.contains('settings-icon')) {
-                console.log("Settings clicked!");
-            } else if (this.classList.contains('warning-icon')) {
-                console.log("Warning / Alert clicked!");
-            } else if (this.classList.contains('reload-icon')) {
-                console.log("Reload / Reset Trip clicked!");
+            if (this.classList.contains('reload-icon')) {
                 clearInterval(simulationInterval);
                 startSimulation();
             }
+            console.log(`${this.classList[1]} clicked!`);
         });
     });
 });
