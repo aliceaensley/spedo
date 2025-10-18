@@ -9,8 +9,6 @@ let isYoutubeOpen = false;
 let fuelWarningInterval = null; 
 let currentFuelWarningType = null; 
 
-// Variabel turnSignalState dan fungsi setTurnSignal DIHAPUS
-
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
 const criticalFuelSound = new Audio('sekarat.mp3'); 
@@ -144,8 +142,6 @@ function setHealth(health) {
     if (elements.health) elements.health.innerText = displayValue;
 }
 
-// setGear dan maxGearAchieved DIHAPUS
-
 function setHeadlights(state) {
     headlightsState = state;
     toggleActive(elements.headlightsIcon, state > 0);
@@ -168,8 +164,6 @@ function setSeatbelts(state) {
     seatbeltState = state;
     toggleActive(elements.seatbeltIcon, state); 
 }
-
-// setTurnSignal DIHAPUS
 
 function updateTimeWIB() {
     const now = new Date();
@@ -198,28 +192,42 @@ function stopSimulation() {
     
     setSpeed(0);
     setRPM(0.1); 
-    // setGear DIHAPUS
 }
 
 function startSimulation() {
     if (simulationInterval !== null) return;
 
+    // Ambil kecepatan awal dari nilai yang ditampilkan saat ini (jika ada)
     let currentSpeed = 0;
+    try {
+        const currentSpeedDisplay = elements.speed.innerText;
+        currentSpeed = parseFloat(currentSpeedDisplay) / 3.6; // Konversi kembali ke m/s (asumsi KMH)
+        if (isNaN(currentSpeed) || currentSpeed < 0) currentSpeed = 0;
+    } catch (e) {
+        currentSpeed = 0;
+    }
+
+    // Set RPM awal ke idle
     setRPM(0.1); 
 
     simulationInterval = setInterval(() => {
+        
         // Logika pergerakan (HANYA MAJU)
         let speedChange = (Math.random() - 0.5) * 0.5;
         currentSpeed = currentSpeed + speedChange;
 
-        // Pastikan kecepatan tidak negatif (tidak ada mundur)
-        currentSpeed = Math.max(0, currentSpeed);
-        
-        // Fix Speed Stabil di 0
-        if (currentSpeed < 0.5 && speedChange < 0) { 
+        // Ambil batas toleransi kecepatan diam (e.g., 0.1 m/s)
+        const idleTolerance = 0.1; 
+
+        // 🟢 PERBAIKAN STABILITAS KECEPATAN:
+        // Jika kecepatan saat ini sangat rendah DAN trennya menurun, set langsung ke 0.
+        if (currentSpeed < idleTolerance && speedChange < 0) { 
             currentSpeed = 0; 
             speedChange = 0; 
         } 
+        
+        // Pastikan kecepatan tidak negatif
+        currentSpeed = Math.max(0, currentSpeed);
         
         // Batasi kecepatan Maju max 40 m/s (~144 KMH)
         currentSpeed = Math.min(40, currentSpeed); 
@@ -228,11 +236,17 @@ function startSimulation() {
         
         // RPM Logic
         const absSpeed = Math.abs(currentSpeed);
-        let baseRPM = absSpeed > 5 ? 0.4 : 0.1;
-        const currentRPM = absSpeed > 0 ? Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05)) : 0.1;
-        setRPM(currentRPM);
+        let baseRPM = absSpeed > 0 ? 0.4 : 0.1; // RPM lebih tinggi jika bergerak, idle jika diam
         
-        // Logika Lampu Sen/Blinking DIHAPUS
+        // Stabilkan RPM saat Speed = 0, tetapi tambahkan sedikit fluktuasi saat bergerak.
+        let currentRPM;
+        if (currentSpeed === 0) {
+            currentRPM = 0.1; // RPM Idle stabil
+        } else {
+            currentRPM = Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
+        }
+
+        setRPM(currentRPM);
         
     }, 300); 
 }
@@ -383,7 +397,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
         timeWIB: document.getElementById('time-wib'), 
-        // elements.gear DIHAPUS
         speedMode: document.getElementById('speed-mode'),
 
         // Indikator
@@ -391,8 +404,6 @@ document.addEventListener('DOMContentLoaded', () => {
         engineIcon: document.getElementById('engine-icon'), 
         seatbeltIcon: document.getElementById('seatbelt-icon'),
         youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
-        
-        // turnSignalLeft/Right DIHAPUS
         
         // Elemen YouTube Internal
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
@@ -483,8 +494,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Event klik Lampu Sen DIHAPUS
-
     // Nyalakan mesin setelah 2 detik untuk memulai startSimulation
     setTimeout(() => {
         setEngine(true);
