@@ -11,11 +11,10 @@ let currentFuelWarningType = null;
 let isVehicleIdle = false; 
 let timeInterval = null; 
 
-// Objek Audio Peringatan Bensin
+// ✅ AUDIO FILES (Pastikan file ada di direktori yang sama)
 const fuelWarningSound = new Audio('bensin.mp3'); 
 const criticalFuelSound = new Audio('sekarat.mp3'); 
 const welcomeSound = new Audio('selebew.mp3'); 
-// ✅ BARU: Objek Audio Seatbelt
 const seatbeltSound = new Audio('ahh.mp3'); 
 
 // *****************************************************************
@@ -102,13 +101,20 @@ function setSpeed(speed) {
         case 2: speedValue = Math.round(absSpeed * 1.943844); break; 
         default: speedValue = Math.round(absSpeed * 3.6); 
     }
+    // Speed selalu ditampilkan 3 digit
     const displayValue = String(speedValue).padStart(3, '0');
     if (elements.speed) elements.speed.innerText = displayValue;
 }
 
 function setRPM(rpm) {
-    const safeRPM = Math.max(0.2, rpm); 
-    const displayValue = `${Math.round(safeRPM * 10000)}`;
+    // Diasumsikan RPM masuk sebagai nilai 0.0 - 1.0 (Skala 0 - 10000)
+    
+    // Jika RPM di bawah 0.16, atur ke 0.16 sebagai minimum (agar tidak 0)
+    const safeRPM = Math.max(0.16, rpm); 
+    
+    // Konversi ke nilai 4 digit (misal: 0.16 -> 1600, 0.5 -> 5000)
+    const displayValue = `${Math.round(safeRPM * 10000)}`.padStart(4, '0'); 
+    
     if (elements.rpm) elements.rpm.innerText = displayValue;
 }
 
@@ -149,7 +155,7 @@ function setEngine(state) {
 }
 
 function setSeatbelts(state) {
-    // ✅ BARU: Cek jika sabuk pengaman baru saja diaktifkan (dari false ke true)
+    // ✅ Logika Suara Seatbelt: Putar ahh.mp3 jika sabuk baru dipasang (dari false ke true)
     if (state === true && seatbeltState === false) {
         seatbeltSound.currentTime = 0;
         seatbeltSound.play().catch(e => { 
@@ -182,13 +188,18 @@ function startClock() {
 }
 
 // --- FUNGSI KONTROL SIMULASI BERKENDARA ---
+
+const IDLE_RPM_VALUE = 0.16; // 1600 RPM
+const IDLE_TOLERANCE_MS = 0.2; // Batas kecepatan di mana simulasi dianggap bergerak
+
 function stopSimulation() {
     if (simulationInterval !== null) {
         clearInterval(simulationInterval);
         simulationInterval = null;
     }
     setSpeed(0);
-    setRPM(0.0);
+    // Atur RPM ke 0.0000 saat mesin dimatikan
+    if (elements.rpm) elements.rpm.innerText = '0000'; 
     isVehicleIdle = false; 
 }
 
@@ -196,16 +207,17 @@ function startSimulation() {
     if (simulationInterval !== null) return;
 
     let currentSpeed = 0;
-    const IDLE_RPM = 0.2; 
-    const IDLE_TOLERANCE_MS = 0.2; 
 
-    setRPM(IDLE_RPM); 
+    // Set nilai awal idle (000 dan 1600)
+    setSpeed(0);
+    setRPM(IDLE_RPM_VALUE); 
 
     simulationInterval = setInterval(() => {
         
         let speedChange = (Math.random() - 0.5) * 0.5;
         currentSpeed = currentSpeed + speedChange;
 
+        // Jika kecepatan sangat rendah atau negatif, paksa ke 0 (Idle)
         if (currentSpeed < IDLE_TOLERANCE_MS && speedChange < 0) { 
             currentSpeed = 0; 
         } 
@@ -213,20 +225,26 @@ function startSimulation() {
         currentSpeed = Math.max(0, currentSpeed);
         currentSpeed = Math.min(40, currentSpeed); 
         
-        setSpeed(currentSpeed);
+        // Cek status Idle
         isVehicleIdle = (currentSpeed === 0);
         
         let currentRPM;
         
         if (isVehicleIdle) {
-            currentRPM = IDLE_RPM + (Math.random() - 0.5) * 0.002; 
+            // ✅ Kunci Nilai: Jika idle, Speed = 000, RPM = 1600 (nilai tetap)
+            setSpeed(0);
+            // setRPM(IDLE_RPM_VALUE) tidak perlu dipanggil karena sudah dilakukan di luar loop
+            if (elements.rpm) elements.rpm.innerText = '1600'; 
         } else {
+            // ✅ Simulasi normal jika bergerak
+            setSpeed(currentSpeed); 
+            
             const absSpeed = Math.abs(currentSpeed);
-            let baseRPM = Math.min(0.8, absSpeed / 50 + IDLE_RPM); 
-            currentRPM = Math.max(IDLE_RPM + 0.05, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
+            // Logika naik turun RPM saat bergerak
+            let baseRPM = Math.min(0.8, absSpeed / 50 + IDLE_RPM_VALUE); 
+            currentRPM = Math.max(IDLE_RPM_VALUE + 0.05, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
+            setRPM(currentRPM);
         }
-
-        setRPM(currentRPM);
         
     }, 300); 
 }
@@ -393,7 +411,6 @@ function hideWelcomeOverlay(durationMs) {
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
     elements = {
-        // ... (Elemen mapping tetap sama) ...
         speedometerUI: document.getElementById('speedometer-ui'), 
         youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), 
         speed: document.getElementById('speed'),
