@@ -1,74 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Speedometer & YouTube</title>
-    <link rel="stylesheet" href="styles.css">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
-</head>
-<body>
+<div id="welcome-overlay" class="welcome-overlay">
+    </div>
 
+<div id="speedometer-ui" class="speedometer-ui">
     
-<div id="welcome-overlay">
-        <div class="welcome-message">
-            <div class="javanese-script">ꦱꦸꦒꦼꦁꦫꦮꦸꦃ</div>
-            
-            <h1>SUGENG RAWUH</h1>
-            <p>Ampun Supen Dungo Rumiyen Sakderenge Budal</p>
+    <div id="gauge-container" class="gauge-container">
+        <div id="speed-display" class="speed-display">
+            <span id="speed" class="speed-value">000</span>
+            <span id="speed-mode" class="speed-unit">MPH</span>
+        </div>
+        
+        <div id="rpm-bar-wrapper" class="rpm-bar-wrapper">
+            <div id="rpm-bar" class="rpm-bar"></div>
+        </div>
+
+        <div class="indicators-bottom">
+            <i id="headlights-icon" class="icon-light off">💡</i>
+            <i id="engine-icon" class="icon-engine off">⚙️</i>
+            <i id="seatbelt-icon" class="icon-seatbelt off">💺</i>
+            <i id="youtube-toggle-icon" class="icon-youtube">▶️</i>
         </div>
     </div>
     
-<main class="speedometer-container" id="speedometer-ui">
+    <div id="digital-panel" class="digital-panel">
         
-        <div class="youtube-integrated-container hidden" id="youtube-ui-wrapper">
+        <div class="digital-box digital-vitals">
+            <p>Health</p>
+            <span id="health">100%</span>
+        </div>
+        <div class="digital-box digital-vitals">
+            <p>Fuel</p>
+            <span id="fuel">49%</span>
+        </div>
+
+        <div class="digital-box digital-time">
+            <p>Time (WIB)</p>
+            <span id="time-wib">14:52:38</span>
+        </div>
+
+        <div id="youtube-ui-wrapper" class="youtube-ui-wrapper hidden">
+            <iframe id="browser-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             
-            <div class="search-bar-container" id="youtube-search-ui">
-                <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
+            <div id="youtube-search-ui" class="youtube-search-ui">
+                <input type="text" id="youtube-search-input" placeholder="Cari YouTube...">
                 <button id="youtube-search-button">Cari</button>
+                <button id="youtube-hide-button" class="hide-button">X</button>
             </div>
             
-            <div class="search-results-container hidden" id="youtube-results">
-                </div>
-
-            <iframe id="browser-iframe" src="about:blank"></iframe>
-            
-            <div class="youtube-close-button" id="youtube-hide-button">
-                HIDE YOUTUBE [ESC]
-            </div>
+            <div id="youtube-results" class="youtube-results hidden"></div>
         </div>
-        
-        <div class="panel speed-panel">
-            <div class="speed-header">
-                <span class="speed-title">Speed</span>
-                <span class="speed-unit" id="speed-mode">MPH</span>
-            </div>
-            <div class="speed-value-wrapper">
-                <div class="speed-value" id="speed">000</div>
-                <img src="https://bit.ly/signalice" alt="Logo Hak Cipta" class="speed-copyright-logo">
-            </div>
-        </div>
-
-        <div class="panel info-panels-grid">
-            <div class="stat-item"><div class="stat-label">RPM</div><div class="stat-value" id="rpm">0000</div></div>
-            <div class="stat-item"><div class="stat-label">Fuel</div><div class="stat-value" id="fuel">0%</div></div>
-            <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value" id="health">100%</div></div>
-            <div class="stat-item"><div class="stat-label">Time</div><div class="stat-value" id="time-wib">00:00:00</div></div>
-        </div>
-
-        <div class="panel bottom-panel">
-            <div class="status-indicators">
-                <div class="indicator-icon" id="headlights-icon">💡</div> 
-                <div class="indicator-icon" id="engine-icon">⚙️</div> 
-                <div class="indicator-icon" id="seatbelt-icon">💺</div> 
-                
-                <div class="indicator-icon youtube-toggle" id="youtube-toggle-icon">▶️</div> 
-            </div>
-        </div>
-        
-    </main>
-
-    <script src="script.js"></script>
-</body>
-</html>
+    </div>
+</div>
