@@ -18,7 +18,7 @@ const criticalFuelSound = new Audio('sekarat.mp3');
 const welcomeSound = new Audio('selebew.mp3'); 
 
 // *****************************************************************
-// ✅ Kunci API YouTube FINAL
+// Kunci API YouTube FINAL
 // *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; 
 // *****************************************************************
@@ -350,63 +350,92 @@ function toggleYoutubeUI(state) {
     }
 }
 
+/**
+ * Fungsi untuk mengontrol durasi overlay berdasarkan audio.
+ * @param {number} durationMs - Durasi audio dalam milidetik.
+ */
+function hideWelcomeOverlay(durationMs) {
+    if (!elements.welcomeOverlay) return;
+
+    // Durasi total tampilan overlay adalah Durasi Audio + Buffer
+    const totalDisplayTime = durationMs; 
+
+    // Durasi Fade-out CSS adalah 1000ms (1 detik)
+    const fadeOutDuration = 1000;
+
+    // Mulai animasi fade-out tepat setelah durasi audio (atau sedikit sebelum akhir jika durasi sangat singkat)
+    const fadeOutStartDelay = Math.max(0, totalDisplayTime - fadeOutDuration);
+
+    setTimeout(() => {
+        elements.welcomeOverlay.classList.add('fade-out');
+        
+        // Hapus elemen sepenuhnya setelah transisi fade-out selesai
+        setTimeout(() => {
+            elements.welcomeOverlay.style.display = 'none';
+            document.body.style.overflow = ''; 
+        }, fadeOutDuration);
+        
+    }, fadeOutStartDelay);
+}
+
 
 // --- INISIALISASI DAN EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
     elements = {
-        // Kontainer Utama
+        // ... (Elemen mapping tetap sama) ...
         speedometerUI: document.getElementById('speedometer-ui'), 
         youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), 
-        
-        // Data Utama
         speed: document.getElementById('speed'),
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
         timeWIB: document.getElementById('time-wib'), 
         speedMode: document.getElementById('speed-mode'),
-
-        // Indikator
         headlightsIcon: document.getElementById('headlights-icon'),
         engineIcon: document.getElementById('engine-icon'), 
         seatbeltIcon: document.getElementById('seatbelt-icon'),
         youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
-        
-        // Elemen YouTube Internal
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
         youtubeSearchInput: document.getElementById('youtube-search-input'),
         youtubeSearchButton: document.getElementById('youtube-search-button'),
         youtubeResults: document.getElementById('youtube-results'),
         browserIframe: document.getElementById('browser-iframe'), 
-
-        // Elemen Overlay Selamat Datang
         welcomeOverlay: document.getElementById('welcome-overlay'),
-        
-        // Tombol Hide/Close YouTube
         youtubeHideButton: document.getElementById('youtube-hide-button'),
     };
     
-    // 2. Tampilkan dan sembunyikan Overlay Selamat Datang
+    // 2. Tampilkan dan sembunyikan Overlay Selamat Datang (Disinkronkan dengan Audio)
     if (elements.welcomeOverlay) {
         
-        // ✅ BARU: Putar suara Selebew saat overlay muncul
-        welcomeSound.currentTime = 0;
-        welcomeSound.play().catch(e => {
-            console.warn("Gagal memutar selebew.mp3. Pastikan file ada di direktori yang sama.");
-        });
+        // Atur listener untuk mendapatkan durasi audio
+        welcomeSound.onloadedmetadata = () => {
+            const audioDurationMs = welcomeSound.duration * 1000; // Konversi ke milidetik
+            
+            // Putar suara Selebew setelah metadata dimuat
+            welcomeSound.currentTime = 0;
+            welcomeSound.play().catch(e => {
+                console.warn("Gagal memutar selebew.mp3. Pastikan file ada di direktori yang sama. Kesalahan:", e);
+                // Fallback jika pemutaran gagal (misal karena batasan autoplay browser)
+                hideWelcomeOverlay(2500); // Durasi default 2.5 detik
+            });
+            
+            // Atur waktu untuk mulai fade out berdasarkan durasi audio
+            hideWelcomeOverlay(audioDurationMs);
+        };
         
-        // Biarkan overlay terlihat selama 2 detik, lalu fade out
-        setTimeout(() => {
-            elements.welcomeOverlay.classList.add('fade-out');
-            // Hapus overlay sepenuhnya setelah transisi selesai
-            setTimeout(() => {
-                elements.welcomeOverlay.style.display = 'none';
-                document.body.style.overflow = ''; 
-                welcomeSound.pause(); // Hentikan suara jika masih berjalan
-            }, 1000); 
-        }, 2000); // Overlay muncul selama 2 detik
+        // Fallback jika onloadedmetadata tidak pernah dipanggil (misalnya file tidak ditemukan)
+        welcomeSound.onerror = () => {
+             console.error("Gagal memuat file selebew.mp3. Menggunakan durasi default.");
+             hideWelcomeOverlay(2500); // Durasi default 2.5 detik
+        };
+        
+        // Jika file sudah di-cache dan metadata segera tersedia
+        if(welcomeSound.readyState >= 2) {
+             welcomeSound.onloadedmetadata();
+        }
+
     }
 
 
@@ -488,6 +517,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Nyalakan mesin setelah 2 detik untuk memulai startSimulation
+    // Catatan: Ini dipicu setelah animasi welcome selesai jika menggunakan durasi default.
+    // Jika menggunakan sinkronisasi audio, ini akan dipicu 2 detik setelah DOMContentLoaded.
     setTimeout(() => {
         setEngine(true);
     }, 2000);
