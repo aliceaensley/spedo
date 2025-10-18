@@ -8,7 +8,7 @@ let vitalInterval = null;
 let isYoutubeOpen = false; 
 let fuelWarningInterval = null; 
 let currentFuelWarningType = null; 
-let isVehicleIdle = false; // 🚩 Status baru untuk mengunci RPM
+let isVehicleIdle = false; 
 
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
@@ -103,7 +103,8 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    const safeRPM = Math.max(0.1, rpm);
+    // RPM minimum sekarang 0.2 (2000 RPM) saat mesin menyala
+    const safeRPM = Math.max(0.2, rpm); // 🚨 Disesuaikan dengan nilai IDLE_RPM baru
     const displayValue = `${Math.round(safeRPM * 10000)}`;
     if (elements.rpm) elements.rpm.innerText = displayValue;
 }
@@ -176,14 +177,16 @@ function stopSimulation() {
     
     setSpeed(0);
     setRPM(0.0);
-    isVehicleIdle = false; // Reset status idle
+    isVehicleIdle = false; 
 }
 
 function startSimulation() {
     if (simulationInterval !== null) return;
 
     let currentSpeed = 0;
-    const IDLE_RPM = 0.1; // 1000 RPM
+    
+    // 🚩 PERUBAHAN UTAMA: IDLE RPM diatur ke 0.2 (2000 RPM)
+    const IDLE_RPM = 0.2; 
     
     // Toleransi kecepatan yang dianggap diam (0.2 m/s, sekitar 0.72 KMH)
     const IDLE_TOLERANCE_MS = 0.2; 
@@ -197,8 +200,7 @@ function startSimulation() {
         let speedChange = (Math.random() - 0.5) * 0.5;
         currentSpeed = currentSpeed + speedChange;
 
-        // 🟢 LANGKAH 1: Kunci Kecepatan ke Nol Mutlak
-        // Jika kecepatan saat ini di bawah toleransi DAN trennya menurun, set langsung ke 0.
+        // Kunci Kecepatan ke Nol Mutlak
         if (currentSpeed < IDLE_TOLERANCE_MS && speedChange < 0) { 
             currentSpeed = 0; 
         } 
@@ -211,26 +213,24 @@ function startSimulation() {
         
         setSpeed(currentSpeed);
         
-        // 🟢 LANGKAH 2: Tentukan Status Idle
-        // Gunakan currentSpeed MUTLAK untuk menentukan status RPM.
+        // Tentukan Status Idle
         isVehicleIdle = (currentSpeed === 0);
         
         let currentRPM;
         
         if (isVehicleIdle) {
-            // 🎯 Solusi Final: RPM Kunci Stabil
-            // Saat idle, RPM harus terkunci sempurna. Kita tambahkan sedikit noise yang sangat kecil (0.002) 
-            // agar terlihat "hidup" tanpa lonjakan besar.
+            // RPM Kunci Stabil di 0.2
+            // Tambahkan noise yang sangat kecil (0.002 = 20 RPM) untuk realisme idle
             currentRPM = IDLE_RPM + (Math.random() - 0.5) * 0.002; 
         } else {
             // Logika RPM saat bergerak
             const absSpeed = Math.abs(currentSpeed);
             
-            // Base RPM akan naik seiring kecepatan.
-            let baseRPM = Math.min(0.8, absSpeed / 50 + 0.2); 
+            // Base RPM akan naik seiring kecepatan. Pastikan minimalnya adalah 0.2.
+            let baseRPM = Math.min(0.8, absSpeed / 50 + IDLE_RPM); // Minimal 0.2
             
             // Fluktuasi saat bergerak lebih besar
-            currentRPM = Math.max(0.15, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
+            currentRPM = Math.max(IDLE_RPM + 0.05, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
         }
 
         setRPM(currentRPM);
