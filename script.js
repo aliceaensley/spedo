@@ -8,7 +8,9 @@ let vitalInterval = null;
 let isYoutubeOpen = false; 
 let fuelWarningInterval = null; 
 let currentFuelWarningType = null; 
-let maxGearAchieved = 0; // Menyimpan gear tertinggi yang pernah dicapai
+
+// 🚨 BARU: Variabel untuk status Lampu Sen
+let turnSignalState = 0; // 0=Off, 1=Left, 2=Right, 3=Hazard (Left+Right)
 
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
@@ -105,7 +107,7 @@ function setSpeedMode(mode) {
 function setSpeed(speed) {
     let speedValue;
     
-    // Pastikan speed selalu positif untuk tampilan (Simulasi ini hanya maju)
+    // Kecepatan selalu positif (simulasi hanya maju)
     const absSpeed = Math.abs(speed); 
     
     switch(speedMode)
@@ -143,20 +145,7 @@ function setHealth(health) {
     if (elements.health) elements.health.innerText = displayValue;
 }
 
-function setGear(gear) {
-    let gearText = 'N';
-    if (gear > 0) {
-        gearText = String(gear);
-    } else if (gear < 0) {
-        gearText = 'R'; // Hanya digunakan jika Anda mengaktifkan logika Mundur
-    }
-    if (elements.gear) elements.gear.innerText = gearText;
-    
-    // Update maxGearAchieved HANYA jika gear saat ini lebih tinggi dari 0 (Forward Gear)
-    if (gear > maxGearAchieved) {
-        maxGearAchieved = gear;
-    }
-}
+// 🚨 HAPUS setGear dan maxGearAchieved
 
 function setHeadlights(state) {
     headlightsState = state;
@@ -180,6 +169,23 @@ function setSeatbelts(state) {
     seatbeltState = state;
     toggleActive(elements.seatbeltIcon, state); 
 }
+
+// 🚨 BARU: Fungsi untuk mengontrol Lampu Sen
+function setTurnSignal(state) {
+    turnSignalState = state; 
+    
+    // Status Sen Kiri (1) atau Hazard (3)
+    const isLeftOn = (state === 1 || state === 3); 
+    // Status Sen Kanan (2) atau Hazard (3)
+    const isRightOn = (state === 2 || state === 3); 
+    
+    toggleActive(elements.turnSignalLeft, isLeftOn);
+    toggleActive(elements.turnSignalRight, isRightOn);
+
+    // Hapus class 'N' dari gear display (jika gear div tetap digunakan untuk kosmetik)
+    if(elements.gear) elements.gear.innerText = '';
+}
+
 
 function updateTimeWIB() {
     const now = new Date();
@@ -208,8 +214,7 @@ function stopSimulation() {
     
     setSpeed(0);
     setRPM(0.1); 
-    setGear(0); 
-    maxGearAchieved = 0; // Reset max gear saat mesin mati
+    // Hapus setGear
 }
 
 function startSimulation() {
@@ -217,8 +222,7 @@ function startSimulation() {
 
     let currentSpeed = 0;
     setRPM(0.1); 
-    setGear(0); 
-    maxGearAchieved = 0; 
+    // Hapus setGear dan maxGearAchieved
 
     simulationInterval = setInterval(() => {
         // Logika pergerakan (HANYA MAJU)
@@ -245,54 +249,17 @@ function startSimulation() {
         const currentRPM = absSpeed > 0 ? Math.max(0.1, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05)) : 0.1;
         setRPM(currentRPM);
         
-        // 🚨 LOGIKA GEAR SANGAT STABIL (Final):
-        
-        if (currentSpeed === 0) {
-            // Gear Netral saat diam
-            setGear(0); 
-            maxGearAchieved = 0; 
-            return;
-        }
-        
-        // Logika Maju (currentSpeed > 0)
-        let targetGear = 1; 
-        
-        // Skala Gear Baru untuk Max Speed 40 m/s
-        if (currentSpeed >= 30) { 
-            targetGear = 4; // Gear 4 (Speed > 108 KMH)
-        } else if (currentSpeed >= 20) {
-            targetGear = 3; // Gear 3 (Speed > 72 KMH)
-        } else if (currentSpeed >= 10) {
-            targetGear = 2; // Gear 2 (Speed > 36 KMH)
-        } 
-        
-        // 1. Up-shifting: Jika targetGear lebih besar dari yang pernah dicapai, naik gear.
-        if (targetGear > maxGearAchieved) {
-            setGear(targetGear);
+        // Logika Lampu Sen: Berkedip
+        // Toggle active class setiap 500ms jika Lampu Sen diaktifkan
+        if (turnSignalState !== 0) {
+            elements.turnSignalLeft.classList.toggle('blink', turnSignalState === 1 || turnSignalState === 3);
+            elements.turnSignalRight.classList.toggle('blink', turnSignalState === 2 || turnSignalState === 3);
         } else {
-            // 2. Maintaining/Down-shifting:
-            // Pertahankan Gear tertinggi yang pernah dicapai (maxGearAchieved).
-            let finalGear = maxGearAchieved;
-            
-            // Downshift Terpaksa (Hanya untuk skenario deselerasi ekstrem)
-            if (maxGearAchieved === 4 && currentSpeed < 25) { 
-                finalGear = 3;
-            } else if (maxGearAchieved === 3 && currentSpeed < 15) { 
-                finalGear = 2;
-            } else if (maxGearAchieved === 2 && currentSpeed < 5) {
-                finalGear = 1;
-            }
-            
-            // Perbarui maxGearAchieved jika terjadi downshift paksa
-            // (Ini penting agar tidak langsung lompat kembali ke gear tinggi pada fluktuasi berikutnya)
-            if (finalGear < maxGearAchieved) {
-                maxGearAchieved = finalGear;
-            }
-
-            setGear(finalGear);
+            elements.turnSignalLeft.classList.remove('blink');
+            elements.turnSignalRight.classList.remove('blink');
         }
         
-    }, 3000); 
+    }, 300); // Interval dipercepat menjadi 300ms untuk efek blinking yang halus
 }
 
 
@@ -318,7 +285,7 @@ function startVitalUpdates() {
     }, 3000); 
 }
 
-// --- FUNGSI YOUTUBE API ---
+// --- FUNGSI YOUTUBE API (TETAP SAMA) ---
 async function searchYoutube(query) {
     if (!query || YOUTUBE_API_KEY === 'GANTI_DENGAN_API_KEY_ANDA_DI_SINI') {
         alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
@@ -441,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
         timeWIB: document.getElementById('time-wib'), 
-        gear: document.getElementById('gear'),
+        gear: document.getElementById('gear'), // Tetap dipakai untuk layout kosmetik
         speedMode: document.getElementById('speed-mode'),
 
         // Indikator
@@ -449,6 +416,10 @@ document.addEventListener('DOMContentLoaded', () => {
         engineIcon: document.getElementById('engine-icon'), 
         seatbeltIcon: document.getElementById('seatbelt-icon'),
         youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
+        
+        // 🚨 BARU: Indikator Sen
+        turnSignalLeft: document.getElementById('turn-signal-left'),
+        turnSignalRight: document.getElementById('turn-signal-right'),
         
         // Elemen YouTube Internal
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
@@ -516,9 +487,13 @@ document.addEventListener('DOMContentLoaded', () => {
     setHeadlights(1);
     setSeatbelts(true);
     
+    // 🚨 INISIASI Lampu Sen (Mati)
+    setTurnSignal(0); 
+    
     // Mulai pembaruan data vital segera!
     startVitalUpdates(); 
 
+    // 7. EVENT KLIK BARU UNTUK LAMPU SEN DAN FUNGSI LAIN
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
             setEngine(!engineState); 
@@ -535,6 +510,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.seatbeltIcon) {
         elements.seatbeltIcon.addEventListener('click', () => {
             setSeatbelts(!seatbeltState);
+        });
+    }
+    
+    // 🚨 EVENT KLIK UNTUK LAMPU SEN (L, R, Hazard)
+    if (elements.turnSignalLeft) {
+        elements.turnSignalLeft.addEventListener('click', () => {
+            // Urutan: OFF -> L -> R -> H -> OFF
+            if (turnSignalState === 0) setTurnSignal(1); // OFF -> L
+            else if (turnSignalState === 1) setTurnSignal(2); // L -> R
+            else if (turnSignalState === 2) setTurnSignal(3); // R -> H
+            else if (turnSignalState === 3) setTurnSignal(0); // H -> OFF
+        });
+    }
+    
+    if (elements.turnSignalRight) {
+        elements.turnSignalRight.addEventListener('click', () => {
+            // Urutan: OFF -> R -> L -> H -> OFF
+            if (turnSignalState === 0) setTurnSignal(2); // OFF -> R
+            else if (turnSignalState === 2) setTurnSignal(1); // R -> L
+            else if (turnSignalState === 1) setTurnSignal(3); // L -> H
+            else if (turnSignalState === 3) setTurnSignal(0); // H -> OFF
         });
     }
 
