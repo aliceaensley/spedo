@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Speedometer Mini Rapi V2</title>
+    <title>GPS Speedometer Mini Final</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -14,36 +14,18 @@
                 <div class="gauge-display-area">
                     <div class="gauge-wrapper">
                         
-                        <div class="indicator-lights">
-                            <span class="indicator-light engine-light">🔴</span>
-                            <span class="indicator-light handbrake-light">🚷</span>
-                        </div>
-                        
                         <div id="speed-needle" class="speed-needle"></div>
                         
-                        <div class="gauge-scale-numbers">
-                            <span class="speed-label speed-0">0</span>
-                            <span class="speed-label speed-20">20</span>
-                            <span class="speed-label speed-40">40</span>
-                            <span class="speed-label speed-60">60</span>
-                            <span class="speed-label speed-80">80</span>
-                            <span class="speed-label speed-100">100</span>
-                            <span class="speed-label speed-120">120</span>
-                            <span class="speed-label speed-140">140</span>
-                            <span class="speed-label speed-160">160</span>
-                            <span class="speed-label speed-180">180</span>
-                            <span class="speed-label speed-200">200</span>
+                        <div class="gauge-center-text">
+                            <span class="label">TOTAL</span>
+                            <span id="total-distance" class="value">0.000KM</span>
                         </div>
-                    </div>
-                    <div class="total-km-display">
-                        <span class="label">TOTAL</span>
-                        <span id="total-distance" class="value">250.012KM</span>
                     </div>
                 </div>
 
                 <div class="bottom-nav">
                     <span class="nav-item active">⊙ Analog</span>
-                    <span class="nav-item digital-nav-item"><span id="digital-speed-val" class="digital-speed-display">087</span> Digital</span>
+                    <span class="nav-item digital-nav-item"><span id="digital-speed-val" class="digital-speed-display">000</span> Digital</span>
                     <span class="nav-item">🗺️ Map</span>
                 </div>
             </div>
@@ -53,12 +35,12 @@
                     
                     <div class="data-box-item data-distance">
                         <span class="label">Distance</span>
-                        <span id="distance-val" class="value">3.5</span>
+                        <span id="distance-val" class="value">0.0</span>
                         <span class="unit">KM</span>
                     </div>
                     <div class="data-box-item data-avg-speed">
                         <span class="label">Avg Speed</span>
-                        <span id="avg-speed-val" class="value">125</span>
+                        <span id="avg-speed-val" class="value">0</span>
                         <span class="unit">KMH</span>
                     </div>
                     <div class="data-box-item data-max-speed large-value-box">
