@@ -1,184 +1,254 @@
 /* --- BASE & RESET --- */
 * {
-    user-select: none;
-    user-drag: none;
     box-sizing: border-box; 
+    user-select: none;
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
 }
 
 body {
-    background-color: transparent !important;
+    background-color: #000 !important; /* Latar belakang hitam penuh */
+    color: white;
+    font-family: Arial, sans-serif;
 }
 
-/* --- SPEEDOMETER UTAMA --- */
-main.speedometer-digital {
+.speedometer-ui {
     position: fixed;
-    bottom: 15px;
-    right: 15px;
-    width: 250px;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    
-    /* GAYA KOTAK ORANYE GLOW */
-    background-color: #382500; /* Warna dasar coklat gelap */
-    border: 3px solid #ffaa00; /* Border Oranye */
-    box-shadow: 0 0 15px 5px rgba(255, 170, 0, 0.7); /* Glow Oranye */
-    color: white;
     padding: 10px;
-    border-radius: 15px;
+    background-color: #000;
 }
 
-/* --- 1. SPEED HEADER & UNIT --- */
-.header-unit-row {
+/* Warna Neon Cyan */
+:root {
+    --cyan-neon: #00ffff;
+    --cyan-glow: rgba(0, 255, 255, 0.7);
+    --dark-bg: #111;
+    --mid-grey: #444;
+}
+
+/* --- 1. TOP BAR --- */
+.top-bar {
     display: flex;
     justify-content: space-between;
-    padding: 0 5px;
-    font-size: 10pt;
-    font-weight: bold;
-    color: #ffaa00; 
-}
-
-/* --- 2. SPEED VALUE --- */
-.speed-value-box {
-    margin: 5px 0 10px 0;
-    position: relative;
-    padding: 5px 0;
-    text-align: center;
-    border-bottom: 2px solid #ffaa0055; /* Garis pemisah tipis */
-}
-
-.speed-large {
-    font-size: 50pt;
-    font-weight: bold;
-    color: white;
-    /* Efek Neon Glow */
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 170, 0, 0.5);
-    line-height: 1;
-    display: block;
-}
-
-.speed-unit-mini {
-    position: absolute;
-    right: 15px;
-    bottom: 5px;
-    font-size: 8pt;
-    color: #ffaa00;
-    opacity: 0.7;
-    font-style: italic;
-    font-family: 'cursive'; /* Untuk gaya tulisan tangan 'Sly' */
-}
-
-
-/* --- 3. VITAL STATS GRID --- */
-.vitals-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.data-box {
-    /* GAYA KOTAK DATA VITAL (Hitam dengan border oranye) */
-    background-color: #000000;
-    border: 1px solid #ffaa00;
-    border-radius: 5px;
-    padding: 5px 5px;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-height: 45px;
-}
-
-.data-box .label {
-    font-size: 8pt;
-    color: #ffaa00;
-    text-transform: uppercase;
-}
-
-.data-box .value {
-    font-size: 11pt;
-    font-weight: bold;
-    color: white;
-}
-
-/* --- 4. INDICATORS BAR --- */
-.indicators-bar {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding-top: 10px;
-    border-top: 1px solid #ffaa0055;
-}
-
-.indicators-bar .icon {
-    font-size: 20pt;
-    cursor: pointer;
-    opacity: 0.4;
-    color: white;
-    transition: opacity 0.2s, color 0.2s;
-    font-style: normal;
-}
-
-.indicators-bar .icon.active {
-    opacity: 1;
-    color: #00ff00; /* Hijau aktif default */
-    text-shadow: 0 0 5px rgba(0, 255, 0, 0.8);
-}
-
-.icon-light.active {
-    color: yellow;
-    text-shadow: 0 0 5px rgba(255, 255, 0, 0.8);
-}
-.icon-youtube.active {
-    color: red;
-}
-
-/* --- YOUTUBE UI (Berdasarkan Gambar 97101e.png) --- */
-.youtube-ui-wrapper {
-    position: fixed;
-    bottom: 15px;
-    right: 280px; /* Di sebelah kiri speedometer */
-    width: 350px;
-    min-height: 200px;
-    background-color: #382500;
-    border: 3px solid #ffaa00;
-    box-shadow: 0 0 15px 5px rgba(255, 170, 0, 0.7);
-    border-radius: 15px;
-    padding: 10px;
-    z-index: 99;
-}
-.youtube-search-area {
-    display: flex;
-    gap: 5px;
+    padding: 5px 10px;
+    font-size: 14pt;
+    background: var(--dark-bg);
+    border-radius: 8px;
     margin-bottom: 10px;
 }
-#youtube-search-input {
-    flex-grow: 1;
-    background: #000;
-    color: white;
-    border: 1px solid #ffaa00;
-    padding: 5px;
-    border-radius: 3px;
+
+.time-duration {
+    font-weight: bold;
+    color: var(--cyan-neon);
+    text-shadow: 0 0 5px var(--cyan-glow);
+}
+
+.header-indicators {
+    display: flex;
+    gap: 15px;
+    align-items: center;
     font-size: 10pt;
 }
-#youtube-search-button {
-    background: #FF0000;
-    color: white;
-    border: 1px solid #FF0000;
-    padding: 5px 10px;
-    border-radius: 3px;
+.header-indicators span {
+    color: var(--cyan-neon);
+}
+.header-indicators .icon {
+    font-size: 12pt;
+    margin-right: -10px;
+    opacity: 0.8;
+}
+
+/* --- 2. MAIN CONTENT AREA --- */
+.main-content {
+    display: flex;
+    flex-grow: 1;
+    gap: 10px;
+}
+
+/* --- GAUGE SECTION (KIRI) --- */
+.gauge-section {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    max-width: 50%;
+}
+
+.speed-gauge-wrapper {
+    width: 350px;
+    height: 350px;
+    position: relative;
+    background: radial-gradient(circle at center, #111 50%, #000 70%);
+    border-radius: 50%;
+    /* Simulasi Skala dan Tick Mark (CSS Sederhana) */
+}
+
+/* Nilai Digital Tengah Gauge */
+.gauge-center-display {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.gauge-center-display .label {
+    font-size: 10pt;
+    color: var(--mid-grey);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.current-speed {
+    font-size: 80pt;
+    font-weight: bold;
+    color: var(--cyan-neon);
+    text-shadow: 0 0 20px var(--cyan-glow);
+    line-height: 0.8;
+}
+
+.gauge-center-display .unit {
+    font-size: 18pt;
+    color: var(--mid-grey);
+    display: block;
+    margin-top: 5px;
+}
+
+/* JARUM (NEEDLE) - Sederhana */
+.gauge-needle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 150px;
+    background: var(--cyan-neon);
+    transform-origin: 50% 100%;
+    border-radius: 2px 2px 0 0;
+    /* Mulai dari 225 derajat (posisi 0) dan diubah oleh JS */
+    transform: translate(-50%, -100%) rotate(225deg);
+    z-index: 10;
+    box-shadow: 0 0 10px var(--cyan-glow);
+    transition: transform 0.3s ease-out; /* Untuk animasi jarum */
+}
+
+
+/* --- DIGITAL DATA PANEL (KANAN) --- */
+.digital-data-panel {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.vitals-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.digital-box, .vitals-box {
+    background: var(--dark-bg);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.vitals-box {
+    text-align: center;
+}
+
+.vitals-box .label {
+    font-size: 8pt;
+    color: var(--mid-grey);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+.vitals-box .value {
+    font-size: 16pt;
+    font-weight: bold;
+    color: var(--cyan-neon);
+    text-shadow: 0 0 5px var(--cyan-glow);
+}
+.vitals-box .unit {
+    font-size: 10pt;
+    color: var(--mid-grey);
+}
+
+
+/* Panel Besar (Avg Speed & Distance) */
+.large-box {
+    min-height: 100px;
+    text-align: center;
+}
+.large-box .label {
+    font-size: 10pt;
+    color: var(--mid-grey);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+.value-large {
+    font-size: 40pt;
+    font-weight: bold;
+    color: var(--cyan-neon);
+    text-shadow: 0 0 10px var(--cyan-glow);
+    line-height: 1;
+}
+.unit-large {
+    font-size: 12pt;
+    color: var(--mid-grey);
+}
+
+
+/* --- QUICK ICONS BAR (KANAN PINGGIR) --- */
+.quick-icons-bar {
+    width: 40px;
+    background: var(--dark-bg);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 0;
+    align-items: center;
+}
+.quick-icons-bar .icon {
+    font-size: 18pt;
+    color: var(--mid-grey);
     cursor: pointer;
 }
-.youtube-warning-text {
-    color: #F00;
-    font-size: 9pt;
-    padding: 5px 0;
-    text-align: left;
+.quick-icons-bar .icon:hover {
+    color: white;
 }
-/* Menyembunyikan elemen secara default */
-.hidden {
-    display: none !important;
+
+
+/* --- 3. BOTTOM NAVIGATION --- */
+.bottom-nav {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 10px;
+    margin-top: 10px;
+    background: var(--dark-bg);
+    border-radius: 8px;
+}
+.nav-item {
+    font-size: 12pt;
+    color: var(--mid-grey);
+    cursor: pointer;
+    padding: 5px 10px;
+}
+.nav-item.active {
+    color: var(--cyan-neon);
+    font-weight: bold;
+    border-bottom: 2px solid var(--cyan-neon);
+    text-shadow: 0 0 5px var(--cyan-glow);
 }
