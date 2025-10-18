@@ -32,7 +32,6 @@ function setSpeed(speed_ms) {
         elements.digitalSpeedVal.innerText = String(speed_kmh).padStart(3, '0');
     }
     
-    // Menghitung max speed meskipun tidak ditampilkan
     if (speed_kmh > maxSpeedReached) {
         maxSpeedReached = speed_kmh;
     }
@@ -41,7 +40,6 @@ function setSpeed(speed_ms) {
 }
 
 function updateTripData(distance_km) {
-    // Hanya update TOTAL KM yang tersisa
     if (elements.totalDistance) elements.totalDistance.innerText = `${distance_km.toFixed(3)}KM`;
 }
 
@@ -56,28 +54,22 @@ function toggleIndicator(lightElement, isActive) {
 function startSimulation() {
     let currentSpeed_ms = 0;
     
-    // Reset data trip
     totalDistanceTraveled = 0;
     maxSpeedReached = 0;
     
-    // Set nilai awal
     setSpeed(0);
     updateTripData(0); 
 
     simulationInterval = setInterval(() => {
         
-        // 1. Simulasi Speed (m/s)
         currentSpeed_ms += (Math.random() - 0.5) * 1; 
         currentSpeed_ms = Math.max(0, Math.min(60, currentSpeed_ms)); 
         const speed_kmh = setSpeed(currentSpeed_ms);
         
-        // 2. Simulasi Jarak
         totalDistanceTraveled += (speed_kmh / 3600); 
         
-        // 3. Update Trip Data (Hanya total distance)
         updateTripData(totalDistanceTraveled);
         
-        // 4. Simulasi Indikator Lampu
         toggleIndicator(elements.engineLight, speed_kmh > 100 && Math.random() < 0.1); 
         toggleIndicator(elements.handbrakeLight, speed_kmh < 5 && Math.random() < 0.2); 
         toggleIndicator(elements.seatbeltLight, speed_kmh > 10 && Math.random() < 0.05);
@@ -88,23 +80,17 @@ function startSimulation() {
 
 // --- INISIALISASI ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pemetaan Elemen
     elements = {
-        // Gauge
         speedNeedle: document.getElementById('speed-needle'),
         engineLight: document.querySelector('.engine-light'),
         handbrakeLight: document.querySelector('.handbrake-light'),
         seatbeltLight: document.querySelector('.seatbelt-light'),
         totalDistance: document.getElementById('total-distance'), 
-
-        // Bottom Nav
         digitalSpeedVal: document.getElementById('digital-speed-val'),
     };
     
-    // 2. Mulai Simulasi
     startSimulation(); 
     
-    // 3. Tambahkan event listener 
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function() {
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
