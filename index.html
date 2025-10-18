@@ -3,64 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speedometer Digital Sly</title>
+    <title>Speedometer Gauge Cyan</title>
     <link rel="stylesheet" href="styles.css">
     </head>
 <body>
-    <main class="speedometer-digital">
+    <div id="speedometer-ui" class="speedometer-ui">
         
-        <div class="header-unit-row">
-            <span class="label">Speed</span>
-            <span id="speed-mode" class="unit">MPH</span>
-        </div>
-        
-        <div class="speed-value-box">
-            <span id="speed" class="speed-large">001</span>
-            <span class="speed-unit-mini">Sly</span>
+        <div class="top-bar">
+            <div class="time-duration">
+                <span id="duration-display">0:08:36</span><span class="unit">s</span>
+            </div>
+            
+            <div class="header-indicators">
+                <i class="icon">🔋</i><span id="battery-level">84%</span>
+                <i class="icon">❌</i><span id="satellites-count">5/17</span>
+                <i class="icon">📶</i><span id="signal-level">44%</span>
+            </div>
+            
+            <i class="icon icon-pause">⏸</i>
         </div>
 
-        <div class="vitals-grid">
-            <div class="data-box">
-                <span class="label">RPM</span>
-                <span id="rpm" class="value">1000</span>
+        <div class="main-content">
+            
+            <div class="gauge-section">
+                <div class="speed-gauge-wrapper">
+                    <div id="gauge-arc" class="gauge-arc"></div>
+                    <div id="gauge-needle" class="gauge-needle"></div>
+                    
+                    <div class="gauge-center-display">
+                        <span class="label">Current Speed</span>
+                        <span id="speed-value" class="current-speed">141</span>
+                        <span id="speed-unit" class="unit">kmh</span>
+                    </div>
+                </div>
             </div>
-            <div class="data-box">
-                <span class="label">Fuel</span>
-                <span id="fuel" class="value">49%</span>
+            
+            <div class="digital-data-panel">
+                <div class="vitals-row top-row">
+                    <div class="vitals-box">
+                        <span class="label">Altitude</span>
+                        <span id="altitude" class="value">416<span class="unit">ft</span></span>
+                    </div>
+                    <div class="vitals-box">
+                        <span class="label">longitude</span>
+                        <span id="longitude" class="value">33.49</span>
+                    </div>
+                    <div class="vitals-box">
+                        <span class="label">longitude</span>
+                        <span id="latitude" class="value">79.10</span>
+                    </div>
+                </div>
+                
+                <div class="digital-box large-box">
+                    <span class="label">Avg Speed</span>
+                    <span id="avg-speed" class="value-large">95<span class="unit-large">KMH</span></span>
+                </div>
+
+                <div class="digital-box large-box">
+                    <span class="label">Distance</span>
+                    <span id="distance" class="value-large">3.8<span class="unit-large">km</span></span>
+                </div>
             </div>
-            <div class="data-box">
-                <span class="label">Health</span>
-                <span id="health" class="value">100%</span>
-            </div>
-            <div class="data-box">
-                <span class="label">Time</span>
-                <span id="time" class="value">14:52</span>
+            
+            <div class="quick-icons-bar">
+                <i class="icon icon-settings">⚙️</i>
+                <i class="icon icon-target">🎯</i>
+                <i class="icon icon-record">⏺️</i>
+                <i class="icon icon-sync">🔄</i>
             </div>
         </div>
 
-        <div class="indicators-bar">
-            <i id="headlights-icon" class="icon icon-light off">💡</i>
-            <i id="engine-icon" class="icon icon-engine off">⚙️</i>
-            <i id="seatbelts-icon" class="icon icon-seatbelt off">💺</i>
-            <i id="youtube-toggle-icon" class="icon icon-youtube off">▶️</i>
+        <div class="bottom-nav">
+            <span class="nav-item active">⊙ Analog</span>
+            <span class="nav-item">🆎 Digital</span>
+            <span class="nav-item">🗺️ Map</span>
         </div>
-    </main>
+        
+    </div>
     
-    <div id="youtube-ui-wrapper" class="youtube-ui-wrapper hidden">
-        <div class="youtube-search-area">
-            <input type="text" id="youtube-search-input" placeholder="a">
-            <button id="youtube-search-button">Cari</button>
-        </div>
-        <p id="youtube-warning" class="youtube-warning-text hidden">Gagal melakukan pencarian YouTube. (Kemungkinan: API key salah/kuota habis).</p>
-        <div id="youtube-results" class="youtube-results"></div>
-        <iframe id="browser-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        <button id="youtube-hide-button" class="hide-button">X</button>
-    </div>
-
-    <div id="welcome-overlay" class="welcome-overlay">
-        <p class="welcome-text">Sugeng Rawuh</p>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
