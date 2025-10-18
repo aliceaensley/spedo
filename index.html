@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Speedometer Mini Rapi</title>
+    <title>GPS Speedometer Mini Rapi V2</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -21,7 +21,19 @@
                         
                         <div id="speed-needle" class="speed-needle"></div>
                         
-                        <div class="gauge-marks-overlay"></div>
+                        <div class="gauge-scale-numbers">
+                            <span class="speed-label speed-0">0</span>
+                            <span class="speed-label speed-20">20</span>
+                            <span class="speed-label speed-40">40</span>
+                            <span class="speed-label speed-60">60</span>
+                            <span class="speed-label speed-80">80</span>
+                            <span class="speed-label speed-100">100</span>
+                            <span class="speed-label speed-120">120</span>
+                            <span class="speed-label speed-140">140</span>
+                            <span class="speed-label speed-160">160</span>
+                            <span class="speed-label speed-180">180</span>
+                            <span class="speed-label speed-200">200</span>
+                        </div>
                     </div>
                     <div class="total-km-display">
                         <span class="label">TOTAL</span>
@@ -38,11 +50,7 @@
 
             <div class="right-panel">
                 <div class="data-boxes-grid">
-                    <div class="data-box-item data-max-speed">
-                        <span class="label">Max Speed</span>
-                        <span id="max-speed-val" class="value">185</span>
-                        <span class="unit">KMH</span>
-                    </div>
+                    
                     <div class="data-box-item data-distance">
                         <span class="label">Distance</span>
                         <span id="distance-val" class="value">3.5</span>
