@@ -2,19 +2,17 @@ let elements = {};
 let totalTime = 0; // Detik
 let totalDistance = 0; // KM
 let totalSpeedSum = 0; // Untuk menghitung Avg Speed
-let speedMode = 0; // 0: KMH
+let simulationInterval = null;
 
-const MAX_SPEED = 220; // Max speed pada gauge yang ringkas
+const MAX_SPEED = 220; // KMH
 const MIN_ANGLE = 225; // Sudut start (0 KMH)
-const ANGLE_RANGE = 270; // 225 hingga 45 (sudut total 270 derajat)
+const ANGLE_RANGE = 270; // Jangkauan sudut 
 
 // --- FUNGSI GAUGE ---
 
 function mapSpeedToAngle(speed) {
     const clampedSpeed = Math.min(MAX_SPEED, Math.max(0, speed));
     const percentage = clampedSpeed / MAX_SPEED;
-    
-    // Rotasi searah jarum jam dari 225 derajat
     return MIN_ANGLE + (percentage * ANGLE_RANGE);
 }
 
@@ -22,16 +20,12 @@ function mapSpeedToAngle(speed) {
 
 function setSpeed(speed_ms) {
     const speed_kmh = Math.round(speed_ms * 3.6);
-    
-    // Tampilkan nilai digital
     if (elements.speedValue) elements.speedValue.innerText = String(speed_kmh).padStart(3, '0');
 
-    // Atur posisi jarum
     const angle = mapSpeedToAngle(speed_kmh);
     if (elements.gaugeNeedle) {
         elements.gaugeNeedle.style.transform = `translate(-50%, -100%) rotate(${angle}deg)`;
     }
-    
     return speed_kmh;
 }
 
@@ -40,60 +34,72 @@ function setTimeDuration(seconds) {
     const m = Math.floor((seconds % 3600) / 60);
     const s = Math.floor(seconds % 60);
     
+    // Format: 0:00:00
     const display = `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    if (elements.timeDisplay) elements.timeDisplay.innerText = display;
+    if (elements.durationDisplay) elements.durationDisplay.innerText = display;
 }
 
-function setAvgSpeed(avg_kmh) {
-    if (elements.avgSpeed) elements.avgSpeed.innerHTML = `${Math.round(avg_kmh)}<span class="unit-small">KMH</span>`;
-}
-
-function setDistance(distance_km) {
-    if (elements.distance) elements.distance.innerHTML = `${distance_km.toFixed(1)}<span class="unit-small">km</span>`;
-}
-
-function setBattery(level) {
-    if (elements.batteryLevel) elements.batteryLevel.innerText = `${level}%`;
+function setVitals(data) {
+    if (elements.batteryLevel) elements.batteryLevel.innerText = `${data.battery}%`;
+    if (elements.signalLevel) elements.signalLevel.innerText = `${data.signal}%`;
+    
+    if (elements.altitude) elements.altitude.innerHTML = `${Math.round(data.altitude)}<span class="unit-small">ft</span>`;
+    if (elements.avgSpeed) elements.avgSpeed.innerHTML = `${Math.round(data.avgSpeed)}<span class="unit-small">KMH</span>`;
+    if (elements.distance) elements.distance.innerHTML = `${data.distance.toFixed(1)}<span class="unit-small">km</span>`;
 }
 
 
-// --- KONTROL SIMULASI ---
+// --- KONTROL SIMULASI LENGKAP ---
 
 function startSimulation() {
     let currentSpeed_ms = 0;
-    
-    // Reset nilai awal simulasi
-    totalTime = 0;
-    totalDistance = 0;
-    totalSpeedSum = 0;
+    let currentAltitude = 0;
     let batteryLevel = 100;
+    let signalLevel = 75;
+
+    // Set nilai awal
+    setSpeed(0);
+    setVitals({
+        battery: batteryLevel,
+        signal: signalLevel,
+        altitude: 0,
+        avgSpeed: 0,
+        distance: 0
+    });
+    setTimeDuration(0);
 
     simulationInterval = setInterval(() => {
         
-        // 1. Simulasi Speed (Bergerak secara acak)
+        // 1. Simulasi Speed & Jarak
         currentSpeed_ms += (Math.random() - 0.5) * 1.5; 
-        currentSpeed_ms = Math.max(0, Math.min(70, currentSpeed_ms)); // Batasi 0-70 m/s
-        
+        currentSpeed_ms = Math.max(0, Math.min(60, currentSpeed_ms)); 
         const speed_kmh = setSpeed(currentSpeed_ms);
         
-        // 2. Simulasi Waktu, Jarak, dan Avg Speed
-        totalTime += 1; // 1 detik
-        totalDistance += (speed_kmh / 3600); // Konversi KMH ke KM/detik
+        totalTime += 1; 
+        totalDistance += (speed_kmh / 3600); 
         totalSpeedSum += speed_kmh;
 
-        setTimeDuration(totalTime);
-        setDistance(totalDistance);
+        // 2. Simulasi Data Tambahan
+        currentAltitude += (Math.random() - 0.5) * 5; // Ubah ketinggian
+        currentAltitude = Math.max(0, currentAltitude);
         
-        const avgSpeed = totalTime > 0 ? totalSpeedSum / totalTime : 0;
-        setAvgSpeed(avgSpeed);
-        
-        // 3. Simulasi Baterai (Turun perlahan)
-        if (totalTime % 60 === 0) { // Turun 1% setiap menit
-            batteryLevel = Math.max(0, batteryLevel - 1);
-            setBattery(batteryLevel);
+        if (totalTime % 60 === 0) { 
+            batteryLevel = Math.max(1, batteryLevel - 1);
         }
+        
+        // 3. Update Semua
+        setTimeDuration(totalTime);
+        const avgSpeed = totalTime > 0 ? totalSpeedSum / totalTime : 0;
+        
+        setVitals({
+            battery: batteryLevel,
+            signal: Math.max(10, Math.round(75 + (Math.random() * 25 - 10))), // Sinyal sedikit berfluktuasi
+            altitude: currentAltitude,
+            avgSpeed: avgSpeed,
+            distance: totalDistance
+        });
 
-    }, 1000); // Update setiap 1 detik
+    }, 1000); 
 }
 
 
@@ -102,19 +108,30 @@ function startSimulation() {
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
     elements = {
+        // Gauge
         gaugeNeedle: document.getElementById('gauge-needle'),
         speedValue: document.getElementById('speed-value'),
         speedUnit: document.getElementById('speed-unit'),
-        timeDisplay: document.getElementById('time-display'),
+        
+        // Header
+        durationDisplay: document.getElementById('duration-display'),
+        batteryLevel: document.getElementById('battery-level'),
+        signalLevel: document.getElementById('signal-level'),
+        
+        // Vitals
+        altitude: document.getElementById('altitude'),
         distance: document.getElementById('distance'),
         avgSpeed: document.getElementById('avg-speed'),
-        batteryLevel: document.getElementById('battery-level'),
+        settingsIcon: document.getElementById('settings-icon'),
     };
-
-    // 2. Set Data Awal
-    setSpeed(0);
-    setBattery(100);
     
-    // 3. Mulai Simulasi
+    // 2. Mulai Simulasi
     startSimulation(); 
+    
+    // 3. Tambahkan fungsi klik sederhana untuk ikon Settings
+    if (elements.settingsIcon) {
+        elements.settingsIcon.addEventListener('click', () => {
+            alert("Settings Pop-up! (Dalam simulasi ini, tidak ada menu yang dibuka)");
+        });
+    }
 });
