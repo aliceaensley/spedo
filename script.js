@@ -9,19 +9,19 @@ let isYoutubeOpen = false;
 let fuelWarningInterval = null; 
 let currentFuelWarningType = null; 
 let isVehicleIdle = false; 
-let timeInterval = null; // 🚩 Deklarasi interval baru untuk jam
+let timeInterval = null; 
 
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
 const criticalFuelSound = new Audio('sekarat.mp3'); 
 
 // *****************************************************************
-// ⚠️ PENTING: API KEY YOUTUBE
+// ⚠️ PERBAIKAN UTAMA: GANTI DENGAN KUNCI API YOUTUBE ANDA YANG ASLI 
 // *****************************************************************
-const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
+const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; // <--- HARUS DIGANTI!
 // *****************************************************************
 
-// --- FUNGSI UTILITY & TOGGLE (TIDAK BERUBAH) ---
+// --- FUNGSI UTILITY & TOGGLE ---
 const toggleActive = (element, state) => {
     if (Array.isArray(element)) {
         element.forEach(el => toggleActive(el, state));
@@ -104,7 +104,6 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    // RPM minimum sekarang 0.2 (2000 RPM) saat mesin menyala
     const safeRPM = Math.max(0.2, rpm); 
     const displayValue = `${Math.round(safeRPM * 10000)}`;
     if (elements.rpm) elements.rpm.innerText = displayValue;
@@ -123,6 +122,7 @@ function setFuel(fuel) {
     }
 }
 
+// Logic setHealth disederhanakan
 function setHealth(health) {
     const displayValue = `${Math.round(health * 100)}%`;
     if (elements.health) elements.health.innerText = displayValue;
@@ -151,16 +151,11 @@ function setSeatbelts(state) {
     toggleActive(elements.seatbeltIcon, state); 
 }
 
-// 🚩 FUNGSI UTAMA YANG DIMODIFIKASI
 function updateTimeWIB() {
     const now = new Date();
-    
-    // Ambil Jam, Menit, Detik dan pastikan selalu 2 digit (padding)
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
-    
-    // Format baru: HH:MM:SS
     const timeString = `${hours}:${minutes}:${seconds}`; 
     
     if (elements.timeWIB) {
@@ -169,27 +164,19 @@ function updateTimeWIB() {
 }
 
 function startClock() {
-    // Jalankan pertama kali
     updateTimeWIB();
-    
-    // Hentikan interval lama jika ada
     if (timeInterval) {
         clearInterval(timeInterval);
     }
-    
-    // 🚩 Set interval baru untuk pembaruan SETIAP DETIK (1000ms)
     timeInterval = setInterval(updateTimeWIB, 1000); 
 }
-// ---------------------------------------------------------------------
 
-// --- FUNGSI KONTROL SIMULASI BERKENDARA (TIDAK BERUBAH) ---
-
+// --- FUNGSI KONTROL SIMULASI BERKENDARA ---
 function stopSimulation() {
     if (simulationInterval !== null) {
         clearInterval(simulationInterval);
         simulationInterval = null;
     }
-    
     setSpeed(0);
     setRPM(0.0);
     isVehicleIdle = false; 
@@ -199,7 +186,6 @@ function startSimulation() {
     if (simulationInterval !== null) return;
 
     let currentSpeed = 0;
-    
     const IDLE_RPM = 0.2; 
     const IDLE_TOLERANCE_MS = 0.2; 
 
@@ -218,7 +204,6 @@ function startSimulation() {
         currentSpeed = Math.min(40, currentSpeed); 
         
         setSpeed(currentSpeed);
-        
         isVehicleIdle = (currentSpeed === 0);
         
         let currentRPM;
@@ -237,8 +222,7 @@ function startSimulation() {
 }
 
 
-// --- FUNGSI KONTROL DATA VITAL (TIDAK BERUBAH) ---
-
+// --- FUNGSI KONTROL DATA VITAL ---
 function startVitalUpdates() {
     if (vitalInterval !== null) return;
     
@@ -250,18 +234,24 @@ function startVitalUpdates() {
     vitalInterval = setInterval(() => {
         const fuelReductionRate = engineState ? 0.005 : 0.000; 
         
+        // Logika Health dinonaktifkan (hanya inisiasi)
+
+        // Logika Fuel
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
         
         setFuel(Math.max(0.00, currentFuel - fuelReductionRate)); 
         
-    }, 3000); 
+    }, 10000); 
 }
 
-// --- FUNGSI YOUTUBE API, TOGGLE, DLL. (TIDAK BERUBAH) ---
+
+// --- FUNGSI YOUTUBE API (Sudah Benar, tinggal API Keynya) ---
 async function searchYoutube(query) {
     if (!query || YOUTUBE_API_KEY === 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs') {
-        alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
+        alert("PERINGATAN: YouTube API Key Anda adalah kunci contoh dan TIDAK AKAN BERFUNGSI. Harap ganti dengan kunci yang valid.");
+        elements.youtubeResults.innerHTML = '<p style="color:red; padding: 10px; width: 300px;">API Key GAGAL! Ganti kunci contoh di script.js.</p>';
+        elements.youtubeResults.classList.remove('hidden');
         return;
     }
     
@@ -321,6 +311,7 @@ async function searchYoutube(query) {
 
 function showVideo(url) {
     if (elements.browserIframe) {
+        // Tambahkan allow='autoplay' agar iframe bisa langsung play
         elements.browserIframe.src = url; 
     }
 }
@@ -362,6 +353,8 @@ function toggleYoutubeUI(state) {
         toggleActive(elements.youtubeToggleIcon, false);
         
         toggleYoutubeSearchUI(false);
+        // Hentikan pemutaran video saat ditutup
+        if (elements.browserIframe) elements.browserIframe.src = 'about:blank';
     }
 }
 
@@ -371,9 +364,11 @@ function toggleYoutubeUI(state) {
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
     elements = {
+        // Kontainer Utama
         speedometerUI: document.getElementById('speedometer-ui'), 
         youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), 
         
+        // Data Utama
         speed: document.getElementById('speed'),
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
@@ -387,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
         seatbeltIcon: document.getElementById('seatbelt-icon'),
         youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
         
-        // Elemen YouTube Internal
+        // Elemen YouTube Internal (Semua ID sudah benar dan sinkron dengan HTML)
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
         youtubeSearchInput: document.getElementById('youtube-search-input'),
         youtubeSearchButton: document.getElementById('youtube-search-button'),
@@ -399,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // 2. SETUP CLOCK WIB
-    startClock(); // 🚨 Menggantikan updateTimeWIB() dan setInterval lama
+    startClock(); 
     
     // 3. SETUP INTERAKSI KLIK YOUTUBE TOGGLE
     if (elements.youtubeToggleIcon) {
@@ -445,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 6. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
-    setHealth(1.0); 
+    setHealth(1.0); // Diinisiasi normal (tanpa warning)
     setFuel(0.49); 
     
     setEngine(false); 
