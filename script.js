@@ -18,7 +18,6 @@ function mapSpeedToGaugeAngle(speed_kmh) {
     return GAUGE_MIN_ANGLE + (percentage * GAUGE_ANGLE_RANGE);
 }
 
-// Jarum bergerak dari 225 deg ke 495 deg (270 derajat total)
 function setSpeed(speed_ms) {
     const speed_kmh = Math.round(speed_ms * 3.6); 
     
@@ -28,21 +27,12 @@ function setSpeed(speed_ms) {
         elements.speedNeedle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
     }
     
-    // 2. Update Masking (Area yang belum tercapai - pseudo-element ::after)
-    // Masking berputar kebalikan dari jarum (dari 0 hingga -270)
-    const maskRotation = 270 * (speed_kmh / GAUGE_MAX_SPEED);
-    if (elements.gaugeWrapper) {
-        // Menggunakan ::after (yang seharusnya bergerak) sebagai elemen penutup
-        // Karena kita tidak bisa mengakses pseudo-element di JS, kita buat div baru di HTML 
-        // yang bertindak sebagai masker (Dibatalkan, gunakan jarum dan data saja)
-    }
-
-    // 3. Update digital speed di nav
+    // 2. Update digital speed di nav
     if (elements.digitalSpeedVal) {
         elements.digitalSpeedVal.innerText = String(speed_kmh).padStart(3, '0');
     }
 
-    // 4. Update Max Speed (Hanya yang besar di bawah)
+    // 3. Update Max Speed (Hanya yang besar di bawah)
     if (speed_kmh > maxSpeedReached) {
         maxSpeedReached = speed_kmh;
         if (elements.largeMaxSpeedVal) elements.largeMaxSpeedVal.innerText = maxSpeedReached;
@@ -52,15 +42,11 @@ function setSpeed(speed_ms) {
 }
 
 function updateTripData(distance_km, avgSpeed_kmh) {
+    // Memperbarui nilai TOTAL KM (di tengah gauge) dan Distance
     if (elements.totalDistance) elements.totalDistance.innerText = `${distance_km.toFixed(3)}KM`;
+    
     if (elements.distanceVal) elements.distanceVal.innerText = distance_km.toFixed(1); 
     if (elements.avgSpeedVal) elements.avgSpeedVal.innerText = Math.round(avgSpeed_kmh);
-}
-
-function toggleIndicator(lightElement, isActive) {
-    if (lightElement) {
-        lightElement.classList.toggle('active', isActive);
-    }
 }
 
 
@@ -97,10 +83,6 @@ function startSimulation() {
         // 4. Update Trip Data
         updateTripData(totalDistanceTraveled, currentAvgSpeed);
         
-        // 5. Simulasi Indikator Lampu
-        toggleIndicator(elements.engineLight, speed_kmh > 100 && Math.random() < 0.1); 
-        toggleIndicator(elements.handbrakeLight, speed_kmh === 0 && Math.random() < 0.2); 
-
     }, 1000); 
 }
 
@@ -111,16 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
     elements = {
         // Gauge
         speedNeedle: document.getElementById('speed-needle'),
-        gaugeWrapper: document.querySelector('.gauge-wrapper'), // Untuk masking
-        engineLight: document.querySelector('.engine-light'),
-        handbrakeLight: document.querySelector('.handbrake-light'),
-        totalDistance: document.getElementById('total-distance'),
+        totalDistance: document.getElementById('total-distance'), // Pindah ke gauge center text
 
         // Bottom Nav
         digitalSpeedVal: document.getElementById('digital-speed-val'),
 
         // Right Panel Data
-        // maxSpeedVal yang atas dihapus
         distanceVal: document.getElementById('distance-val'),
         avgSpeedVal: document.getElementById('avg-speed-val'),
         largeMaxSpeedVal: document.getElementById('large-max-speed-val'),
