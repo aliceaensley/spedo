@@ -9,7 +9,7 @@ let isYoutubeOpen = false;
 let fuelWarningInterval = null; 
 let currentFuelWarningType = null; 
 
-// 🚨 BARU: Variabel untuk status Lampu Sen
+// Variabel untuk status Lampu Sen
 let turnSignalState = 0; // 0=Off, 1=Left, 2=Right, 3=Hazard (Left+Right)
 
 // Objek Audio Peringatan Bensin
@@ -107,7 +107,6 @@ function setSpeedMode(mode) {
 function setSpeed(speed) {
     let speedValue;
     
-    // Kecepatan selalu positif (simulasi hanya maju)
     const absSpeed = Math.abs(speed); 
     
     switch(speedMode)
@@ -126,11 +125,9 @@ function setRPM(rpm) {
 }
 
 function setFuel(fuel) {
-    // Tampilkan nilai Fuel seperti biasa
     const displayValue = `${Math.round(fuel * 100)}%`;
     if (elements.fuel) elements.fuel.innerText = displayValue;
 
-    // Logika Peringatan Bahan Bakar (10%-5% untuk bensin.mp3, <=4% untuk sekarat.mp3)
     if (fuel <= 0.04) { 
         toggleFuelWarning('critical');
     } else if (fuel <= 0.1) { 
@@ -144,8 +141,6 @@ function setHealth(health) {
     const displayValue = `${Math.round(health * 100)}%`;
     if (elements.health) elements.health.innerText = displayValue;
 }
-
-// 🚨 HAPUS setGear dan maxGearAchieved
 
 function setHeadlights(state) {
     headlightsState = state;
@@ -170,20 +165,17 @@ function setSeatbelts(state) {
     toggleActive(elements.seatbeltIcon, state); 
 }
 
-// 🚨 BARU: Fungsi untuk mengontrol Lampu Sen
+// BARU: Fungsi untuk mengontrol Lampu Sen
 function setTurnSignal(state) {
     turnSignalState = state; 
     
-    // Status Sen Kiri (1) atau Hazard (3)
     const isLeftOn = (state === 1 || state === 3); 
-    // Status Sen Kanan (2) atau Hazard (3)
     const isRightOn = (state === 2 || state === 3); 
+    const isHazardOn = (state === 3); // Hanya hazard saat state 3
     
     toggleActive(elements.turnSignalLeft, isLeftOn);
     toggleActive(elements.turnSignalRight, isRightOn);
-
-    // Hapus class 'N' dari gear display (jika gear div tetap digunakan untuk kosmetik)
-    if(elements.gear) elements.gear.innerText = '';
+    toggleActive(elements.hazardIcon, isHazardOn);
 }
 
 
@@ -214,7 +206,6 @@ function stopSimulation() {
     
     setSpeed(0);
     setRPM(0.1); 
-    // Hapus setGear
 }
 
 function startSimulation() {
@@ -222,7 +213,6 @@ function startSimulation() {
 
     let currentSpeed = 0;
     setRPM(0.1); 
-    // Hapus setGear dan maxGearAchieved
 
     simulationInterval = setInterval(() => {
         // Logika pergerakan (HANYA MAJU)
@@ -250,15 +240,26 @@ function startSimulation() {
         setRPM(currentRPM);
         
         // Logika Lampu Sen: Berkedip
-        // Toggle active class setiap 500ms jika Lampu Sen diaktifkan
-        if (turnSignalState !== 0) {
-            elements.turnSignalLeft.classList.toggle('blink', turnSignalState === 1 || turnSignalState === 3);
-            elements.turnSignalRight.classList.toggle('blink', turnSignalState === 2 || turnSignalState === 3);
+        // Toggle 'blink' class setiap 300ms jika Lampu Sen diaktifkan
+        if (turnSignalState === 1 || turnSignalState === 3) { // Left atau Hazard
+            elements.turnSignalLeft.classList.toggle('blink');
+            elements.hazardIcon.classList.toggle('blink', turnSignalState === 3); // Hazard juga berkedip
         } else {
             elements.turnSignalLeft.classList.remove('blink');
+        }
+
+        if (turnSignalState === 2 || turnSignalState === 3) { // Right atau Hazard
+            elements.turnSignalRight.classList.toggle('blink');
+            elements.hazardIcon.classList.toggle('blink', turnSignalState === 3); // Hazard juga berkedip
+        } else {
             elements.turnSignalRight.classList.remove('blink');
         }
         
+        // Pastikan hazard icon hanya berkedip jika turnSignalState == 3
+        if (turnSignalState !== 3) {
+            elements.hazardIcon.classList.remove('blink');
+        }
+
     }, 300); // Interval dipercepat menjadi 300ms untuk efek blinking yang halus
 }
 
@@ -279,7 +280,6 @@ function startVitalUpdates() {
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
         
-        // Batas aman minimum di set ke 0.01 (1%) agar bisa turun sampai 0%
         setFuel(Math.max(0.01, currentFuel - fuelReductionRate)); 
         
     }, 3000); 
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
         timeWIB: document.getElementById('time-wib'), 
-        gear: document.getElementById('gear'), // Tetap dipakai untuk layout kosmetik
+        // elements.gear TIDAK DIGUNAKAN UNTUK TEKS LAGI
         speedMode: document.getElementById('speed-mode'),
 
         // Indikator
@@ -417,9 +417,10 @@ document.addEventListener('DOMContentLoaded', () => {
         seatbeltIcon: document.getElementById('seatbelt-icon'),
         youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
         
-        // 🚨 BARU: Indikator Sen
+        // BARU: Indikator Sen dan Hazard
         turnSignalLeft: document.getElementById('turn-signal-left'),
         turnSignalRight: document.getElementById('turn-signal-right'),
+        hazardIcon: document.getElementById('hazard-icon'), // Elemen hazard baru
         
         // Elemen YouTube Internal
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
@@ -487,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setHeadlights(1);
     setSeatbelts(true);
     
-    // 🚨 INISIASI Lampu Sen (Mati)
+    // INISIASI Lampu Sen (Mati)
     setTurnSignal(0); 
     
     // Mulai pembaruan data vital segera!
@@ -513,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // 🚨 EVENT KLIK UNTUK LAMPU SEN (L, R, Hazard)
+    // EVENT KLIK UNTUK LAMPU SEN (L, R, Hazard)
     if (elements.turnSignalLeft) {
         elements.turnSignalLeft.addEventListener('click', () => {
             // Urutan: OFF -> L -> R -> H -> OFF
@@ -532,7 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (turnSignalState === 1) setTurnSignal(3); // L -> H
             else if (turnSignalState === 3) setTurnSignal(0); // H -> OFF
         });
-    }
+    });
 
     // Nyalakan mesin setelah 2 detik untuk memulai startSimulation
     setTimeout(() => {
