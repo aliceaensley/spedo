@@ -8,7 +8,7 @@
 }
 
 body {
-    background-color: transparent !important; /* Untuk overlay */
+    background-color: transparent !important; 
     color: white;
 }
 
@@ -17,7 +17,7 @@ body {
     --primary-text: #E0E0E0;
     --secondary-text: #9E9E9E;
     --accent-red: #FF0000;
-    --accent-blue: #00BFFF; /* DeepSkyBlue untuk efek biru */
+    --accent-blue: #00BFFF; 
     --accent-green: #00FF00;
     --dark-bg: #1A1A1A;
     --medium-dark-bg: #2C2C2C;
@@ -28,9 +28,8 @@ body {
 
     /* Mini Widget Size Adjustments */
     --widget-width: 450px; 
-    --widget-height: 280px; 
-    --header-font-size: 9pt;
-    --title-font-size: 11pt;
+    --widget-height: 250px; /* Tinggi dikurangi karena header dihapus */
+    --title-font-size: 11pt; /* Tidak terpakai lagi */
     --data-label-font: 7pt;
     --data-value-font: 14pt;
     --large-data-value-font: 30pt;
@@ -45,7 +44,7 @@ body {
     bottom: 15px;
     right: 15px;
     width: var(--widget-width);
-    height: var(--widget-height);
+    height: var(--widget-height); /* Tinggi disesuaikan */
     background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%);
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
@@ -53,50 +52,24 @@ body {
     display: flex;
     flex-direction: column;
     color: var(--primary-text);
-    overflow: hidden; /* Penting untuk clipping */
+    overflow: hidden; 
 }
 
-/* --- HEADER SECTION --- */
-.header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 10px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
+/* --- HEADER SECTION (Dihapus/Dikosongkan) --- */
+/* .header-section { display: none; } */
 
-.app-title {
-    font-size: var(--title-font-size);
-    font-weight: bold;
-    color: white;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-}
-
-.gps-info {
-    text-align: right;
-    font-size: var(--header-font-size);
-    line-height: 1.2;
-}
-.gps-connectivity, .satellite-info {
-    display: block;
-    color: var(--secondary-text);
-}
-.gps-connectivity span, .satellite-info span {
-    color: var(--accent-blue);
-    font-weight: bold;
-}
 
 /* --- MAIN CONTENT LAYOUT --- */
 .main-content {
     display: flex;
     flex-grow: 1;
-    gap: 10px; /* Jarak antara panel kiri dan kanan */
+    gap: 10px; 
     position: relative;
+    /* Main content sekarang mengisi seluruh tinggi widget (kecuali padding) */
 }
 
 .left-panel {
-    width: 55%; /* Gauge mengambil lebih banyak ruang */
+    width: 55%; 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -109,34 +82,35 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    position: relative; /* Untuk tombol aksi */
+    position: relative; 
 }
 
 
 /* --- GAUGE DISPLAY AREA (KIRI) --- */
 .gauge-display-area {
     width: 100%;
-    height: 180px; /* Tinggi disesuaikan */
+    /* Tinggi disesuaikan agar pas di ruang baru */
+    height: 160px; 
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end; /* Posisikan gauge di bawah */
-    margin-top: 10px;
+    justify-content: flex-end; 
+    margin-top: 0; /* Margin atas dikurangi */
 }
 
 .gauge-wrapper {
-    width: 200px; /* Lebar gauge */
-    height: 100px; /* Setengah dari lebar untuk setengah lingkaran */
-    border-radius: 200px 200px 0 0; /* Bentuk setengah lingkaran atas */
-    background: linear-gradient(to right, var(--gauge-red-start), var(--gauge-red-end)); /* Default merah */
+    width: 200px; 
+    height: 100px; 
+    border-radius: 200px 200px 0 0; 
+    background: linear-gradient(to right, var(--gauge-red-start), var(--gauge-red-end));
     position: relative;
-    overflow: hidden; /* Penting untuk efek gauge */
-    transform: rotate(180deg); /* Balik agar buka ke atas */
+    overflow: hidden; 
+    transform: rotate(180deg); 
     margin-bottom: 5px;
 }
 
-/* Background untuk area gauge yang tidak terisi */
+/* ... (Gaya Gauge Wrapper, Needle, Indicator Lights, Total KM Display tetap sama) ... */
 .gauge-wrapper::before {
     content: '';
     position: absolute;
@@ -145,14 +119,13 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 200px 200px 0 0;
-    background: var(--medium-dark-bg); /* Warna abu-abu gelap */
+    background: var(--medium-dark-bg); 
     z-index: 1;
     transform-origin: center top;
-    transform: rotate(0deg); /* Ini akan dirotasi oleh JS untuk menunjukkan speed */
+    transform: rotate(0deg); 
     transition: transform 0.3s ease-out;
 }
 
-/* Overlays untuk garis, angka, dll. */
 .gauge-wrapper::after {
     content: '';
     position: absolute;
@@ -161,27 +134,25 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 200px 200px 0 0;
-    border: 2px solid var(--medium-dark-bg); /* Border luar */
+    border: 2px solid var(--medium-dark-bg); 
     border-bottom: none;
-    z-index: 3; /* Di atas warna gauge dan background */
+    z-index: 3; 
 }
 
-/* Jarum Speedometer */
 .speed-needle {
     position: absolute;
-    bottom: 0; /* Posisikan di tengah bawah gauge */
+    bottom: 0; 
     left: 50%;
-    transform-origin: 50% 100%; /* Rotasi dari pangkal */
+    transform-origin: 50% 100%; 
     width: 2px;
-    height: 90px; /* Panjang jarum */
+    height: 90px; 
     background-color: var(--accent-red);
     z-index: 4;
-    transform: translateX(-50%) rotate(225deg); /* Posisi awal 0 KMH */
+    transform: translateX(-50%) rotate(225deg); 
     box-shadow: 0 0 8px var(--accent-red);
     transition: transform 0.3s ease-out;
 }
 
-/* Tengah Lingkaran Jarum */
 .speed-needle::before {
     content: '';
     position: absolute;
@@ -198,13 +169,12 @@ body {
 }
 
 
-/* Indikator Peringatan/Info di dalam Gauge */
 .indicator-lights {
     position: absolute;
-    top: 50%; /* Di tengah area gauge */
+    top: 50%; 
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 2; /* Di atas background gauge tapi di bawah jarum */
+    z-index: 2; 
     display: flex;
     gap: 10px;
 }
@@ -217,10 +187,6 @@ body {
     opacity: 1;
 }
 
-/* Teks angka gauge dan garis ticks (lebih kompleks, bisa pakai SVG atau div banyak)
-   Untuk kesederhanaan, kita bisa mengandalkan background dan jarum saja */
-
-/* Total KM Display */
 .total-km-display {
     text-align: center;
     margin-top: 5px;
@@ -246,7 +212,7 @@ body {
     width: 100%;
     padding: 8px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 10px;
+    margin-top: 0px; /* Margin atas dihilangkan */
 }
 
 .nav-item {
@@ -266,19 +232,9 @@ body {
     color: white;
     text-shadow: 0 0 5px var(--accent-blue);
 }
-.nav-item.active .icon-analog, .nav-item.active .digital-speed-display, .nav-item.active .icon-map {
-    filter: brightness(0) invert(1) drop-shadow(0 0 3px var(--accent-blue));
-}
-
-
 .nav-item:not(.active):hover {
     background-color: rgba(255, 255, 255, 0.05);
     color: white;
-}
-.nav-item img {
-    height: var(--icon-size);
-    width: var(--icon-size);
-    filter: invert(0.5); /* Membuat ikon menjadi abu-abu default */
 }
 .digital-speed-display {
     font-size: var(--nav-font-size);
@@ -291,7 +247,7 @@ body {
 /* --- RIGHT PANEL DATA BOXES --- */
 .data-boxes-grid {
     display: grid;
-    grid-template-columns: 1fr; /* Stack vertically */
+    grid-template-columns: 1fr;
     gap: 8px;
     width: 100%;
 }
@@ -343,21 +299,20 @@ body {
 .data-distance .value { color: var(--accent-blue); text-shadow: 0 0 5px var(--accent-blue); }
 .data-avg-speed .value { color: var(--accent-green); text-shadow: 0 0 5px var(--accent-green); }
 
-/* Gradien Latar Belakang untuk Large Max Speed Box */
 .data-max-speed.large-value-box {
     background: linear-gradient(135deg, rgba(0, 191, 255, 0.2) 0%, rgba(255, 0, 0, 0.2) 100%), var(--medium-dark-bg);
-    border: 1px solid rgba(0, 191, 255, 0.5); /* Border biru */
+    border: 1px solid rgba(0, 191, 255, 0.5); 
     box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
-    padding: 5px; /* Lebih sedikit padding agar muat */
+    padding: 5px; 
 }
 
 
 /* --- ACTION BUTTONS BAR (KANAN PINGGIR) --- */
 .action-buttons-bar {
     position: absolute;
-    top: 0px; /* Posisikan di atas data box grid */
+    top: 0px; 
     right: 0px;
-    width: 30px; /* Lebar tombol kecil */
+    width: 30px; 
     display: flex;
     flex-direction: column;
     gap: 8px;
