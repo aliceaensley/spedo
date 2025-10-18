@@ -26,13 +26,13 @@ body {
     --gauge-end-angle: 135deg; 
 }
 
-/* --- MAIN WIDGET CONTAINER (Diperkecil karena data box hilang) --- */
+/* --- MAIN WIDGET CONTAINER --- */
 .speedometer-ui {
     position: fixed;
     bottom: 15px;
     right: 15px;
-    width: 250px; /* Lebar diperkecil hanya muat gauge */
-    height: 300px; /* Tinggi ditambah sedikit untuk menampung tombol aksi */
+    width: 250px; 
+    height: 300px; 
     background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%);
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
@@ -47,38 +47,38 @@ body {
 .main-content {
     display: flex;
     flex-grow: 1;
+    flex-direction: column; /* Ubah menjadi kolom */
     gap: 10px; 
     position: relative;
 }
 
 .left-panel {
-    /* Left panel sekarang mengisi 100% lebar widget */
     width: 100%; 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    flex-grow: 1; /* Agar left-panel mengisi sisa ruang */
 }
-
-/* RIGHT PANEL DIHAPUS */
 
 
 /* --- GAUGE DISPLAY AREA --- */
 .gauge-display-area {
     width: 100%;
-    height: 180px; /* Area lebih besar */
+    height: 180px; 
     position: relative;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Posisikan gauge di bagian atas area */
+    align-items: flex-start; 
+    flex-shrink: 0; /* Agar tidak menyusut */
 }
 
 .gauge-wrapper {
-    width: calc(var(--gauge-radius) * 2);
-    height: var(--gauge-radius);
+    width: calc(var(--gauge-radius) * 2); /* 200px */
+    height: var(--gauge-radius); /* 100px */
     position: relative;
     overflow: visible; 
-    margin-top: 15px; /* Sedikit dorongan ke bawah agar angka 0 dan 200 terlihat */
+    margin-top: 20px; /* Dorong sedikit ke bawah dari atas widget */
 }
 
 /* Lingkaran Luar (Background) */
@@ -90,15 +90,14 @@ body {
     width: 200px;
     height: 100px;
     border-radius: 200px 200px 0 0;
-    background-color: var(--medium-dark-bg); 
-    border-top: 5px solid var(--accent-blue); 
+    background-color: var(--dark-bg); /* Ubah ke dark-bg agar sesuai gambar */
+    border-top: 5px solid var(--accent-blue); /* Border atas biru */
     z-index: 1;
     transform: rotate(180deg);
+    box-shadow: 0 0 10px rgba(0, 191, 255, 0.3); /* Tambah glow biru */
 }
 
-/* --- JARUM SPEEDOMETER, SKALA ANGKA, INDIKATOR, TOTAL KM --- */
-/* (Semua gaya dari versi sebelumnya dipertahankan di sini) */
-/* Jarum Speedometer */
+/* --- JARUM SPEEDOMETER --- */
 .speed-needle {
     position: absolute;
     bottom: -15px; 
@@ -127,7 +126,7 @@ body {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* Skala Angka Gauge */
+/* --- SKALA ANGKA GAUGE --- */
 .gauge-scale-numbers {
     position: absolute;
     top: calc(var(--gauge-radius) - 15px); 
@@ -142,6 +141,7 @@ body {
     color: var(--gauge-text-color);
     width: 30px; 
     text-align: center;
+    font-weight: bold; /* Angka lebih tebal */
     --angle: 0deg;
     --radius: calc(var(--gauge-radius) - 15px);
     transform-origin: 50% 50%;
@@ -161,7 +161,7 @@ body {
 .label-180 { --angle: 108deg; }
 .label-200 { --angle: 135deg; color: var(--accent-red); }
 
-/* Indikator Lampu */
+/* --- INDIKATOR LAMPU --- */
 .indicator-lights {
     position: absolute;
     top: 50%;
@@ -169,13 +169,15 @@ body {
     transform: translate(-50%, -50%);
     z-index: 3;
     display: flex;
-    gap: 15px;
-    width: 80%;
+    gap: 20px; /* Jarak antar ikon diperlebar */
+    width: 100%; /* Agar bisa space-around */
     justify-content: space-around;
+    padding: 0 40px; /* Padding agar tidak terlalu pinggir */
 }
 .indicator-light {
     font-size: 18pt;
     opacity: 0.2; 
+    transition: opacity 0.3s;
 }
 .indicator-light.active {
     opacity: 1; 
@@ -183,10 +185,11 @@ body {
 }
 .seatbelt-light { font-size: 14pt; }
 
-/* Total KM Display */
+
+/* --- TOTAL KM DISPLAY --- */
 .total-km-display {
     position: absolute;
-    bottom: -40px; 
+    bottom: -40px; /* Posisikan lebih ke bawah sedikit */
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
@@ -211,16 +214,18 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px; /* Jarak antar baris tombol aksi dan nav */
     padding-top: 10px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
 }
 
 .bottom-nav {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between; /* Kembali ke space-between */
     align-items: center;
     width: 100%;
+    padding: 0 5px; /* Sedikit padding agar tidak terlalu pinggir */
 }
 .nav-item {
     display: flex;
@@ -230,6 +235,7 @@ body {
     color: var(--secondary-text);
     padding: 3px 5px;
     border-radius: 5px;
+    cursor: pointer; /* Agar terasa interaktif */
 }
 .nav-item.active {
     background-color: var(--accent-blue);
@@ -241,22 +247,23 @@ body {
 }
 
 
-/* --- ACTION BUTTONS BAR (Dipindahkan ke kiri bawah) --- */
+/* --- ACTION BUTTONS BAR --- */
 .action-buttons-bar {
     display: flex;
-    justify-content: space-around; /* Agar ikon tersebar rapi di lebar widget */
+    justify-content: space-around; 
     width: 100%;
-    padding: 5px 0;
+    padding: 0 5px; /* Padding agar lebih rapi */
 }
 .action-icon {
     background-color: var(--medium-dark-bg);
     border-radius: 5px;
-    width: 35px; /* Lebih besar */
-    height: 35px; /* Lebih besar */
+    width: 35px; 
+    height: 35px; 
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 16pt;
+    cursor: pointer; /* Agar terasa interaktif */
     transition: background-color 0.2s, box-shadow 0.2s;
 }
 .action-icon:hover {
