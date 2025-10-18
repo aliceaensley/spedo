@@ -16,7 +16,7 @@ const fuelWarningSound = new Audio('bensin.mp3');
 const criticalFuelSound = new Audio('sekarat.mp3'); 
 
 // *****************************************************************
-// ⚠️ PERBAIKAN: Kunci API YouTube Diperbarui
+// ⚠️ PERBAIKAN: Kunci API YouTube Diperbarui dengan kunci baru Anda
 // *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; 
 // *****************************************************************
