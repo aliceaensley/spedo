@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Speedometer Analog Rapi</title>
+    <title>GPS Speedometer Minimalis</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -26,7 +26,7 @@
                             <div class="speed-label label-160">160</div>
                             <div class="speed-label label-180">180</div>
                             <div class="speed-label label-200">200</div>
-                            </div>
+                        </div>
 
                         <div class="indicator-lights">
                             <span class="indicator-light handbrake-light">🚷</span> 
@@ -43,41 +43,24 @@
                     </div>
                 </div>
 
-                <div class="bottom-nav">
-                    <span class="nav-item active">⊙ Analog</span>
-                    <span class="nav-item digital-nav-item"><span id="digital-speed-val" class="digital-speed-display">087</span> Digital</span>
-                    <span class="nav-item">🗺️ Map</span>
-                </div>
-            </div>
-
-            <div class="right-panel">
-                <div class="data-boxes-grid">
+                <div class="bottom-controls">
+                    <div class="action-buttons-bar">
+                        <i class="action-icon play-icon">▶️</i>
+                        <i class="action-icon settings-icon">⚙️</i>
+                        <i class="action-icon warning-icon">⚠️</i>
+                        <i class="action-icon reload-icon">🔄</i>
+                    </div>
                     
-                    <div class="data-box-item data-distance">
-                        <span class="label">Distance</span>
-                        <span id="distance-val" class="value">3.5</span>
-                        <span class="unit">KM</span>
-                    </div>
-                    <div class="data-box-item data-avg-speed">
-                        <span class="label">Avg Speed</span>
-                        <span id="avg-speed-val" class="value">125</span>
-                        <span class="unit">KMH</span>
-                    </div>
-                    <div class="data-box-item data-max-speed large-value-box">
-                        <span class="label">Max Speed</span>
-                        <span id="large-max-speed-val" class="value large">185</span>
-                        <span class="unit large">KMH</span>
+                    <div class="bottom-nav">
+                        <span class="nav-item active">⊙ Analog</span>
+                        <span class="nav-item digital-nav-item"><span id="digital-speed-val" class="digital-speed-display">087</span> Digital</span>
+                        <span class="nav-item">🗺️ Map</span>
                     </div>
                 </div>
+                
             </div>
             
-            <div class="action-buttons-bar">
-                <i class="action-icon play-icon">▶️</i>
-                <i class="action-icon settings-icon">⚙️</i>
-                <i class="action-icon warning-icon">⚠️</i>
-                <i class="action-icon reload-icon">🔄</i>
             </div>
-        </div>
     </div>
     
     <script src="script.js"></script>
