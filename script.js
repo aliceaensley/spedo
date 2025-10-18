@@ -9,6 +9,7 @@ let isYoutubeOpen = false;
 let fuelWarningInterval = null; 
 let currentFuelWarningType = null; 
 let isVehicleIdle = false; 
+let timeInterval = null; // 🚩 Deklarasi interval baru untuk jam
 
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
@@ -75,7 +76,7 @@ function toggleFuelWarning(type) {
 }
 
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER (TIDAK BERUBAH) ---
+// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -104,7 +105,7 @@ function setSpeed(speed) {
 
 function setRPM(rpm) {
     // RPM minimum sekarang 0.2 (2000 RPM) saat mesin menyala
-    const safeRPM = Math.max(0.2, rpm); // 🚨 Disesuaikan dengan nilai IDLE_RPM baru
+    const safeRPM = Math.max(0.2, rpm); 
     const displayValue = `${Math.round(safeRPM * 10000)}`;
     if (elements.rpm) elements.rpm.innerText = displayValue;
 }
@@ -150,24 +151,38 @@ function setSeatbelts(state) {
     toggleActive(elements.seatbeltIcon, state); 
 }
 
+// 🚩 FUNGSI UTAMA YANG DIMODIFIKASI
 function updateTimeWIB() {
     const now = new Date();
-    const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' };
     
-    let timeString;
-    try {
-        timeString = now.toLocaleTimeString('en-US', options);
-    } catch (e) {
-        timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    }
+    // Ambil Jam, Menit, Detik dan pastikan selalu 2 digit (padding)
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    // Format baru: HH:MM:SS
+    const timeString = `${hours}:${minutes}:${seconds}`; 
     
     if (elements.timeWIB) {
         elements.timeWIB.innerText = timeString;
     }
 }
+
+function startClock() {
+    // Jalankan pertama kali
+    updateTimeWIB();
+    
+    // Hentikan interval lama jika ada
+    if (timeInterval) {
+        clearInterval(timeInterval);
+    }
+    
+    // 🚩 Set interval baru untuk pembaruan SETIAP DETIK (1000ms)
+    timeInterval = setInterval(updateTimeWIB, 1000); 
+}
 // ---------------------------------------------------------------------
 
-// --- FUNGSI KONTROL SIMULASI BERKENDARA ---
+// --- FUNGSI KONTROL SIMULASI BERKENDARA (TIDAK BERUBAH) ---
 
 function stopSimulation() {
     if (simulationInterval !== null) {
@@ -185,51 +200,34 @@ function startSimulation() {
 
     let currentSpeed = 0;
     
-    // 🚩 PERUBAHAN UTAMA: IDLE RPM diatur ke 0.2 (2000 RPM)
     const IDLE_RPM = 0.2; 
-    
-    // Toleransi kecepatan yang dianggap diam (0.2 m/s, sekitar 0.72 KMH)
     const IDLE_TOLERANCE_MS = 0.2; 
 
-    // RPM awal saat mesin dinyalakan
     setRPM(IDLE_RPM); 
 
     simulationInterval = setInterval(() => {
         
-        // Logika pergerakan (Random Walk)
         let speedChange = (Math.random() - 0.5) * 0.5;
         currentSpeed = currentSpeed + speedChange;
 
-        // Kunci Kecepatan ke Nol Mutlak
         if (currentSpeed < IDLE_TOLERANCE_MS && speedChange < 0) { 
             currentSpeed = 0; 
         } 
         
-        // Pastikan kecepatan tidak negatif
         currentSpeed = Math.max(0, currentSpeed);
-        
-        // Batasi kecepatan
         currentSpeed = Math.min(40, currentSpeed); 
         
         setSpeed(currentSpeed);
         
-        // Tentukan Status Idle
         isVehicleIdle = (currentSpeed === 0);
         
         let currentRPM;
         
         if (isVehicleIdle) {
-            // RPM Kunci Stabil di 0.2
-            // Tambahkan noise yang sangat kecil (0.002 = 20 RPM) untuk realisme idle
             currentRPM = IDLE_RPM + (Math.random() - 0.5) * 0.002; 
         } else {
-            // Logika RPM saat bergerak
             const absSpeed = Math.abs(currentSpeed);
-            
-            // Base RPM akan naik seiring kecepatan. Pastikan minimalnya adalah 0.2.
-            let baseRPM = Math.min(0.8, absSpeed / 50 + IDLE_RPM); // Minimal 0.2
-            
-            // Fluktuasi saat bergerak lebih besar
+            let baseRPM = Math.min(0.8, absSpeed / 50 + IDLE_RPM); 
             currentRPM = Math.max(IDLE_RPM + 0.05, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
         }
 
@@ -260,7 +258,7 @@ function startVitalUpdates() {
     }, 3000); 
 }
 
-// --- FUNGSI YOUTUBE API (TIDAK BERUBAH) ---
+// --- FUNGSI YOUTUBE API, TOGGLE, DLL. (TIDAK BERUBAH) ---
 async function searchYoutube(query) {
     if (!query || YOUTUBE_API_KEY === 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs') {
         alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
@@ -340,8 +338,6 @@ function toggleYoutubeSearchUI(show) {
 }
 
 
-// --- LOGIC TOGGLE YOUTUBE (TIDAK BERUBAH) ---
-
 function toggleYoutubeUI(state) {
     const speedometer = elements.speedometerUI;
     const youtubeWrapper = elements.youtubeUIWrapper;
@@ -370,7 +366,7 @@ function toggleYoutubeUI(state) {
 }
 
 
-// --- INISIALISASI DAN EVENT LISTENERS (TIDAK BERUBAH) ---
+// --- INISIALISASI DAN EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
@@ -403,8 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // 2. SETUP CLOCK WIB
-    updateTimeWIB();
-    setInterval(updateTimeWIB, 60000); 
+    startClock(); // 🚨 Menggantikan updateTimeWIB() dan setInterval lama
     
     // 3. SETUP INTERAKSI KLIK YOUTUBE TOGGLE
     if (elements.youtubeToggleIcon) {
