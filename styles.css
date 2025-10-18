@@ -20,7 +20,7 @@ body {
     --accent-blue: #00BFFF; 
     --dark-bg: #1A1A1A;
     --medium-dark-bg: #2C2C2C;
-    --gauge-radius: 90px; 
+    --gauge-radius: 90px; /* Radius 90px (Diameter 180px) */
     --gauge-text-color: #E0E0E0;
     --gauge-start-angle: -135deg; 
     --gauge-end-angle: 135deg; 
@@ -38,10 +38,9 @@ body {
     right: 15px;
     width: 220px; 
     height: 300px; 
-    /* HILANGKAN BACKGROUND DARI SINI */
-    background: transparent; 
+    background: transparent; /* Widget keseluruhan transparan */
     border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); /* Shadow tetap ada */
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -56,9 +55,6 @@ body {
     flex-direction: column; 
     gap: 10px; 
     position: relative;
-    /* Tambahkan background ke sini untuk menutupi bagian atas widget,
-       tetapi kita akan mengandalkan background dari .bottom-controls
-       dan transparansi di .gauge-display-area */
 }
 .left-panel {
     width: 100%; 
@@ -80,8 +76,7 @@ body {
     align-items: flex-start; 
     flex-shrink: 0; 
     padding-top: 5px; 
-    /* BACKGROUND AREA INI DIBUAT TRANSPARAN */
-    background-color: transparent;
+    background-color: transparent; /* Tetap transparan */
 }
 
 /* Kontainer untuk Analog View dan Digital View */
@@ -119,7 +114,7 @@ body {
 
 /* --- GAUGE WRAPPER (ANALOG) --- */
 .gauge-wrapper {
-    /* Lingkaran Penuh (180px x 180px) tetap SOLID */
+    /* Ukuran Lingkaran Penuh (180px x 180px) */
     width: calc(var(--gauge-radius) * 2); 
     height: calc(var(--gauge-radius) * 2); 
     position: relative;
@@ -134,7 +129,7 @@ body {
     z-index: 10;
 }
 
-/* --- JARUM, SKALA, INDIKATOR, TOTAL KM (tetap sama) --- */
+/* --- JARUM SPEEDOMETER --- */
 .speed-needle {
     position: absolute;
     bottom: 50%; 
@@ -148,19 +143,64 @@ body {
     box-shadow: 0 0 10px var(--accent-red);
     transition: transform 0.3s ease-out;
 }
-.speed-needle::before { /* ... */ }
+.speed-needle::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 18px;
+    background-color: var(--accent-red);
+    border-radius: 50%;
+    border: 3px solid white;
+    z-index: 20; 
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
 
-.gauge-scale-numbers { /* ... */ }
-.speed-label { /* ... */ }
-.label-0   { --angle: -135deg; }
-/* ... (lanjutan label) ... */
-.label-200 { --angle: 135deg; color: var(--accent-red); }
+/* --- SKALA ANGKA GAUGE (Perubahan besar di sini) --- */
+.gauge-scale-numbers {
+    position: absolute;
+    top: 50%; 
+    left: 0; /* Posisikan ke kiri kontainer gauge-display-area */
+    width: 100%; /* Agar span bisa flex/distribusi */
+    height: 100%;
+    display: flex; /* Menggunakan flexbox untuk vertikal */
+    flex-direction: column;
+    justify-content: space-between; /* Distribusi angka secara merata */
+    align-items: flex-start; /* Angka di awal garis (kiri) */
+    padding: 0px 0 0 0px; /* Padding untuk angka agar tidak terlalu mepet */
+    z-index: 12;
+}
 
-.indicator-lights { /* ... */ }
-.indicator-light { /* ... */ }
-.total-km-display { /* ... */ }
-.total-km-display .label { /* ... */ }
-.total-km-display .value { /* ... */ }
+.speed-label {
+    position: relative; /* Angka diatur secara relatif dalam flex container */
+    font-size: 10pt;
+    color: var(--gauge-text-color);
+    width: auto; /* Width auto karena flexbox */
+    text-align: left; /* Angka rata kiri */
+    font-weight: bold; 
+    /* HILANGKAN semua properti transform/rotasi sebelumnya */
+    transform: none; 
+    margin-left: 0;
+    margin-top: 0;
+    line-height: 1; /* Kontrol jarak antar angka */
+    padding-left: 5px; /* Sedikit padding agar angka tidak mepet tepi */
+}
+
+/* Override untuk angka 0, 100, 200 (opsional, jika ingin menonjol) */
+.label-0, .label-100, .label-200 {
+    font-size: 11pt;
+    color: white;
+}
+.label-200 { color: var(--accent-red); }
+
+
+/* --- INDIKATOR LAMPU & TOTAL KM (disembunyikan di Analog ini) --- */
+/* Karena referensi gambar tidak menampilkan indikator lampu dan total KM */
+.indicator-lights, .total-km-display {
+    display: none !important; 
+}
 
 
 /* --- BOTTOM CONTROLS (NAV & ACTIONS) --- */
@@ -173,11 +213,9 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
     
-    /* TAMBAHKAN KEMBALI BACKGROUND KE SINI */
     background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%);
-    border-radius: 0 0 15px 15px; /* Sudut bawah tetap melengkung */
+    border-radius: 0 0 15px 15px; 
     
-    /* Atur z-index tinggi agar ini terlihat di atas konten lain jika ada overlap */
     z-index: 100; 
 }
 
