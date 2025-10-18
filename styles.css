@@ -159,52 +159,6 @@ body {
     color: #00ff00; /* Warna aktif */
 }
 
-/* 🚨 PERUBAHAN DI SINI: Styling untuk Sen dan Hazard */
-.turn-signal-area {
-    position: absolute;
-    top: 120px; /* Sesuaikan posisi agar di tengah dial, sedikit di atas speed */
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly; /* Rata kiri-kanan dengan space */
-    align-items: center;
-    z-index: 7; /* Pastikan di atas dial */
-}
-
-.turn-signal-area .indicator {
-    font-size: 3.5em; /* Ukuran lebih besar untuk ikon sen */
-    font-weight: bolder;
-    color: #555; /* Default non-aktif */
-    transition: none; /* Blinking akan menangani efek */
-}
-
-/* Styling untuk ikon panah */
-.icon-turn-left::before { content: '⇐'; }
-.icon-turn-right::before { content: '⇒'; }
-
-/* Styling untuk ikon hazard (menggunakan background-image) */
-.icon-hazard {
-    width: 60px; /* Sesuaikan ukuran ikon hazard */
-    height: 60px;
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5orgiMTAzMC41MjEiIHdpZHRoPSIxNzcuNzY0IiBoZWlnaHQ9IjE1My41NCIgdmlld0JveD0iMCAwIDEzMy42MiAxMTUuODMiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj48cGF0aCBkPSJtODguMjYgMTguNzItNTAuMjQgODIuNzFoMTAwLjQ3em01MC4yNC04Mi43MS0zNy42OCA2Mi4wNGgzNy42OHptLTYyLjg1IDMyLjQ1Yy0xLjU1LTcuMy00LjE2LTEzLjU4LTcuODMtMTcuNDMtMy42Ny0zLjgyLTguMTYtNS45LTEzLjUzLTUuOTEtNS4zNiAwLTkuNDQgMS45Mi0xMi4yMSAzLjQ5LTEuNTEuODItNC42NSAzLjI1LTIuNjkgMi42NyAxLjgzLS41MyAyLjk0LS43NiA0LjQ5LS43NiAxLjg1IDAgMy40Mi42MiA0LjU5IDEuMTcgMS4wOS41NSAxLjU5IDEuMiAxLjU5IDIuMTcgMCAuNzItLjM0IDEuNDgtMS42MyAzLjY2LTEuNzIgMi41MS0zLjY5IDUuNzMtNS45NyA5LjU0LTIuMDYgMy41Mi00LjQ4IDcuNTktNy4yMiAxMi4yMS0xLjAyIDEuNzQtMS45OCAzLjQ5LTIuODYgNC40OC0xLjExIDEuMTctMS4yMiAxLjI1LS40MyAxLjI1IDEuOTMgMCA1LjAyLS45MyA4LjAzLTEuOTggMy4wOS0xLjE3IDUuNjItMi41IDcuOTYtMy44OCAyLjI2LTEuMzIgMy43Ni0xLjg0IDQuNS0xLjg0LjgyIDAgMS42NS4wNyAyLjA5LjExLjg4LjA5IDEuNzQuMTMgMi4yNSAwIC40OS0uMTIgMS4xMy0uMzMgMS41NS0uNjYgLjY4LS41MiAxLjA2LS44MiAxLjA3LS44NiAwIDAgMi44OC0yLjQxIDIuMzMtMy4wNC0uNjItLjY5LTMuMzEtMy42My02LjYxLTcuNzktMy43My00Ljc3LTcuMTctOS4wOS0xMC4yNC0xMy41MnoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    filter: grayscale(100%) brightness(50%); /* Warna abu-abu saat tidak aktif */
-}
-
-.icon-hazard.active {
-    filter: none; /* Kembalikan warna asli saat aktif */
-}
-
-
-.indicator.blink {
-    animation: blinker 0.5s linear infinite;
-}
-
-@keyframes blinker {
-    50% { opacity: 0; }
-}
-
 
 .bottom-panel {
     width: 90%;
