@@ -42,8 +42,6 @@ body {
     color: var(--primary-text);
     overflow: hidden; 
 }
-
-/* --- MAIN CONTENT LAYOUT --- */
 .main-content {
     display: flex;
     flex-grow: 1;
@@ -51,7 +49,6 @@ body {
     gap: 10px; 
     position: relative;
 }
-
 .left-panel {
     width: 100%; 
     display: flex;
@@ -62,16 +59,16 @@ body {
 }
 
 
-/* --- GAUGE DISPLAY AREA --- */
+/* --- GAUGE DISPLAY AREA (HILANGKAN OVERFLOW) --- */
 .gauge-display-area {
     width: 100%;
     height: 180px; 
     position: relative;
     display: flex;
     justify-content: center;
-    align-items: flex-end; /* Posisikan di bawah area agar setengah lingkaran terlihat */
+    align-items: flex-end; 
     flex-shrink: 0; 
-    overflow: hidden; /* Penting untuk memotong bagian bawah lingkaran penuh */
+    /* HILANGKAN OVERFLOW: HIDDEN YANG MENYEBABKAN GARIS */
 }
 
 .gauge-wrapper {
@@ -80,25 +77,31 @@ body {
     height: calc(var(--gauge-radius) * 2); /* 200px */
     position: relative;
     
-    /* Posisikan ke atas agar bagian bawahnya terpotong, menyisakan setengah lingkaran */
+    /* Posisikan ke atas, setengah lingkaran berada di atas area */
     margin-bottom: -100px; 
     
     /* Busur Solid Biru (Background + Box Shadow) */
     background-color: var(--dark-bg); 
-    border-radius: 50%; /* Membuat lingkaran penuh */
+    border-radius: 50%; /* Lingkaran penuh */
     
-    /* Outline Biru Tebal dan Glow */
+    /* === PENTING: CLIPPING DENGAN CLIP-PATH === */
+    /* Memotong bagian bawah lingkaran, meninggalkan setengah bagian atas */
+    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+    
+    /* Outline Biru Tebal dan Glow (Harus disesuaikan agar cocok dengan clip-path) */
     box-shadow: 
-        0 0 0 5px var(--accent-blue), 
-        0 0 20px rgba(0, 191, 255, 0.6); 
+        0 0 0 5px var(--accent-blue), /* Outline solid biru */
+        0 0 20px rgba(0, 191, 255, 0.6); /* Glow biru */
     
     z-index: 10;
 }
 
+/* Jarum, Angka, Indikator, dan Total KM semuanya harus diposisikan relatif terhadap PUSAT lingkaran (50% dari atas/kiri) */
+
 /* --- JARUM SPEEDOMETER --- */
 .speed-needle {
     position: absolute;
-    bottom: 50%; /* Pusat vertikal lingkaran */
+    bottom: 50%; 
     left: 50%;
     transform-origin: 50% 100%; 
     width: 3px;
@@ -144,7 +147,6 @@ body {
     --angle: 0deg;
     --radius: calc(var(--gauge-radius) - 15px);
     transform-origin: 50% 50%;
-    /* Rotasi Angka */
     transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle)));
     margin-left: -15px; 
     margin-top: -10px; 
@@ -172,7 +174,7 @@ body {
     gap: 20px; 
     width: calc(var(--gauge-radius) * 2 - 80px); 
     justify-content: space-around;
-    margin-top: -30px; /* Posisikan lampu sedikit di atas titik pusat */
+    margin-top: -30px; 
 }
 .indicator-light {
     font-size: 18pt;
@@ -195,7 +197,7 @@ body {
     text-align: center;
     z-index: 12;
     width: 100%;
-    margin-top: 10px; /* Posisikan teks TOTAL di bawah titik pusat */
+    margin-top: 10px; 
 }
 .total-km-display .label {
     font-size: 8pt;
