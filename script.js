@@ -1,25 +1,22 @@
 let elements = {};
-let speedMode = 0; // Default ke KMH (diatur 0: KMH, 1: MPH, 2: Knots)
+let speedMode = 0; // 0: KMH, 1: MPH, 2: Knots
 let engineState = false; 
 let headlightsState = 1; 
 let seatbeltState = true; 
 let simulationInterval = null; 
-let vitalInterval = null; 
 let isVehicleIdle = false; 
 
-// *****************************************************************
-// Fitur Audio, YouTube, dan Clock Dihapus / Dinonaktifkan sementara
-// Karena tidak ada elemen HTML pendukung di template baru.
-// Hanya logika Speed/RPM/Engine yang dipertahankan.
-// *****************************************************************
-
-// ✅ AUDIO FILES (Dipertahankan untuk fitur Seatbelts)
+// ✅ AUDIO FILES (Hanya mempertahankan yang ada elemen pendukungnya: Seatbelts)
 const seatbeltSound = new Audio('ahh.mp3'); 
 
-const IDLE_RPM_VALUE = 0.16; // 1600 RPM
-const IDLE_TOLERANCE_MS = 0.2; // Batas kecepatan di mana simulasi dianggap bergerak (m/s)
+const IDLE_RPM_VALUE = 0.16; // 1600 RPM (dinyatakan sebagai 0.16 dari 10000 RPM)
+const IDLE_TOLERANCE_MS = 0.01; // Batas kecepatan agar lebih cepat kembali ke 0
 
 const onOrOff = state => state ? 'On' : 'Off';
+
+// --- FUNGSI UTILITY ---
+// Logika untuk YouTube, Fuel Warning, Welcome Overlay, dan Vitals dihapus 
+// karena tidak ada elemen HTML pendukung di template yang Anda kirim.
 
 // --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
 
@@ -55,7 +52,7 @@ function setSpeed(speed) {
         default: speedValue = Math.round(absSpeed * 3.6); // KMH
     }
     
-    // Output disesuaikan dengan template baru (menghilangkan padding '000' dan unit di fungsi ini)
+    // Output disesuaikan dengan template baru
     if (elements.speed) elements.speed.innerText = `${speedValue}`; 
 }
 
@@ -65,7 +62,9 @@ function setSpeed(speed) {
  */
 function setRPM(rpm) {
     // rpm dikonversi ke nilai 4 digit (misal: 0.16 -> 1600, 0.5 -> 5000)
-    const displayValue = `${Math.round(rpm * 10000)}`; 
+    // RPM minimum dibatasi 0.16 (1600) untuk mencegah nilai RPM di bawah idle saat bergerak
+    const safeRPM = Math.max(IDLE_RPM_VALUE, rpm); 
+    const displayValue = `${Math.round(safeRPM * 10000)}`; 
     
     // Output disesuaikan dengan template baru
     if (elements.rpm) elements.rpm.innerText = displayValue;
@@ -73,7 +72,6 @@ function setRPM(rpm) {
 
 /**
  * Updates the fuel level display as a percentage.
- * @param {number} fuel - The fuel level (0 to 1).
  */
 function setFuel(fuel) {
     if (elements.fuel) elements.fuel.innerText = `${(fuel * 100).toFixed(1)}%`;
@@ -81,7 +79,6 @@ function setFuel(fuel) {
 
 /**
  * Updates the vehicle health display as a percentage.
- * @param {number} health - The vehicle health level (0 to 1).
  */
 function setHealth(health) {
     if (elements.health) elements.health.innerText = `${(health * 100).toFixed(1)}%`;
@@ -89,7 +86,6 @@ function setHealth(health) {
 
 /**
  * Updates the current gear display.
- * @param {number} gear - The current gear to display. 0 represents neutral/reverse.
  */
 function setGear(gear) {
     if (elements.gear) elements.gear.innerText = String(gear);
@@ -97,7 +93,6 @@ function setGear(gear) {
 
 /**
  * Updates the headlights status display.
- * @param {number} state - The headlight state (0: Off, 1: On, 2: High Beam).
  */
 function setHeadlights(state) {
     headlightsState = state;
@@ -108,32 +103,12 @@ function setHeadlights(state) {
 }
 
 /**
- * Sets the state of the left turn indicator and updates the display.
- * @param {boolean} state - If true, turns the left indicator on; otherwise, turns it off.
- */
-function setLeftIndicator(state) {
-    // Logika Indicators dipertahankan dari template baru
-    // ...
-}
-
-/**
- * Sets the state of the right turn indicator and updates the display.
- * @param {boolean} state - If true, turns the right indicator on; otherwise, turns it off.
- */
-function setRightIndicator(state) {
-    // Logika Indicators dipertahankan dari template baru
-    // ...
-}
-
-/**
  * Updates the seatbelt status display.
- * @param {boolean} state - If true, indicates seatbelts are fastened; otherwise, indicates they are not.
  */
 function setSeatbelts(state) {
     // Logika Suara Seatbelt: Putar ahh.mp3 jika sabuk baru dipasang (dari false ke true)
     if (state === true && seatbeltState === false) {
         seatbeltSound.currentTime = 0;
-        // Handle error autoplay di browser
         seatbeltSound.play().catch(e => { console.warn("Gagal memutar ahh.mp3:", e); });
     }
 
@@ -143,7 +118,6 @@ function setSeatbelts(state) {
 
 /**
  * Sets the speed display mode and updates the speed unit display.
- * @param {number} mode - The speed mode to set (0: KMH, 1: MPH, 2: Knots).
  */
 function setSpeedMode(mode) {
     speedMode = mode;
@@ -166,7 +140,7 @@ function stopSimulation() {
         simulationInterval = null;
     }
     setSpeed(0);
-    // Atur RPM ke 0000 saat mesin dimatikan
+    // RPM DIBUAT 0000 saat mesin mati
     if (elements.rpm) elements.rpm.innerText = '0000'; 
     isVehicleIdle = false; 
 }
@@ -179,7 +153,7 @@ function startSimulation() {
     let accelerationRate = 0.5; 
     let decelerationRate = 0.1; 
 
-    // Set nilai awal idle (0 dan 1600)
+    // Set nilai awal idle yang benar
     setSpeed(0);
     if (elements.rpm) elements.rpm.innerText = '1600'; 
 
@@ -217,7 +191,7 @@ function startSimulation() {
         isVehicleIdle = (currentSpeed === 0);
         
         if (isVehicleIdle) {
-            // ✅ Kunci Nilai: Jika idle, Speed = 0, RPM = 1600 (STABIL)
+            // ✅ Kunci Nilai: Speed = 0, RPM = 1600 (STABIL)
             setSpeed(0);
             if (elements.rpm) elements.rpm.innerText = '1600'; 
         } else {
@@ -238,23 +212,6 @@ function startSimulation() {
         }
         
     }, 100); 
-}
-
-
-// --- FUNGSI KONTROL DATA VITAL (MINIMAL) ---
-
-function startVitalUpdates() {
-    if (vitalInterval !== null) return;
-    
-    // Inisiasi nilai awal Fuel dan Health
-    if (elements.health) setHealth(1.0); 
-    if (elements.fuel) setFuel(0.49); 
-
-    vitalInterval = setInterval(() => {
-        // Karena tidak ada UI untuk Vital, fungsi ini hanya menjaga simulasi dasar
-        // Di sini bisa ditambahkan logika pengurangan Fuel jika diperlukan
-        
-    }, 10000); 
 }
 
 
@@ -282,10 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setSeatbelts(true);
     setGear(0); // Neutral
 
+    // Inisiasi data yang tersedia di HTML
     if (elements.health) setHealth(1.0); 
     if (elements.fuel) setFuel(0.49); 
-
-    startVitalUpdates(); 
 
     // 3. LOGIC SIMULASI
     // Nyalakan mesin setelah 1 detik untuk memulai simulasi
