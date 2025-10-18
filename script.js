@@ -18,12 +18,17 @@ const welcomeSound = new Audio('selebew.mp3');
 const seatbeltSound = new Audio('ahh.mp3'); 
 
 // *****************************************************************
-// Kunci API YouTube FINAL
+// Kunci API YouTube FINAL (Ganti dengan kunci valid Anda)
 // *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; 
 // *****************************************************************
 
+// --- KONSTANTA SIMULASI STABIL ---
+const IDLE_RPM_VALUE = 0.16; // 1600 RPM
+const IDLE_TOLERANCE_MS = 0.2; // Kecepatan di bawah ini dianggap Idle (m/s)
+
 // --- FUNGSI UTILITY & TOGGLE ---
+
 const toggleActive = (element, state) => {
     if (Array.isArray(element)) {
         element.forEach(el => toggleActive(el, state));
@@ -79,6 +84,7 @@ function toggleFuelWarning(type) {
 
 
 // --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
+
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -108,10 +114,8 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    // Diasumsikan RPM masuk sebagai nilai 0.0 - 1.0 (Skala 0 - 10000)
-    
     // Jika RPM di bawah 0.16, atur ke 0.16 sebagai minimum (agar tidak 0)
-    const safeRPM = Math.max(0.16, rpm); 
+    const safeRPM = Math.max(IDLE_RPM_VALUE, rpm); 
     
     // Konversi ke nilai 4 digit (misal: 0.16 -> 1600, 0.5 -> 5000)
     const displayValue = `${Math.round(safeRPM * 10000)}`.padStart(4, '0'); 
@@ -156,7 +160,6 @@ function setEngine(state) {
 }
 
 function setSeatbelts(state) {
-    // Logika Suara Seatbelt: Putar ahh.mp3 jika sabuk baru dipasang (dari false ke true)
     if (state === true && seatbeltState === false) {
         seatbeltSound.currentTime = 0;
         seatbeltSound.play().catch(e => { 
@@ -188,10 +191,8 @@ function startClock() {
     timeInterval = setInterval(updateTimeWIB, 1000); 
 }
 
-// --- FUNGSI KONTROL SIMULASI BERKENDARA ---
 
-const IDLE_RPM_VALUE = 0.16; // 1600 RPM
-const IDLE_TOLERANCE_MS = 0.2; // Batas kecepatan di mana simulasi dianggap bergerak (m/s)
+// --- FUNGSI KONTROL SIMULASI BERKENDARA ---
 
 function stopSimulation() {
     if (simulationInterval !== null) {
@@ -199,7 +200,7 @@ function stopSimulation() {
         simulationInterval = null;
     }
     setSpeed(0);
-    // Atur RPM ke 0000 saat mesin dimatikan
+    // RPM di set ke 0000 saat mesin dimatikan
     if (elements.rpm) elements.rpm.innerText = '0000'; 
     isVehicleIdle = false; 
 }
@@ -209,43 +210,33 @@ function startSimulation() {
 
     let currentSpeed = 0;
     
-    // **Variabel Simulasi Baru untuk Kontrol Lebih Baik**
-    let accelerationRate = 0.5; // Maksimum percepatan per interval (m/s)
-    let decelerationRate = 0.1; // Deselerasi saat rem/gas dilepas (m/s)
+    let accelerationRate = 0.5; 
+    let decelerationRate = 0.1; 
 
-    // Set nilai awal idle (000 dan 1600)
+    // Set nilai awal idle yang benar
     setSpeed(0);
     if (elements.rpm) elements.rpm.innerText = '1600'; 
 
     simulationInterval = setInterval(() => {
         
         let targetSpeedChange = 0;
-        
-        // Simulasikan input user: 
-        // 1. Peluang 50% untuk mencoba menambah kecepatan (Akselerasi)
-        // 2. Peluang 30% untuk mengurangi kecepatan (Deselerasi/Rem)
-        // 3. Peluang 20% untuk mempertahankan kecepatan (Cruising/Inertia)
         let action = Math.random();
         
+        // Logika Dinamis: 50% Akselerasi, 30% Deselerasi/Rem, 20% Cruising
         if (action < 0.5) { 
-            // 50%: Akselerasi/Tambah kecepatan (seperti gas ditekan)
             targetSpeedChange = accelerationRate * Math.random(); 
         } else if (action < 0.8) { 
-            // 30%: Deselerasi (seperti rem ditekan pelan)
             targetSpeedChange = -decelerationRate * Math.random() * 2; 
         } else {
-            // 20%: Cruising (Perubahan sangat kecil)
             targetSpeedChange = (Math.random() - 0.5) * 0.1;
         }
 
-        // Terapkan perubahan kecepatan
         currentSpeed += targetSpeedChange;
         
-        // Perlambatan alami (Drag) - Terapkan hanya jika tidak akselerasi kuat
+        // Perlambatan alami (Drag) 
         if (targetSpeedChange < 0.1 && currentSpeed > 0) {
-            currentSpeed *= 0.98; // Kurangi kecepatan 2% per interval
+            currentSpeed *= 0.98; 
         }
-
 
         // Jika kecepatan sangat rendah, paksa ke 0 (Idle)
         if (currentSpeed < IDLE_TOLERANCE_MS) { 
@@ -254,11 +245,10 @@ function startSimulation() {
         
         currentSpeed = Math.max(0, currentSpeed);
         
-        // Cek status Idle
         isVehicleIdle = (currentSpeed === 0);
         
         if (isVehicleIdle) {
-            // ✅ Kunci Nilai: Jika idle, Speed = 000, RPM = 1600 (nilai TEPAT dan STABIL)
+            // ✅ Kunci Nilai: Speed = 000, RPM = 1600 (STABIL)
             setSpeed(0);
             if (elements.rpm) elements.rpm.innerText = '1600'; 
         } else {
@@ -267,11 +257,9 @@ function startSimulation() {
             
             const absSpeed = Math.abs(currentSpeed);
             
-            // Logika RPM (Proporsional dengan Speed, tapi dengan lantai IDLE_RPM)
-            // RPM Max 9000 (0.9) jika Speed ~ 100 m/s (~360 KMH)
-            let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.007); // 0.007 adalah faktor transmisi
+            // Logika RPM (Proporsional dengan Speed)
+            let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.007); 
             
-            // Batasi RPM agar tidak melewati batas (misal 9900 atau 0.99)
             let currentRPM = Math.min(0.99, baseRPM);
             
             // Tambahkan sedikit noise hanya saat bergerak
@@ -280,11 +268,12 @@ function startSimulation() {
             setRPM(currentRPM);
         }
         
-    }, 100); // ✅ Interval dipercepat menjadi 100ms agar simulasi lebih mulus
+    }, 100); 
 }
 
 
 // --- FUNGSI KONTROL DATA VITAL ---
+
 function startVitalUpdates() {
     if (vitalInterval !== null) return;
     
@@ -296,7 +285,6 @@ function startVitalUpdates() {
     vitalInterval = setInterval(() => {
         const fuelReductionRate = engineState ? 0.005 : 0.000; 
         
-        // Logika Fuel
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
         
@@ -306,7 +294,8 @@ function startVitalUpdates() {
 }
 
 
-// --- FUNGSI YOUTUBE API ---
+// --- FUNGSI YOUTUBE API (Fungsi tidak akan bekerja tanpa API Key yang valid) ---
+
 async function searchYoutube(query) {
     if (!query) {
         elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Harap masukkan kata kunci.</p>';
@@ -318,7 +307,6 @@ async function searchYoutube(query) {
     
     elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Mencari...</p>';
     elements.youtubeResults.classList.remove('hidden');
-
 
     try {
         const response = await fetch(API_URL);
@@ -359,7 +347,7 @@ async function searchYoutube(query) {
     } catch (error) {
         console.error('Error fetching YouTube data:', error);
         
-        let errorMessage = 'Gagal melakukan pencarian YouTube. (Kemungkinan: API Key salah/kuota habis).';
+        let errorMessage = 'Gagal melakukan pencarian YouTube data.';
         
         elements.youtubeResults.innerHTML = `<p style="color:red; padding: 10px; width: 300px;">${errorMessage}</p>`;
     }
@@ -383,7 +371,6 @@ function toggleYoutubeSearchUI(show) {
     }
 }
 
-
 function toggleYoutubeUI(state) {
     const speedometer = elements.speedometerUI;
     const youtubeWrapper = elements.youtubeUIWrapper;
@@ -406,14 +393,11 @@ function toggleYoutubeUI(state) {
         speedometer.classList.remove('youtube-active');
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
-        
-        // Video tetap berjalan saat disembunyikan (tidak mereset iframe.src)
     }
 }
 
 /**
  * Fungsi untuk mengontrol durasi overlay berdasarkan audio.
- * @param {number} durationMs - Durasi audio dalam milidetik.
  */
 function hideWelcomeOverlay(durationMs) {
     if (!elements.welcomeOverlay) return;
@@ -421,13 +405,11 @@ function hideWelcomeOverlay(durationMs) {
     const totalDisplayTime = durationMs; 
     const fadeOutDuration = 1000;
 
-    // Mulai animasi fade-out tepat setelah durasi audio
     const fadeOutStartDelay = Math.max(0, totalDisplayTime - fadeOutDuration);
 
     setTimeout(() => {
         elements.welcomeOverlay.classList.add('fade-out');
         
-        // Hapus elemen sepenuhnya setelah transisi fade-out selesai
         setTimeout(() => {
             elements.welcomeOverlay.style.display = 'none';
             document.body.style.overflow = ''; 
@@ -440,7 +422,7 @@ function hideWelcomeOverlay(durationMs) {
 // --- INISIALISASI DAN EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pemetaan Elemen
+    // 1. Pemetaan Elemen (Asumsi ID dari HTML lengkap Anda)
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
         youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), 
@@ -463,57 +445,46 @@ document.addEventListener('DOMContentLoaded', () => {
         youtubeHideButton: document.getElementById('youtube-hide-button'),
     };
     
-    // 2. Tampilkan dan sembunyikan Overlay Selamat Datang (Disinkronkan dengan Audio)
+    // 2. Tampilkan dan sembunyikan Overlay Selamat Datang
     if (elements.welcomeOverlay) {
-        
-        // Atur listener untuk mendapatkan durasi audio
         welcomeSound.onloadedmetadata = () => {
-            const audioDurationMs = welcomeSound.duration * 1000; // Konversi ke milidetik
+            const audioDurationMs = welcomeSound.duration * 1000; 
             
-            // Putar suara Selebew setelah metadata dimuat
             welcomeSound.currentTime = 0;
             welcomeSound.play().catch(e => {
-                console.warn("Gagal memutar selebew.mp3. Pastikan file ada di direktori yang sama. Kesalahan:", e);
-                // Fallback jika pemutaran gagal (misal karena batasan autoplay browser)
-                hideWelcomeOverlay(2500); // Durasi default 2.5 detik
+                console.warn("Gagal memutar selebew.mp3. Error:", e);
+                hideWelcomeOverlay(2500); 
             });
             
-            // Atur waktu untuk mulai fade out berdasarkan durasi audio
             hideWelcomeOverlay(audioDurationMs);
         };
         
-        // Fallback jika onloadedmetadata tidak pernah dipanggil (misalnya file tidak ditemukan)
         welcomeSound.onerror = () => {
-             console.error("Gagal memuat file selebew.mp3. Menggunakan durasi default.");
-             hideWelcomeOverlay(2500); // Durasi default 2.5 detik
+             console.error("Gagal memuat file selebew.mp3.");
+             hideWelcomeOverlay(2500); 
         };
         
-        // Jika file sudah di-cache dan metadata segera tersedia
         if(welcomeSound.readyState >= 2) {
              welcomeSound.onloadedmetadata();
         }
-
     }
-
 
     // 3. SETUP CLOCK WIB
     startClock(); 
     
-    // 4. SETUP INTERAKSI KLIK YOUTUBE TOGGLE
+    // 4. SETUP INTERAKSI YOUTUBE
     if (elements.youtubeToggleIcon) {
         elements.youtubeToggleIcon.addEventListener('click', () => {
             toggleYoutubeUI(); 
         });
     }
     
-    // 5. Listener untuk Tombol HIDE/CLOSE
     if (elements.youtubeHideButton) {
         elements.youtubeHideButton.addEventListener('click', () => {
             toggleYoutubeUI(false); 
         });
     }
 
-    // 6. LOGIC INTERAKSI PENCARIAN YOUTUBE
     const handleSearch = () => {
         const query = elements.youtubeSearchInput.value;
         if (query.trim() !== '') {
@@ -533,7 +504,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // LOGIC ESCAPE UNTUK MENUTUP YOUTUBE
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && isYoutubeOpen) {
             toggleYoutubeUI(false);
@@ -541,7 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // 7. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
+    // 5. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
     setSpeedMode(1); 
     setHealth(1.0); 
     setFuel(0.49); 
@@ -550,10 +520,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setHeadlights(1);
     setSeatbelts(true);
     
-    // Mulai pembaruan data vital segera!
     startVitalUpdates(); 
 
-    // 8. EVENT KLIK FUNGSI LAIN
     if (elements.engineIcon) {
         elements.engineIcon.addEventListener('click', () => {
             setEngine(!engineState); 
@@ -569,12 +537,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (elements.seatbeltIcon) {
         elements.seatbeltIcon.addEventListener('click', () => {
-            // Panggil setSeatbelts dengan status kebalikan dari status saat ini.
             setSeatbelts(!seatbeltState);
         });
     }
     
-    // Nyalakan mesin setelah 2 detik untuk memulai startSimulation
+    // Nyalakan mesin setelah 2 detik untuk memulai simulasi
     setTimeout(() => {
         setEngine(true);
     }, 2000);
