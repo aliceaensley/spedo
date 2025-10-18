@@ -1,90 +1,153 @@
 let elements = {};
-let speedMode = 1; 
-let engineState = false; 
-let headlightsState = 1; 
-let seatbeltState = true; 
-let simulationInterval = null; 
-let vitalInterval = null; 
-let isYoutubeOpen = false; 
-let fuelWarningInterval = null; 
-let currentFuelWarningType = null; 
-let isVehicleIdle = false; 
-let timeInterval = null; 
+let speedMode = 1;
+let indicators = 0;
+let engineState = false; // Tambahkan state untuk engine
+let seatbeltState = false; // Tambahkan state untuk seatbelt
 
-// ✅ AUDIO FILES (Pastikan file ada di direktori yang sama)
-const fuelWarningSound = new Audio('bensin.mp3'); 
-const criticalFuelSound = new Audio('sekarat.mp3'); 
-const welcomeSound = new Audio('selebew.mp3'); 
-const seatbeltSound = new Audio('ahh.mp3'); 
+const onOrOff = state => state ? 'On' : 'Off';
 
-// *****************************************************************
-// Kunci API YouTube FINAL (Ganti dengan kunci valid Anda)
-// *****************************************************************
-const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; 
-// *****************************************************************
+// --- FUNGSI UTILITY BARU ---
 
-// --- KONSTANTA SIMULASI STABIL ---
-const IDLE_RPM_VALUE = 0.16; // 1600 RPM
-const IDLE_TOLERANCE_MS = 0.2; // Kecepatan di bawah ini dianggap Idle (m/s)
-
-// --- FUNGSI UTILITY & TOGGLE ---
-
-const toggleActive = (element, state) => {
-    if (Array.isArray(element)) {
-        element.forEach(el => toggleActive(el, state));
-        return;
-    }
+/**
+ * Toggles the 'active' class on an element (for icons).
+ * @param {HTMLElement} element - The element to toggle.
+ * @param {boolean} state - The desired state.
+ */
+const toggleIconActive = (element, state) => {
     if (element) {
-        if (state) {
-            element.classList.add('active');
-        } else {
-            element.classList.remove('active');
-        }
+        element.classList.toggle('active', state);
     }
 };
 
-function playLowFuelSoundTwice() {
-    fuelWarningSound.currentTime = 0;
-    fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (1).", e); });
+/**
+ * Updates the time display (HH:MM).
+ */
+function updateTime() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
     
-    setTimeout(() => {
-        fuelWarningSound.currentTime = 0;
-        fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (2).", e); });
-    }, 500); 
-}
-
-function toggleFuelWarning(type) {
-    if (currentFuelWarningType === type) {
-        return; 
-    }
-
-    if (fuelWarningInterval !== null) {
-        clearInterval(fuelWarningInterval);
-        fuelWarningInterval = null;
-    }
-    fuelWarningSound.pause();
-    criticalFuelSound.pause();
-    currentFuelWarningType = null;
-    
-    if (type === 'low') {
-        playLowFuelSoundTwice();
-        fuelWarningInterval = setInterval(playLowFuelSoundTwice, 10000);
-        currentFuelWarningType = 'low';
-
-    } else if (type === 'critical') {
-        criticalFuelSound.currentTime = 0; 
-        criticalFuelSound.play().catch(e => { console.warn("Gagal memutar sekarat.mp3.", e); });
-        fuelWarningInterval = setInterval(() => {
-            criticalFuelSound.currentTime = 0;
-            criticalFuelSound.play().catch(e => { console.warn("Gagal memutar sekarat.mp3 (interval).", e); });
-        }, 5000); 
-        currentFuelWarningType = 'critical';
+    if (elements.time) {
+        elements.time.innerText = `${hours}:${minutes}`;
     }
 }
 
+// --- FUNGSI PEMBARUAN DATA ---
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
+/**
+ * Updates the display of the engine state.
+ * @param {boolean} state If true, the engine is on; otherwise, it is off.
+ */
+function setEngine(state) {
+    engineState = state;
+    // Update ikon mesin
+    toggleIconActive(elements.engineIcon, state);
+    // Kita tidak menampilkan teks 'On/Off' di UI baru, cukup ikon
+}
 
+/**
+ * Updates the speed display based on the current speed mode.
+ * @param {number} speed - The speed value in meters per second (m/s).
+ */
+function setSpeed(speed) {
+    let speedValue;
+    const absSpeed = Math.abs(speed); 
+    
+    switch(speedMode)
+    {
+        case 1: speedValue = Math.round(absSpeed * 2.236936); break; // MPH
+        case 2: speedValue = Math.round(absSpeed * 1.943844); break; // Knots
+        default: speedValue = Math.round(absSpeed * 3.6); // KMH
+    }
+    
+    // Speed selalu ditampilkan 3 digit
+    const displayValue = String(speedValue).padStart(3, '0');
+    if (elements.speed) elements.speed.innerText = displayValue;
+}
+
+/**
+ * Updates the RPM (Revolutions Per Minute) display.
+ * @param {number} rpm - The RPM value to display. (0 to 1).
+ */
+function setRPM(rpm) {
+    // RPM ditampilkan sebagai nilai 4 digit di kotak kecil
+    const rpmValue = Math.round(rpm * 10000);
+    elements.rpm.innerText = `${rpmValue} RPM`;
+}
+
+/**
+ * Updates the fuel level display as a percentage.
+ * @param {number} fuel - The fuel level (0 to 1).
+ */
+function setFuel(fuel) {
+    elements.fuel.innerText = `${(fuel * 100).toFixed(1)}%`;
+}
+
+/**
+ * Updates the vehicle health display as a percentage.
+ * @param {number} health - The vehicle health level (0 to 1).
+ */
+function setHealth(health) {
+    elements.health.innerText = `${(health * 100).toFixed(1)}%`;
+}
+
+/**
+ * Updates the current gear display (menggunakan ikon gear di bar).
+ * @param {number} gear - The current gear to display. 0 represents neutral/reverse.
+ */
+function setGear(gear) {
+    let gearText;
+    if (gear === 0) {
+        gearText = 'N';
+    } else if (gear < 0) {
+        gearText = 'R';
+    } else {
+        gearText = String(gear);
+    }
+    
+    if (elements.gearDisplay) elements.gearDisplay.innerText = gearText;
+}
+
+/**
+ * Updates the headlights status display (menggunakan ikon lampu).
+ * @param {number} state - The headlight state (0: Off, 1: On, 2: High Beam).
+ */
+function setHeadlights(state) {
+    const isActive = (state > 0);
+    toggleIconActive(elements.headlightsIcon, isActive);
+}
+
+/**
+ * Sets the state of the left turn indicator and updates the display.
+ */
+function setLeftIndicator(state) {
+    indicators = (indicators & 0b10) | (state ? 0b01 : 0b00);
+    // Ikon indikator aktif jika salah satu atau keduanya aktif
+    toggleIconActive(elements.indicatorsIcon, indicators > 0);
+}
+
+/**
+ * Sets the state of the right turn indicator and updates the display.
+ */
+function setRightIndicator(state) {
+    indicators = (indicators & 0b01) | (state ? 0b10 : 0b00);
+    // Ikon indikator aktif jika salah satu atau keduanya aktif
+    toggleIconActive(elements.indicatorsIcon, indicators > 0);
+}
+
+/**
+ * Updates the seatbelt status display (menggunakan ikon seatbelt).
+ * @param {boolean} state - If true, indicates seatbelts are fastened; otherwise, indicates they are not.
+ */
+function setSeatbelts(state) {
+    seatbeltState = state;
+    toggleIconActive(elements.seatbeltsIcon, state);
+}
+
+/**
+ * Sets the speed display mode and updates the speed unit display.
+ * @param {number} mode - The speed mode to set (0: KMH, 1: MPH, 2: Knots).
+ */
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -97,452 +160,74 @@ function setSpeedMode(mode) {
     if (elements.speedMode) elements.speedMode.innerText = unit;
 }
 
-function setSpeed(speed) {
-    let speedValue;
-    const absSpeed = Math.abs(speed); 
-    
-    switch(speedMode)
-    {
-        // 1 m/s = 2.236936 mph | 1 m/s = 1.943844 knot | 1 m/s = 3.6 kmh
-        case 1: speedValue = Math.round(absSpeed * 2.236936); break; 
-        case 2: speedValue = Math.round(absSpeed * 1.943844); break; 
-        default: speedValue = Math.round(absSpeed * 3.6); 
-    }
-    // Speed selalu ditampilkan 3 digit
-    const displayValue = String(speedValue).padStart(3, '0');
-    if (elements.speed) elements.speed.innerText = displayValue;
-}
-
-function setRPM(rpm) {
-    // Jika RPM di bawah 0.16, atur ke 0.16 sebagai minimum (agar tidak 0)
-    const safeRPM = Math.max(IDLE_RPM_VALUE, rpm); 
-    
-    // Konversi ke nilai 4 digit (misal: 0.16 -> 1600, 0.5 -> 5000)
-    const displayValue = `${Math.round(safeRPM * 10000)}`.padStart(4, '0'); 
-    
-    if (elements.rpm) elements.rpm.innerText = displayValue;
-}
-
-function setFuel(fuel) {
-    const displayValue = `${Math.round(fuel * 100)}%`;
-    if (elements.fuel) elements.fuel.innerText = displayValue;
-
-    if (fuel <= 0.04) { 
-        toggleFuelWarning('critical');
-    } else if (fuel <= 0.1) { 
-        toggleFuelWarning('low');
-    } else { 
-        toggleFuelWarning(null); 
-    }
-}
-
-function setHealth(health) {
-    const displayValue = `${Math.round(health * 100)}%`;
-    if (elements.health) elements.health.innerText = displayValue;
-}
-
-function setHeadlights(state) {
-    headlightsState = state;
-    toggleActive(elements.headlightsIcon, state > 0);
-}
-
-function setEngine(state) {
-    if (engineState !== state) {
-        engineState = state;
-        toggleActive(elements.engineIcon, state);
-        if (state) {
-            startSimulation(); 
-        } else {
-            stopSimulation(); 
-            toggleFuelWarning(null); 
-        }
-    }
-}
-
-function setSeatbelts(state) {
-    if (state === true && seatbeltState === false) {
-        seatbeltSound.currentTime = 0;
-        seatbeltSound.play().catch(e => { 
-            console.warn("Gagal memutar ahh.mp3. Pastikan file ada di direktori yang sama.", e); 
-        });
-    }
-
-    seatbeltState = state;
-    toggleActive(elements.seatbeltIcon, state); 
-}
-
-function updateTimeWIB() {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    const timeString = `${hours}:${minutes}:${seconds}`; 
-    
-    if (elements.timeWIB) {
-        elements.timeWIB.innerText = timeString;
-    }
-}
-
-function startClock() {
-    updateTimeWIB();
-    if (timeInterval) {
-        clearInterval(timeInterval);
-    }
-    timeInterval = setInterval(updateTimeWIB, 1000); 
-}
-
-
-// --- FUNGSI KONTROL SIMULASI BERKENDARA ---
-
-function stopSimulation() {
-    if (simulationInterval !== null) {
-        clearInterval(simulationInterval);
-        simulationInterval = null;
-    }
-    setSpeed(0);
-    // RPM di set ke 0000 saat mesin dimatikan
-    if (elements.rpm) elements.rpm.innerText = '0000'; 
-    isVehicleIdle = false; 
-}
-
-function startSimulation() {
-    if (simulationInterval !== null) return;
-
-    let currentSpeed = 0;
-    
-    let accelerationRate = 0.5; 
-    let decelerationRate = 0.1; 
-
-    // Set nilai awal idle yang benar
-    setSpeed(0);
-    if (elements.rpm) elements.rpm.innerText = '1600'; 
-
-    simulationInterval = setInterval(() => {
-        
-        let targetSpeedChange = 0;
-        let action = Math.random();
-        
-        // Logika Dinamis: 50% Akselerasi, 30% Deselerasi/Rem, 20% Cruising
-        if (action < 0.5) { 
-            targetSpeedChange = accelerationRate * Math.random(); 
-        } else if (action < 0.8) { 
-            targetSpeedChange = -decelerationRate * Math.random() * 2; 
-        } else {
-            targetSpeedChange = (Math.random() - 0.5) * 0.1;
-        }
-
-        currentSpeed += targetSpeedChange;
-        
-        // Perlambatan alami (Drag) 
-        if (targetSpeedChange < 0.1 && currentSpeed > 0) {
-            currentSpeed *= 0.98; 
-        }
-
-        // Jika kecepatan sangat rendah, paksa ke 0 (Idle)
-        if (currentSpeed < IDLE_TOLERANCE_MS) { 
-            currentSpeed = 0; 
-        } 
-        
-        currentSpeed = Math.max(0, currentSpeed);
-        
-        isVehicleIdle = (currentSpeed === 0);
-        
-        if (isVehicleIdle) {
-            // ✅ Kunci Nilai: Speed = 000, RPM = 1600 (STABIL)
-            setSpeed(0);
-            if (elements.rpm) elements.rpm.innerText = '1600'; 
-        } else {
-            // ✅ Simulasi normal jika bergerak
-            setSpeed(currentSpeed); 
-            
-            const absSpeed = Math.abs(currentSpeed);
-            
-            // Logika RPM (Proporsional dengan Speed)
-            let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.007); 
-            
-            let currentRPM = Math.min(0.99, baseRPM);
-            
-            // Tambahkan sedikit noise hanya saat bergerak
-            currentRPM += (Math.random() - 0.5) * 0.02; 
-            
-            setRPM(currentRPM);
-        }
-        
-    }, 100); 
-}
-
-
-// --- FUNGSI KONTROL DATA VITAL ---
-
-function startVitalUpdates() {
-    if (vitalInterval !== null) return;
-    
-    const initialFuel = 0.49;
-    const initialHealth = 1.0;
-    setHealth(initialHealth); 
-    setFuel(initialFuel); 
-
-    vitalInterval = setInterval(() => {
-        const fuelReductionRate = engineState ? 0.005 : 0.000; 
-        
-        const currentFuelText = elements.fuel.innerText.replace('%', '');
-        const currentFuel = parseFloat(currentFuelText) / 100;
-        
-        setFuel(Math.max(0.00, currentFuel - fuelReductionRate)); 
-        
-    }, 10000); 
-}
-
-
-// --- FUNGSI YOUTUBE API (Fungsi tidak akan bekerja tanpa API Key yang valid) ---
-
-async function searchYoutube(query) {
-    if (!query) {
-        elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Harap masukkan kata kunci.</p>';
-        elements.youtubeResults.classList.remove('hidden');
-        return;
-    }
-    
-    const API_URL = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=5&key=${YOUTUBE_API_KEY}`;
-    
-    elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Mencari...</p>';
-    elements.youtubeResults.classList.remove('hidden');
-
-    try {
-        const response = await fetch(API_URL);
-        
-        if (!response.ok) {
-            throw new Error(`API Error: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        elements.youtubeResults.innerHTML = ''; 
-
-        if (data.items && data.items.length > 0) {
-            data.items.forEach(item => {
-                const videoId = item.id.videoId;
-                const title = item.snippet.title;
-                const thumbnailUrl = item.snippet.thumbnails.default.url; 
-
-                const resultItem = document.createElement('div');
-                resultItem.classList.add('search-result-item');
-                resultItem.setAttribute('data-videoid', videoId);
-                resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
-                
-                resultItem.addEventListener('click', () => {
-                    const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-                    showVideo(embedUrl); 
-                    elements.youtubeResults.classList.add('hidden'); 
-                });
-
-                elements.youtubeResults.appendChild(resultItem);
-            });
-            elements.youtubeResults.classList.remove('hidden');
-            elements.youtubeResults.scrollLeft = 0;
-
-        } else {
-            elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px;">Tidak ditemukan video.</p>';
-        }
-
-    } catch (error) {
-        console.error('Error fetching YouTube data:', error);
-        
-        let errorMessage = 'Gagal melakukan pencarian YouTube data.';
-        
-        elements.youtubeResults.innerHTML = `<p style="color:red; padding: 10px; width: 300px;">${errorMessage}</p>`;
-    }
-}
-
-function showVideo(url) {
-    if (elements.browserIframe) {
-        elements.browserIframe.src = url; 
-    }
-}
-
-function toggleYoutubeSearchUI(show) {
-    if (elements.youtubeSearchUI) {
-        elements.youtubeSearchUI.classList.toggle('hidden', !show);
-    }
-    if (elements.youtubeResults) {
-        elements.youtubeResults.classList.toggle('hidden', !show);
-    }
-    if (!show && elements.youtubeResults) {
-        elements.youtubeResults.innerHTML = '';
-    }
-}
-
-function toggleYoutubeUI(state) {
-    const speedometer = elements.speedometerUI;
-    const youtubeWrapper = elements.youtubeUIWrapper;
-    
-    if (state === undefined) {
-        state = !isYoutubeOpen;
-    }
-
-    isYoutubeOpen = state;
-    
-    if (state) {
-        speedometer.classList.add('youtube-active');
-        youtubeWrapper.classList.remove('hidden');
-        toggleActive(elements.youtubeToggleIcon, true);
-        
-        toggleYoutubeSearchUI(true);
-        if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
-        
-    } else {
-        speedometer.classList.remove('youtube-active');
-        youtubeWrapper.classList.add('hidden');
-        toggleActive(elements.youtubeToggleIcon, false);
-    }
-}
-
-/**
- * Fungsi untuk mengontrol durasi overlay berdasarkan audio.
- */
-function hideWelcomeOverlay(durationMs) {
-    if (!elements.welcomeOverlay) return;
-
-    const totalDisplayTime = durationMs; 
-    const fadeOutDuration = 1000;
-
-    const fadeOutStartDelay = Math.max(0, totalDisplayTime - fadeOutDuration);
-
-    setTimeout(() => {
-        elements.welcomeOverlay.classList.add('fade-out');
-        
-        setTimeout(() => {
-            elements.welcomeOverlay.style.display = 'none';
-            document.body.style.overflow = ''; 
-        }, fadeOutDuration);
-        
-    }, fadeOutStartDelay);
-}
-
-
-// --- INISIALISASI DAN EVENT LISTENERS ---
-
+// Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pemetaan Elemen (Asumsi ID dari HTML lengkap Anda)
+    // 1. Pemetaan Elemen
     elements = {
-        speedometerUI: document.getElementById('speedometer-ui'), 
-        youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), 
+        // Data Utama
         speed: document.getElementById('speed'),
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
-        timeWIB: document.getElementById('time-wib'), 
+        time: document.getElementById('time'), // BARU
         speedMode: document.getElementById('speed-mode'),
-        headlightsIcon: document.getElementById('headlights-icon'),
-        engineIcon: document.getElementById('engine-icon'), 
-        seatbeltIcon: document.getElementById('seatbelt-icon'),
-        youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
-        youtubeSearchUI: document.getElementById('youtube-search-ui'),
-        youtubeSearchInput: document.getElementById('youtube-search-input'),
-        youtubeSearchButton: document.getElementById('youtube-search-button'),
-        youtubeResults: document.getElementById('youtube-results'),
-        browserIframe: document.getElementById('browser-iframe'), 
-        welcomeOverlay: document.getElementById('welcome-overlay'),
-        youtubeHideButton: document.getElementById('youtube-hide-button'),
+        
+        // Ikon (Interaksi/Status)
+        engineIcon: document.getElementById('engine-icon'), // BARU
+        headlightsIcon: document.getElementById('headlights-icon'), // BARU
+        seatbeltsIcon: document.getElementById('seatbelts-icon'), // BARU
+        indicatorsIcon: document.getElementById('indicators-icon'), // BARU
+        gearDisplay: document.getElementById('gear-display'), // BARU
+
+        // Elemen lama yang tetap ada di HTML tapi diabaikan/disembunyikan
+        engine: document.getElementById('engine'), // Dibiarkan saja
+        indicators: document.getElementById('indicators'), // Dibiarkan saja
+        seatbelts: document.getElementById('seatbelts'), // Dibiarkan saja
+        headlights: document.getElementById('headlights'), // Dibiarkan saja
+        gear: document.getElementById('gear'), // Dibiarkan saja
     };
     
-    // 2. Tampilkan dan sembunyikan Overlay Selamat Datang
-    if (elements.welcomeOverlay) {
-        welcomeSound.onloadedmetadata = () => {
-            const audioDurationMs = welcomeSound.duration * 1000; 
-            
-            welcomeSound.currentTime = 0;
-            welcomeSound.play().catch(e => {
-                console.warn("Gagal memutar selebew.mp3. Error:", e);
-                hideWelcomeOverlay(2500); 
-            });
-            
-            hideWelcomeOverlay(audioDurationMs);
-        };
-        
-        welcomeSound.onerror = () => {
-             console.error("Gagal memuat file selebew.mp3.");
-             hideWelcomeOverlay(2500); 
-        };
-        
-        if(welcomeSound.readyState >= 2) {
-             welcomeSound.onloadedmetadata();
-        }
-    }
-
-    // 3. SETUP CLOCK WIB
-    startClock(); 
-    
-    // 4. SETUP INTERAKSI YOUTUBE
-    if (elements.youtubeToggleIcon) {
-        elements.youtubeToggleIcon.addEventListener('click', () => {
-            toggleYoutubeUI(); 
-        });
-    }
-    
-    if (elements.youtubeHideButton) {
-        elements.youtubeHideButton.addEventListener('click', () => {
-            toggleYoutubeUI(false); 
-        });
-    }
-
-    const handleSearch = () => {
-        const query = elements.youtubeSearchInput.value;
-        if (query.trim() !== '') {
-            searchYoutube(query.trim());
-        }
-    };
-    
-    if (elements.youtubeSearchButton) {
-        elements.youtubeSearchButton.addEventListener('click', handleSearch);
-    }
-    
-    if (elements.youtubeSearchInput) {
-        elements.youtubeSearchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                handleSearch();
-            }
-        });
-    }
-    
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && isYoutubeOpen) {
-            toggleYoutubeUI(false);
-        }
-    });
-
-
-    // 5. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
-    setSpeedMode(1); 
-    setHealth(1.0); 
-    setFuel(0.49); 
-    
+    // 2. Inisiasi dan Simulasi Sederhana
+    setSpeedMode(1); // Default MPH
     setEngine(false); 
-    setHeadlights(1);
-    setSeatbelts(true);
+    setHeadlights(0); // Off
+    setSeatbelts(false); 
+    setGear(0); // Neutral
+    setRPM(0.10); // Nilai RPM awal rendah
+    setFuel(0.49); 
+    setHealth(1.0); 
     
-    startVitalUpdates(); 
+    // Update Time setiap detik
+    updateTime(); 
+    setInterval(updateTime, 1000); 
 
-    if (elements.engineIcon) {
-        elements.engineIcon.addEventListener('click', () => {
-            setEngine(!engineState); 
-        });
-    }
+    // --- LOGIC SIMULASI DASAR (Anda dapat mengganti ini dengan simulasi kompleks jika perlu) ---
     
-    if (elements.headlightsIcon) {
-        elements.headlightsIcon.addEventListener('click', () => {
-            const newState = (headlightsState === 1) ? 0 : 1; 
-            setHeadlights(newState);
-        });
-    }
-
-    if (elements.seatbeltIcon) {
-        elements.seatbeltIcon.addEventListener('click', () => {
-            setSeatbelts(!seatbeltState);
-        });
-    }
+    let currentSpeed = 0;
     
-    // Nyalakan mesin setelah 2 detik untuk memulai simulasi
+    // Set engine ON dan mulai simulasi setelah 1 detik
     setTimeout(() => {
         setEngine(true);
-    }, 2000);
+        currentSpeed = 1; // Mulai bergerak
+        setRPM(0.20); // Naikkan RPM
+        
+        // Simulasi Loop
+        setInterval(() => {
+            // Naikkan/turunkan speed secara acak
+            currentSpeed += (Math.random() - 0.5) * 2; 
+            currentSpeed = Math.max(0, Math.min(100, currentSpeed)); // Batasi 0-100 m/s
+            
+            // Set speed dan RPM proporsional
+            setSpeed(currentSpeed);
+            setRPM(0.15 + (currentSpeed / 100) * 0.8);
+
+        }, 500); // Update setiap 0.5 detik
+        
+    }, 1000); 
+
+    // --- LOGIC KLIK ICON (Simulasi Toggle) ---
+    if (elements.engineIcon) elements.engineIcon.addEventListener('click', () => setEngine(!engineState));
+    if (elements.headlightsIcon) elements.headlightsIcon.addEventListener('click', () => setHeadlights(1));
+    if (elements.seatbeltsIcon) elements.seatbeltsIcon.addEventListener('click', () => setSeatbelts(!seatbeltState));
+    if (elements.indicatorsIcon) elements.indicatorsIcon.addEventListener('click', () => setLeftIndicator(true));
 });
