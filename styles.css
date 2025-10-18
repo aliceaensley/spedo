@@ -38,9 +38,10 @@ body {
     right: 15px;
     width: 220px; 
     height: 300px; 
-    background: transparent; /* Widget keseluruhan transparan */
+    /* Latar Belakang Transparan */
+    background: transparent; 
     border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); /* Shadow tetap ada */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); 
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -76,7 +77,7 @@ body {
     align-items: flex-start; 
     flex-shrink: 0; 
     padding-top: 5px; 
-    background-color: transparent; /* Tetap transparan */
+    background-color: transparent; /* Area ini transparan */
 }
 
 /* Kontainer untuk Analog View dan Digital View */
@@ -114,12 +115,12 @@ body {
 
 /* --- GAUGE WRAPPER (ANALOG) --- */
 .gauge-wrapper {
-    /* Ukuran Lingkaran Penuh (180px x 180px) */
+    /* Lingkaran Penuh (180px x 180px) */
     width: calc(var(--gauge-radius) * 2); 
     height: calc(var(--gauge-radius) * 2); 
     position: relative;
     
-    background-color: var(--dark-bg); /* Tetap gelap agar lingkaran utuh */
+    background-color: var(--dark-bg); /* Latar belakang lingkaran tetap solid gelap */
     border-radius: 50%; 
     
     box-shadow: 
@@ -158,37 +159,36 @@ body {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* --- SKALA ANGKA GAUGE (Perubahan besar di sini) --- */
+/* --- SKALA ANGKA GAUGE (Angka di sisi kiri vertikal) --- */
 .gauge-scale-numbers {
     position: absolute;
     top: 50%; 
-    left: 0; /* Posisikan ke kiri kontainer gauge-display-area */
-    width: 100%; /* Agar span bisa flex/distribusi */
+    left: 0; /* Posisikan ke kiri wadah display */
+    width: 100%; 
     height: 100%;
-    display: flex; /* Menggunakan flexbox untuk vertikal */
+    display: flex; 
     flex-direction: column;
-    justify-content: space-between; /* Distribusi angka secara merata */
-    align-items: flex-start; /* Angka di awal garis (kiri) */
-    padding: 0px 0 0 0px; /* Padding untuk angka agar tidak terlalu mepet */
+    justify-content: space-between; /* Distribusi vertikal merata */
+    align-items: flex-start; 
+    padding: 0px 0 0 0px; 
     z-index: 12;
 }
 
 .speed-label {
-    position: relative; /* Angka diatur secara relatif dalam flex container */
+    position: relative; 
     font-size: 10pt;
     color: var(--gauge-text-color);
-    width: auto; /* Width auto karena flexbox */
-    text-align: left; /* Angka rata kiri */
+    width: auto; 
+    text-align: left; 
     font-weight: bold; 
-    /* HILANGKAN semua properti transform/rotasi sebelumnya */
     transform: none; 
     margin-left: 0;
     margin-top: 0;
-    line-height: 1; /* Kontrol jarak antar angka */
-    padding-left: 5px; /* Sedikit padding agar angka tidak mepet tepi */
+    line-height: 1; 
+    padding-left: 5px; 
 }
 
-/* Override untuk angka 0, 100, 200 (opsional, jika ingin menonjol) */
+/* Override untuk angka 0, 100, 200 */
 .label-0, .label-100, .label-200 {
     font-size: 11pt;
     color: white;
@@ -196,14 +196,13 @@ body {
 .label-200 { color: var(--accent-red); }
 
 
-/* --- INDIKATOR LAMPU & TOTAL KM (disembunyikan di Analog ini) --- */
-/* Karena referensi gambar tidak menampilkan indikator lampu dan total KM */
+/* --- INDIKATOR LAMPU & TOTAL KM (Disembunyikan) --- */
 .indicator-lights, .total-km-display {
     display: none !important; 
 }
 
 
-/* --- BOTTOM CONTROLS (NAV & ACTIONS) --- */
+/* --- BOTTOM CONTROLS (Latar belakang tetap solid) --- */
 .bottom-controls {
     width: 100%;
     display: flex;
@@ -213,6 +212,7 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
     
+    /* Latar belakang solid gelap */
     background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%);
     border-radius: 0 0 15px 15px; 
     
