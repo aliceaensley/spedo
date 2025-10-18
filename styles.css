@@ -20,10 +20,15 @@ body {
     --accent-blue: #00BFFF; 
     --dark-bg: #1A1A1A;
     --medium-dark-bg: #2C2C2C;
-    --gauge-radius: 90px; /* Radius 90px (Diameter 180px) untuk proporsi yang pas */
+    --gauge-radius: 90px; /* Radius 90px (Diameter 180px) */
     --gauge-text-color: #E0E0E0;
     --gauge-start-angle: -135deg; 
     --gauge-end-angle: 135deg; 
+}
+
+/* --- UTILITY CLASS BARU --- */
+.hidden-view {
+    display: none !important;
 }
 
 /* --- MAIN WIDGET CONTAINER --- */
@@ -61,18 +66,52 @@ body {
 }
 
 
-/* --- GAUGE DISPLAY AREA (Kontainer yang menampung lingkaran) --- */
+/* --- GAUGE DISPLAY AREA & VIEWS --- */
 .gauge-display-area {
     width: 100%;
     height: 180px; 
     position: relative;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Posisikan lingkaran di bagian atas wadah */
+    align-items: flex-start; 
     flex-shrink: 0; 
-    padding-top: 5px; /* Memberi ruang agar angka 100 tidak terpotong */
+    padding-top: 5px; 
 }
 
+/* Kontainer untuk Analog View harus absolute agar tidak mengganggu Digital View, dan sebaliknya */
+#analog-view, #digital-view {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- DIGITAL VIEW STYLE BARU --- */
+#digital-view {
+    flex-direction: column;
+    z-index: 50; 
+    padding-bottom: 30px; /* Dorong ke atas sedikit agar terlihat di tengah */
+}
+
+.large-speed-value {
+    font-size: 60pt;
+    font-weight: 900;
+    color: var(--accent-blue);
+    text-shadow: 0 0 20px var(--accent-blue);
+    line-height: 1;
+}
+
+.speed-unit {
+    font-size: 14pt;
+    color: var(--secondary-text);
+    margin-top: -5px;
+}
+
+/* --- GAUGE WRAPPER (ANALOG) --- */
 .gauge-wrapper {
     /* Ukuran Lingkaran Penuh (180px x 180px) */
     width: calc(var(--gauge-radius) * 2); 
@@ -82,7 +121,6 @@ body {
     background-color: var(--dark-bg); 
     border-radius: 50%; 
     
-    /* Outline Biru dan Glow */
     box-shadow: 
         0 0 0 5px var(--accent-blue), 
         0 0 20px rgba(0, 191, 255, 0.6); 
@@ -97,7 +135,7 @@ body {
     left: 50%;
     transform-origin: 50% 100%; 
     width: 3px;
-    height: calc(var(--gauge-radius) - 10px); /* 80px */
+    height: calc(var(--gauge-radius) - 10px); 
     background-color: var(--accent-red); 
     z-index: 15;
     transform: translateX(-50%) translateY(calc(var(--gauge-radius) - 90px)) rotate(var(--gauge-start-angle)); 
@@ -136,7 +174,7 @@ body {
     text-align: center;
     font-weight: bold; 
     --angle: 0deg;
-    --radius: calc(var(--gauge-radius) - 10px); /* 80px */
+    --radius: calc(var(--gauge-radius) - 10px); 
     transform-origin: 50% 50%;
     transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle)));
     margin-left: -15px; 
@@ -154,7 +192,7 @@ body {
 .label-180 { --angle: 108deg; }
 .label-200 { --angle: 135deg; color: var(--accent-red); }
 
-/* --- INDIKATOR LAMPU --- */
+/* --- INDIKATOR LAMPU & TOTAL KM (di dalam Analog View) --- */
 .indicator-lights {
     position: absolute;
     top: 50%;
@@ -178,8 +216,6 @@ body {
 }
 .seatbelt-light { font-size: 14pt; }
 
-
-/* --- TOTAL KM DISPLAY --- */
 .total-km-display {
     position: absolute;
     bottom: 50%; 
@@ -235,8 +271,6 @@ body {
     background-color: var(--accent-blue);
     color: white;
 }
-/* digital-speed-display class dihapus di HTML, jadi tidak perlu styling di sini */
-
 
 /* --- ACTION BUTTONS BAR --- */
 .action-buttons-bar {
