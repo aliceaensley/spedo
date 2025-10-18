@@ -16,7 +16,7 @@ const fuelWarningSound = new Audio('bensin.mp3');
 const criticalFuelSound = new Audio('sekarat.mp3'); 
 
 // *****************************************************************
-// ⚠️ PERBAIKAN: Kunci API YouTube Diperbarui dengan kunci baru Anda
+// ✅ Kunci API YouTube FINAL (Ganti jika masih gagal/kuota habis)
 // *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; 
 // *****************************************************************
@@ -233,8 +233,6 @@ function startVitalUpdates() {
     vitalInterval = setInterval(() => {
         const fuelReductionRate = engineState ? 0.005 : 0.000; 
         
-        // Logika Health dinonaktifkan
-
         // Logika Fuel
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
@@ -281,6 +279,7 @@ async function searchYoutube(query) {
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
                 resultItem.addEventListener('click', () => {
+                    // Tambahkan autoplay=1 untuk memulai video otomatis
                     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
                     showVideo(embedUrl); 
                     elements.youtubeResults.classList.add('hidden'); 
@@ -306,6 +305,7 @@ async function searchYoutube(query) {
 
 function showVideo(url) {
     if (elements.browserIframe) {
+        // Ini memuat video ke dalam iframe
         elements.browserIframe.src = url; 
     }
 }
@@ -347,7 +347,7 @@ function toggleYoutubeUI(state) {
         toggleActive(elements.youtubeToggleIcon, false);
         
         toggleYoutubeSearchUI(false);
-        if (elements.browserIframe) elements.browserIframe.src = 'about:blank';
+        // VIDEO TIDAK DIHENTIKAN: Baris untuk mengatur iframe.src = 'about:blank' dihilangkan.
     }
 }
 
