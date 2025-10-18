@@ -135,11 +135,18 @@ body {
 .stat-label { color: #FFA500; font-size: 9pt; }
 .stat-value { font-size: 12pt; font-weight: bold; color: white; }
 
-/* Bottom Panel (Gear + Indicators) */
-.bottom-panel { display: flex; justify-content: space-between; align-items: center; padding: 10px; }
-.gear-label { color: #FFD700; font-size: 10pt; font-weight: bold; }
+/* Bottom Panel (Indicators ONLY) */
+.bottom-panel { 
+    display: flex; 
+    justify-content: center; /* Diposisikan di tengah karena gear dihapus */
+    align-items: center; 
+    padding: 10px; 
+}
+
+/* Gear Styling DIHAPUS */
+/* .gear-label { color: #FFD700; font-size: 10pt; font-weight: bold; }
 .gear-value { font-size: 30pt; font-weight: 900; color: white; line-height: 1; text-shadow: 0 0 8px #FFD700; }
-.gear-display { text-align: center; line-height: 1.2; }
+.gear-display { text-align: center; line-height: 1.2; } */
 
 .status-indicators { display: flex; gap: 15px; font-size: 20pt; }
 .indicator-icon { opacity: 0.4; cursor: pointer; } 
