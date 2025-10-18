@@ -14,8 +14,9 @@ let timeInterval = null;
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
 const criticalFuelSound = new Audio('sekarat.mp3'); 
-// ✅ BARU: Objek Audio Selamat Datang
 const welcomeSound = new Audio('selebew.mp3'); 
+// ✅ BARU: Objek Audio Seatbelt
+const seatbeltSound = new Audio('ahh.mp3'); 
 
 // *****************************************************************
 // Kunci API YouTube FINAL
@@ -148,6 +149,14 @@ function setEngine(state) {
 }
 
 function setSeatbelts(state) {
+    // ✅ BARU: Cek jika sabuk pengaman baru saja diaktifkan (dari false ke true)
+    if (state === true && seatbeltState === false) {
+        seatbeltSound.currentTime = 0;
+        seatbeltSound.play().catch(e => { 
+            console.warn("Gagal memutar ahh.mp3. Pastikan file ada di direktori yang sama.", e); 
+        });
+    }
+
     seatbeltState = state;
     toggleActive(elements.seatbeltIcon, state); 
 }
@@ -512,13 +521,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (elements.seatbeltIcon) {
         elements.seatbeltIcon.addEventListener('click', () => {
+            // Panggil setSeatbelts dengan status kebalikan dari status saat ini.
             setSeatbelts(!seatbeltState);
         });
     }
     
     // Nyalakan mesin setelah 2 detik untuk memulai startSimulation
-    // Catatan: Ini dipicu setelah animasi welcome selesai jika menggunakan durasi default.
-    // Jika menggunakan sinkronisasi audio, ini akan dipicu 2 detik setelah DOMContentLoaded.
     setTimeout(() => {
         setEngine(true);
     }, 2000);
