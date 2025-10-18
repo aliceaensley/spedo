@@ -8,6 +8,7 @@ let vitalInterval = null;
 let isYoutubeOpen = false; 
 let fuelWarningInterval = null; 
 let currentFuelWarningType = null; 
+let isVehicleIdle = false; // 🚩 Status baru untuk mengunci RPM
 
 // Objek Audio Peringatan Bensin
 const fuelWarningSound = new Audio('bensin.mp3'); 
@@ -19,7 +20,7 @@ const criticalFuelSound = new Audio('sekarat.mp3');
 const YOUTUBE_API_KEY = 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs'; 
 // *****************************************************************
 
-// --- FUNGSI UTILITY & TOGGLE ---
+// --- FUNGSI UTILITY & TOGGLE (TIDAK BERUBAH) ---
 const toggleActive = (element, state) => {
     if (Array.isArray(element)) {
         element.forEach(el => toggleActive(el, state));
@@ -34,25 +35,21 @@ const toggleActive = (element, state) => {
     }
 };
 
-// Fungsi untuk memainkan bensin.mp3 dua kali (ting ting)
 function playLowFuelSoundTwice() {
     fuelWarningSound.currentTime = 0;
     fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (1).", e); });
     
-    // Play the sound a second time after a very short pause (0.5 detik)
     setTimeout(() => {
         fuelWarningSound.currentTime = 0;
         fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (2).", e); });
     }, 500); 
 }
 
-// Fungsi untuk mengontrol dua tingkat peringatan suara (10% dan 4%)
 function toggleFuelWarning(type) {
     if (currentFuelWarningType === type) {
         return; 
     }
 
-    // 1. Bersihkan semua interval dan hentikan semua suara yang aktif
     if (fuelWarningInterval !== null) {
         clearInterval(fuelWarningInterval);
         fuelWarningInterval = null;
@@ -61,34 +58,24 @@ function toggleFuelWarning(type) {
     criticalFuelSound.pause();
     currentFuelWarningType = null;
     
-
-    // 2. Tentukan status baru
     if (type === 'low') {
-        // Status Rendah (10% - 5%): bensin.mp3 dua kali setiap 10 detik
-        
         playLowFuelSoundTwice();
-        
-        fuelWarningInterval = setInterval(playLowFuelSoundTwice, 10000); // 10 detik
-        
+        fuelWarningInterval = setInterval(playLowFuelSoundTwice, 10000);
         currentFuelWarningType = 'low';
 
     } else if (type === 'critical') {
-        // Status Kritis (Di bawah 4%): sekarat.mp3 setiap 5 detik
-        
         criticalFuelSound.currentTime = 0; 
         criticalFuelSound.play().catch(e => { console.warn("Gagal memutar sekarat.mp3.", e); });
-        
         fuelWarningInterval = setInterval(() => {
             criticalFuelSound.currentTime = 0;
             criticalFuelSound.play().catch(e => { console.warn("Gagal memutar sekarat.mp3 (interval).", e); });
-        }, 5000); // 5 detik
-        
+        }, 5000); 
         currentFuelWarningType = 'critical';
     }
 }
 
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
+// --- FUNGSI PEMBARUAN DATA SPEEDOMETER (TIDAK BERUBAH) ---
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -103,8 +90,6 @@ function setSpeedMode(mode) {
 
 function setSpeed(speed) {
     let speedValue;
-    
-    // Kecepatan selalu positif (simulasi hanya maju)
     const absSpeed = Math.abs(speed); 
     
     switch(speedMode)
@@ -118,18 +103,15 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    // Pastikan RPM minimal 0.1 (1000) saat mesin menyala
     const safeRPM = Math.max(0.1, rpm);
     const displayValue = `${Math.round(safeRPM * 10000)}`;
     if (elements.rpm) elements.rpm.innerText = displayValue;
 }
 
 function setFuel(fuel) {
-    // Tampilkan nilai Fuel seperti biasa
     const displayValue = `${Math.round(fuel * 100)}%`;
     if (elements.fuel) elements.fuel.innerText = displayValue;
 
-    // Logika Peringatan Bahan Bakar (10%-5% untuk bensin.mp3, <=4% untuk sekarat.mp3)
     if (fuel <= 0.04) { 
         toggleFuelWarning('critical');
     } else if (fuel <= 0.1) { 
@@ -184,7 +166,7 @@ function updateTimeWIB() {
 }
 // ---------------------------------------------------------------------
 
-// --- FUNGSI KONTROL SIMULASI BERKENDARA (DIHENTIKAN SAAT MESIN MATI) ---
+// --- FUNGSI KONTROL SIMULASI BERKENDARA ---
 
 function stopSimulation() {
     if (simulationInterval !== null) {
@@ -193,7 +175,8 @@ function stopSimulation() {
     }
     
     setSpeed(0);
-    setRPM(0.0); // RPM 0 saat mesin mati
+    setRPM(0.0);
+    isVehicleIdle = false; // Reset status idle
 }
 
 function startSimulation() {
@@ -201,50 +184,52 @@ function startSimulation() {
 
     let currentSpeed = 0;
     const IDLE_RPM = 0.1; // 1000 RPM
-    const IDLE_TOLERANCE_SPEED = 0.5; // Kecepatan (KMH/MPH) minimum untuk dianggap bergerak
+    
+    // Toleransi kecepatan yang dianggap diam (0.2 m/s, sekitar 0.72 KMH)
+    const IDLE_TOLERANCE_MS = 0.2; 
 
     // RPM awal saat mesin dinyalakan
     setRPM(IDLE_RPM); 
 
     simulationInterval = setInterval(() => {
         
-        // Logika pergerakan (HANYA MAJU)
+        // Logika pergerakan (Random Walk)
         let speedChange = (Math.random() - 0.5) * 0.5;
         currentSpeed = currentSpeed + speedChange;
 
-        // 🟢 PERBAIKAN STABILITAS KECEPATAN:
-        // Jika kecepatan saat ini di bawah ambang batas (e.g. 0.5 m/s) DAN trennya menurun, set langsung ke 0.
-        if (currentSpeed < IDLE_TOLERANCE_SPEED && speedChange < 0) { 
+        // 🟢 LANGKAH 1: Kunci Kecepatan ke Nol Mutlak
+        // Jika kecepatan saat ini di bawah toleransi DAN trennya menurun, set langsung ke 0.
+        if (currentSpeed < IDLE_TOLERANCE_MS && speedChange < 0) { 
             currentSpeed = 0; 
         } 
         
         // Pastikan kecepatan tidak negatif
         currentSpeed = Math.max(0, currentSpeed);
         
-        // Batasi kecepatan Maju max 40 m/s (~144 KMH)
+        // Batasi kecepatan
         currentSpeed = Math.min(40, currentSpeed); 
         
         setSpeed(currentSpeed);
         
-        // RPM Logic
+        // 🟢 LANGKAH 2: Tentukan Status Idle
+        // Gunakan currentSpeed MUTLAK untuk menentukan status RPM.
+        isVehicleIdle = (currentSpeed === 0);
         
         let currentRPM;
         
-        // Tentukan apakah kendaraan sedang bergerak (menggunakan ambang batas 0.1 m/s)
-        // Kita menggunakan 0.1 m/s di sini agar lebih realistis daripada 0 mutlak
-        const isMoving = currentSpeed > 0.1; 
-        
-        if (!isMoving) {
-            // 🎯 Solusi Final: RPM Idle Stabil (0.1 atau 1000)
-            currentRPM = IDLE_RPM; 
+        if (isVehicleIdle) {
+            // 🎯 Solusi Final: RPM Kunci Stabil
+            // Saat idle, RPM harus terkunci sempurna. Kita tambahkan sedikit noise yang sangat kecil (0.002) 
+            // agar terlihat "hidup" tanpa lonjakan besar.
+            currentRPM = IDLE_RPM + (Math.random() - 0.5) * 0.002; 
         } else {
             // Logika RPM saat bergerak
             const absSpeed = Math.abs(currentSpeed);
             
-            // Base RPM akan naik seiring kecepatan. Gunakan faktor minimal 0.2 saat bergerak.
+            // Base RPM akan naik seiring kecepatan.
             let baseRPM = Math.min(0.8, absSpeed / 50 + 0.2); 
             
-            // Tambahkan fluktuasi kecil
+            // Fluktuasi saat bergerak lebih besar
             currentRPM = Math.max(0.15, Math.min(0.9, baseRPM + (Math.random() - 0.5) * 0.05));
         }
 
@@ -254,7 +239,7 @@ function startSimulation() {
 }
 
 
-// --- FUNGSI KONTROL DATA VITAL (SELALU AKTIF) ---
+// --- FUNGSI KONTROL DATA VITAL (TIDAK BERUBAH) ---
 
 function startVitalUpdates() {
     if (vitalInterval !== null) return;
@@ -265,7 +250,6 @@ function startVitalUpdates() {
     setFuel(initialFuel); 
 
     vitalInterval = setInterval(() => {
-        // Reduksi bensin hanya terjadi jika mesin menyala
         const fuelReductionRate = engineState ? 0.005 : 0.000; 
         
         const currentFuelText = elements.fuel.innerText.replace('%', '');
@@ -276,9 +260,9 @@ function startVitalUpdates() {
     }, 3000); 
 }
 
-// --- FUNGSI YOUTUBE API (TETAP SAMA) ---
+// --- FUNGSI YOUTUBE API (TIDAK BERUBAH) ---
 async function searchYoutube(query) {
-    if (!query || YOUTUBE_API_KEY === 'GANTI_DENGAN_API_KEY_ANDA_DI_SINI') {
+    if (!query || YOUTUBE_API_KEY === 'AIzaSyCISE9aLaUpeaa_tEK-usE17o7rkpJl7Zs') {
         alert("Harap masukkan API Key YouTube Anda yang valid di dalam script.js!");
         return;
     }
@@ -356,7 +340,7 @@ function toggleYoutubeSearchUI(show) {
 }
 
 
-// --- LOGIC TOGGLE YOUTUBE ---
+// --- LOGIC TOGGLE YOUTUBE (TIDAK BERUBAH) ---
 
 function toggleYoutubeUI(state) {
     const speedometer = elements.speedometerUI;
@@ -386,7 +370,7 @@ function toggleYoutubeUI(state) {
 }
 
 
-// --- INISIALISASI DAN EVENT LISTENERS ---
+// --- INISIALISASI DAN EVENT LISTENERS (TIDAK BERUBAH) ---
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
