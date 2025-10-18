@@ -279,7 +279,6 @@ async function searchYoutube(query) {
                 resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
                 
                 resultItem.addEventListener('click', () => {
-                    // Tambahkan autoplay=1 untuk memulai video otomatis
                     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
                     showVideo(embedUrl); 
                     elements.youtubeResults.classList.add('hidden'); 
@@ -305,7 +304,6 @@ async function searchYoutube(query) {
 
 function showVideo(url) {
     if (elements.browserIframe) {
-        // Ini memuat video ke dalam iframe
         elements.browserIframe.src = url; 
     }
 }
@@ -346,8 +344,8 @@ function toggleYoutubeUI(state) {
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
         
-        toggleYoutubeSearchUI(false);
-        // VIDEO TIDAK DIHENTIKAN: Baris untuk mengatur iframe.src = 'about:blank' dihilangkan.
+        // ✅ Perbaikan: Video TIDAK DIHENTIKAN saat disembunyikan
+        // if (elements.browserIframe) elements.browserIframe.src = 'about:blank'; // Baris ini dihilangkan
     }
 }
 
@@ -381,11 +379,28 @@ document.addEventListener('DOMContentLoaded', () => {
         youtubeSearchButton: document.getElementById('youtube-search-button'),
         youtubeResults: document.getElementById('youtube-results'),
         browserIframe: document.getElementById('browser-iframe'), 
+
+        // ✅ BARU: Elemen Overlay Selamat Datang
+        welcomeOverlay: document.getElementById('welcome-overlay'),
         
         // Tombol Hide/Close YouTube
         youtubeHideButton: document.getElementById('youtube-hide-button'),
     };
     
+    // ✅ BARU: Tampilkan dan sembunyikan Overlay Selamat Datang
+    if (elements.welcomeOverlay) {
+        // Biarkan overlay terlihat selama 2 detik, lalu fade out
+        setTimeout(() => {
+            elements.welcomeOverlay.classList.add('fade-out');
+            // Hapus overlay sepenuhnya setelah transisi selesai (misal 1 detik setelah fade-out dimulai)
+            setTimeout(() => {
+                elements.welcomeOverlay.style.display = 'none';
+                document.body.style.overflow = ''; // Mengaktifkan scroll lagi jika diperlukan
+            }, 1000); 
+        }, 2000); // Overlay muncul selama 2 detik
+    }
+
+
     // 2. SETUP CLOCK WIB
     startClock(); 
     
