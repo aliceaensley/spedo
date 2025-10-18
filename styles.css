@@ -1,242 +1,259 @@
-/* Basic Reset and Font */
-* {
-    user-select: none;
-    user-drag: none;
-    box-sizing: border-box; 
-    padding: 0;
-    margin: 0;
-}
-
-@font-face {
-    font-family: 'Digital';
-    /* Ganti dengan font bergaya digital/retro jika ada */
-}
-
 body {
-    background-color: transparent !important;
-    font-family: 'Digital', Arial, sans-serif;
-    color: white;
+    background-color: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    perspective: 1000px;
 }
 
-/* --- Speedometer Utama (Neon Orange) --- */
-.speedometer-container {
-    position: fixed;
-    bottom: 15px; 
-    right: 15px;
-    width: 300px; /* Lebar default */
-    
-    background: linear-gradient(135deg, #FFA500, #FF4500); 
-    padding: 5px;
+#speedometer-ui {
+    background-color: #1a1a1a;
+    border: 5px solid #ff9900;
+    border-radius: 20px;
+    width: 450px;
+    padding: 25px;
+    color: #ff9900;
+    box-shadow: 0 0 40px rgba(255, 153, 0, 0.5);
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+    position: relative;
+    z-index: 10;
+}
+
+/* Transisi untuk YouTube */
+#speedometer-ui.youtube-active {
+    transform: translateY(200px) scale(0.6);
+    opacity: 0.8;
+}
+
+#youtube-ui-wrapper {
+    position: absolute;
+    top: 50px;
+    width: 800px;
+    height: 500px;
+    background: #0d0d0d;
+    border: 5px solid #ff9900;
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
-    z-index: 1000; 
-    
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+    z-index: 20;
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    
-    /* Transisi untuk animasi YouTube */
-    transition: width 0.3s, height 0.3s, right 0.3s, bottom 0.3s;
+    padding: 20px;
 }
 
-/* KONDISI SPEEDOMETER SAAT YOUTUBE AKTIF */
-.speedometer-container.youtube-active {
-    width: 500px; /* Lebar diperluas */
-    height: 500px; /* Tinggi diperluas */
-    right: 15px; 
-    bottom: 15px; 
-    padding: 10px;
-    flex-direction: row; 
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: flex-end;
-}
-
-.speedometer-container.youtube-active .speed-panel,
-.speedometer-container.youtube-active .info-panels-grid,
-.speedometer-container.youtube-active .bottom-panel {
-    /* Sembunyikan panel data utama saat YouTube aktif */
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.1s;
-}
-
-/* YOUTUBE INTEGRATION CONTAINER */
-.youtube-integrated-container {
-    background-color: rgba(0, 0, 0, 0.9);
-    border-radius: 10px;
-    width: 100%;
-    height: 100%;
-    position: absolute; 
-    top: 0;
-    left: 0;
-    padding: 10px;
-    box-sizing: border-box;
+#youtube-search-ui {
     display: flex;
-    flex-direction: column;
-}
-
-#browser-iframe {
-    width: 100%;
-    flex-grow: 1;
-    border: none;
-    background-color: black;
-    border-radius: 5px;
-}
-
-/* Panel Data Speedometer */
-.panel {
-    background-color: rgba(0, 0, 0, 0.75); 
-    border-radius: 10px;
-    padding: 10px;
-    width: 100%; 
-}
-/* Atur tata letak default */
-.speedometer-container:not(.youtube-active) .speed-panel { order: 1; }
-.speedometer-container:not(.youtube-active) .info-panels-grid { order: 2; }
-.speedometer-container:not(.youtube-active) .bottom-panel { order: 3; }
-
-
-/* Speed Panel */
-.speed-panel { display: flex; flex-direction: column; }
-.speed-header { 
-    display: flex; justify-content: space-between; font-size: 10pt; font-weight: bold; 
-    color: #FFA500; margin-bottom: 5px;
-}
-.speed-value-wrapper { 
-    text-align: right; 
-    display: flex; 
-    align-items: flex-end; 
-    justify-content: flex-end; 
-    gap: 5px; 
-}
-
-.speed-value { 
-    font-size: 48pt; font-weight: 900; line-height: 1; color: white; 
-    text-shadow: 0 0 10px #FFA500; 
-}
-
-/* STYLING GAMBAR HAK CIPTA SPEEDOMETER */
-.speed-copyright-logo {
-    width: 30px; 
-    height: 30px; 
-    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 0.7)); 
-}
-
-/* Info Grid (Stats) */
-.info-panels-grid { 
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 5px;
-    background-color: transparent;
-}
-.stat-item { 
-    padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; 
-    background-color: rgba(0, 0, 0, 0.75); text-align: center;
-}
-.stat-label { color: #FFA500; font-size: 9pt; }
-.stat-value { font-size: 12pt; font-weight: bold; color: white; }
-
-/* Bottom Panel (Indicators ONLY) */
-.bottom-panel { 
-    display: flex; 
-    justify-content: center; /* Diposisikan di tengah karena gear dihapus */
-    align-items: center; 
-    padding: 10px; 
-}
-
-/* Gear Styling DIHAPUS */
-/* .gear-label { color: #FFD700; font-size: 10pt; font-weight: bold; }
-.gear-value { font-size: 30pt; font-weight: 900; color: white; line-height: 1; text-shadow: 0 0 8px #FFD700; }
-.gear-display { text-align: center; line-height: 1.2; } */
-
-.status-indicators { display: flex; gap: 15px; font-size: 20pt; }
-.indicator-icon { opacity: 0.4; cursor: pointer; } 
-.indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
-
-.youtube-toggle.active {
-    opacity: 1;
-    text-shadow: 0 0 8px #FF0000; /* Warna merah untuk YouTube aktif */
-}
-
-/* --- STYLING YOUTUBE SEARCH --- */
-
-.search-bar-container {
-    display: flex;
-    padding-bottom: 10px;
-    background-color: transparent; 
-    border-bottom: 1px solid #FF4500;
+    margin-bottom: 10px;
 }
 
 #youtube-search-input {
     flex-grow: 1;
-    padding: 8px;
-    border: 1px solid #555;
+    padding: 10px;
+    border: 2px solid #ff9900;
+    background-color: #222;
+    color: white;
     border-radius: 5px 0 0 5px;
-    background-color: #1a1a1a;
-    color: white;
+    font-size: 16px;
 }
 
-#youtube-search-button {
-    padding: 8px 15px;
+#youtube-search-button, #youtube-hide-button {
+    padding: 10px 15px;
+    background-color: #ff9900;
     border: none;
-    background-color: #FF0000; 
-    color: white;
-    font-weight: bold;
+    color: #1a1a1a;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+}
+#youtube-search-button {
     border-radius: 0 5px 5px 0;
+    margin-right: 5px;
 }
 
-/* Area Hasil Pencarian */
-.search-results-container {
-    height: 100px; 
-    overflow-x: scroll; 
-    overflow-y: hidden;
+#youtube-hide-button {
+    background-color: #ff0000;
+    color: white;
+    border-radius: 5px;
+}
+
+#browser-iframe {
+    flex-grow: 1;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ff9900;
+}
+
+#youtube-results {
     display: flex;
-    flex-wrap: nowrap; 
-    gap: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-bottom: 15px;
     padding: 10px 0;
-    background-color: transparent;
-    border-bottom: 1px solid #444;
+    gap: 10px;
 }
 
 .search-result-item {
-    cursor: pointer;
-    flex: 0 0 auto; 
-    width: 100px; 
+    display: inline-block;
+    width: 150px;
     text-align: center;
+    cursor: pointer;
+    background-color: #222;
+    border-radius: 5px;
+    padding: 5px;
 }
 
 .search-result-item img {
     width: 100%;
     height: auto;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 .search-result-item p {
-    font-size: 8pt; 
-    color: #AAA;
-    margin-top: 5px;
-    height: 25px; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-}
-
-/* TOMBOL HIDE YOUTUBE BARU */
-.youtube-close-button {
-    background-color: #FF4500; 
+    font-size: 12px;
     color: white;
-    text-align: center;
-    padding: 8px;
-    margin-top: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    border-radius: 5px;
-    transition: background-color 0.2s;
+    white-space: normal;
+    word-wrap: break-word;
+    margin: 5px 0 0 0;
+    height: 30px; 
+    overflow: hidden;
+    line-height: 15px;
 }
 
-.youtube-close-button:hover {
-    background-color: #FF6347;
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.logo img {
+    height: 40px; 
+}
+
+.time-wib {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ff9900;
+}
+
+.speed-display {
+    text-align: center;
+    margin: 20px 0;
+    border: 2px solid #ff9900;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #0d0d0d;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.speed-value {
+    font-size: 5em;
+    font-weight: bold;
+    line-height: 1;
+    color: white;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    transition: color 0.3s;
+}
+
+.speed-unit {
+    font-size: 1.5em;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    color: #ff9900;
+    font-weight: bold;
+}
+
+.indicator-lights {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.indicator {
+    font-size: 1.5em;
+    opacity: 0.3;
+    cursor: pointer;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.indicator.active {
+    opacity: 1;
+    color: #33ff33; /* Warna hijau untuk aktif */
+}
+
+#headlights-icon.active {
+    color: yellow;
+}
+#engine-icon.active {
+    color: #ff3333; /* Merah untuk mesin menyala */
+}
+#seatbelt-icon.active {
+    color: #0088ff; /* Biru untuk sabuk aktif */
+}
+.youtube-toggle.active {
+    color: #ff0000; /* Merah untuk YouTube aktif */
+}
+
+
+.data-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.data-box {
+    background-color: #2e1a00;
+    border: 1px solid #ff9900;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
+    transition: background-color 0.5s, box-shadow 0.5s, color 0.5s; /* Transisi untuk health */
+}
+
+.data-box .label {
+    font-size: 0.8em;
+    color: #ff9900;
+    margin-bottom: 5px;
+}
+
+.data-box .value {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: white;
 }
 
 .hidden {
     display: none !important;
+}
+
+/* --- Kelas Baru untuk Health Warning --- */
+
+/* Health di 50% atau kurang */
+.health-low {
+    /* Merah Menyala */
+    background-color: #ff0000; 
+    box-shadow: 0 0 15px #ff0000; /* Tambahkan bayangan untuk efek menyala */
+    color: white; /* Pastikan teks tetap terbaca */
+}
+.health-low .label {
+    color: white !important;
+}
+
+/* Health di 25% atau kurang */
+.health-critical {
+    /* Hitam */
+    background-color: #000000; 
+    box-shadow: none; /* Hilangkan bayangan */
+    color: #ff0000; /* Teks Merah Kritis */
+}
+.health-critical .label {
+    color: #ff0000 !important;
+}
+.health-critical .value {
+    color: #ff0000 !important;
 }
