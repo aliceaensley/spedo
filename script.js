@@ -22,12 +22,14 @@ function setSpeed(speed_ms) {
     // 1. Update Jarum (Needle)
     const angle = mapSpeedToGaugeAngle(speed_kmh);
     if (elements.speedNeedle) {
-        // Radius 90px
         const needleBaseOffset = 90 - 10; 
         elements.speedNeedle.style.transform = `translateX(-50%) translateY(calc(90px - ${needleBaseOffset}px)) rotate(${angle}deg)`;
     }
     
-    // Angka digital di nav tidak lagi diperbarui
+    // 2. Update Large Digital Display (BARU)
+    if (elements.digitalSpeedLarge) {
+        elements.digitalSpeedLarge.innerText = String(speed_kmh).padStart(3, '0');
+    }
     
     if (speed_kmh > maxSpeedReached) {
         maxSpeedReached = speed_kmh;
@@ -47,7 +49,23 @@ function toggleIndicator(lightElement, isActive) {
 }
 
 
-// --- KONTROL SIMULASI LENGKAP ---
+// --- FUNGSI TOGGLE VIEW BARU ---
+function toggleView(viewId) {
+    const isAnalog = viewId === 'analog-nav';
+    
+    // 1. Toggle View Containers
+    elements.analogView.classList.toggle('hidden-view', !isAnalog);
+    elements.digitalView.classList.toggle('hidden-view', isAnalog);
+
+    // 2. Toggle Nav Button States
+    elements.analogNav.classList.toggle('active', isAnalog);
+    elements.digitalNav.classList.toggle('active', !isAnalog);
+    // Pastikan Map tidak aktif saat Analog/Digital dipilih
+    elements.mapNav.classList.remove('active');
+}
+
+
+// --- KONTROL SIMULASI ---
 function startSimulation() {
     let currentSpeed_ms = 0;
     
@@ -59,17 +77,15 @@ function startSimulation() {
 
     simulationInterval = setInterval(() => {
         
-        // Simulasikan kecepatan yang berfluktuasi
         currentSpeed_ms += (Math.random() - 0.5) * 1; 
-        currentSpeed_ms = Math.max(0, Math.min(60, currentSpeed_ms)); // Batasi hingga 60 m/s (~216 km/h)
+        currentSpeed_ms = Math.max(0, Math.min(60, currentSpeed_ms)); 
         const speed_kmh = setSpeed(currentSpeed_ms);
         
-        // Hitung jarak
         totalDistanceTraveled += (speed_kmh / 3600); 
         
         updateTripData(totalDistanceTraveled);
         
-        // Simulasikan indikator (berkedip jika kondisi terpenuhi)
+        // Simulasikan indikator
         toggleIndicator(elements.engineLight, speed_kmh > 100 && Math.random() < 0.1); 
         toggleIndicator(elements.handbrakeLight, speed_kmh < 5 && Math.random() < 0.2); 
         toggleIndicator(elements.seatbeltLight, speed_kmh > 10 && Math.random() < 0.05);
@@ -87,21 +103,47 @@ document.addEventListener('DOMContentLoaded', () => {
         handbrakeLight: document.querySelector('.handbrake-light'),
         seatbeltLight: document.querySelector('.seatbelt-light'),
         totalDistance: document.getElementById('total-distance'), 
-        // digitalSpeedVal sudah dihapus dari pemetaan
+        
+        // Elemen View Baru
+        analogView: document.getElementById('analog-view'),
+        digitalView: document.getElementById('digital-view'),
+        digitalSpeedLarge: document.getElementById('digital-speed-large'), // BARU
+        
+        // Elemen Navigasi
+        analogNav: document.querySelector('.analog-nav-item'),
+        digitalNav: document.querySelector('.digital-nav-item'),
+        mapNav: document.querySelector('.map-nav-item'),
     };
     
-    // 2. Mulai Simulasi
+    // 2. Setup Awal
+    // Pastikan Analog View aktif secara default dan Digital View tersembunyi
+    elements.analogView.classList.remove('hidden-view');
+    elements.digitalView.classList.add('hidden-view');
+
+    // 3. Mulai Simulasi
     startSimulation(); 
     
-    // 3. Tambahkan event listener untuk navigasi dan tombol aksi
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function() {
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            this.classList.add('active');
-            console.log(`Mode ${this.textContent.trim()} dipilih!`);
-        });
+    // 4. Tambahkan event listener untuk navigasi
+    elements.analogNav.addEventListener('click', function() {
+        toggleView('analog-nav');
     });
 
+    elements.digitalNav.addEventListener('click', function() {
+        toggleView('digital-nav');
+    });
+
+    // Logika klik untuk tombol Map (misalnya, menyembunyikan kedua tampilan dan mengaktifkan tombol Map)
+    elements.mapNav.addEventListener('click', function() {
+        elements.analogView.classList.add('hidden-view');
+        elements.digitalView.classList.add('hidden-view');
+        elements.analogNav.classList.remove('active');
+        elements.digitalNav.classList.remove('active');
+        this.classList.add('active');
+        console.log(`Mode Map dipilih!`);
+    });
+
+
+    // 5. Event listener untuk tombol Aksi
     document.querySelectorAll('.action-icon').forEach(icon => {
         icon.addEventListener('click', function() {
             if (this.classList.contains('reload-icon')) {
