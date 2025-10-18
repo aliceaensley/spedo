@@ -1,53 +1,56 @@
-/* --- TEMPLATE RESET/BASE --- */
+/* --- BASE & RESET --- */
 * {
     user-select: none;
     user-drag: none;
-    box-sizing: border-box; /* Penting untuk layout kotak */
+    box-sizing: border-box; 
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
 }
 
 body {
     background-color: transparent !important;
-    font-family: Arial, sans-serif;
-    font-size: 11pt;
-    margin: 0;
 }
 
+/* --- SPEEDOMETER UTAMA --- */
 main.speedometer-digital {
     position: fixed;
     bottom: 15px;
     right: 15px;
-    width: 280px; /* Lebar lebih besar agar speed muat */
+    width: 250px;
     display: flex;
     flex-direction: column;
     
-    /* GAYA KOTAK UTAMA (ORANGE GLOW) */
-    background-color: #332100;
-    border: 3px solid #ffaa00;
-    box-shadow: 0 0 15px 5px rgba(255, 170, 0, 0.7);
+    /* GAYA KOTAK ORANYE GLOW */
+    background-color: #382500; /* Warna dasar coklat gelap */
+    border: 3px solid #ffaa00; /* Border Oranye */
+    box-shadow: 0 0 15px 5px rgba(255, 170, 0, 0.7); /* Glow Oranye */
     color: white;
     padding: 10px;
     border-radius: 15px;
-    text-align: center;
 }
 
-/* --- 1. SPEED HEADER & VALUE --- */
-.header-box {
+/* --- 1. SPEED HEADER & UNIT --- */
+.header-unit-row {
     display: flex;
     justify-content: space-between;
     padding: 0 5px;
-    font-size: 14pt;
+    font-size: 10pt;
     font-weight: bold;
-    color: #ffaa00; /* Warna Orange Header */
+    color: #ffaa00; 
 }
 
+/* --- 2. SPEED VALUE --- */
 .speed-value-box {
     margin: 5px 0 10px 0;
     position: relative;
     padding: 5px 0;
+    text-align: center;
+    border-bottom: 2px solid #ffaa0055; /* Garis pemisah tipis */
 }
 
 .speed-large {
-    font-size: 70pt;
+    font-size: 50pt;
     font-weight: bold;
     color: white;
     /* Efek Neon Glow */
@@ -58,16 +61,17 @@ main.speedometer-digital {
 
 .speed-unit-mini {
     position: absolute;
-    right: 10px;
-    bottom: 0px;
-    font-size: 10pt;
+    right: 15px;
+    bottom: 5px;
+    font-size: 8pt;
     color: #ffaa00;
     opacity: 0.7;
     font-style: italic;
+    font-family: 'cursive'; /* Untuk gaya tulisan tangan 'Sly' */
 }
 
 
-/* --- 2. VITAL STATS GRID --- */
+/* --- 3. VITAL STATS GRID --- */
 .vitals-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -76,15 +80,16 @@ main.speedometer-digital {
 }
 
 .data-box {
+    /* GAYA KOTAK DATA VITAL (Hitam dengan border oranye) */
     background-color: #000000;
     border: 1px solid #ffaa00;
-    border-radius: 8px;
-    padding: 8px 5px;
+    border-radius: 5px;
+    padding: 5px 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 50px;
+    min-height: 45px;
 }
 
 .data-box .label {
@@ -94,12 +99,12 @@ main.speedometer-digital {
 }
 
 .data-box .value {
-    font-size: 12pt;
+    font-size: 11pt;
     font-weight: bold;
     color: white;
 }
 
-/* --- 3. INDICATORS BAR --- */
+/* --- 4. INDICATORS BAR --- */
 .indicators-bar {
     display: flex;
     justify-content: space-around;
@@ -109,30 +114,71 @@ main.speedometer-digital {
 }
 
 .indicators-bar .icon {
-    font-size: 24pt;
+    font-size: 20pt;
     cursor: pointer;
-    opacity: 0.3;
+    opacity: 0.4;
     color: white;
     transition: opacity 0.2s, color 0.2s;
-    font-style: normal; /* Untuk ikon/simbol */
+    font-style: normal;
 }
 
 .indicators-bar .icon.active {
     opacity: 1;
-    color: #00ff00; /* Hijau saat aktif */
+    color: #00ff00; /* Hijau aktif default */
     text-shadow: 0 0 5px rgba(0, 255, 0, 0.8);
 }
 
-/* Penyesuaian ikon Headlights */
 .icon-light.active {
     color: yellow;
     text-shadow: 0 0 5px rgba(255, 255, 0, 0.8);
 }
+.icon-youtube.active {
+    color: red;
+}
 
-/* Penyesuaian ikon Gear (sebagai teks) */
-.icon-gear {
-    font-size: 16pt !important;
-    font-weight: bold;
-    opacity: 1 !important;
-    color: #ffaa00 !important;
+/* --- YOUTUBE UI (Berdasarkan Gambar 97101e.png) --- */
+.youtube-ui-wrapper {
+    position: fixed;
+    bottom: 15px;
+    right: 280px; /* Di sebelah kiri speedometer */
+    width: 350px;
+    min-height: 200px;
+    background-color: #382500;
+    border: 3px solid #ffaa00;
+    box-shadow: 0 0 15px 5px rgba(255, 170, 0, 0.7);
+    border-radius: 15px;
+    padding: 10px;
+    z-index: 99;
+}
+.youtube-search-area {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+#youtube-search-input {
+    flex-grow: 1;
+    background: #000;
+    color: white;
+    border: 1px solid #ffaa00;
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 10pt;
+}
+#youtube-search-button {
+    background: #FF0000;
+    color: white;
+    border: 1px solid #FF0000;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.youtube-warning-text {
+    color: #F00;
+    font-size: 9pt;
+    padding: 5px 0;
+    text-align: left;
+}
+/* Menyembunyikan elemen secara default */
+.hidden {
+    display: none !important;
 }
