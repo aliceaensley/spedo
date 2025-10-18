@@ -3,82 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speedometer Gauge Cyan</title>
+    <title>Mini Cyan Speedometer</title>
     <link rel="stylesheet" href="styles.css">
-    </head>
+</head>
 <body>
     <div id="speedometer-ui" class="speedometer-ui">
         
-        <div class="top-bar">
-            <div class="time-duration">
-                <span id="duration-display">0:08:36</span><span class="unit">s</span>
-            </div>
-            
-            <div class="header-indicators">
-                <i class="icon">🔋</i><span id="battery-level">84%</span>
-                <i class="icon">❌</i><span id="satellites-count">5/17</span>
-                <i class="icon">📶</i><span id="signal-level">44%</span>
-            </div>
-            
-            <i class="icon icon-pause">⏸</i>
-        </div>
-
-        <div class="main-content">
-            
-            <div class="gauge-section">
-                <div class="speed-gauge-wrapper">
-                    <div id="gauge-arc" class="gauge-arc"></div>
-                    <div id="gauge-needle" class="gauge-needle"></div>
-                    
-                    <div class="gauge-center-display">
-                        <span class="label">Current Speed</span>
-                        <span id="speed-value" class="current-speed">141</span>
-                        <span id="speed-unit" class="unit">kmh</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="digital-data-panel">
-                <div class="vitals-row top-row">
-                    <div class="vitals-box">
-                        <span class="label">Altitude</span>
-                        <span id="altitude" class="value">416<span class="unit">ft</span></span>
-                    </div>
-                    <div class="vitals-box">
-                        <span class="label">longitude</span>
-                        <span id="longitude" class="value">33.49</span>
-                    </div>
-                    <div class="vitals-box">
-                        <span class="label">longitude</span>
-                        <span id="latitude" class="value">79.10</span>
-                    </div>
-                </div>
+        <div class="gauge-section">
+            <div class="speed-gauge-wrapper">
+                <div id="gauge-needle" class="gauge-needle"></div>
                 
-                <div class="digital-box large-box">
-                    <span class="label">Avg Speed</span>
-                    <span id="avg-speed" class="value-large">95<span class="unit-large">KMH</span></span>
-                </div>
-
-                <div class="digital-box large-box">
-                    <span class="label">Distance</span>
-                    <span id="distance" class="value-large">3.8<span class="unit-large">km</span></span>
+                <div class="gauge-center-display">
+                    <span id="speed-value" class="current-speed">000</span>
+                    <span id="speed-unit" class="unit">KMH</span>
                 </div>
             </div>
-            
-            <div class="quick-icons-bar">
-                <i class="icon icon-settings">⚙️</i>
-                <i class="icon icon-target">🎯</i>
-                <i class="icon icon-record">⏺️</i>
-                <i class="icon icon-sync">🔄</i>
-            </div>
-        </div>
-
-        <div class="bottom-nav">
-            <span class="nav-item active">⊙ Analog</span>
-            <span class="nav-item">🆎 Digital</span>
-            <span class="nav-item">🗺️ Map</span>
         </div>
         
+        <div class="digital-data-panel">
+            <div class="vitals-grid">
+                
+                <div class="vitals-box">
+                    <span class="label">Time</span>
+                    <span id="time-display" class="value">0:00:00</span>
+                </div>
+                
+                <div class="vitals-box">
+                    <span class="label">Distance</span>
+                    <span id="distance" class="value">0.0<span class="unit-small">km</span></span>
+                </div>
+                
+                <div class="vitals-box">
+                    <span class="label">Avg Speed</span>
+                    <span id="avg-speed" class="value">0<span class="unit-small">KMH</span></span>
+                </div>
+                
+                <div class="vitals-box">
+                    <span class="label">Battery</span>
+                    <span id="battery-level" class="value">100%</span>
+                </div>
+            </div>
+        </div>
     </div>
     
     <script src="script.js"></script>
