@@ -2,7 +2,7 @@ let elements = {};
 let totalDistance = 0; // KM
 let totalSpeedSum = 0; // Untuk menghitung Avg Speed
 let simulationInterval = null;
-let clockInterval = null; // Interval baru untuk jam
+let clockInterval = null;
 
 const MAX_SPEED = 220; // KMH
 const MIN_ANGLE = 225; // Sudut start (0 KMH)
@@ -20,12 +20,10 @@ function mapSpeedToAngle(speed) {
 
 function updateRealtimeClock() {
     const now = new Date();
-    // Menggunakan padStart(2, '0') untuk memastikan format dua digit (09, bukan 9)
     const h = String(now.getHours()).padStart(2, '0');
     const m = String(now.getMinutes()).padStart(2, '0');
     const s = String(now.getSeconds()).padStart(2, '0');
     
-    // Format: HH:MM:SS (atau HH:DD:YY sesuai permintaan, yang biasa diinterpretasikan sebagai HH:MM:SS)
     const display = `${h}:${m}:${s}`;
     if (elements.durationDisplay) elements.durationDisplay.innerText = display;
 }
@@ -44,8 +42,7 @@ function setSpeed(speed_ms) {
 }
 
 function setVitals(data) {
-    if (elements.batteryLevel) elements.batteryLevel.innerText = `${data.battery}%`;
-    if (elements.signalLevel) elements.signalLevel.innerText = `${data.signal}%`;
+    // Baterai dan Sinyal dihapus dari header, tapi kita biarkan Altitude, Avg Speed, dan Distance.
     
     if (elements.altitude) elements.altitude.innerHTML = `${Math.round(data.altitude)}<span class="unit-small">ft</span>`;
     if (elements.avgSpeed) elements.avgSpeed.innerHTML = `${Math.round(data.avgSpeed)}<span class="unit-small">KMH</span>`;
@@ -58,9 +55,8 @@ function setVitals(data) {
 function startSimulation() {
     let currentSpeed_ms = 0;
     let currentAltitude = 0;
-    let batteryLevel = 100;
-    let totalTimeCounter = 0; // Digunakan hanya untuk simulasi Vitals, bukan untuk display Jam
-
+    let totalTimeCounter = 0; 
+    
     // Start Realtime Clock
     updateRealtimeClock();
     clockInterval = setInterval(updateRealtimeClock, 1000); 
@@ -69,11 +65,9 @@ function startSimulation() {
     totalDistance = 0;
     totalSpeedSum = 0;
 
-    // Set nilai awal Vitals
+    // Set nilai awal Vitals (Data Baterai/Sinyal tidak diperlukan lagi)
     setSpeed(0);
     setVitals({
-        battery: batteryLevel,
-        signal: 75,
         altitude: 0,
         avgSpeed: 0,
         distance: 0
@@ -86,7 +80,7 @@ function startSimulation() {
         currentSpeed_ms = Math.max(0, Math.min(60, currentSpeed_ms)); 
         const speed_kmh = setSpeed(currentSpeed_ms);
         
-        totalTimeCounter += 1; // Penghitung waktu simulasi
+        totalTimeCounter += 1; 
         totalDistance += (speed_kmh / 3600); 
         totalSpeedSum += speed_kmh;
 
@@ -94,16 +88,10 @@ function startSimulation() {
         currentAltitude += (Math.random() - 0.5) * 5; 
         currentAltitude = Math.max(0, currentAltitude);
         
-        if (totalTimeCounter % 60 === 0) { 
-            batteryLevel = Math.max(1, batteryLevel - 1);
-        }
-        
         // 3. Update Vitals
         const avgSpeed = totalTimeCounter > 0 ? totalSpeedSum / totalTimeCounter : 0;
         
         setVitals({
-            battery: batteryLevel,
-            signal: Math.max(10, Math.round(75 + (Math.random() * 25 - 10))),
             altitude: currentAltitude,
             avgSpeed: avgSpeed,
             distance: totalDistance
@@ -124,9 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
         speedUnit: document.getElementById('speed-unit'),
         
         // Header
-        durationDisplay: document.getElementById('duration-display'), // Sekarang untuk Jam Realtime
-        batteryLevel: document.getElementById('battery-level'),
-        signalLevel: document.getElementById('signal-level'),
+        durationDisplay: document.getElementById('duration-display'), // Jam Realtime
+        // batteryLevel dan signalLevel dihapus dari pemetaan
         
         // Vitals
         altitude: document.getElementById('altitude'),
@@ -141,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Fungsi klik untuk ikon Settings
     if (elements.settingsIcon) {
         elements.settingsIcon.addEventListener('click', () => {
-            alert("Settings Pop-up! (Dalam simulasi ini, ikon ini tidak membuka menu)");
+            alert("Settings Pop-up! (Ikon berfungsi)");
         });
     }
 });
