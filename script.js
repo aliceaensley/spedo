@@ -1,8 +1,6 @@
 let elements = {};
 let totalDistanceTraveled = 0; // KM
-let maxSpeedReached = 0; // KMH (meskipun tidak ditampilkan, tetap dihitung)
-let avgSpeedSum = 0; 
-let tripDurationSeconds = 0;
+let maxSpeedReached = 0; 
 let simulationInterval = null;
 
 // --- GAUGE PARAMETERS ---
@@ -24,7 +22,9 @@ function setSpeed(speed_ms) {
     // 1. Update Jarum (Needle)
     const angle = mapSpeedToGaugeAngle(speed_kmh);
     if (elements.speedNeedle) {
-        elements.speedNeedle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+        // Rotasi + Transformasi penempatan jarum (dibuat agar cocok dengan posisi di CSS)
+        const needleBaseOffset = 100 - 10; // Radius - 10px (needle height)
+        elements.speedNeedle.style.transform = `translateX(-50%) translateY(calc(100px - ${needleBaseOffset}px)) rotate(${angle}deg)`;
     }
     
     // 2. Update digital speed di nav
@@ -80,6 +80,7 @@ function startSimulation() {
 
 // --- INISIALISASI ---
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Pemetaan Elemen
     elements = {
         speedNeedle: document.getElementById('speed-needle'),
         engineLight: document.querySelector('.engine-light'),
@@ -89,8 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
         digitalSpeedVal: document.getElementById('digital-speed-val'),
     };
     
+    // 2. Mulai Simulasi
     startSimulation(); 
     
+    // 3. Tambahkan event listener untuk navigasi dan tombol aksi
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function() {
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
