@@ -21,17 +21,12 @@ body {
     --accent-green: #00FF00;
     --dark-bg: #1A1A1A;
     --medium-dark-bg: #2C2C2C;
-    --gauge-line-color: rgba(0, 191, 255, 0.4); /* Garis Cyan Transparan */
-
-    /* Mini Widget Size Adjustments */
-    --widget-width: 450px; 
-    --widget-height: 250px; 
-    --data-label-font: 7pt;
-    --data-value-font: 14pt;
-    --large-data-value-font: 30pt;
-    --nav-font-size: 9pt;
-    --action-icon-size: 16pt;
-    --gauge-radius: 100px; 
+    --gauge-radius: 100px; /* Radius untuk perhitungan skala */
+    --gauge-text-color: #E0E0E0;
+    --gauge-tick-length: 8px;
+    --gauge-start-angle: -135deg; /* Sudut 0 KMH */
+    --gauge-end-angle: 135deg;   /* Sudut 200 KMH */
+    --gauge-angle-range: 270deg;
 }
 
 /* --- MAIN WIDGET CONTAINER --- */
@@ -39,8 +34,8 @@ body {
     position: fixed;
     bottom: 15px;
     right: 15px;
-    width: var(--widget-width);
-    height: var(--widget-height); 
+    width: 450px;
+    height: 250px; 
     background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%);
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
@@ -58,7 +53,6 @@ body {
     gap: 10px; 
     position: relative;
 }
-
 .left-panel {
     width: 55%; 
     display: flex;
@@ -66,13 +60,9 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-
 .right-panel {
     flex-grow: 1;
     width: 45%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
     position: relative; 
 }
 
@@ -83,58 +73,48 @@ body {
     height: 160px; 
     position: relative;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: flex-end; 
 }
 
 .gauge-wrapper {
     width: calc(var(--gauge-radius) * 2);
     height: var(--gauge-radius);
-    border-radius: var(--gauge-radius) var(--gauge-radius) 0 0; 
-    background: var(--dark-bg);
     position: relative;
-    overflow: hidden; 
-    transform: rotate(180deg); /* Balik agar buka ke atas */
-    margin-bottom: 5px;
-    
-    /* === EFEK GARIS VERTIKAL (Seperti di gambar 8a50fe) === */
-    background-image: repeating-linear-gradient(90deg, 
-                        var(--gauge-line-color) 0, 
-                        var(--gauge-line-color) 1px, 
-                        transparent 1px, 
-                        transparent 6px);
-    background-size: 100% 100%;
-    border-bottom: 3px solid var(--accent-blue);
-    box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+    overflow: visible; /* Penting untuk skala angka */
+    margin-top: calc(var(--gauge-radius) - 10px); /* Posisikan ke tengah area display */
 }
 
-/* Garis Border Biru Bawah yang melengkung */
-.gauge-wrapper::after {
+/* Lingkaran Luar (Background) */
+.gauge-wrapper::before {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: var(--gauge-radius) var(--gauge-radius) 0 0;
-    border: 3px solid var(--accent-blue);
-    border-bottom: none;
-    z-index: 2; 
+    width: 200px;
+    height: 100px;
+    border-radius: 200px 200px 0 0;
+    background-color: var(--medium-dark-bg); /* Warna dasar gauge */
+    border-top: 5px solid var(--accent-blue); /* Garis atas biru */
+    z-index: 1;
+    /* Masking untuk area yang terpotong */
+    mask: linear-gradient(to top, transparent 0%, black 50%), 
+          linear-gradient(to right, transparent 0%, black 100%);
+    mask-composite: exclude;
+    transform: rotate(180deg);
 }
 
-
-/* --- JARUM SPEEDOMETER (Jarum Merah di Tengah) --- */
+/* --- JARUM SPEEDOMETER --- */
 .speed-needle {
     position: absolute;
-    bottom: 0; 
+    bottom: -15px; /* Posisikan di pusat bawah */
     left: 50%;
     transform-origin: 50% 100%; 
     width: 3px;
     height: calc(var(--gauge-radius) - 10px); 
     background-color: var(--accent-red); 
     z-index: 5;
-    transform: translateX(-50%) rotate(225deg); 
+    transform: translateX(-50%) rotate(var(--gauge-start-angle)); 
     box-shadow: 0 0 10px var(--accent-red);
     transition: transform 0.3s ease-out;
 }
@@ -154,75 +134,140 @@ body {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* --- Teks TOTAL KM di Tengah Gauge --- */
-.gauge-center-text {
+/* --- SKALA ANGKA GAUGE (Perbaikan Akurat) --- */
+.gauge-scale-numbers {
     position: absolute;
-    bottom: 5px; /* Posisikan di bagian bawah tengah gauge */
-    left: 50%;
-    transform: translateX(-50%) rotate(-180deg); /* Putar kembali agar teks terbaca tegak */
-    text-align: center;
-    z-index: 7;
+    top: calc(var(--gauge-radius) - 15px); /* Posisi pusat vertikal */
+    left: var(--gauge-radius); /* Posisi pusat horizontal */
+    width: 0;
+    height: 0;
+    z-index: 4;
 }
-.gauge-center-text .label {
-    font-size: var(--data-label-font);
+
+.speed-label {
+    position: absolute;
+    font-size: 10pt;
+    color: var(--gauge-text-color);
+    width: 30px; /* Lebar agar angka 3 digit muat */
+    text-align: center;
+    
+    /* Transformasi Rotasi & Translasi */
+    --angle: 0deg;
+    --radius: calc(var(--gauge-radius) - 15px); /* Jarak dari pusat */
+    transform-origin: 50% 50%;
+    /* 1. Rotasi ke posisi busur (angle) */
+    /* 2. Translasi ke radius (radius) */
+    /* 3. Rotasi balik label agar tegak (angle) */
+    transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle)));
+    
+    margin-left: -15px; /* Kompensasi lebar (setengah width) */
+    margin-top: -10px;  /* Kompensasi tinggi (setengah font size) */
+}
+
+/* Perhitungan Sudut (Range 270 deg)
+   0 KMH = -135 deg
+   200 KMH = 135 deg 
+   Kenaikan 20 KMH = 270 / 10 = 27 deg */
+
+.label-0   { --angle: -135deg; }
+.label-20  { --angle: -108deg; } /* -135 + 27 = -108 */
+.label-40  { --angle: -81deg; }  /* -108 + 27 = -81 */
+.label-60  { --angle: -54deg; }  /* -81 + 27 = -54 */
+.label-80  { --angle: -27deg; }  /* -54 + 27 = -27 */
+.label-100 { --angle: 0deg; }    /* -27 + 27 = 0 (Tepat di atas) */
+.label-120 { --angle: 27deg; }
+.label-140 { --angle: 54deg; }
+.label-160 { --angle: 81deg; }
+.label-180 { --angle: 108deg; }
+.label-200 { --angle: 135deg; }
+/* Label 200 KMH diatur warna merah */
+.label-200 { --angle: 135deg; color: var(--accent-red); }
+
+
+/* --- INDIKATOR LAMPU --- */
+.indicator-lights {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    display: flex;
+    gap: 15px;
+    width: 80%;
+    justify-content: space-around;
+}
+.indicator-light {
+    font-size: 18pt;
+    opacity: 0.2; /* Default off */
+    transition: opacity 0.3s;
+}
+.indicator-light.active {
+    opacity: 1; /* Turn on */
+    text-shadow: 0 0 5px white;
+}
+.seatbelt-light { font-size: 14pt; }
+
+
+/* --- TOTAL KM DISPLAY --- */
+.total-km-display {
+    position: absolute;
+    bottom: -40px; 
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+    width: 100%;
+}
+.total-km-display .label {
+    font-size: 8pt;
     color: var(--secondary-text);
     display: block;
-    line-height: 1;
 }
-.gauge-center-text .value {
-    font-size: 18pt;
+.total-km-display .value {
+    font-size: 16pt;
     font-weight: bold;
     color: var(--accent-blue);
     text-shadow: 0 0 5px var(--accent-blue);
-    line-height: 1.2;
 }
 
 
 /* --- BOTTOM NAVIGATION --- */
 .bottom-nav {
     display: flex;
-    justify-content: space-around; /* Ganti space-between agar rapi */
+    justify-content: space-around;
     align-items: center;
     width: 100%;
     padding: 8px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 5px;
 }
-
 .nav-item {
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: var(--nav-font-size);
+    font-size: 9pt;
     color: var(--secondary-text);
-    cursor: pointer;
     padding: 3px 5px;
     border-radius: 5px;
-    transition: background-color 0.2s, color 0.2s;
 }
-
 .nav-item.active {
     background-color: var(--accent-blue);
     color: white;
-    text-shadow: 0 0 5px var(--accent-blue);
 }
 .digital-speed-display {
-    font-size: var(--nav-font-size);
     font-weight: bold;
     color: var(--accent-blue);
-    text-shadow: 0 0 3px var(--accent-blue);
 }
 
 
-/* --- DATA BOXES GRID --- */
+/* --- RIGHT PANEL DATA BOXES (3 baris) --- */
 .data-boxes-grid {
     display: grid;
-    /* Grid 3 baris: Distance, Avg Speed, Max Speed */
+    /* Grid 3 baris: Distance, Avg Speed, Max Speed Besar */
     grid-template-rows: 1fr 1fr 2fr; 
     gap: 8px;
     width: 100%;
     height: 100%; 
-    padding-right: 35px;
+    padding-right: 35px; /* Ruang untuk tombol aksi */
 }
 
 .data-box-item {
@@ -230,28 +275,11 @@ body {
     border-radius: 8px;
     padding: 8px;
     text-align: center;
-    position: relative;
-    overflow: hidden;
     height: 100%; 
 }
 
-.data-box-item .label {
-    font-size: var(--data-label-font);
-    color: var(--secondary-text);
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 2px;
-}
-
-.data-box-item .value {
-    font-size: var(--data-value-font);
-    font-weight: bold;
-    color: white;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
-    line-height: 1.1;
-}
 .data-box-item .value.large {
-    font-size: var(--large-data-value-font);
+    font-size: 30pt;
     color: var(--accent-blue);
     text-shadow: 0 0 10px var(--accent-blue);
 }
@@ -262,13 +290,14 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 5px; 
+    background: linear-gradient(135deg, rgba(0, 191, 255, 0.2) 0%, rgba(255, 0, 0, 0.2) 100%), var(--medium-dark-bg);
+    border: 1px solid rgba(0, 191, 255, 0.5); 
+    box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
 }
 
-
 /* Warna khusus */
-.data-distance .value { color: var(--accent-blue); text-shadow: 0 0 5px var(--accent-blue); }
-.data-avg-speed .value { color: var(--accent-green); text-shadow: 0 0 5px var(--accent-green); }
+.data-distance .value { color: var(--accent-blue); }
+.data-avg-speed .value { color: var(--accent-green); }
 
 
 /* --- ACTION BUTTONS BAR --- */
@@ -284,18 +313,11 @@ body {
 }
 .action-icon {
     background-color: var(--medium-dark-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 5px;
     width: 30px;
     height: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: var(--action-icon-size);
-    cursor: pointer;
-    transition: background-color 0.2s, box-shadow 0.2s;
-}
-.action-icon:hover {
-    background-color: var(--accent-blue);
-    box-shadow: 0 0 8px var(--accent-blue);
+    font-size: 16pt;
 }
