@@ -47,7 +47,7 @@ body {
 .main-content {
     display: flex;
     flex-grow: 1;
-    flex-direction: column; /* Ubah menjadi kolom */
+    flex-direction: column; 
     gap: 10px; 
     position: relative;
 }
@@ -58,7 +58,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    flex-grow: 1; /* Agar left-panel mengisi sisa ruang */
+    flex-grow: 1; 
 }
 
 
@@ -70,7 +70,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start; 
-    flex-shrink: 0; /* Agar tidak menyusut */
+    flex-shrink: 0; 
 }
 
 .gauge-wrapper {
@@ -78,10 +78,12 @@ body {
     height: var(--gauge-radius); /* 100px */
     position: relative;
     overflow: visible; 
-    margin-top: 20px; /* Dorong sedikit ke bawah dari atas widget */
+    margin-top: 20px; 
+    /* Hilangkan background agar hanya border yang terlihat */
+    background: none; 
 }
 
-/* Lingkaran Luar (Background) */
+/* Lingkaran Luar (Background / Busur Biru) */
 .gauge-wrapper::before {
     content: '';
     position: absolute;
@@ -90,11 +92,27 @@ body {
     width: 200px;
     height: 100px;
     border-radius: 200px 200px 0 0;
-    background-color: var(--dark-bg); /* Ubah ke dark-bg agar sesuai gambar */
-    border-top: 5px solid var(--accent-blue); /* Border atas biru */
+    background: none; /* Hilangkan background inner, hanya border */
+    border: 5px solid var(--accent-blue); /* Ini akan membuat busur biru */
+    border-bottom: none; /* Hilangkan border bawah */
     z-index: 1;
-    transform: rotate(180deg);
+    transform: rotate(180deg); /* Balik agar busur ke atas */
     box-shadow: 0 0 10px rgba(0, 191, 255, 0.3); /* Tambah glow biru */
+}
+
+/* === Area Gelap di Belakang Angka dan Jarum === */
+/* Kita buat pseudo-element lain atau div di HTML untuk area gelap agar tidak menimpa border biru */
+.gauge-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: 0px; /* Sedikit di atas garis biru */
+    left: 10px; /* Offset dari kiri */
+    width: calc(100% - 20px); /* Kurangi lebar agar pas di dalam busur */
+    height: calc(100% - 10px); /* Kurangi tinggi */
+    border-radius: 180px 180px 0 0; /* Radius sedikit lebih kecil dari busur utama */
+    background-color: var(--dark-bg); /* Area gelap */
+    z-index: 2; /* Di atas ::before agar menutupi sebagian */
+    transform: rotate(180deg);
 }
 
 /* --- JARUM SPEEDOMETER --- */
@@ -133,7 +151,7 @@ body {
     left: var(--gauge-radius); 
     width: 0;
     height: 0;
-    z-index: 4;
+    z-index: 4; /* Di atas ::after (area gelap) */
 }
 .speed-label {
     position: absolute;
@@ -141,7 +159,7 @@ body {
     color: var(--gauge-text-color);
     width: 30px; 
     text-align: center;
-    font-weight: bold; /* Angka lebih tebal */
+    font-weight: bold; 
     --angle: 0deg;
     --radius: calc(var(--gauge-radius) - 15px);
     transform-origin: 50% 50%;
@@ -167,12 +185,12 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 3;
+    z-index: 3; 
     display: flex;
-    gap: 20px; /* Jarak antar ikon diperlebar */
-    width: 100%; /* Agar bisa space-around */
+    gap: 20px; 
+    width: 100%; 
     justify-content: space-around;
-    padding: 0 40px; /* Padding agar tidak terlalu pinggir */
+    padding: 0 40px; 
 }
 .indicator-light {
     font-size: 18pt;
@@ -185,11 +203,10 @@ body {
 }
 .seatbelt-light { font-size: 14pt; }
 
-
 /* --- TOTAL KM DISPLAY --- */
 .total-km-display {
     position: absolute;
-    bottom: -40px; /* Posisikan lebih ke bawah sedikit */
+    bottom: -40px; 
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
@@ -214,7 +231,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Jarak antar baris tombol aksi dan nav */
+    gap: 10px; 
     padding-top: 10px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
@@ -222,10 +239,10 @@ body {
 
 .bottom-nav {
     display: flex;
-    justify-content: space-between; /* Kembali ke space-between */
+    justify-content: space-between; 
     align-items: center;
     width: 100%;
-    padding: 0 5px; /* Sedikit padding agar tidak terlalu pinggir */
+    padding: 0 5px; 
 }
 .nav-item {
     display: flex;
@@ -235,7 +252,7 @@ body {
     color: var(--secondary-text);
     padding: 3px 5px;
     border-radius: 5px;
-    cursor: pointer; /* Agar terasa interaktif */
+    cursor: pointer; 
 }
 .nav-item.active {
     background-color: var(--accent-blue);
@@ -252,7 +269,7 @@ body {
     display: flex;
     justify-content: space-around; 
     width: 100%;
-    padding: 0 5px; /* Padding agar lebih rapi */
+    padding: 0 5px; 
 }
 .action-icon {
     background-color: var(--medium-dark-bg);
@@ -263,7 +280,7 @@ body {
     justify-content: center;
     align-items: center;
     font-size: 16pt;
-    cursor: pointer; /* Agar terasa interaktif */
+    cursor: pointer; 
     transition: background-color 0.2s, box-shadow 0.2s;
 }
 .action-icon:hover {
