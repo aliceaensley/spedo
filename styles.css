@@ -7,88 +7,63 @@
 }
 
 body {
-    background-color: #000 !important; /* Latar belakang hitam penuh */
+    background-color: transparent !important; /* Penting untuk overlay */
     color: white;
     font-family: Arial, sans-serif;
-}
-
-.speedometer-ui {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    background-color: #000;
 }
 
 /* Warna Neon Cyan */
 :root {
     --cyan-neon: #00ffff;
-    --cyan-glow: rgba(0, 255, 255, 0.7);
-    --dark-bg: #111;
+    --cyan-glow: rgba(0, 255, 255, 0.5);
+    --dark-bg: #0d0d0d;
     --mid-grey: #444;
 }
 
-/* --- 1. TOP BAR --- */
-.top-bar {
+/* --- SPEEDOMETER UTAMA (POJOK KANAN BAWAH) --- */
+.speedometer-ui {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    width: 320px; /* Lebar total yang ringkas */
+    background-color: #000000a0; /* Transparan gelap */
+    border: 1px solid var(--mid-grey);
+    border-radius: 12px;
+    padding: 10px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 10px;
-    font-size: 14pt;
-    background: var(--dark-bg);
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.time-duration {
-    font-weight: bold;
-    color: var(--cyan-neon);
-    text-shadow: 0 0 5px var(--cyan-glow);
-}
-
-.header-indicators {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    font-size: 10pt;
-}
-.header-indicators span {
-    color: var(--cyan-neon);
-}
-.header-indicators .icon {
-    font-size: 12pt;
-    margin-right: -10px;
-    opacity: 0.8;
-}
-
-/* --- 2. MAIN CONTENT AREA --- */
-.main-content {
-    display: flex;
-    flex-grow: 1;
     gap: 10px;
+    box-shadow: 0 0 10px var(--cyan-glow);
 }
 
-/* --- GAUGE SECTION (KIRI) --- */
+/* --- KIRI: GAUGE RINGKAS --- */
 .gauge-section {
-    flex-grow: 1;
+    width: 150px;
+    height: 150px;
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
-    max-width: 50%;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #111 50%, #000 70%);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--mid-grey);
 }
 
-.speed-gauge-wrapper {
-    width: 350px;
-    height: 350px;
-    position: relative;
-    background: radial-gradient(circle at center, #111 50%, #000 70%);
-    border-radius: 50%;
-    /* Simulasi Skala dan Tick Mark (CSS Sederhana) */
+/* Jarum (Needle) */
+.gauge-needle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 70px;
+    background: var(--cyan-neon);
+    transform-origin: 50% 100%;
+    border-radius: 2px 2px 0 0;
+    /* Sudut Awal (0 KMH): 225 derajat */
+    transform: translate(-50%, -100%) rotate(225deg); 
+    z-index: 10;
+    box-shadow: 0 0 5px var(--cyan-glow);
+    transition: transform 0.3s ease-out; 
 }
 
 /* Nilai Digital Tengah Gauge */
@@ -100,155 +75,63 @@ body {
     text-align: center;
 }
 
-.gauge-center-display .label {
-    font-size: 10pt;
-    color: var(--mid-grey);
-    display: block;
-    margin-bottom: 5px;
-}
-
 .current-speed {
-    font-size: 80pt;
+    font-size: 38pt;
     font-weight: bold;
     color: var(--cyan-neon);
-    text-shadow: 0 0 20px var(--cyan-glow);
+    text-shadow: 0 0 10px var(--cyan-glow);
     line-height: 0.8;
 }
 
 .gauge-center-display .unit {
-    font-size: 18pt;
+    font-size: 10pt;
     color: var(--mid-grey);
     display: block;
     margin-top: 5px;
 }
 
-/* JARUM (NEEDLE) - Sederhana */
-.gauge-needle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 4px;
-    height: 150px;
-    background: var(--cyan-neon);
-    transform-origin: 50% 100%;
-    border-radius: 2px 2px 0 0;
-    /* Mulai dari 225 derajat (posisi 0) dan diubah oleh JS */
-    transform: translate(-50%, -100%) rotate(225deg);
-    z-index: 10;
-    box-shadow: 0 0 10px var(--cyan-glow);
-    transition: transform 0.3s ease-out; /* Untuk animasi jarum */
-}
 
-
-/* --- DIGITAL DATA PANEL (KANAN) --- */
+/* --- KANAN: DIGITAL DATA PANEL --- */
 .digital-data-panel {
-    width: 300px;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;
 }
 
-.vitals-row {
+.vitals-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-}
-
-.digital-box, .vitals-box {
-    background: var(--dark-bg);
-    border-radius: 8px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    width: 100%;
+    height: 100%;
 }
 
 .vitals-box {
+    background: var(--dark-bg);
+    border-radius: 5px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
     text-align: center;
 }
 
 .vitals-box .label {
-    font-size: 8pt;
+    font-size: 7pt;
     color: var(--mid-grey);
     text-transform: uppercase;
-    margin-bottom: 5px;
-}
-.vitals-box .value {
-    font-size: 16pt;
-    font-weight: bold;
-    color: var(--cyan-neon);
-    text-shadow: 0 0 5px var(--cyan-glow);
-}
-.vitals-box .unit {
-    font-size: 10pt;
-    color: var(--mid-grey);
-}
-
-
-/* Panel Besar (Avg Speed & Distance) */
-.large-box {
-    min-height: 100px;
-    text-align: center;
-}
-.large-box .label {
-    font-size: 10pt;
-    color: var(--mid-grey);
-    text-transform: uppercase;
-    margin-bottom: 5px;
-}
-.value-large {
-    font-size: 40pt;
-    font-weight: bold;
-    color: var(--cyan-neon);
-    text-shadow: 0 0 10px var(--cyan-glow);
     line-height: 1;
 }
-.unit-large {
-    font-size: 12pt;
-    color: var(--mid-grey);
-}
 
-
-/* --- QUICK ICONS BAR (KANAN PINGGIR) --- */
-.quick-icons-bar {
-    width: 40px;
-    background: var(--dark-bg);
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 15px 0;
-    align-items: center;
-}
-.quick-icons-bar .icon {
-    font-size: 18pt;
-    color: var(--mid-grey);
-    cursor: pointer;
-}
-.quick-icons-bar .icon:hover {
-    color: white;
-}
-
-
-/* --- 3. BOTTOM NAVIGATION --- */
-.bottom-nav {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    padding: 10px;
-    margin-top: 10px;
-    background: var(--dark-bg);
-    border-radius: 8px;
-}
-.nav-item {
-    font-size: 12pt;
-    color: var(--mid-grey);
-    cursor: pointer;
-    padding: 5px 10px;
-}
-.nav-item.active {
-    color: var(--cyan-neon);
+.vitals-box .value {
+    font-size: 11pt;
     font-weight: bold;
-    border-bottom: 2px solid var(--cyan-neon);
+    color: var(--cyan-neon);
     text-shadow: 0 0 5px var(--cyan-glow);
+    line-height: 1.2;
+}
+
+.unit-small {
+    font-size: 7pt;
+    color: var(--mid-grey);
 }
