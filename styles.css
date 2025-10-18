@@ -26,19 +26,19 @@ body {
     bottom: 15px;
     right: 15px;
     width: 320px; 
-    background-color: #000000e0; /* Semi transparan */
+    background-color: #000000e0;
     border: 1px solid var(--mid-grey);
     border-radius: 12px;
-    padding: 8px; /* Padding lebih kecil */
+    padding: 8px; 
     display: flex;
-    flex-direction: column; /* Ubah ke kolom untuk header/main content */
+    flex-direction: column;
     box-shadow: 0 0 10px var(--cyan-glow);
 }
 
-/* === 1. TOP BAR MINI === */
+/* === 1. TOP BAR MINI (Disesuaikan agar Jam di Tengah) === */
 .top-bar-mini {
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* Ubah dari space-between menjadi center */
     align-items: center;
     padding: 0 5px 5px 5px; 
     border-bottom: 1px solid var(--mid-grey);
@@ -52,20 +52,8 @@ body {
     text-shadow: 0 0 3px var(--cyan-glow);
 }
 
-.header-indicators-mini {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-.header-indicators-mini span {
-    color: var(--cyan-neon);
-    font-size: 8pt;
-}
-.header-indicators-mini .icon {
-    font-size: 10pt;
-    margin-right: -5px;
-    opacity: 0.8;
-}
+/* Indikator Header (Baterai/Sinyal) dihapus di HTML, jadi CSS ini tidak lagi diperlukan */
+/* .header-indicators-mini {...} */ 
 
 /* === 2. MAIN CONTENT AREA === */
 .main-content-mini {
@@ -75,7 +63,7 @@ body {
 
 /* --- KIRI: GAUGE RINGKAS --- */
 .gauge-section {
-    width: 130px; /* Ukuran gauge lebih kecil */
+    width: 130px; 
     height: 130px;
     position: relative;
     display: flex;
@@ -92,7 +80,7 @@ body {
     top: 50%;
     left: 50%;
     width: 2px;
-    height: 60px; /* Jarum lebih pendek */
+    height: 60px; 
     background: var(--cyan-neon);
     transform-origin: 50% 100%;
     border-radius: 2px 2px 0 0;
@@ -134,7 +122,7 @@ body {
 .vitals-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 5px; /* Gap lebih kecil */
+    gap: 5px; 
     width: 100%;
     height: 100%;
 }
@@ -150,7 +138,7 @@ body {
 }
 
 .vitals-box .label {
-    font-size: 6pt; /* Font label sangat kecil */
+    font-size: 6pt; 
     color: var(--mid-grey);
     text-transform: uppercase;
     line-height: 1;
