@@ -215,16 +215,23 @@ function startSimulation() {
 
     simulationInterval = setInterval(() => {
         
-        let speedChange = (Math.random() - 0.4) * 0.9; // ✅ Diperbesar agar kecepatan lebih tinggi
+        // **PERBAIKAN 1: Tambahkan Drag/Perlambatan Alami**
+        if (currentSpeed > 0) {
+             currentSpeed *= 0.95; // Kurangi kecepatan sebesar 5% di setiap interval
+        }
+        
+        // **PERBAIKAN 2: Sesuaikan Random SpeedChange**
+        // Nilai sekarang berkisar antara -0.4 hingga +0.5 (memungkinkan akselerasi dan deselerasi)
+        let speedChange = (Math.random() - 0.45) * 1.5; 
         currentSpeed = currentSpeed + speedChange;
 
         // Jika kecepatan sangat rendah atau negatif, paksa ke 0 (Idle)
-        if (currentSpeed < IDLE_TOLERANCE_MS && speedChange < 0) { 
+        if (currentSpeed < IDLE_TOLERANCE_MS) { 
             currentSpeed = 0; 
         } 
         
         currentSpeed = Math.max(0, currentSpeed);
-        // ✅ BATAS KECEPATAN DIHAPUS, kendaraan bisa ngebut (tapi tetap dikontrol oleh kecepatan simulasinya)
+        // ✅ BATAS KECEPATAN TETAP DIHAPUS (Hanya dibatasi oleh *drag* dan *speedChange* acak)
         
         // Cek status Idle
         isVehicleIdle = (currentSpeed === 0);
@@ -239,7 +246,8 @@ function startSimulation() {
             
             const absSpeed = Math.abs(currentSpeed);
             // Logika naik turun RPM saat bergerak
-            let baseRPM = Math.min(0.95, absSpeed / 100 + IDLE_RPM_VALUE); // Skala disesuaikan
+            let baseRPM = Math.min(0.95, absSpeed / 100 + IDLE_RPM_VALUE); 
+            // RPM saat bergerak sekarang akan memiliki sedikit variasi acak
             let currentRPM = Math.max(IDLE_RPM_VALUE + 0.05, Math.min(0.99, baseRPM + (Math.random() - 0.5) * 0.05));
             setRPM(currentRPM);
         }
