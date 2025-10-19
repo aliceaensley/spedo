@@ -46,7 +46,7 @@ body {
     text-align: center;
     color: #FFA500; 
     /* Efek Neon Orange */
-    text-shadow: 0 0 20px rgba(255, 165, 0, 0.8), 0 0 30px rgba(255, 165, 0, 0.5);
+    text-shadow: 0 0 20px rgba(255, 165, 0, 0.8), 0 0 30px rgba(255, 165, 0, 0.5); 
     animation: pulse 1.5s infinite alternate; 
 }
 
@@ -68,7 +68,7 @@ body {
     font-size: 3.5em; 
     margin-bottom: 5px; 
     letter-spacing: 5px;
-    opacity: 0.7; /* Sedikit redup dibandingkan Aksara Jawa */
+    opacity: 0.7; 
 }
 
 .welcome-message p {
@@ -117,7 +117,7 @@ body {
     justify-content: flex-end;
 }
 
-.speedometer-container.youtube-active .speed-panel,
+.speedometer-container.youtube-active .speedometer-view-wrapper, /* Sembunyikan wadah view */
 .speedometer-container.youtube-active .info-panels-grid,
 .speedometer-container.youtube-active .bottom-panel {
     /* Sembunyikan panel data utama saat YouTube aktif */
@@ -157,12 +157,27 @@ body {
     width: 100%; 
 }
 /* Atur tata letak default */
-.speedometer-container:not(.youtube-active) .speed-panel { order: 1; }
+.speedometer-container:not(.youtube-active) .speedometer-view-wrapper { order: 1; }
 .speedometer-container:not(.youtube-active) .info-panels-grid { order: 2; }
 .speedometer-container:not(.youtube-active) .bottom-panel { order: 3; }
 
 
-/* Speed Panel */
+/* --- WADAH VIEW TOGGLE --- */
+.speedometer-view-wrapper {
+    width: 100%;
+    position: relative; 
+    /* Tinggi harus diatur agar analog/digital view bisa pas */
+    height: 160px; 
+}
+#digital-speed-view, #analog-speed-view {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/* Speed Panel (Digital) */
 .speed-panel { display: flex; flex-direction: column; }
 .speed-header { 
     display: flex; justify-content: space-between; font-size: 10pt; font-weight: bold; 
@@ -188,6 +203,93 @@ body {
     filter: drop-shadow(0 0 5px rgba(255, 165, 0, 0.7)); 
 }
 
+
+/* ========================================================= */
+/* --- GAYA BARU: ANALOG SPEED VIEW --- */
+/* ========================================================= */
+.analog-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px; 
+}
+
+/* Gauge (Wadah jarum) */
+.gauge-wrapper {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid rgba(255, 165, 0, 0.5); /* Cincin luar neon */
+    background-color: rgba(0, 0, 0, 0.7);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+    margin-bottom: 5px;
+    flex-shrink: 0;
+}
+
+/* Nilai digital kecil di tengah analog */
+.analog-speed-value {
+    font-size: 24pt;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 0 5px #FFA500;
+    line-height: 1;
+    z-index: 10;
+}
+.speed-unit-analog {
+    font-size: 10pt;
+    color: #FFA500;
+    z-index: 10;
+}
+
+/* JARUM SPEEDOMETER */
+.speed-needle {
+    position: absolute;
+    bottom: 50%; 
+    left: 50%;
+    transform-origin: 50% 100%; /* PIVOT POINT: Tengah Bawah */
+    width: 3px;
+    height: 65px; 
+    background-color: #FF0000; /* Jarum Merah */
+    z-index: 9;
+    /* Sudut awal (-135 derajat) */
+    transform: translateX(-50%) rotate(-135deg); 
+    transition: transform 0.1s linear; 
+    box-shadow: 0 0 5px #FF0000;
+}
+
+.center-pin {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid #FF0000;
+    z-index: 11;
+}
+
+/* RPM Bar di bawah Gauge */
+.rpm-bar-analog-wrapper {
+    width: 100%;
+    height: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+.rpm-bar {
+    height: 100%;
+    width: 0%; /* Diatur oleh JS */
+    background: linear-gradient(to right, #00FF00, #FFFF00, #FF0000);
+    transition: width 0.1s linear;
+}
+
+
 /* Info Grid (Stats) */
 .info-panels-grid { 
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 5px;
@@ -211,6 +313,15 @@ body {
 .status-indicators { display: flex; gap: 15px; font-size: 20pt; }
 .indicator-icon { opacity: 0.4; cursor: pointer; } 
 .indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
+
+/* Gaya untuk tombol mode baru */
+.mode-toggle {
+    opacity: 0.8; 
+    color: #FFA500; /* Warna neon orange agar menonjol */
+}
+.mode-toggle.active {
+    text-shadow: 0 0 5px #00BFFF; /* Glow Biru saat mode Analog aktif */
+}
 
 .youtube-toggle.active {
     opacity: 1;
