@@ -469,8 +469,8 @@ body {
 /* Memutar angka agar tegak lurus (counter-rotate) (FIXED) */
 .speed-mark.label .text-rotate {
     display: block;
-    /* TranslateY(-60px) menggeser teks ke posisi radial yang diinginkan, lalu di-counter rotate (Variabel --counter-rotate-angle dari JS) */
-    transform: translateY(-60px) rotate(var(--counter-rotate-angle)); 
+    /* TranslateY(-50px) menggeser teks ke posisi radial yang diinginkan, lalu di-counter rotate (Variabel --counter-rotate-angle dari JS) */
+    transform: translateY(-50px) rotate(var(--counter-rotate-angle)); 
 }
 
 
