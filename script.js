@@ -151,7 +151,7 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    // KODE BARU: Jika RPM adalah 0 (mesin mati), set lebar menjadi 0%
+    // KODE PERMINTAAN SEBELUMNYA: RPM 0% saat mesin mati
     if (rpm === 0) {
         if (elements.rpmBarMain) {
             elements.rpmBarMain.style.width = '0%';
@@ -251,7 +251,7 @@ function stopSimulation() {
     }
     setSpeed(0);
     
-    // KODE BARU: RPM bar disetel ke 0 saat mesin mati
+    // RPM bar disetel ke 0 saat mesin mati
     setRPM(0); 
     
     isVehicleIdle = false; 
@@ -262,12 +262,14 @@ function startSimulation() {
 
     let currentSpeed = 0;
     
-    let accelerationRate = 0.5; 
-    let decelerationRate = 0.1; 
+    // [UPDATE] Nilai diperkecil agar perubahan kecepatan di setiap tick lebih halus
+    let accelerationRate = 0.2; // Sebelumnya 0.5
+    let decelerationRate = 0.05; // Sebelumnya 0.1
 
     setSpeed(0);
     setRPM(IDLE_RPM_VALUE); 
 
+    // [UPDATE] Interval dipercepat dari 100ms menjadi 50ms untuk update yang lebih sering/halus
     simulationInterval = setInterval(() => {
         
         let targetSpeedChange = 0;
@@ -278,13 +280,14 @@ function startSimulation() {
         } else if (action < 0.8) { 
             targetSpeedChange = -decelerationRate * Math.random() * 2; 
         } else {
-            targetSpeedChange = (Math.random() - 0.5) * 0.1;
+            // Fluktuasi kecil saat cruise
+            targetSpeedChange = (Math.random() - 0.5) * 0.05; // Diperhalus dari 0.1
         }
 
         currentSpeed += targetSpeedChange;
         
         if (targetSpeedChange < 0.1 && currentSpeed > 0) {
-            currentSpeed *= 0.98; 
+            currentSpeed *= 0.99; // Dibuat lebih lambat melambat secara alami
         }
 
         if (currentSpeed < IDLE_TOLERANCE_MS) { 
@@ -304,14 +307,15 @@ function startSimulation() {
             
             const absSpeed = Math.abs(currentSpeed);
             
-            let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.007); 
+            // Perhitungan RPM juga disesuaikan untuk merespon perubahan kecepatan yang lebih halus
+            let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.005); // Koefisien 0.007 ke 0.005
             let currentRPM = Math.min(0.99, baseRPM);
-            currentRPM += (Math.random() - 0.5) * 0.02; 
+            currentRPM += (Math.random() - 0.5) * 0.01; // Fluktuasi acak dikurangi (dari 0.02 ke 0.01)
             
             setRPM(currentRPM);
         }
         
-    }, 100); 
+    }, 50); // [UPDATE] Interval Simulasi 50ms
 }
 
 
