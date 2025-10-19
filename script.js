@@ -30,7 +30,7 @@ seatbeltSound.volume = 0.7;
 const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw';	
 // *****************************************************************
 
-// --- FUNGSI GENERATE TANDA SPEEDOMETER ANALOG (FINAL FIX ULANG) ---
+// --- FUNGSI GENERATE TANDA SPEEDOMETER ANALOG (FINAL FIX ULTIMATE) ---
 function generateAnalogMarks() {
     const marksWrapper = elements.speedMarksWrapper;
     if (!marksWrapper) return;
@@ -48,16 +48,15 @@ function generateAnalogMarks() {
     for (let speed = 0; speed <= MAX_SPEED; speed += 10) {
         const angle = START_ANGLE + (speed * ANGLE_PER_KMH);
         
-        // Sudut rotasi untuk wadah label, agar label berputar ke posisinya
+        // Sudut rotasi untuk wadah label
         const labelContainerRotation = angle;
-        // Sudut counter-rotasi untuk teks di dalam label, agar teks tetap "tegak lurus"
-        // Kita perlu -labelContainerRotation + 90 untuk menjaga orientasi visual yang baik
-        const counterRotateText = -labelContainerRotation - 90; 
+        // FINAL FIX: Sudut counter-rotasi untuk teks di dalam label (agar tegak lurus)
+        const counterRotateText = -labelContainerRotation; 
 
         // 1. Tanda Utama (Major Mark) - Setiap 10 unit
         const majorMark = document.createElement('div');
         majorMark.classList.add('speed-mark', 'line', 'major');
-        // Jarak Tanda Garis: -75px
+        // Jarak Tanda Garis: -75px (Sesuai CSS)
         majorMark.style.transform = `translate(-50%, -100%) translateY(-75px) rotate(${angle}deg)`;
         marksWrapper.appendChild(majorMark);
 
@@ -69,6 +68,7 @@ function generateAnalogMarks() {
         label.style.setProperty('--rotate-angle', `${labelContainerRotation}deg`); 
         
         // Counter Rotasi Teks di dalam label
+        // Jarak Teks -65px (Sesuai CSS)
         label.innerHTML = `<span class="text-rotate" style="--counter-rotate-angle: ${counterRotateText}deg;">${speed}</span>`;
         marksWrapper.appendChild(label);
         
