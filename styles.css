@@ -78,17 +78,18 @@ body {
 }
 
 
-/* --- Speedometer Utama (Neon Orange) --- */
+/* --- Speedometer Utama (Container) --- */
 .speedometer-container {
     position: fixed;
     bottom: 15px; 
     right: 15px;
     width: 300px; 
     
-    background: linear-gradient(135deg, #FFA500, #FF4500); 
-    padding: 5px;
+    /* MODIFIKASI: Hapus Neon Orange Background dan Shadow */
+    background: transparent; 
+    padding: 0; 
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
+    box-shadow: none; 
     z-index: 1000; 
     
     display: flex;
@@ -136,7 +137,8 @@ body {
 
 /* Panel Data Speedometer */
 .panel {
-    background-color: rgba(0, 0, 0, 0.75); /* DEFAULT BACKGROUND HITAM SEMI-TRANSAPARAN */
+    /* DEFAULT BACKGROUND HITAM SEMI-TRANSAPARAN */
+    background-color: rgba(0, 0, 0, 0.75); 
     border-radius: 10px;
     padding: 10px;
     width: 100%; 
@@ -147,6 +149,7 @@ body {
     width: 100%;
     position: relative; 
     height: 200px; 
+    padding: 0 10px; /* Tambahkan padding agar Digital View tidak terlalu mepet */
 }
 #digital-speed-view, #analog-speed-view {
     position: absolute;
@@ -154,6 +157,7 @@ body {
     height: 100%;
     top: 0;
     left: 0;
+    padding: 0 10px; /* Tambahkan padding agar Digital View tidak terlalu mepet */
 }
 
 /* Speed Panel (Digital) */
@@ -280,10 +284,30 @@ body {
 }
 
 
-/* Info Grid (Stats) - TETAP BACKGROUND HITAM */
+/* ========================================================= */
+/* --- WADAH BAWAH NEON ORANGE (Baru) --- */
+/* ========================================================= */
+.bottom-data-wrapper {
+    /* Gabungkan Info Grid dan Bottom Panel dalam satu kotak neon */
+    background: linear-gradient(135deg, #FFA500, #FF4500); 
+    padding: 5px; /* Padding di sekeliling kotak oranye */
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
+    
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+
+/* Info Grid (Stats) */
 .info-panels-grid { 
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 5px;
-    background-color: transparent;
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 5px; 
+    padding: 0; /* Hapus padding agar kotak oranye menampungnya */
+    background-color: transparent; /* Pastikan ini transparan */
 }
 .stat-item { 
     padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; 
@@ -292,12 +316,11 @@ body {
 .stat-label { color: #FFA500; font-size: 9pt; }
 .stat-value { font-size: 12pt; font-weight: bold; color: white; }
 
-/* Bottom Panel (Indicators & Toggles) - TETAP BACKGROUND HITAM */
+/* Bottom Panel (Indicators & Toggles) */
 .bottom-panel { 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    padding: 10px; 
+    /* Hapus background dan padding yang berlebihan */
+    background-color: transparent; 
+    padding: 10px 0 0 0; /* Padding atas untuk pemisah visual */
 }
 
 .status-indicators { display: flex; gap: 15px; font-size: 20pt; }
