@@ -211,55 +211,52 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Memastikan ini benar-benar di tengah */
+    transform: translate(-50%, -50%); 
     display: flex;
-    flex-direction: column; /* Engine di atas, Gear N di bawah */
+    flex-direction: column; 
     align-items: center;
     justify-content: center;
     z-index: 12;
-    gap: 5px; /* Spasi antar elemen tengah */
+    gap: 5px; 
 }
 
 .engine-indicator {
-    font-size: 20pt; /* Ukuran icon Engine */
+    font-size: 20pt; 
     color: var(--accent-green);
     text-shadow: 0 0 8px var(--accent-green);
-    opacity: 0.2; /* Default off */
+    opacity: 0.2; 
     transition: opacity 0.3s;
 }
 .engine-indicator.active {
-    opacity: 1; /* Ketika aktif */
+    opacity: 1; 
 }
-/* Untuk Font Awesome, Anda mungkin perlu mengimpornya di <head> HTML */
-/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> */
-
 
 .gear-display {
-    font-size: 24pt; /* Ukuran huruf N */
+    font-size: 24pt; 
     font-weight: bold;
     color: var(--primary-text);
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    margin-top: -10px; /* GESER N KE ATAS - Sesuaikan nilai ini */
 }
 
 .turn-signals {
     position: absolute;
-    width: calc(var(--gauge-radius) * 2 - 40px); /* Lebar turn signal */
+    width: calc(var(--gauge-radius) * 2 - 40px); 
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* Posisikan di garis tengah vertikal */
     top: 50%; 
-    transform: translateY(-50%); /* Adjust untuk centering */
+    transform: translateY(-50%); 
     font-size: 18pt;
     color: var(--secondary-text);
 }
 .turn-signal.left-signal {
-    margin-right: 50px; /* Jarak dari tengah */
+    margin-right: 50px; 
     opacity: 0.2;
     transition: opacity 0.3s;
 }
 .turn-signal.right-signal {
-    margin-left: 50px; /* Jarak dari tengah */
+    margin-left: 50px; 
     opacity: 0.2;
     transition: opacity 0.3s;
 }
