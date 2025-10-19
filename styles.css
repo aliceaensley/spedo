@@ -25,6 +25,9 @@ body {
     --gauge-start-angle: -135deg; 
     --gauge-end-angle: 135deg; 
     --accent-green: #00FF00; /* Warna hijau untuk Engine */
+    --level-good: #00FF00; /* Hijau */
+    --level-warning: #FFA500; /* Oranye */
+    --level-critical: #FF0000; /* Merah */
 }
 
 /* --- UTILITY CLASS --- */
@@ -206,12 +209,12 @@ body {
 .label-200 { --angle: 135deg; color: var(--accent-red); }
 
 
-/* --- KONTEN TENGAH (ENGINE & N) --- */
+/* --- KONTEN TENGAH (N & ENGINE ICON) --- */
 .center-display-area {
     position: absolute;
     top: 50%;
     left: 50%;
-    /* TETAPKAN POSISI N & ENGINE DI ATAS PUSAT */
+    /* Posisi N & Engine di atas pusat */
     transform: translate(-50%, calc(-50% - 20px)); 
     display: flex;
     flex-direction: column; 
@@ -241,31 +244,28 @@ body {
 }
 
 
-/* --- SINYAL BELOK (SEIN) - DIPOSISIKAN ULANG SEPERTI INDIKATOR LAMA --- */
+/* --- SINYAL BELOK (SEIN) - Posisi kembali di samping jarum --- */
 .turn-signals {
     position: absolute;
-    /* Posisikan di garis tengah vertikal lingkaran (50%) */
     top: 50%; 
     left: 50%;
     transform: translate(-50%, -50%); 
-    width: calc(var(--gauge-radius) * 2 - 40px); /* Lebar turn signal */
+    width: calc(var(--gauge-radius) * 2 - 40px); 
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 18pt;
     color: var(--secondary-text);
     z-index: 12;
-    margin-top: 15px; /* GESER KE BAWAH, DI SAMPING JARUM */
+    margin-top: 15px; 
 }
 
 .turn-signal.left-signal {
-    /* Angka 50px di sini untuk menggeser ke kiri */
     margin-right: calc(var(--gauge-radius) - 55px); 
     opacity: 0.2;
     transition: opacity 0.3s;
 }
 .turn-signal.right-signal {
-    /* Angka 50px di sini untuk menggeser ke kanan */
     margin-left: calc(var(--gauge-radius) - 55px);
     opacity: 0.2;
     transition: opacity 0.3s;
@@ -276,6 +276,47 @@ body {
     text-shadow: 0 0 5px var(--accent-blue);
 }
 
+
+/* --- LEVEL INDICATORS (FUEL & ENGINE) --- */
+.level-indicators-area {
+    position: absolute;
+    top: 30px; /* Posisi di atas angka 100 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(var(--gauge-radius) * 2 - 20px); 
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: 12;
+    font-size: 8pt;
+    font-weight: bold;
+    color: var(--primary-text);
+}
+
+.fuel-indicator, .engine-health-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.2;
+    padding: 2px 5px;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.3); /* Sedikit latar belakang transparan */
+}
+
+.fuel-indicator {
+    color: var(--level-good); /* Fuel default hijau */
+    margin-left: 5px;
+}
+.engine-health-indicator {
+    color: var(--level-good); /* Engine default hijau */
+    margin-right: 5px;
+}
+
+.fuel-indicator .label, .engine-health-indicator .label {
+    font-size: 7pt;
+    font-weight: normal;
+    color: var(--secondary-text);
+}
 
 /* --- INDIKATOR LAMPU LAMA & TOTAL KM (Dihilangkan) --- */
 .indicator-lights, .total-km-display {
