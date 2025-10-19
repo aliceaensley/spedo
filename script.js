@@ -1,3 +1,4 @@
+
 let elements = {};
 let speedMode = 1;	
 let engineState = false;	
@@ -13,6 +14,7 @@ let timeInterval = null;
 let currentSpeedometerMode = 'digital'; // 'digital' atau 'analog'
 
 // ✅ AUDIO FILES (Pastikan file ada di direktori yang sama: bensin.mp3, sekarat.mp3, kebo.mp3, ahh.mp3)
+// Anda harus menyediakan file-file audio ini di folder yang sama agar berfungsi
 const fuelWarningSound = new Audio('bensin.mp3');	
 const criticalFuelSound = new Audio('sekarat.mp3');	
 const welcomeSound = new Audio('kebo.mp3');	
@@ -150,7 +152,7 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    // RPM 0% saat mesin mati
+    // KODE PERMINTAAN SEBELUMNYA: RPM 0% saat mesin mati
     if (rpm === 0) {
         if (elements.rpmBarMain) {
             elements.rpmBarMain.style.width = '0%';
@@ -436,8 +438,7 @@ function toggleYoutubeSearchUI(show) {
 		elements.youtubeResults.classList.toggle('hidden', !show);
 	}
 	if (!show && elements.youtubeResults) {
-		// KOSONGKAN hasil hanya jika disembunyikan agar hasilnya tidak menumpuk saat pencarian baru
-		elements.youtubeResults.innerHTML = ''; 
+		elements.youtubeResults.innerHTML = ''; // Kosongkan hasil jika disembunyikan
 	}
 }
 
@@ -458,17 +459,18 @@ function toggleYoutubeUI(state) {
 		youtubeWrapper.classList.remove('hidden');
 		toggleActive(elements.youtubeToggleIcon, true);
 		
-		// ******* LOGIKA PENTING: Tentukan apakah video sudah ada (src !== 'about:blank') *******
-		const hasVideoLoaded = elements.browserIframe.src !== 'about:blank';
+		// Saat dibuka: 
+		// Jika iframe kosong (sebelumnya sudah direset) atau tidak ada hasil, tampilkan search UI.
+        // Jika ada video yang berjalan (src != 'about:blank'), sembunyikan search UI.
+		const isIframeBlank = elements.browserIframe.src === 'about:blank';
 		
-		if (hasVideoLoaded) {
-            // Jika ada video yang berjalan, langsung sembunyikan antarmuka pencarian
-            toggleYoutubeSearchUI(false); 
-        } else {
-            // Jika iframe masih kosong (belum pernah memutar video), tampilkan antarmuka pencarian
-            elements.browserIframe.src = 'about:blank'; // Bersihkan jika ada sisa
+		if (isIframeBlank || elements.youtubeResults.innerHTML === '') {
+            elements.browserIframe.src = 'about:blank'; // Bersihkan sebelum mencari (jika ada sisa)
             toggleYoutubeSearchUI(true);
             if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
+        } else {
+            // Jika ada video yang berjalan, sembunyikan hasil pencarian.
+            toggleYoutubeSearchUI(false); 
         }
 		
 	} else {
@@ -477,10 +479,11 @@ function toggleYoutubeUI(state) {
 		youtubeWrapper.classList.add('hidden');
 		toggleActive(elements.youtubeToggleIcon, false);
 		
-		// JANGAN RESET IFRAME.SRC: Memastikan video/audio tetap berjalan di latar belakang.
+		// KUNCI PENTING: JANGAN RESET IFRAME.SRC
+        // Ini memastikan video terus diputar (audio tetap terdengar) di latar belakang.
         
-		// Sembunyikan overlay hasil pencarian (jika belum tertutup)
-		elements.youtubeResults.classList.add('hidden');	
+		// Sembunyikan hasil pencarian (overlay)
+		toggleYoutubeSearchUI(false);	
 	}
 }
 
