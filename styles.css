@@ -1,5 +1,5 @@
 /* ========================================================= */
-/* Final CSS Speedometer - High-Tech Glow Theme (Versi Diperbaiki) */
+/* Final CSS Speedometer - High-Tech Glow Theme */
 /* ========================================================= */
 
 /* Basic Reset and Font */
@@ -119,20 +119,9 @@ body {
     justify-content: flex-end; /* Dorong ke kanan bawah */
 }
 
-/* Sembunyikan elemen Speedometer utama saat YouTube aktif (agar YouTube menjadi fokus) */
-.speedometer-container.youtube-active .speedometer-view-wrapper, 
-.speedometer-container.youtube-active .bottom-data-wrapper {
-    /* Kembali tampilkan (jangan sembunyikan) agar muncul di sebelah kanan YouTube */
-    /* Karena kita menggunakan flex-direction: row-reverse */
-    width: 300px; /* Beri lebar tetap untuk elemen speedo */
-    opacity: 1; 
-    pointer-events: auto;
-    transition: opacity 0.1s;
-}
-
 /* Modifikasi agar Speedometer utama tetap muncul di sebelah kanan YouTube */
 .speedometer-container.youtube-active .speedometer-main-elements {
-    width: 300px; /* Beri lebar tetap */
+    width: 300px; /* Beri lebar tetap untuk elemen speedo */
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -410,12 +399,7 @@ body {
     flex-shrink: 0;
 }
 
-/* Nilai digital kecil di tengah analog */
-.analog-speed-value, .speed-unit-analog {
-    display: none; 
-}
-
-/* JARUM SPEEDOMETER */
+/* Jarum & Pin */
 .speed-needle {
     position: absolute;
     bottom: 50%; 
@@ -505,7 +489,7 @@ body {
 .indicator-icon { opacity: 0.4; cursor: pointer; } 
 .indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
 
-/* Gaya untuk tombol mode baru */
+/* Gaya untuk tombol mode (Timer) */
 .mode-toggle {
     opacity: 0.8; 
     color: #FFA500; 
@@ -515,6 +499,7 @@ body {
     text-shadow: 0 0 8px #00BFFF, 0 0 12px rgba(0, 191, 255, 0.5); /* Glow Biru/Cyan */
 }
 
+/* Gaya untuk tombol YouTube */
 .youtube-toggle.active {
     opacity: 1;
     text-shadow: 0 0 8px #FF0000; /* Warna merah untuk YouTube aktif */
