@@ -13,6 +13,7 @@ let timeInterval = null; 
 let currentSpeedometerMode = 'digital'; // 'digital' atau 'analog'
 
 // ✅ AUDIO FILES (Pastikan file ada di direktori yang sama: bensin.mp3, sekarat.mp3, kebo.mp3, ahh.mp3)
+// Anda harus menyediakan file-file audio ini di folder yang sama agar berfungsi
 const fuelWarningSound = new Audio('bensin.mp3'); 
 const criticalFuelSound = new Audio('sekarat.mp3'); 
 const welcomeSound = new Audio('kebo.mp3'); 
@@ -150,12 +151,20 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    const safeRPM = Math.max(0.16, rpm); 
-    
-    // Konversi nilai 0.16 - 0.99 menjadi 16% - 99%
+    // KODE BARU: Jika RPM adalah 0 (mesin mati), set lebar menjadi 0%
+    if (rpm === 0) {
+        if (elements.rpmBarMain) {
+            elements.rpmBarMain.style.width = '0%';
+        }
+        return; 
+    }
+    
+    // Untuk nilai RPM idle/berjalan (minimal 0.16)
+    const safeRPM = Math.max(0.16, rpm); 
+        // Konversi nilai 0.16 - 0.99 menjadi 16% - 99%
     const barWidth = Math.round(safeRPM * 100); 
 
-    // Update RPM Bar MAIN (Menggunakan ID baru: rpmBarMain)
+    // Update RPM Bar MAIN
     if (elements.rpmBarMain) {
         elements.rpmBarMain.style.width = `${barWidth}%`;
     }
@@ -241,8 +250,10 @@ function stopSimulation() {
         simulationInterval = null;
     }
     setSpeed(0);
-    // RPM bar disetel ke 0 saat mesin mati
-    if (elements.rpmBarMain) elements.rpmBarMain.style.width = '0%'; 
+    
+    // KODE BARU: RPM bar disetel ke 0 saat mesin mati
+    setRPM(0); 
+    
     isVehicleIdle = false; 
 }
 
@@ -286,6 +297,7 @@ function startSimulation() {
         
         if (isVehicleIdle) {
             setSpeed(0);
+            // RPM disetel ke idle 0.16 (16%) saat mesin hidup dan kendaraan diam
             setRPM(IDLE_RPM_VALUE); 
         } else {
             setSpeed(currentSpeed); 
@@ -474,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         speedModeAnalog: document.getElementById('speed-mode-analog'),
         analogNeedle: document.getElementById('analog-needle'),
         
-        // ID BARU UNTUK RPM BAR UTAMA
+        // ID UNTUK RPM BAR UTAMA
         rpmBarMain: document.getElementById('rpm-bar-main'),
         
         // Mode View Toggler
