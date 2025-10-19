@@ -277,7 +277,7 @@ body {
 }
 
 
-/* --- LEVEL INDICATORS (FUEL & ENGINE) - POSISI PALING KEPINGGIR --- */
+/* --- LEVEL INDICATORS (FUEL & ENGINE) - POSISI PALING KEPINGGIR (FINAL) --- */
 .level-indicators-area {
     position: absolute;
     top: 50%; 
@@ -313,9 +313,9 @@ body {
     color: var(--level-good); 
 }
 .engine-health-indicator {
-    /* ENGINE: Digeser ke 90px horizontal (SANGAT JAUH ke kanan) dan 10px vertikal (ke bawah) */
+    /* ENGINE: Digeser ke 100px horizontal (POSISI EKSTREM KANAN) dan 10px vertikal (ke bawah) */
     right: 50%; 
-    transform: translate(calc(90px), 10px); 
+    transform: translate(calc(100px), 10px); 
     
     color: var(--level-good); 
 }
