@@ -244,7 +244,7 @@ body {
 }
 
 
-/* --- SINYAL BELOK (SEIN) - Posisi kembali di samping jarum --- */
+/* --- SINYAL BELOK (SEIN) - Posisi di samping jarum --- */
 .turn-signals {
     position: absolute;
     top: 50%; 
@@ -257,7 +257,7 @@ body {
     font-size: 18pt;
     color: var(--secondary-text);
     z-index: 12;
-    margin-top: 15px; 
+    margin-top: 15px; /* Geser sedikit ke bawah */
 }
 
 .turn-signal.left-signal {
@@ -279,43 +279,58 @@ body {
 
 /* --- LEVEL INDICATORS (FUEL & ENGINE) --- */
 .level-indicators-area {
+    /* Kontainer Penuh di dalam gauge-wrapper untuk penempatan absolut */
     position: absolute;
-    top: 30px; /* Posisi di atas angka 100 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(var(--gauge-radius) * 2 - 20px); 
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    
+    width: 100%; 
+    height: 100%;
+    
+    display: block; 
     z-index: 12;
-    font-size: 8pt;
-    font-weight: bold;
-    color: var(--primary-text);
 }
 
 .fuel-indicator, .engine-health-indicator {
+    position: absolute; 
     display: flex;
     flex-direction: column;
     align-items: center;
-    line-height: 1.2;
-    padding: 2px 5px;
+    line-height: 1.1;
+    padding: 3px 5px; 
     border-radius: 5px;
-    background: rgba(0, 0, 0, 0.3); /* Sedikit latar belakang transparan */
+    background: rgba(0, 0, 0, 0.4); 
+    font-weight: bold;
 }
 
 .fuel-indicator {
-    color: var(--level-good); /* Fuel default hijau */
-    margin-left: 5px;
+    /* POSISI AKHIR: Sejajar dengan angka 60 (Lingkaran Kiri) */
+    top: 50%; 
+    left: 50%; 
+    transform: translate(calc(-100% - 15px), calc(-100% - 5px)); 
+    
+    color: var(--level-good); 
+    z-index: 13;
 }
 .engine-health-indicator {
-    color: var(--level-good); /* Engine default hijau */
-    margin-right: 5px;
+    /* POSISI AKHIR: Sejajar dengan angka 140 (Lingkaran Kanan) */
+    top: 50%; 
+    left: 50%; 
+    transform: translate(15px, calc(-100% - 5px)); 
+    
+    color: var(--level-good); 
+    z-index: 13;
 }
 
 .fuel-indicator .label, .engine-health-indicator .label {
-    font-size: 7pt;
+    font-size: 6pt; 
     font-weight: normal;
     color: var(--secondary-text);
+}
+
+.fuel-indicator .value, .engine-health-indicator .value {
+    font-size: 9pt; 
 }
 
 /* --- INDIKATOR LAMPU LAMA & TOTAL KM (Dihilangkan) --- */
