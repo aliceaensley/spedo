@@ -171,6 +171,7 @@ body {
     box-shadow: none;
     border: none;
     padding: 0; 
+    height: 100%; /* Penting untuk vertical centering */
 }
 
 .speed-header { 
@@ -178,24 +179,31 @@ body {
     padding: 5px 0; 
     display: flex; justify-content: space-between; font-size: 10pt; font-weight: bold; 
     color: #FFA500; margin-bottom: 5px;
+    flex-shrink: 0;
 }
 .speed-value-wrapper { 
-    text-align: right; 
+    /* MODIFIKASI: Menengahkan secara horizontal dan vertikal */
+    text-align: center; 
     display: flex; 
-    align-items: flex-end; 
-    justify-content: flex-end; 
+    align-items: center; /* Center Vertikal */
+    justify-content: center; /* Center Horizontal */
     gap: 5px; 
+    flex-grow: 1; /* Ambil ruang sisa */
+    width: 100%;
 }
 
 .speed-value { 
     font-size: 48pt; font-weight: 900; line-height: 1; color: white; 
     text-shadow: 0 0 10px #FFA500; 
+    /* MODIFIKASI: Dorong angka ke bawah agar posisinya center vertikal relatif terhadap wadah */
+    margin-top: 15px; 
 }
 
 .speed-copyright-logo {
     width: 30px; 
     height: 30px; 
     filter: drop-shadow(0 0 5px rgba(255, 165, 0, 0.7)); 
+    align-self: flex-end; /* Logo tetap di bawah angka */
 }
 
 
@@ -298,7 +306,7 @@ body {
 
 
 /* ========================================================= */
-/* --- WADAH BAWAH NEON ORANGE --- */
+/* --- WADAH BAWAH NEON ORANGE (Bottom Data Wrapper) --- */
 /* ========================================================= */
 .bottom-data-wrapper {
     /* Gabungkan Info Grid dan Bottom Panel dalam satu kotak neon */
@@ -323,6 +331,7 @@ body {
     background-color: transparent; 
 }
 .stat-item { 
+    /* Pertahankan background hitam semi-transparan untuk item grid */
     padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; 
     background-color: rgba(0, 0, 0, 0.75); text-align: center;
 }
