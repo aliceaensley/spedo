@@ -228,13 +228,12 @@ body {
 .gear-display { font-size: 24pt; font-weight: bold; }
 
 /* ------------------------------------------------ */
-/* --- SINYAL BELOK (SEIN) - DIPERBAIKI --- */
+/* --- SINYAL BELOK (SEIN) --- */
 /* ------------------------------------------------ */
 .turn-signals {
     position: absolute;
     top: 50%; 
     left: 50%;
-    /* Menggeser sinyal belok ke bawah 40px dari pusat */
     transform: translate(-50%, calc(-50% + 40px)); 
     
     width: calc(var(--gauge-radius) * 2 - 40px); 
@@ -251,7 +250,7 @@ body {
 
 
 /* ------------------------------------------------ */
-/* --- LEVEL INDICATORS (FUEL & ENGINE) - Kotak Transparan --- */
+/* --- LEVEL INDICATORS (FUEL & ENGINE) --- */
 /* ------------------------------------------------ */
 .level-indicators-area {
     position: absolute;
@@ -273,7 +272,6 @@ body {
     
     padding: 5px 8px; 
     border-radius: 8px; 
-    /* Latar belakang transparan */
     background: rgba(44, 44, 44, 0.6); 
     box-shadow: none; 
     
@@ -324,6 +322,9 @@ body {
     
     z-index: 100; 
     
+    /* PENTING: MENGHILANGKAN PADDING VERTIKAL DARI BOTTOM-CONTROLS */
+    padding: 0; 
+    
     .action-buttons-bar, .action-icon, .nav-item[data-view="map"] {
         display: none !important; 
     }
@@ -334,10 +335,11 @@ body {
 .bottom-nav { 
     display: flex;
     justify-content: center; 
-    align-items: center;
+    align-items: center; /* Tetap center agar tombol berada di tengah vertikal */
     width: 100%;
     height: 100%; 
     
+    /* PENTING: Memastikan padding vertikal hanya untuk horizontal */
     padding: 0 10px; 
     
     gap: 20px; 
@@ -349,6 +351,7 @@ body {
     gap: 5px;
     font-size: 9pt;
     color: var(--secondary-text);
+    /* Padding pada item navigasi yang menentukan ukuran vertikal */
     padding: 5px 10px; 
     border-radius: 8px; 
     cursor: pointer; 
