@@ -422,6 +422,7 @@ body {
     z-index: 11;
 }
 
+/* --- Gaya RPM Diagram Batang (Bar Graph) --- */
 .rpm-bar-analog-wrapper {
     width: 90%; 
     height: 10px; 
@@ -434,6 +435,7 @@ body {
 .rpm-bar {
     height: 100%;
     width: 0%; 
+    /* Gradien: Hijau (Low RPM) -> Merah (High RPM) */
     background: linear-gradient(to right, #00FF00, #FFFF00, #FF4500, #FF0000); 
     transition: width 0.1s linear;
 }
