@@ -1,179 +1,133 @@
-let elements = {};
-let totalDistanceTraveled = 0; // KM
-let maxSpeedReached = 0; 
-let simulationInterval = null;
-
-// --- GAUGE PARAMETERS ---
-const GAUGE_MAX_SPEED = 200; 
-const GAUGE_MIN_ANGLE = -135; 
-const GAUGE_MAX_ANGLE = 135; 
-const GAUGE_ANGLE_RANGE = GAUGE_MAX_ANGLE - GAUGE_MIN_ANGLE; 
-
-// --- FUNGSI GAUGE ---
-function mapSpeedToGaugeAngle(speed_kmh) {
-    const clampedSpeed = Math.min(GAUGE_MAX_SPEED, Math.max(0, speed_kmh));
-    const percentage = clampedSpeed / GAUGE_MAX_SPEED;
-    return GAUGE_MIN_ANGLE + (percentage * GAUGE_ANGLE_RANGE);
-}
-
-function setSpeed(speed_ms) {
-    const speed_kmh = Math.round(speed_ms * 3.6); 
-    
-    // 1. Update Jarum (Needle)
-    const angle = mapSpeedToGaugeAngle(speed_kmh);
-    if (elements.speedNeedle) {
-        const needleBaseOffset = 90 - 10; 
-        elements.speedNeedle.style.transform = `translateX(-50%) translateY(calc(90px - ${needleBaseOffset}px)) rotate(${angle}deg)`;
-    }
-    
-    // 2. Update Large Digital Display
-    if (elements.digitalSpeedLarge) {
-        elements.digitalSpeedLarge.innerText = String(speed_kmh).padStart(3, '0');
-    }
-    
-    if (speed_kmh > maxSpeedReached) {
-        maxSpeedReached = speed_kmh;
-    }
-    
-    return speed_kmh;
-}
-
-// Fungsi ini tidak lagi digunakan untuk Total KM karena sudah dihapus di analog view
-function updateTripData(distance_km) {
-    // if (elements.totalDistance) elements.totalDistance.innerText = `${distance_km.toFixed(3)}KM`;
-}
-
-function toggleIndicator(lightElement, isActive) {
-    if (lightElement) {
-        lightElement.classList.toggle('active', isActive);
-    }
-}
-
-
-// --- FUNGSI TOGGLE VIEW ---
-function toggleView(viewId) {
-    const isAnalog = viewId === 'analog-nav';
-    
-    // 1. Toggle View Containers
-    elements.analogView.classList.toggle('hidden-view', !isAnalog);
-    elements.digitalView.classList.toggle('hidden-view', isAnalog);
-
-    // 2. Toggle Nav Button States
-    elements.analogNav.classList.toggle('active', isAnalog);
-    elements.digitalNav.classList.toggle('active', !isAnalog);
-    elements.mapNav.classList.remove('active');
-}
-
-
-// --- KONTROL SIMULASI ---
-function startSimulation() {
-    let currentSpeed_ms = 0;
-    
-    totalDistanceTraveled = 0;
-    maxSpeedReached = 0;
-    
-    setSpeed(0);
-    updateTripData(0); 
-
-    // Reset indikator baru
-    if (elements.engineIndicator) elements.engineIndicator.classList.remove('active');
-    if (elements.leftSignal) elements.leftSignal.classList.remove('active');
-    if (elements.rightSignal) elements.rightSignal.classList.remove('active');
-    // Gear N selalu aktif di simulasi ini
-    if (elements.gearDisplay) elements.gearDisplay.innerText = 'N';
-
-
-    simulationInterval = setInterval(() => {
-        
-        currentSpeed_ms += (Math.random() - 0.5) * 1; 
-        currentSpeed_ms = Math.max(0, Math.min(60, currentSpeed_ms)); 
-        const speed_kmh = setSpeed(currentSpeed_ms);
-        
-        totalDistanceTraveled += (speed_kmh / 3600); 
-        
-        updateTripData(totalDistanceTraveled); // Ini sekarang tidak melakukan apa-apa untuk Total KM
-        
-        // Simulasikan indikator baru
-        toggleIndicator(elements.engineIndicator, speed_kmh > 100 && Math.random() < 0.1); 
-        toggleIndicator(elements.leftSignal, Math.random() < 0.05); // Contoh random turn signal
-        toggleIndicator(elements.rightSignal, Math.random() < 0.05); // Contoh random turn signal
-
-        // Pastikan hanya satu sinyal belok yang aktif (atau keduanya mati)
-        if (elements.leftSignal.classList.contains('active') && elements.rightSignal.classList.contains('active')) {
-             if (Math.random() < 0.5) {
-                 elements.leftSignal.classList.remove('active');
-             } else {
-                 elements.rightSignal.classList.remove('active');
-             }
-         }
-
-
-    }, 1000); 
-}
-
-
-// --- INISIALISASI ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pemetaan Elemen
-    elements = {
-        speedNeedle: document.getElementById('speed-needle'),
-        // Lampu indikator lama (hidden, tapi referensi tetap ada jika diperlukan)
-        engineLight: document.querySelector('.engine-light'),
-        handbrakeLight: document.querySelector('.handbrake-light'),
-        seatbeltLight: document.querySelector('.seatbelt-light'),
-        totalDistance: document.getElementById('total-distance'), // Ini masih ada di HTML tapi disembunyikan
-        
-        // Elemen View
-        analogView: document.getElementById('analog-view'),
-        digitalView: document.getElementById('digital-view'),
-        digitalSpeedLarge: document.getElementById('digital-speed-large'), 
-        
-        // Elemen Navigasi
-        analogNav: document.querySelector('.analog-nav-item'),
-        digitalNav: document.querySelector('.digital-nav-item'),
-        mapNav: document.querySelector('.map-nav-item'),
+    // DOM Elements
+    const speedNeedle = document.getElementById('speed-needle');
+    const gearDisplay = document.getElementById('gear-display');
+    const engineCheckLight = document.getElementById('engine-check-light');
+    const leftSignal = document.getElementById('left-signal');
+    const rightSignal = document.getElementById('right-signal');
+    const analogView = document.getElementById('analog-view');
+    const digitalView = document.getElementById('digital-view');
+    const largeSpeedValue = document.getElementById('large-speed-value');
+    const navAnalog = document.getElementById('nav-analog');
+    const navDigital = document.getElementById('nav-digital');
 
-        // Elemen Indikator Baru
-        engineIndicator: document.querySelector('.engine-indicator'),
-        gearDisplay: document.querySelector('.gear-display'),
-        leftSignal: document.querySelector('.left-signal'),
-        rightSignal: document.querySelector('.right-signal'),
+    // NEW Elements
+    const fuelValueEl = document.getElementById('fuel-value');
+    const engineValueEl = document.getElementById('engine-value');
+    const fuelIndicatorEl = document.querySelector('.fuel-indicator');
+    const engineIndicatorEl = document.querySelector('.engine-health-indicator');
+
+    // Constants
+    const MIN_SPEED = 0;
+    const MAX_SPEED = 200;
+    const START_ANGLE = -135;
+    const END_ANGLE = 135;
+    const TOTAL_ANGLE = END_ANGLE - START_ANGLE;
+
+    // --- Core Functions ---
+
+    // Function to calculate needle angle
+    const setNeedle = (speed) => {
+        const percentage = Math.min(1, Math.max(0, (speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)));
+        const angle = START_ANGLE + percentage * TOTAL_ANGLE;
+        speedNeedle.style.transform = `translateX(-50%) translateY(calc(var(--gauge-radius) - 90px)) rotate(${angle}deg)`;
+        largeSpeedValue.textContent = String(Math.floor(speed)).padStart(3, '0');
     };
-    
-    // 2. Setup Awal
-    elements.analogView.classList.remove('hidden-view');
-    elements.digitalView.classList.add('hidden-view');
 
-    // 3. Mulai Simulasi
-    startSimulation(); 
-    
-    // 4. Tambahkan event listener untuk navigasi
-    elements.analogNav.addEventListener('click', function() {
-        toggleView('analog-nav');
+    // Function to update Fuel and Engine Health colors
+    const updateLevelIndicatorColor = (element, value) => {
+        element.classList.remove('good', 'warning', 'critical');
+        if (value > 80) {
+            element.style.color = 'var(--level-good)'; // Hijau
+        } else if (value > 20) {
+            element.style.color = 'var(--level-warning)'; // Oranye
+        } else {
+            element.style.color = 'var(--level-critical)'; // Merah
+        }
+    };
+
+    // --- Simulation ---
+
+    let currentSpeed = 0;
+    let currentGear = 'N';
+    let isEngineOn = true;
+    let isLeftSignalActive = true;
+    let isRightSignalActive = false;
+    let totalKm = 0.003;
+    let fuelPercentage = 98;
+    let engineHealth = 99;
+
+
+    const simulate = () => {
+        // 1. SIMULATE SPEED (for demonstration)
+        currentSpeed = Math.min(MAX_SPEED, currentSpeed + 1);
+        if (currentSpeed >= MAX_SPEED) currentSpeed = MIN_SPEED;
+        setNeedle(currentSpeed);
+
+        // 2. SIMULATE TOTAL KM
+        totalKm += currentSpeed / 3600; // Rough KM/sec simulation
+        // document.getElementById('total-km-value').textContent = totalKm.toFixed(3) + 'KM';
+
+        // 3. SIMULATE GEAR SHIFT (N -> 1 -> 2 -> 3 -> N)
+        if (currentSpeed > 50 && currentGear === 'N') currentGear = '1';
+        else if (currentSpeed > 80 && currentGear === '1') currentGear = '2';
+        else if (currentSpeed > 120 && currentGear === '2') currentGear = '3';
+        else if (currentSpeed < 10) currentGear = 'N';
+        gearDisplay.textContent = currentGear;
+
+
+        // 4. SIMULATE FUEL & ENGINE HEALTH
+        if (fuelPercentage > 0) fuelPercentage = Math.max(0, fuelPercentage - 0.1); // Fuel down slowly
+        if (engineHealth > 0) engineHealth = Math.max(0, engineHealth - 0.05); // Health down very slowly
+
+        fuelValueEl.textContent = `${Math.floor(fuelPercentage)}%`;
+        engineValueEl.textContent = `${Math.floor(engineHealth)}%`;
+
+        updateLevelIndicatorColor(fuelIndicatorEl, fuelPercentage);
+        updateLevelIndicatorColor(engineIndicatorEl, engineHealth);
+        
+        // 5. SIMULATE TURN SIGNALS (Blinking)
+        isLeftSignalActive = !isLeftSignalActive; 
+        isRightSignalActive = !isRightSignalActive; 
+        leftSignal.classList.toggle('active', isLeftSignalActive);
+        rightSignal.classList.toggle('active', isRightSignalActive);
+
+
+    };
+
+    // Start simulation loop
+    setInterval(simulate, 200); // Update every 200ms
+
+    // Initial setup
+    setNeedle(currentSpeed);
+    engineCheckLight.classList.toggle('active', isEngineOn); // Initial engine light state
+
+    // --- View Toggle Logic ---
+    const toggleView = (viewType) => {
+        navAnalog.classList.remove('active');
+        navDigital.classList.remove('active');
+
+        if (viewType === 'analog') {
+            analogView.classList.remove('hidden-view');
+            digitalView.classList.add('hidden-view');
+            navAnalog.classList.add('active');
+        } else if (viewType === 'digital') {
+            analogView.classList.add('hidden-view');
+            digitalView.classList.remove('hidden-view');
+            navDigital.classList.add('active');
+        }
+    };
+
+    navAnalog.addEventListener('click', () => toggleView('analog'));
+    navDigital.addEventListener('click', () => toggleView('digital'));
+    document.getElementById('toggle-view').addEventListener('click', () => {
+        if (!analogView.classList.contains('hidden-view')) {
+            toggleView('digital');
+        } else {
+            toggleView('analog');
+        }
     });
 
-    elements.digitalNav.addEventListener('click', function() {
-        toggleView('digital-nav');
-    });
-
-    elements.mapNav.addEventListener('click', function() {
-        elements.analogView.classList.add('hidden-view');
-        elements.digitalView.classList.add('hidden-view');
-        elements.analogNav.classList.remove('active');
-        elements.digitalNav.classList.remove('active');
-        this.classList.add('active');
-        console.log(`Mode Map dipilih!`);
-    });
-
-
-    // 5. Event listener untuk tombol Aksi
-    document.querySelectorAll('.action-icon').forEach(icon => {
-        icon.addEventListener('click', function() {
-            if (this.classList.contains('reload-icon')) {
-                console.log("Reload / Reset Trip clicked!");
-                clearInterval(simulationInterval);
-                startSimulation();
-            }
-        });
-    });
+    // Initial view set
+    toggleView('analog');
 });
