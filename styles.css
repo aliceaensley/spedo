@@ -209,12 +209,12 @@ body {
 .label-200 { --angle: 135deg; color: var(--accent-red); }
 
 
-/* --- KONTEN TENGAH (N & ENGINE ICON) --- */
+/* --- KONTEN TENGAH (N & ENGINE ICON) - POSISI ATAS --- */
 .center-display-area {
     position: absolute;
     top: 50%;
     left: 50%;
-    /* Posisi N & Engine di atas pusat */
+    /* Menggeser N & Engine ke atas, di atas pusat jarum */
     transform: translate(-50%, calc(-50% - 20px)); 
     display: flex;
     flex-direction: column; 
@@ -244,7 +244,7 @@ body {
 }
 
 
-/* --- SINYAL BELOK (SEIN) - Posisi di samping jarum --- */
+/* --- SINYAL BELOK (SEIN) - POSISI SAMPING JARUM --- */
 .turn-signals {
     position: absolute;
     top: 50%; 
@@ -257,7 +257,7 @@ body {
     font-size: 18pt;
     color: var(--secondary-text);
     z-index: 12;
-    margin-top: 15px; /* Geser sedikit ke bawah */
+    margin-top: 15px; 
 }
 
 .turn-signal.left-signal {
@@ -277,9 +277,9 @@ body {
 }
 
 
-/* --- LEVEL INDICATORS (FUEL & ENGINE) --- */
+/* --- LEVEL INDICATORS (FUEL & ENGINE) - POSISI LINGKARAN LAMA --- */
 .level-indicators-area {
-    /* Kontainer Penuh di dalam gauge-wrapper untuk penempatan absolut */
+    /* Kontainer Penuh di dalam gauge-wrapper */
     position: absolute;
     top: 50%; 
     left: 50%; 
@@ -305,19 +305,21 @@ body {
 }
 
 .fuel-indicator {
-    /* POSISI AKHIR: Sejajar dengan angka 60 (Lingkaran Kiri) */
+    /* POSISI AKHIR: Lingkaran Kiri (dekat 60) */
     top: 50%; 
     left: 50%; 
-    transform: translate(calc(-100% - 15px), calc(-100% - 5px)); 
+    /* Geser ke kiri dan sedikit ke atas (sesuai lingkaran) */
+    transform: translate(calc(-100% - 15px), calc(-100% - 10px)); 
     
     color: var(--level-good); 
     z-index: 13;
 }
 .engine-health-indicator {
-    /* POSISI AKHIR: Sejajar dengan angka 140 (Lingkaran Kanan) */
+    /* POSISI AKHIR: Lingkaran Kanan (dekat 140) */
     top: 50%; 
     left: 50%; 
-    transform: translate(15px, calc(-100% - 5px)); 
+    /* Geser ke kanan dan sedikit ke atas (sesuai lingkaran) */
+    transform: translate(15px, calc(-100% - 10px)); 
     
     color: var(--level-good); 
     z-index: 13;
