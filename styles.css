@@ -277,7 +277,7 @@ body {
 }
 
 
-/* --- LEVEL INDICATORS (FUEL & ENGINE) - POSISI PALING KEPINGGIR (FINAL) --- */
+/* --- LEVEL INDICATORS (FUEL & ENGINE) --- */
 .level-indicators-area {
     position: absolute;
     top: 50%; 
@@ -353,11 +353,19 @@ body {
 
 .bottom-nav { 
     display: flex;
-    justify-content: space-between; 
+    /* Ubah dari space-between menjadi center untuk menengahkan Analog dan Digital */
+    justify-content: center; 
     align-items: center;
     width: 100%;
     padding: 0 5px; 
+    gap: 20px; /* Tambahkan sedikit jarak antar item */
 }
+
+/* Sembunyikan elemen Map */
+.nav-item[data-view="map"] {
+    display: none !important;
+}
+
 .nav-item {
     display: flex;
     align-items: center;
