@@ -206,13 +206,13 @@ body {
 .label-200 { --angle: 135deg; color: var(--accent-red); }
 
 
-/* --- KONTEN TENGAH BARU --- */
+/* --- KONTEN TENGAH (ENGINE & N) --- */
 .center-display-area {
     position: absolute;
     top: 50%;
     left: 50%;
-    /* PENYESUAIAN PENTING: Geser seluruh area ke atas */
-    transform: translate(-50%, calc(-50% - 20px)); /* Menggeser ke atas sebesar 20px */
+    /* TETAPKAN POSISI N & ENGINE DI ATAS PUSAT */
+    transform: translate(-50%, calc(-50% - 20px)); 
     display: flex;
     flex-direction: column; 
     align-items: center;
@@ -237,31 +237,36 @@ body {
     font-weight: bold;
     color: var(--primary-text);
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    /* margin-top dihilangkan/dikecilkan karena pergeseran sudah dilakukan di center-display-area */
     margin-top: 0px; 
 }
 
+
+/* --- SINYAL BELOK (SEIN) - DIPOSISIKAN ULANG SEPERTI INDIKATOR LAMA --- */
 .turn-signals {
     position: absolute;
-    width: calc(var(--gauge-radius) * 2 - 40px); 
+    /* Posisikan di garis tengah vertikal lingkaran (50%) */
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    width: calc(var(--gauge-radius) * 2 - 40px); /* Lebar turn signal */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* PENYESUAIAN PENTING: Geser ke atas sesuai dengan center-display-area agar tetap di atas jarum*/
-    top: 0; /* Posisikan di atas center-display-area */
-    transform: none; 
     font-size: 18pt;
     color: var(--secondary-text);
-    margin-top: -30px; /* Geser sinyal belok lebih tinggi lagi */
+    z-index: 12;
+    margin-top: 15px; /* GESER KE BAWAH, DI SAMPING JARUM */
 }
+
 .turn-signal.left-signal {
-    /* Margin di sini berfungsi sebagai jarak dari tengah */
-    margin-right: calc(var(--gauge-radius) * 2 - 130px); /* Adjust untuk jarak yang lebih baik */
+    /* Angka 50px di sini untuk menggeser ke kiri */
+    margin-right: calc(var(--gauge-radius) - 55px); 
     opacity: 0.2;
     transition: opacity 0.3s;
 }
 .turn-signal.right-signal {
-    margin-left: calc(var(--gauge-radius) * 2 - 130px);
+    /* Angka 50px di sini untuk menggeser ke kanan */
+    margin-left: calc(var(--gauge-radius) - 55px);
     opacity: 0.2;
     transition: opacity 0.3s;
 }
