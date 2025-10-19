@@ -13,7 +13,6 @@ let timeInterval = null;
 let currentSpeedometerMode = 'digital'; // 'digital' atau 'analog'
 
 // ✅ AUDIO FILES (Pastikan file ada di direktori yang sama: bensin.mp3, sekarat.mp3, kebo.mp3, ahh.mp3)
-// Anda harus menyediakan file-file audio ini di folder yang sama agar berfungsi
 const fuelWarningSound = new Audio('bensin.mp3');	
 const criticalFuelSound = new Audio('sekarat.mp3');	
 const welcomeSound = new Audio('kebo.mp3');	
@@ -151,7 +150,7 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    // KODE PERMINTAAN SEBELUMNYA: RPM 0% saat mesin mati
+    // RPM 0% saat mesin mati
     if (rpm === 0) {
         if (elements.rpmBarMain) {
             elements.rpmBarMain.style.width = '0%';
@@ -459,7 +458,7 @@ function toggleYoutubeUI(state) {
 		youtubeWrapper.classList.remove('hidden');
 		toggleActive(elements.youtubeToggleIcon, true);
 		
-		// ******* LOGIKA PENTING BARU: Tentukan apakah video sudah ada *******
+		// ******* LOGIKA PENTING: Tentukan apakah video sudah ada (src !== 'about:blank') *******
 		const hasVideoLoaded = elements.browserIframe.src !== 'about:blank';
 		
 		if (hasVideoLoaded) {
