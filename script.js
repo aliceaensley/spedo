@@ -18,7 +18,7 @@ const criticalFuelSound = new Audio('sekarat.mp3'); 
 const welcomeSound = new Audio('kebo.mp3'); 
 const seatbeltSound = new Audio('ahh.mp3'); 
 
-// 🔊 PENTING: PENGATURAN VOLUME AUDIO (Disesuaikan)
+// 🔊 PENTING: PENGATURAN VOLUME AUDIO (Final)
 fuelWarningSound.volume = 0.5; // Menengah
 criticalFuelSound.volume = 0.6; // Agak keras untuk kritis
 welcomeSound.volume = 0.3;     // Dibuat lebih pelan (kebo.mp3)
@@ -152,16 +152,12 @@ function setSpeed(speed) {
 function setRPM(rpm) {
     const safeRPM = Math.max(0.16, rpm); 
     
-    const displayValue = `${Math.round(safeRPM * 10000)}`.padStart(4, '0'); 
-    
-    // 1. Pembaruan RPM Digital 
-    if (elements.rpm) elements.rpm.innerText = displayValue;
-    
-    // 2. Pembaruan RPM Bar Analog 
+    // 1. Pembaruan RPM Bar Analog (DIAGRAM BATANG) 
     const barWidth = Math.round(safeRPM * 100); 
     if (elements.rpmBarAnalog) {
         elements.rpmBarAnalog.style.width = `${barWidth}%`;
     }
+    // Hapus update elemen elements.rpm karena elemen angka RPM sudah dihapus dari HTML
 }
 
 function setFuel(fuel) {
@@ -244,7 +240,7 @@ function stopSimulation() {
         simulationInterval = null;
     }
     setSpeed(0);
-    if (elements.rpm) elements.rpm.innerText = '0000'; 
+    // elements.rpm.innerText = '0000'; // Dihapus karena RPM angka fisik dihilangkan
     if (elements.rpmBarAnalog) elements.rpmBarAnalog.style.width = '0%'; 
     isVehicleIdle = false; 
 }
@@ -436,8 +432,6 @@ function toggleYoutubeUI(state) {
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
         
-        // PENTING: Tidak mereset iframe.src di sini agar video tetap berputar
-        
         // HANYA sembunyikan hasil pencarian (overlay)
         toggleYoutubeSearchUI(false); 
     }
@@ -485,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
         analogSpeedView: document.getElementById('analog-speed-view'),
         modeToggleIcon: document.getElementById('mode-toggle-icon'),
         
-        rpm: document.getElementById('rpm'),
+        // rpm: document.getElementById('rpm'), // DIHAPUS karena elemen angka RPM dihilangkan
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
         timeWIB: document.getElementById('time-wib'), 
