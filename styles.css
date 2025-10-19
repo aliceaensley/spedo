@@ -359,51 +359,7 @@ body {
 
 
 /* ========================================================= */
-/* --- BOTTOM BAR & YOUTUBE TOGGLE --- */
-/* ========================================================= */
-.bottom-bar {
-    display: flex;
-    width: 90%;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 5px;
-}
-
-.time-wib {
-    font-size: 1em;
-    color: white;
-}
-
-.youtube-toggle {
-    cursor: pointer;
-    font-size: 1.5em;
-    color: rgba(255, 0, 0, 0.6);
-    transition: color 0.2s, text-shadow 0.2s;
-}
-
-.youtube-toggle.active {
-    color: #FF0000;
-    text-shadow: 0 0 10px #FF0000;
-}
-
-.mode-toggle {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    cursor: pointer;
-    font-size: 1.5em;
-    color: rgba(0, 191, 255, 0.6);
-    transition: color 0.2s, text-shadow 0.2s;
-}
-
-.mode-toggle.active {
-    color: #00BFFF;
-    text-shadow: 0 0 10px #00BFFF;
-}
-
-
-/* ========================================================= */
-/* --- GAYA ANALOG SPEED VIEW (REVISI: Ditambah Skala) --- */
+/* --- GAYA ANALOG SPEED VIEW (KEMBALI KE AWAL) --- */
 /* ========================================================= */
 .analog-panel {
     display: flex;
@@ -448,6 +404,7 @@ body {
     height: 80px; 
     background-color: #FF0000; 
     z-index: 9;
+    /* SUDUT DEFAULT: -135deg (kecepatan 0) */
     transform: translateX(-50%) rotate(-135deg); 
     transition: transform 0.1s linear; 
     box-shadow: 0 0 8px #FF0000;
@@ -462,31 +419,4 @@ body {
     border: 3px solid #FF0000;
     box-shadow: 0 0 5px white;
     z-index: 11;
-}
-
-/* ========================================================= */
-/* --- GAYA SKALA MENGGUNAKAN ELEMEN BARU --- */
-/* ========================================================= */
-
-.gauge-wrapper .scale-mark {
-    position: absolute;
-    width: 2px; /* Garis tipis */
-    height: 10px; /* Panjang garis */
-    background: #00BFFF;
-    transform-origin: 50% 90px; /* Pusat rotasi (setengah diameter gauge) */
-    left: calc(50% - 1px); /* Tengah Horizontal */
-    top: 0px;
-    z-index: 6;
-    box-shadow: 0 0 3px #00BFFF;
-}
-
-.gauge-wrapper .scale-text {
-    position: absolute;
-    color: white;
-    font-size: 10pt;
-    font-weight: bold;
-    text-shadow: 0 0 5px #00BFFF;
-    /* Transformasi rotasi diatur di HTML inline untuk penempatan angka */
-    transform-origin: 50% 90px;
-    z-index: 7;
 }
