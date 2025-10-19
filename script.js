@@ -237,7 +237,6 @@ function stopSimulation() {
         simulationInterval = null;
     }
     setSpeed(0);
-    // Matikan tampilan RPM
     if (elements.rpm) elements.rpm.innerText = '0000'; 
     if (elements.rpmBarAnalog) elements.rpmBarAnalog.style.width = '0%'; 
     isVehicleIdle = false; 
