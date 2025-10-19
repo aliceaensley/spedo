@@ -209,12 +209,12 @@ body {
 .label-200 { --angle: 135deg; color: var(--accent-red); }
 
 
-/* --- KONTEN TENGAH (N & ENGINE ICON) - POSISI ATAS & DIGESER KE ATAS --- */
+/* --- KONTEN TENGAH (N & ENGINE ICON) - DIGESER KE ATAS --- */
 .center-display-area {
     position: absolute;
     top: 50%;
     left: 50%;
-    /* Posisi N & Engine digeser lebih ke atas (dari -20px menjadi -30px) */
+    /* Nilai -30px dipertahankan untuk menggeser N ke atas */
     transform: translate(-50%, calc(-50% - 30px)); 
     display: flex;
     flex-direction: column; 
@@ -277,7 +277,7 @@ body {
 }
 
 
-/* --- LEVEL INDICATORS (FUEL & ENGINE) - POSISI BARU (DI LUAR LINGKARAN) --- */
+/* --- LEVEL INDICATORS (FUEL & ENGINE) - POSISI AKHIR (DI LUAR LINGKARAN, LEBIH RAPI) --- */
 .level-indicators-area {
     /* Kontainer Penuh di dalam gauge-wrapper */
     position: absolute;
@@ -302,25 +302,24 @@ body {
     border-radius: 5px;
     background: rgba(0, 0, 0, 0.4); 
     font-weight: bold;
-    /* Pindah ke luar lingkaran dengan z-index rendah agar tidak mengganggu jarum */
     z-index: 5; 
     
-    /* Perataan tepi bawah dan luar */
+    /* Posisikan di bawah lingkaran utama */
     bottom: 0; 
-    transform: translateY(100%); /* Geser ke luar dari bottom 0 */
+    transform: translateY(100%); 
 }
 
 .fuel-indicator {
-    /* POSISI AKHIR: Di bawah angka 0 */
+    /* Penyesuaian ke kiri (dari -55px menjadi -45px agar kurang kepinggir) */
     left: 50%; 
-    transform: translate(calc(-100% - 55px), 5px); /* Geser ke kiri dan sedikit ke bawah */
+    transform: translate(calc(-100% - 45px), 5px); 
     
     color: var(--level-good); 
 }
 .engine-health-indicator {
-    /* POSISI AKHIR: Di bawah angka 200 */
+    /* Penyesuaian ke kanan (dari 55px menjadi 45px agar kurang kepinggir) */
     right: 50%; 
-    transform: translate(calc(55px), 5px); /* Geser ke kanan dan sedikit ke bawah */
+    transform: translate(calc(45px), 5px); 
     
     color: var(--level-good); 
 }
