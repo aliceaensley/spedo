@@ -24,6 +24,7 @@ body {
     --gauge-text-color: #E0E0E0;
     --gauge-start-angle: -135deg; 
     --gauge-end-angle: 135deg; 
+    --accent-green: #00FF00; /* Warna hijau untuk Engine */
 }
 
 /* --- UTILITY CLASS --- */
@@ -38,7 +39,7 @@ body {
     right: 15px;
     width: 220px; 
     height: 300px; 
-    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%); /* Solid Gradient */
+    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%); 
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); 
     padding: 10px;
@@ -204,32 +205,73 @@ body {
 .label-180 { --angle: 108deg; }
 .label-200 { --angle: 135deg; color: var(--accent-red); }
 
-/* --- INDIKATOR LAMPU & TOTAL KM --- */
-.indicator-lights {
+
+/* --- KONTEN TENGAH BARU --- */
+.center-display-area {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); 
-    z-index: 12; 
-    display: flex !important; 
-    gap: 20px; 
-    width: calc(var(--gauge-radius) * 2 - 80px); 
-    justify-content: space-around;
-    margin-top: -30px; 
+    transform: translate(-50%, -50%); /* Memastikan ini benar-benar di tengah */
+    display: flex;
+    flex-direction: column; /* Engine di atas, Gear N di bawah */
+    align-items: center;
+    justify-content: center;
+    z-index: 12;
+    gap: 5px; /* Spasi antar elemen tengah */
 }
-.indicator-light {
-    font-size: 18pt;
-    opacity: 0.2; 
+
+.engine-indicator {
+    font-size: 20pt; /* Ukuran icon Engine */
+    color: var(--accent-green);
+    text-shadow: 0 0 8px var(--accent-green);
+    opacity: 0.2; /* Default off */
     transition: opacity 0.3s;
 }
-.indicator-light.active {
-    opacity: 1; 
-    text-shadow: 0 0 5px white;
+.engine-indicator.active {
+    opacity: 1; /* Ketika aktif */
 }
-.seatbelt-light { font-size: 14pt; }
+/* Untuk Font Awesome, Anda mungkin perlu mengimpornya di <head> HTML */
+/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> */
 
-.total-km-display {
-    /* MENGHILANGKAN TOTAL KM DARI ANALOG VIEW */
+
+.gear-display {
+    font-size: 24pt; /* Ukuran huruf N */
+    font-weight: bold;
+    color: var(--primary-text);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.turn-signals {
+    position: absolute;
+    width: calc(var(--gauge-radius) * 2 - 40px); /* Lebar turn signal */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Posisikan di garis tengah vertikal */
+    top: 50%; 
+    transform: translateY(-50%); /* Adjust untuk centering */
+    font-size: 18pt;
+    color: var(--secondary-text);
+}
+.turn-signal.left-signal {
+    margin-right: 50px; /* Jarak dari tengah */
+    opacity: 0.2;
+    transition: opacity 0.3s;
+}
+.turn-signal.right-signal {
+    margin-left: 50px; /* Jarak dari tengah */
+    opacity: 0.2;
+    transition: opacity 0.3s;
+}
+.turn-signal.active {
+    opacity: 1;
+    color: var(--accent-blue);
+    text-shadow: 0 0 5px var(--accent-blue);
+}
+
+
+/* --- INDIKATOR LAMPU LAMA & TOTAL KM (Dihilangkan) --- */
+.indicator-lights, .total-km-display {
     display: none !important; 
 }
 
