@@ -1,616 +1,220 @@
-let elements = {};
-let speedMode = 1; 
-let engineState = false; 
-let headlightsState = 1; 
-let seatbeltState = true; 
-let simulationInterval = null; 
-let vitalInterval = null; 
-let isYoutubeOpen = false; 
-let fuelWarningInterval = null; 
-let currentFuelWarningType = null; 
-let isVehicleIdle = false; 
-let timeInterval = null; 
-let currentSpeedometerMode = 'digital'; // 'digital' atau 'analog'
+/**
+ * Konfigurasi Utama Speedometer dan API Key.
+ */
+const API_KEY = "AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw"; // API Key baru yang Anda berikan
+const MAX_SPEED = 200; // Kecepatan maksimum untuk speedometer analog
+const MAX_RPM = 8000;  // RPM maksimum untuk bar analog
 
-// ✅ AUDIO FILES (Pastikan file ada di direktori yang sama)
-const fuelWarningSound = new Audio('bensin.mp3'); 
-const criticalFuelSound = new Audio('sekarat.mp3'); 
-const welcomeSound = new Audio('kebo.mp3'); // <--- TELAH DIGANTI
-const seatbeltSound = new Audio('ahh.mp3'); 
+// --- Elemen DOM ---
+const digitalSpeedView = document.getElementById('digital-speed-view');
+const analogSpeedView = document.getElementById('analog-speed-view');
+const speedValueElement = document.querySelector('.speed-value');
+const rpmBar = document.querySelector('.rpm-bar');
+const speedNeedle = document.querySelector('.speed-needle');
+const gearDisplay = document.getElementById('gear-display');
+const infoTime = document.getElementById('info-time');
+const infoFuel = document.getElementById('info-fuel');
+const infoEngine = document.getElementById('info-engine');
+const welcomeOverlay = document.getElementById('welcome-overlay');
+const speedometerContainer = document.querySelector('.speedometer-container');
+const modeToggleButton = document.getElementById('mode-toggle-button');
+const youtubeToggleButton = document.getElementById('youtube-toggle-button');
 
-// *****************************************************************
-// Kunci API YouTube FINAL
-// *****************************************************************
-const YOUTUBE_API_KEY = 'ANDA_HARUS_MENGGANTI_INI_DENGAN_KUNCI_API_ANDA_YANG_ASLI'; // <-- GANTI DENGAN KUNCI ANDA!
-// *****************************************************************
+// --- Status Awal ---
+let currentMode = 'analog';
+let isYouTubeActive = false;
+let isLoaded = false;
 
-// --- FUNGSI UTILITY & TOGGLE ---
-const toggleActive = (element, state) => {
-    if (Array.isArray(element)) {
-        element.forEach(el => toggleActive(el, state));
-        return;
-    }
-    if (element) {
-        if (state) {
-            element.classList.add('active');
-        } else {
-            element.classList.remove('active');
-        }
-    }
-};
 
-function playLowFuelSoundTwice() {
-    fuelWarningSound.currentTime = 0;
-    fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (1).", e); });
-    
+// =========================================================
+//  1. FUNGSI UTAMA (INIT & DATA UPDATE)
+// =========================================================
+
+/**
+ * Inisialisasi speedometer saat DOM dimuat.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    // Tampilkan overlay selamat datang sebentar
     setTimeout(() => {
-        fuelWarningSound.currentTime = 0;
-        fuelWarningSound.play().catch(e => { console.warn("Gagal memutar bensin.mp3 (2).", e); });
-    }, 500); 
-}
+        welcomeOverlay.classList.add('fade-out');
+        setTimeout(() => {
+            welcomeOverlay.style.display = 'none';
+        }, 1000); // Tunggu 1 detik setelah fade out selesai
 
-function toggleFuelWarning(type) {
-    if (currentFuelWarningType === type) {
-        return; 
-    }
-
-    if (fuelWarningInterval !== null) {
-        clearInterval(fuelWarningInterval);
-        fuelWarningInterval = null;
-    }
-    fuelWarningSound.pause();
-    criticalFuelSound.pause();
-    currentFuelWarningType = null;
+        // Setelah overlay hilang, set mode awal
+        setSpeedometerMode(currentMode);
+        isLoaded = true;
+    }, 2000); // Tampilkan overlay selama 2 detik
     
-    if (type === 'low') {
-        playLowFuelSoundTwice();
-        fuelWarningInterval = setInterval(playLowFuelSoundTwice, 10000);
-        currentFuelWarningType = 'low';
+    // Setup event listeners
+    setupEventListeners();
 
-    } else if (type === 'critical') {
-        criticalFuelSound.currentTime = 0; 
-        criticalFuelSound.play().catch(e => { console.warn("Gagal memutar sekarat.mp3.", e); });
-        fuelWarningInterval = setInterval(() => {
-            criticalFuelSound.currentTime = 0;
-            criticalFuelSound.play().catch(e => { console.warn("Gagal memutar sekarat.mp3 (interval).", e); });
-        }, 5000); 
-        currentFuelWarningType = 'critical';
-    }
+    // Mulai update jam
+    setInterval(updateTime, 1000); 
+    updateTime();
+});
+
+/**
+ * Memperbarui tampilan speedometer dengan data terbaru dari game/backend.
+ * @param {number} speed - Kecepatan kendaraan.
+ * @param {number} rpm - Rotasi per menit mesin (0.0 - 1.0).
+ * @param {number} gear - Gigi transmisi.
+ * @param {number} fuel - Persentase bahan bakar (0 - 100).
+ * @param {number} engineHealth - Persentase kesehatan mesin (0 - 100).
+ * @param {boolean} lights - Status lampu menyala.
+ * @param {boolean} seatbelt - Status sabuk pengaman terpasang.
+ */
+function updateSpeedometer(speed, rpm, gear, fuel, engineHealth, lights, seatbelt) {
+    if (!isLoaded) return;
+
+    // A. Update Mode Digital
+    speedValueElement.textContent = Math.round(speed);
+    
+    // B. Update Mode Analog
+    // Jarum speed (dari -135 derajat hingga 135 derajat)
+    const speedRatio = Math.min(speed / MAX_SPEED, 1);
+    const rotation = -135 + (speedRatio * 270);
+    speedNeedle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+    
+    // RPM Bar (dari 0% hingga 100%)
+    const rpmPercentage = rpm * 100;
+    rpmBar.style.width = `${rpmPercentage}%`;
+
+    // C. Update Info Grid
+    infoFuel.textContent = `${Math.round(fuel)}%`;
+    infoEngine.textContent = `${Math.round(engineHealth)}%`;
+    
+    // D. Update Indicators
+    updateIndicators(gear, lights, seatbelt);
 }
 
-// --- FUNGSI BARU: TOGGLE ANALOG/DIGITAL ---
-function toggleSpeedometerMode() {
-    if (currentSpeedometerMode === 'digital') {
-        currentSpeedometerMode = 'analog';
-        elements.digitalSpeedView.classList.add('hidden');
-        elements.analogSpeedView.classList.remove('hidden');
-        toggleActive(elements.modeToggleIcon, true); // Aktifkan glow Biru/Cyan
+
+// =========================================================
+//  2. KONTROL MODE & TOGGLE
+// =========================================================
+
+/**
+ * Mengubah mode tampilan speedometer (analog atau digital).
+ * @param {string} mode - 'analog' atau 'digital'.
+ */
+function setSpeedometerMode(mode) {
+    currentMode = mode;
+    if (mode === 'analog') {
+        digitalSpeedView.style.display = 'none';
+        analogSpeedView.style.display = 'block';
+        modeToggleButton.innerHTML = '<i class="fas fa-clock"></i> Analog';
+        modeToggleButton.classList.add('active');
     } else {
-        currentSpeedometerMode = 'digital';
-        elements.digitalSpeedView.classList.remove('hidden');
-        elements.analogSpeedView.classList.add('hidden');
-        toggleActive(elements.modeToggleIcon, false); // Matikan glow
+        digitalSpeedView.style.display = 'block';
+        analogSpeedView.style.display = 'none';
+        modeToggleButton.innerHTML = '<i class="fas fa-digital-tachograph"></i> Digital';
+        modeToggleButton.classList.remove('active');
     }
 }
 
-
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
-
-function setSpeedMode(mode) {
-    speedMode = mode;
-    let unit = 'KMH';
-    switch(mode)
-    {
-        case 1: unit = 'MPH'; break;
-        case 2: unit = 'Knots'; break;
-        default: unit = 'KMH';
-    }
-    // Update kedua mode
-    if (elements.speedModeDigital) elements.speedModeDigital.innerText = unit;
-    if (elements.speedModeAnalog) elements.speedModeAnalog.innerText = unit;
-}
-
-function setSpeed(speed) {
-    let speedValue;
-    const absSpeed = Math.abs(speed); 
+/**
+ * Mengaktifkan atau menonaktifkan tampilan YouTube.
+ */
+function toggleYouTubeView() {
+    isYouTubeActive = !isYouTubeActive;
     
-    switch(speedMode)
-    {
-        case 1: speedValue = Math.round(absSpeed * 2.236936); break; 
-        case 2: speedValue = Math.round(absSpeed * 1.943844); break; 
-        default: speedValue = Math.round(absSpeed * 3.6); 
-    }
-    
-    const displayValue = String(speedValue).padStart(3, '0');
-    
-    // 1. Pembaruan Tampilan Digital
-    if (elements.speedDigital) elements.speedDigital.innerText = displayValue; 
-    
-    // 2. Pembaruan Tampilan Analog (angka di tengah)
-    if (elements.speedAnalogText) elements.speedAnalogText.innerText = speedValue;
-    
-    // 3. Pembaruan Jarum Analog 
-    const MAX_ANALOG_UNIT = 200; 
-    const START_ANGLE = -135;
-    const TOTAL_ANGLE = 270; 
-    
-    const safeSpeed = Math.min(MAX_ANALOG_UNIT, speedValue);
-    const percentage = safeSpeed / MAX_ANALOG_UNIT;
-    const angle = START_ANGLE + (percentage * TOTAL_ANGLE);
-    
-    if (elements.analogNeedle) {
-        elements.analogNeedle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+    if (isYouTubeActive) {
+        speedometerContainer.classList.add('youtube-active');
+        youtubeToggleButton.classList.add('active');
+        // Panggil fungsi untuk menampilkan YouTube UI
+        showYouTubeUI(); 
+    } else {
+        speedometerContainer.classList.remove('youtube-active');
+        youtubeToggleButton.classList.remove('active');
+        // Panggil fungsi untuk menyembunyikan YouTube UI
+        hideYouTubeUI(); 
     }
 }
 
-function setRPM(rpm) {
-    const safeRPM = Math.max(0.16, rpm); 
+/**
+ * Menyiapkan semua event listener untuk tombol dan kontrol.
+ */
+function setupEventListeners() {
+    // Tombol Toggle Mode Analog/Digital
+    modeToggleButton.addEventListener('click', () => {
+        const newMode = (currentMode === 'analog') ? 'digital' : 'analog';
+        setSpeedometerMode(newMode);
+    });
     
-    const displayValue = `${Math.round(safeRPM * 10000)}`.padStart(4, '0'); 
-    
-    // 1. Pembaruan RPM Digital 
-    if (elements.rpm) elements.rpm.innerText = displayValue;
-    
-    // 2. Pembaruan RPM Bar Analog 
-    const barWidth = Math.round(safeRPM * 100); 
-    if (elements.rpmBarAnalog) {
-        elements.rpmBarAnalog.style.width = `${barWidth}%`;
-    }
+    // Tombol Toggle YouTube
+    youtubeToggleButton.addEventListener('click', toggleYouTubeView);
 }
 
-function setFuel(fuel) {
-    const displayValue = `${Math.round(fuel * 100)}%`;
-    if (elements.fuel) elements.fuel.innerText = displayValue;
 
-    if (fuel <= 0.04) { 
-        toggleFuelWarning('critical');
-    } else if (fuel <= 0.1) { 
-        toggleFuelWarning('low');
-    } else { 
-        toggleFuelWarning(null); 
-    }
-}
+// =========================================================
+//  3. FUNGSI TAMBAHAN (JAM, INDIKATOR)
+// =========================================================
 
-function setHealth(health) {
-    const displayValue = `${Math.round(health * 100)}%`;
-    if (elements.health) elements.health.innerText = displayValue;
-}
-
-function setHeadlights(state) {
-    headlightsState = state;
-    toggleActive(elements.headlightsIcon, state > 0);
-}
-
-function setEngine(state) {
-    if (engineState !== state) {
-        engineState = state;
-        toggleActive(elements.engineIcon, state);
-        if (state) {
-            startSimulation(); 
-        } else {
-            stopSimulation(); 
-            toggleFuelWarning(null); 
-        }
-    }
-}
-
-function setSeatbelts(state) {
-    if (state === true && seatbeltState === false) {
-        seatbeltSound.currentTime = 0;
-        seatbeltSound.play().catch(e => { 
-            console.warn("Gagal memutar ahh.mp3. Pastikan file ada di direktori yang sama.", e); 
-        });
-    }
-
-    seatbeltState = state;
-    toggleActive(elements.seatbeltIcon, state); 
-}
-
-function updateTimeWIB() {
+/**
+ * Memperbarui tampilan jam.
+ */
+function updateTime() {
     const now = new Date();
+    // Gunakan format 24 jam HH:MM
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    const timeString = `${hours}:${minutes}:${seconds}`; 
-    
-    if (elements.timeWIB) {
-        elements.timeWIB.innerText = timeString;
-    }
+    infoTime.textContent = `${hours}:${minutes}`;
 }
 
-function startClock() {
-    updateTimeWIB();
-    if (timeInterval) {
-        clearInterval(timeInterval);
-    }
-    timeInterval = setInterval(updateTimeWIB, 1000); 
-}
+/**
+ * Memperbarui status ikon indikator.
+ */
+function updateIndicators(gear, lights, seatbelt) {
+    // 1. Gear
+    const gearText = (gear === 0) ? 'N' : (gear === -1) ? 'R' : gear;
+    gearDisplay.textContent = gearText;
 
-// --- FUNGSI KONTROL SIMULASI BERKENDARA ---
-
-const IDLE_RPM_VALUE = 0.16; 
-const IDLE_TOLERANCE_MS = 0.2; 
-
-function stopSimulation() {
-    if (simulationInterval !== null) {
-        clearInterval(simulationInterval);
-        simulationInterval = null;
-    }
-    setSpeed(0);
-    if (elements.rpm) elements.rpm.innerText = '0000'; 
-    if (elements.rpmBarAnalog) elements.rpmBarAnalog.style.width = '0%'; 
-    isVehicleIdle = false; 
-}
-
-function startSimulation() {
-    if (simulationInterval !== null) return;
-
-    let currentSpeed = 0;
-    
-    let accelerationRate = 0.5; 
-    let decelerationRate = 0.1; 
-
-    setSpeed(0);
-    setRPM(IDLE_RPM_VALUE); 
-
-    simulationInterval = setInterval(() => {
-        
-        let targetSpeedChange = 0;
-        let action = Math.random();
-        
-        if (action < 0.5) { 
-            targetSpeedChange = accelerationRate * Math.random(); 
-        } else if (action < 0.8) { 
-            targetSpeedChange = -decelerationRate * Math.random() * 2; 
-        } else {
-            targetSpeedChange = (Math.random() - 0.5) * 0.1;
-        }
-
-        currentSpeed += targetSpeedChange;
-        
-        if (targetSpeedChange < 0.1 && currentSpeed > 0) {
-            currentSpeed *= 0.98; 
-        }
-
-        if (currentSpeed < IDLE_TOLERANCE_MS) { 
-            currentSpeed = 0; 
-        } 
-        
-        currentSpeed = Math.max(0, currentSpeed);
-        
-        isVehicleIdle = (currentSpeed === 0);
-        
-        if (isVehicleIdle) {
-            setSpeed(0);
-            setRPM(IDLE_RPM_VALUE); 
-        } else {
-            setSpeed(currentSpeed); 
-            
-            const absSpeed = Math.abs(currentSpeed);
-            
-            let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.007); 
-            let currentRPM = Math.min(0.99, baseRPM);
-            currentRPM += (Math.random() - 0.5) * 0.02; 
-            
-            setRPM(currentRPM);
-        }
-        
-    }, 100); 
-}
-
-
-// --- FUNGSI KONTROL DATA VITAL ---
-function startVitalUpdates() {
-    if (vitalInterval !== null) return;
-    
-    const initialFuel = 0.49;
-    const initialHealth = 1.0;
-    setHealth(initialHealth); 
-    setFuel(initialFuel); 
-
-    vitalInterval = setInterval(() => {
-        const fuelReductionRate = engineState ? 0.005 : 0.000; 
-        
-        const currentFuelText = elements.fuel.innerText.replace('%', '');
-        const currentFuel = parseFloat(currentFuelText) / 100;
-        
-        setFuel(Math.max(0.00, currentFuel - fuelReductionRate)); 
-        
-    }, 10000); 
-}
-
-
-// --- FUNGSI YOUTUBE API (TETAP SAMA) ---
-async function searchYoutube(query) {
-    if (!query) {
-        elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Harap masukkan kata kunci.</p>';
-        elements.youtubeResults.classList.remove('hidden');
-        return;
-    }
-    
-    const API_URL = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=5&key=${YOUTUBE_API_KEY}`;
-    
-    elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Mencari...</p>';
-    elements.youtubeResults.classList.remove('hidden');
-
-
-    try {
-        const response = await fetch(API_URL);
-        
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('YouTube API Response Error:', errorData);
-            throw new Error(`API Error: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        elements.youtubeResults.innerHTML = ''; 
-
-        if (data.items && data.items.length > 0) {
-            data.items.forEach(item => {
-                const videoId = item.id.videoId;
-                const title = item.snippet.title;
-                const thumbnailUrl = item.snippet.thumbnails.default.url; 
-
-                const resultItem = document.createElement('div');
-                resultItem.classList.add('search-result-item');
-                resultItem.setAttribute('data-videoid', videoId);
-                resultItem.innerHTML = `<img src="${thumbnailUrl}" alt="${title}"><p>${title}</p>`;
-                
-                resultItem.addEventListener('click', () => {
-                    const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-                    showVideo(embedUrl); 
-                    elements.youtubeResults.classList.add('hidden'); 
-                });
-
-                elements.youtubeResults.appendChild(resultItem);
-            });
-            elements.youtubeResults.classList.remove('hidden');
-            elements.youtubeResults.scrollLeft = 0;
-
-        } else {
-            elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px;">Tidak ditemukan video.</p>';
-        }
-
-    } catch (error) {
-        console.error('Error fetching YouTube data:', error);
-        
-        let errorMessage = 'Gagal melakukan pencarian YouTube. (Kemungkinan: API Key salah/kuota habis/batasan CORS).';
-        
-        elements.youtubeResults.innerHTML = `<p style="color:red; padding: 10px; width: 300px;">${errorMessage}</p>`;
-    }
-}
-
-function showVideo(url) {
-    if (elements.browserIframe) {
-        elements.browserIframe.src = url; 
-    }
-}
-
-function toggleYoutubeSearchUI(show) {
-    if (elements.youtubeSearchUI) {
-        elements.youtubeSearchUI.classList.toggle('hidden', !show);
-    }
-    if (elements.youtubeResults) {
-        elements.youtubeResults.classList.toggle('hidden', !show);
-    }
-    if (!show && elements.youtubeResults) {
-        elements.youtubeResults.innerHTML = '';
-    }
-}
-
-
-function toggleYoutubeUI(state) {
-    const speedometer = elements.speedometerUI;
-    const youtubeWrapper = elements.youtubeUIWrapper;
-    
-    if (state === undefined) {
-        state = !isYoutubeOpen;
-    }
-
-    isYoutubeOpen = state;
-    
-    if (state) {
-        speedometer.classList.add('youtube-active');
-        youtubeWrapper.classList.remove('hidden');
-        toggleActive(elements.youtubeToggleIcon, true);
-        
-        toggleYoutubeSearchUI(true);
-        if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
-        
+    // 2. Lampu (di panel bawah)
+    const lightIcon = document.getElementById('light-icon');
+    if (lights) {
+        lightIcon.classList.add('active');
     } else {
-        speedometer.classList.remove('youtube-active');
-        youtubeWrapper.classList.add('hidden');
-        toggleActive(elements.youtubeToggleIcon, false);
-        
-        if (elements.browserIframe) elements.browserIframe.src = 'about:blank';
+        lightIcon.classList.remove('active');
+    }
+
+    // 3. Sabuk Pengaman (di panel bawah)
+    const seatbeltIcon = document.getElementById('seatbelt-icon');
+    if (seatbelt) {
+        seatbeltIcon.classList.add('active');
+    } else {
+        seatbeltIcon.classList.remove('active');
     }
 }
 
-function hideWelcomeOverlay(durationMs) {
-    if (!elements.welcomeOverlay) return;
 
-    const totalDisplayTime = durationMs; 
-    const fadeOutDuration = 1000;
+// =========================================================
+//  4. FUNGSI YOUTUBE (TEMPAT API KEY DIGUNAKAN)
+// =========================================================
 
-    const fadeOutStartDelay = Math.max(0, totalDisplayTime - fadeOutDuration);
+function showYouTubeUI() {
+    // Logika untuk menampilkan input pencarian YouTube, tombol, dan iframe/container video.
+    // Biasanya ini melibatkan:
+    // 1. Membuat atau menampilkan elemen HTML .youtube-integrated-container
+    // 2. Menggunakan API_KEY untuk membuat panggilan ke YouTube Data API (Search)
+    console.log("YouTube View Activated. API Key ready for search.");
+    // Contoh: document.getElementById('youtube-container').style.display = 'flex';
+}
 
-    setTimeout(() => {
-        elements.welcomeOverlay.classList.add('fade-out');
-        
-        setTimeout(() => {
-            elements.welcomeOverlay.style.display = 'none';
-            document.body.style.overflow = ''; 
-        }, fadeOutDuration);
-        
-    }, fadeOutStartDelay);
+function hideYouTubeUI() {
+    // Logika untuk menyembunyikan YouTube UI.
+    console.log("YouTube View Deactivated.");
+    // Contoh: document.getElementById('youtube-container').style.display = 'none';
 }
 
 
-// --- INISIALISASI DAN EVENT LISTENERS ---
+// =========================================================
+//  5. FUNGSI EXPOSURE GLOBAL (Untuk Komunikasi Backend/Game)
+// =========================================================
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pemetaan Elemen
-    elements = {
-        speedometerUI: document.getElementById('speedometer-ui'), 
-        youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), 
-        
-        speedDigital: document.getElementById('speed-digital'),
-        speedModeDigital: document.getElementById('speed-mode-digital'),
-        
-        speedAnalogText: document.getElementById('speed-analog-text'),
-        speedModeAnalog: document.getElementById('speed-mode-analog'),
-        analogNeedle: document.getElementById('analog-needle'),
-        rpmBarAnalog: document.getElementById('rpm-bar-analog'),
-        
-        // Mode View Toggler
-        digitalSpeedView: document.getElementById('digital-speed-view'),
-        analogSpeedView: document.getElementById('analog-speed-view'),
-        modeToggleIcon: document.getElementById('mode-toggle-icon'),
-        
-        rpm: document.getElementById('rpm'),
-        fuel: document.getElementById('fuel'),
-        health: document.getElementById('health'),
-        timeWIB: document.getElementById('time-wib'), 
-        
-        headlightsIcon: document.getElementById('headlights-icon'),
-        engineIcon: document.getElementById('engine-icon'), 
-        seatbeltIcon: document.getElementById('seatbelt-icon'),
-        youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
-        
-        youtubeSearchUI: document.getElementById('youtube-search-ui'),
-        youtubeSearchInput: document.getElementById('youtube-search-input'),
-        youtubeSearchButton: document.getElementById('youtube-search-button'),
-        youtubeResults: document.getElementById('youtube-results'),
-        browserIframe: document.getElementById('browser-iframe'), 
-        youtubeHideButton: document.getElementById('youtube-hide-button'),
-        
-        welcomeOverlay: document.getElementById('welcome-overlay'),
-    };
-    
-    // 2. Tampilkan dan sembunyikan Overlay Selamat Datang
-    if (elements.welcomeOverlay) {
-        
-        // Durasi tampilan welcome overlay (2.5 detik)
-        const OVERLAY_DURATION_MS = 2500; 
-        // Durasi pemutaran audio (2 detik)
-        const AUDIO_PLAY_DURATION_MS = 2000; 
+// Di lingkungan FiveM atau sejenisnya, fungsi ini mungkin dipanggil dari backend.
+// Pastikan fungsi ini dapat diakses secara global (misalnya: window.updateSpeedometer).
 
-        const playAndHide = () => {
-            welcomeSound.currentTime = 0;
-            welcomeSound.play().catch(e => {
-                console.warn("Gagal memutar kebo.mp3. Fallback durasi.", e);
-            });
-            
-            // ** MODIFIKASI: Hentikan audio setelah 2 detik **
-            setTimeout(() => {
-                welcomeSound.pause();
-                welcomeSound.currentTime = 0; 
-            }, AUDIO_PLAY_DURATION_MS); 
-            
-            // Panggil fungsi untuk menyembunyikan overlay setelah durasi tetap (2.5 detik)
-            hideWelcomeOverlay(OVERLAY_DURATION_MS); 
-        };
-        
-        // Listener saat file audio selesai dimuat
-        welcomeSound.onloadedmetadata = playAndHide;
-        
-        // Listener jika terjadi error saat memuat file
-        welcomeSound.onerror = () => {
-             console.error("Gagal memuat file kebo.mp3. Menggunakan durasi default.");
-             hideWelcomeOverlay(OVERLAY_DURATION_MS); 
-        };
-        
-        // Fallback jika file sudah siap sebelum event DOMContentLoaded selesai
-        if(welcomeSound.readyState >= 2) {
-             playAndHide();
-        }
-    }
+window.updateSpeedometer = updateSpeedometer;
 
-
-    // 3. SETUP CLOCK WIB
-    startClock(); 
-    
-    // 4. SETUP INTERAKSI KLIK YOUTUBE TOGGLE
-    if (elements.youtubeToggleIcon) {
-        elements.youtubeToggleIcon.addEventListener('click', () => {
-            toggleYoutubeUI(); 
-        });
-    }
-    
-    // 5. Listener untuk Tombol HIDE/CLOSE
-    if (elements.youtubeHideButton) {
-        elements.youtubeHideButton.addEventListener('click', () => {
-            toggleYoutubeUI(false); 
-        });
-    }
-    
-    // 6. LOGIC INTERAKSI PENCARIAN YOUTUBE
-    const handleSearch = () => {
-        const query = elements.youtubeSearchInput.value;
-        if (query.trim() !== '') {
-            searchYoutube(query.trim());
-        }
-    };
-    
-    if (elements.youtubeSearchButton) {
-        elements.youtubeSearchButton.addEventListener('click', handleSearch);
-    }
-    
-    if (elements.youtubeSearchInput) {
-        elements.youtubeSearchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                handleSearch();
-            }
-        });
-    }
-    
-    // LOGIC ESCAPE UNTUK MENUTUP YOUTUBE
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && isYoutubeOpen) {
-            toggleYoutubeUI(false);
-        }
-    });
-
-
-    // 7. INISIASI DATA AWAL & LOGIC KLIK INDIKATOR
-    setSpeedMode(1); 
-    setHealth(1.0); 
-    setFuel(0.49); 
-    
-    setEngine(false); 
-    setHeadlights(1);
-    setSeatbelts(true);
-    
-    startVitalUpdates(); 
-
-    // 8. EVENT KLIK FUNGSI LAIN
-    if (elements.engineIcon) {
-        elements.engineIcon.addEventListener('click', () => {
-            setEngine(!engineState); 
-        });
-    }
-    
-    if (elements.headlightsIcon) {
-        elements.headlightsIcon.addEventListener('click', () => {
-            const newState = (headlightsState === 1) ? 0 : 1; 
-            setHeadlights(newState);
-        });
-    }
-
-    if (elements.seatbeltIcon) {
-        elements.seatbeltIcon.addEventListener('click', () => {
-            setSeatbelts(!seatbeltState);
-        });
-    }
-
-    // ** EVENT KLIK BARU: TOGGLE MODE **
-    if (elements.modeToggleIcon) {
-        elements.modeToggleIcon.addEventListener('click', toggleSpeedometerMode);
-    }
-    
-    // Nyalakan mesin setelah 2 detik untuk memulai startSimulation
-    setTimeout(() => {
-        setEngine(true);
-    }, 2000);
-});
+// Catatan: Jika Anda menggunakan framework seperti Vue/React/jQuery, 
+// struktur kode akan berbeda dan menggunakan API key di dalam layanan framework tersebut.
