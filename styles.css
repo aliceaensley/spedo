@@ -313,9 +313,9 @@ body {
     color: var(--level-good); 
 }
 .engine-health-indicator {
-    /* ENGINE: Digeser ke 110px horizontal (POSISI EKSTREM KANAN FINAL) dan 10px vertikal (ke bawah) */
+    /* ENGINE: Digeser ke 105px horizontal (POSISI FINAL KANAN) dan 10px vertikal (ke bawah) */
     right: 50%; 
-    transform: translate(calc(110px), 10px); 
+    transform: translate(calc(105px), 10px); 
     
     color: var(--level-good); 
 }
