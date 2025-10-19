@@ -95,7 +95,7 @@ body {
     align-items: center;
 }
 
-/* --- DIGITAL VIEW STYLE --- */
+/* --- DIGITAL VIEW STYLE (Tidak Berubah) --- */
 #digital-view {
     flex-direction: column;
     z-index: 50; 
@@ -132,7 +132,7 @@ body {
     z-index: 10;
 }
 
-/* --- JARUM SPEEDOMETER --- */
+/* --- JARUM SPEEDOMETER (Tidak Berubah) --- */
 .speed-needle {
     position: absolute;
     bottom: 50%; 
@@ -161,7 +161,7 @@ body {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* --- SKALA ANGKA GAUGE (Melingkar) --- */
+/* --- SKALA ANGKA GAUGE (Tidak Berubah) --- */
 .gauge-scale-numbers {
     position: absolute;
     top: 50%; 
@@ -195,7 +195,7 @@ body {
 }
 .label-200 { color: var(--accent-red); }
 
-/* Aturan Sudut */
+/* Aturan Sudut (Tidak Berubah) */
 .label-0   { --angle: -135deg; }
 .label-20  { --angle: -108deg; } 
 .label-40  { --angle: -81deg; }  
@@ -209,13 +209,13 @@ body {
 .label-200 { --angle: 135deg; color: var(--accent-red); }
 
 
-/* --- KONTEN TENGAH (N & ENGINE ICON) - POSISI ATAS --- */
+/* --- KONTEN TENGAH (N & ENGINE ICON) - POSISI ATAS & DIGESER KE ATAS --- */
 .center-display-area {
     position: absolute;
     top: 50%;
     left: 50%;
-    /* Menggeser N & Engine ke atas, di atas pusat jarum */
-    transform: translate(-50%, calc(-50% - 20px)); 
+    /* Posisi N & Engine digeser lebih ke atas (dari -20px menjadi -30px) */
+    transform: translate(-50%, calc(-50% - 30px)); 
     display: flex;
     flex-direction: column; 
     align-items: center;
@@ -244,7 +244,7 @@ body {
 }
 
 
-/* --- SINYAL BELOK (SEIN) - POSISI SAMPING JARUM --- */
+/* --- SINYAL BELOK (SEIN) - POSISI SAMPING JARUM (Tidak Berubah) --- */
 .turn-signals {
     position: absolute;
     top: 50%; 
@@ -277,7 +277,7 @@ body {
 }
 
 
-/* --- LEVEL INDICATORS (FUEL & ENGINE) - POSISI LINGKARAN LAMA --- */
+/* --- LEVEL INDICATORS (FUEL & ENGINE) - POSISI BARU (DI LUAR LINGKARAN) --- */
 .level-indicators-area {
     /* Kontainer Penuh di dalam gauge-wrapper */
     position: absolute;
@@ -302,27 +302,27 @@ body {
     border-radius: 5px;
     background: rgba(0, 0, 0, 0.4); 
     font-weight: bold;
+    /* Pindah ke luar lingkaran dengan z-index rendah agar tidak mengganggu jarum */
+    z-index: 5; 
+    
+    /* Perataan tepi bawah dan luar */
+    bottom: 0; 
+    transform: translateY(100%); /* Geser ke luar dari bottom 0 */
 }
 
 .fuel-indicator {
-    /* POSISI AKHIR: Lingkaran Kiri (dekat 60) */
-    top: 50%; 
+    /* POSISI AKHIR: Di bawah angka 0 */
     left: 50%; 
-    /* Geser ke kiri dan sedikit ke atas (sesuai lingkaran) */
-    transform: translate(calc(-100% - 15px), calc(-100% - 10px)); 
+    transform: translate(calc(-100% - 55px), 5px); /* Geser ke kiri dan sedikit ke bawah */
     
     color: var(--level-good); 
-    z-index: 13;
 }
 .engine-health-indicator {
-    /* POSISI AKHIR: Lingkaran Kanan (dekat 140) */
-    top: 50%; 
-    left: 50%; 
-    /* Geser ke kanan dan sedikit ke atas (sesuai lingkaran) */
-    transform: translate(15px, calc(-100% - 10px)); 
+    /* POSISI AKHIR: Di bawah angka 200 */
+    right: 50%; 
+    transform: translate(calc(55px), 5px); /* Geser ke kanan dan sedikit ke bawah */
     
     color: var(--level-good); 
-    z-index: 13;
 }
 
 .fuel-indicator .label, .engine-health-indicator .label {
@@ -340,7 +340,7 @@ body {
     display: none !important; 
 }
 
-/* --- BOTTOM CONTROLS --- */
+/* --- BOTTOM CONTROLS (Tidak Berubah) --- */
 .bottom-controls {
     width: 100%;
     display: flex;
@@ -378,7 +378,7 @@ body {
     color: white;
 }
 
-/* --- ACTION BUTTONS BAR --- */
+/* --- ACTION BUTTONS BAR (Tidak Berubah) --- */
 .action-buttons-bar {
     display: flex;
     justify-content: space-around; 
