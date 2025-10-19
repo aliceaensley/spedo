@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------
-    // --- 1. DOM Elements ---
+    // --- 1. DOM Elements & Constants ---
     // -------------------------------------------------------------------
     const speedNeedle = document.querySelector('.speed-needle');
     const gearDisplay = document.querySelector('.gear-display');
@@ -20,92 +20,78 @@ document.addEventListener('DOMContentLoaded', () => {
     const navAnalog = document.querySelector('.nav-item[data-view="analog"]');
     const navDigital = document.querySelector('.nav-item[data-view="digital"]');
     
-    // Safety check
-    if (!speedNeedle || !analogView || !digitalView || !navAnalog || !navDigital) {
-        console.error("Error: Beberapa elemen DOM utama tidak ditemukan. Pastikan HTML Anda sudah benar.");
-        return;
-    }
-
-    // -------------------------------------------------------------------
-    // --- 2. Constants & Core Functions ---
-    // -------------------------------------------------------------------
+    // Konstanta Sudut Jarum
     const MIN_SPEED = 0;
     const MAX_SPEED = 200;
     const START_ANGLE = -135;
     const END_ANGLE = 135;
     const TOTAL_ANGLE = END_ANGLE - START_ANGLE;
 
-    // Fungsi untuk memperbarui warna level indikator
-    const updateLevelIndicatorColor = (element, value) => {
-        if (!element) return;
-        
-        if (value > 80) {
-            element.style.color = 'var(--level-good)'; // Hijau
-        } else if (value > 20) {
-            element.style.color = 'var(--level-warning)'; // Oranye
-        } else {
-            element.style.color = 'var(--level-critical)'; // Merah
-        }
-    };
+    // Safety check
+    if (!speedNeedle || !analogView || !digitalView || !navAnalog || !navDigital) {
+        console.error("Error: Beberapa elemen DOM utama tidak ditemukan.");
+        return;
+    }
 
     // -------------------------------------------------------------------
-    // --- 3. FUNGSI UTAMA (API Fungsionalitas Asli) ---
-    // Ini adalah fungsi yang siap Anda panggil dari data nyata.
+    // --- 2. Fungsi Pembantu ---
     // -------------------------------------------------------------------
 
     /**
-     * Memperbarui jarum speedometer dan tampilan speed digital.
-     * @param {number} speed - Kecepatan saat ini (0-200).
+     * Memperbarui warna level indikator (Fuel/Engine).
      */
-    window.updateSpeed = (speed) => {
-        const safeSpeed = Math.min(MAX_SPEED, Math.max(MIN_SPEED, speed));
-        const percentage = (safeSpeed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED);
-        const angle = START_ANGLE + percentage * TOTAL_ANGLE;
-        
-        if (speedNeedle) {
-             speedNeedle.style.transform = `translateX(-50%) translateY(calc(var(--gauge-radius) - 90px)) rotate(${angle}deg)`;
-        }
-        
-        if (largeSpeedValue) {
-            largeSpeedValue.textContent = String(Math.floor(safeSpeed)).padStart(3, '0');
+    const updateLevelIndicatorColor = (element, value) => {
+        if (!element) return;
+        if (value > 80) {
+            element.style.color = 'var(--level-good)'; 
+        } else if (value > 20) {
+            element.style.color = 'var(--level-warning)'; 
+        } else {
+            element.style.color = 'var(--level-critical)'; 
         }
     };
     
     /**
-     * Memperbarui tampilan gear.
-     * @param {string} gear - Nilai gear (contoh: "N", "1", "2", "R").
+     * Menggerakkan jarum speedometer dan memperbarui nilai digital.
      */
-    window.updateGear = (gear) => {
-        if (gearDisplay) gearDisplay.textContent = String(gear).toUpperCase();
+    const updateSpeed = (speed) => {
+        const safeSpeed = Math.min(MAX_SPEED, Math.max(MIN_SPEED, speed));
+        const percentage = (safeSpeed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED);
+        const angle = START_ANGLE + percentage * TOTAL_ANGLE;
+        
+        speedNeedle.style.transform = `translateX(-50%) translateY(calc(var(--gauge-radius) - 90px)) rotate(${angle}deg)`;
+        largeSpeedValue.textContent = String(Math.floor(safeSpeed)).padStart(3, '0');
     };
-
+    
     /**
-     * Memperbarui level Fuel dan Engine Health serta warnanya.
-     * @param {number} fuel - Persentase fuel (0-100).
-     * @param {number} engine - Persentase Engine Health (0-100).
+     * Memperbarui tampilan gear.
      */
-    window.updateLevels = (fuel, engine) => {
-        if (fuelValueEl) fuelValueEl.textContent = `${Math.floor(fuel)}%`;
-        if (engineValueEl) engineValueEl.textContent = `${Math.floor(engine)}%`;
-
-        updateLevelIndicatorColor(fuelIndicatorEl, fuel);
-        updateLevelIndicatorColor(engineIndicatorEl, engine);
+    const updateGear = (gear) => {
+        gearDisplay.textContent = String(gear).toUpperCase();
     };
-
+    
     /**
      * Mengaktifkan atau menonaktifkan lampu sinyal belok.
-     * @param {string} side - 'left' atau 'right'.
-     * @param {boolean} isActive - True untuk menyala, False untuk mati.
      */
-    window.toggleSignal = (side, isActive) => {
+    const toggleSignal = (side, isActive) => {
         const signalEl = side === 'left' ? leftSignal : rightSignal;
         if (signalEl) {
             signalEl.classList.toggle('active', isActive);
         }
     };
+    
+    /**
+     * Memperbarui level Fuel dan Engine Health serta warnanya.
+     */
+    const updateLevels = (fuel, engine) => {
+        if (fuelValueEl) fuelValueEl.textContent = `${Math.floor(fuel)}%`;
+        if (engineValueEl) engineValueEl.textContent = `${Math.floor(engine)}%`;
+        updateLevelIndicatorColor(fuelIndicatorEl, fuel);
+        updateLevelIndicatorColor(engineIndicatorEl, engine);
+    };
 
     // -------------------------------------------------------------------
-    // --- 4. View Toggle Logic (Fitur Klik) ---
+    // --- 3. View Toggle Logic (Analog/Digital) ---
     // -------------------------------------------------------------------
     const toggleView = (viewType) => {
         navAnalog.classList.remove('active');
@@ -122,41 +108,72 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Tambahkan event listener untuk tombol navigasi
     navAnalog.addEventListener('click', () => toggleView('analog'));
     navDigital.addEventListener('click', () => toggleView('digital'));
     
-    // Set tampilan awal
-    toggleView('analog');
+    // -------------------------------------------------------------------
+    // --- 4. EVENT LISTENER UNTUK DATA REAL-TIME (Sesuai Referensi) ---
+    // -------------------------------------------------------------------
+    window.addEventListener('message', (event) => {
+        const data = event.data;
+
+        // Cek apakah data yang diterima memiliki properti 'type' (Contoh: "updateStatus")
+        if (data.type === 'updateStatus') {
+            
+            // Perbarui Speed
+            if (data.speed !== undefined) {
+                updateSpeed(data.speed);
+            }
+
+            // Perbarui Gear
+            if (data.gear !== undefined) {
+                updateGear(data.gear);
+            }
+            
+            // Perbarui Level Indikator
+            if (data.fuel !== undefined && data.engineHealth !== undefined) {
+                updateLevels(data.fuel, data.engineHealth);
+            }
+
+            // Perbarui Sinyal Belok (Jika data.signalLeft dan data.signalRight ada)
+            if (data.signalLeft !== undefined) {
+                // Catatan: Anda perlu mengirim TRUE/FALSE dari sumber eksternal
+                toggleSignal('left', data.signalLeft);
+            }
+            if (data.signalRight !== undefined) {
+                toggleSignal('right', data.signalRight);
+            }
+            
+            // Perbarui Engine Light
+            if (data.engineOn !== undefined) {
+                engineCheckLight.classList.toggle('active', data.engineOn);
+            }
+        }
+    });
 
     // -------------------------------------------------------------------
     // --- 5. INITIAL STATE SETUP (Status Awal) ---
-    // Atur semua indikator ke posisi mati/standar saat UI dimuat.
     // -------------------------------------------------------------------
-    window.updateSpeed(0);
-    window.updateGear('N');
-    window.updateLevels(100, 100); // Mulai dari 100%
-    
-    // Nonaktifkan Sein
-    window.toggleSignal('left', false);
-    window.toggleSignal('right', false);
-    
-    // Nonaktifkan Engine Light
+    toggleView('analog');
+    updateSpeed(0);
+    updateGear('N');
+    updateLevels(100, 100); 
+    toggleSignal('left', false);
+    toggleSignal('right', false);
     if (engineCheckLight) engineCheckLight.classList.remove('active'); 
 });
 
 /*
-    CONTOH CARA MENGGUNAKAN FUNGSI BARU (jika Anda ingin menguji di konsol):
+    CONTOH CARA MENGIRIM DATA DARI SUMBER EKSTERNAL (di luar iFrame/UI ini):
     
-    // Kecepatan 120 KMH
-    updateSpeed(120); 
-
-    // Gear ke 3
-    updateGear('3');
-
-    // Fuel 15%, Engine 85%
-    updateLevels(15, 85);
-
-    // Aktifkan Sein Kiri (harus Anda panggil berulang untuk membuat kedip)
-    toggleSignal('left', true); 
+    window.postMessage({
+        type: 'updateStatus',
+        speed: 120.5,
+        gear: '3',
+        fuel: 85,
+        engineHealth: 99,
+        signalLeft: true,
+        signalRight: false,
+        engineOn: true
+    }, '*');
 */
