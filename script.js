@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const analogView = document.getElementById('analog-view');
     const digitalView = document.getElementById('digital-view');
+    const uiContainer = document.querySelector('.speedometer-ui'); 
     
     const largeSpeedValue = document.querySelector('.large-speed-value');
 
@@ -21,14 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const navAnalog = document.querySelector('.nav-item[data-view="analog"]');
     const navDigital = document.querySelector('.nav-item[data-view="digital"]');
     
-    // Konstanta Sudut Jarum
     const MIN_SPEED = 0;
     const MAX_SPEED = 200;
     const START_ANGLE = -135;
     const END_ANGLE = 135;
     const TOTAL_ANGLE = END_ANGLE - START_ANGLE;
 
-    if (!speedNeedle || !analogView || !digitalView || !navAnalog || !navDigital) {
+    if (!speedNeedle || !analogView || !digitalView || !navAnalog || !navDigital || !uiContainer) {
         console.error("Error: Beberapa elemen DOM utama tidak ditemukan.");
         return;
     }
@@ -102,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('message', (event) => {
         const data = event.data;
 
-        // Memproses data berdasarkan 'type' seperti template GitHub
         if (data.type === 'updateStatus') {
             
             if (data.speed !== undefined) {
@@ -128,19 +127,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 engineCheckLight.classList.toggle('active', data.engineOn);
             }
             
-            // Fungsionalitas show/hide UI
+            // Fungsionalitas show/hide UI dari data eksternal
             if (data.show !== undefined) {
-                 const uiContainer = document.querySelector('.speedometer-ui');
-                 if (uiContainer) {
-                     uiContainer.style.display = data.show ? 'flex' : 'none';
-                 }
+                 uiContainer.style.display = data.show ? 'flex' : 'none';
             }
         }
     });
 
     // -------------------------------------------------------------------
-    // --- 5. INITIAL STATE SETUP (Status Awal) ---
+    // --- 5. INITIAL STATE SETUP (Status Awal & Flash) ---
     // -------------------------------------------------------------------
+    
+    // 5a. Atur status awal (0 KMH, N, 100%)
     toggleView('analog');
     updateSpeed(0);
     updateGear('N');
@@ -148,10 +146,16 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleSignal('left', false);
     toggleSignal('right', false);
     if (engineCheckLight) engineCheckLight.classList.remove('active'); 
+
+    // 5b. Tampilkan UI secara default (memastikan terlihat)
+    uiContainer.style.display = 'flex'; 
     
-    // Sembunyikan UI secara default, siap diaktifkan oleh 'data.show = true'
-    const uiContainer = document.querySelector('.speedometer-ui');
-    if (uiContainer) {
+    // 5c. HAPUS FUNGSI TIMEOUT (KODE ASLI YANG MENYEBABKAN UI HILANG)
+    /*
+    setTimeout(() => {
         uiContainer.style.display = 'none';
-    }
+    }, 500); 
+    */
+    
+    // UI kini akan tetap terlihat ('flex') sampai ada perintah 'data.show = false' dari luar.
 });
