@@ -28,7 +28,7 @@ body {
     --level-good: #00FF00; 
     --level-warning: #FFA500; 
     --level-critical: #FF0000; 
-    --nav-height: 45px; /* Ketinggian kotak navigasi bawah */
+    --nav-height: 45px; /* Ketinggian Kotak Bawah Navigasi */
 }
 
 /* --- UTILITY CLASS --- */
@@ -36,7 +36,9 @@ body {
     display: none !important;
 }
 
-/* --- MAIN WIDGET CONTAINER (Solid Background) --- */
+/* ------------------------------------------------ */
+/* --- WADAH UTAMA (PEMBAGI DUA KOTAK) --- */
+/* ------------------------------------------------ */
 .speedometer-ui {
     position: fixed;
     bottom: 15px;
@@ -56,7 +58,9 @@ body {
     overflow: hidden; 
 }
 
-/* KOTAK ATAS: SPEEDOMETER & INDIKATOR */
+/* ------------------------------------------------ */
+/* --- KOTAK ATAS: SPEEDOMETER & INDIKATOR (main-content) --- */
+/* ------------------------------------------------ */
 .main-content {
     /* Mengisi sisa ruang setelah dikurangi tinggi kotak bawah */
     height: calc(100% - var(--nav-height)); 
@@ -79,24 +83,203 @@ body {
     flex-grow: 1; 
 }
 
-/* ... (Bagian CSS Gauge, Indikator, Jarum, dll. tetap sama) ... */
+/* --- GAUGE DISPLAY AREA & VIEWS --- */
 .gauge-display-area {
     width: 100%;
     height: 180px; 
     position: relative;
-    /* ... */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; 
+    flex-shrink: 0; 
+    padding-top: 5px; 
+    background-color: transparent; 
 }
-/* ... */
+
+/* Kontainer untuk Analog View dan Digital View */
+#analog-view, #digital-view {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- DIGITAL VIEW STYLE --- */
+#digital-view {
+    flex-direction: column;
+    z-index: 50; 
+    padding-bottom: 30px; 
+}
+
+.large-speed-value {
+    font-size: 60pt;
+    font-weight: 900;
+    color: var(--accent-blue);
+    text-shadow: 0 0 20px var(--accent-blue);
+    line-height: 1;
+}
+
+.speed-unit {
+    font-size: 14pt;
+    color: var(--secondary-text);
+    margin-top: -5px;
+}
+
+/* --- GAUGE WRAPPER (ANALOG) --- */
+.gauge-wrapper {
+    width: calc(var(--gauge-radius) * 2); 
+    height: calc(var(--gauge-radius) * 2); 
+    position: relative;
+    background-color: var(--dark-bg); 
+    border-radius: 50%; 
+    box-shadow: 
+        0 0 0 5px var(--accent-blue), 
+        0 0 20px rgba(0, 191, 255, 0.6); 
+    z-index: 10;
+}
+
+/* --- JARUM SPEEDOMETER --- */
+.speed-needle {
+    position: absolute;
+    bottom: 50%; 
+    left: 50%;
+    transform-origin: 50% 100%; 
+    width: 3px;
+    height: calc(var(--gauge-radius) - 10px); 
+    background-color: var(--accent-red); 
+    z-index: 15;
+    transform: translateX(-50%) translateY(calc(var(--gauge-radius) - 90px)) rotate(var(--gauge-start-angle)); 
+    box-shadow: 0 0 10px var(--accent-red);
+    transition: transform 0.3s ease-out;
+}
+.speed-needle::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 18px;
+    background-color: var(--accent-red);
+    border-radius: 50%;
+    border: 3px solid white;
+    z-index: 20; 
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* --- SKALA ANGKA GAUGE --- */
+.gauge-scale-numbers {
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    width: 0;
+    height: 0;
+    z-index: 12;
+    display: block; 
+    padding: 0;
+}
+
+.speed-label {
+    position: absolute;
+    font-size: 10pt;
+    color: var(--gauge-text-color);
+    width: 30px; 
+    text-align: center;
+    font-weight: bold; 
+    --angle: 0deg;
+    --radius: calc(var(--gauge-radius) - 10px); 
+    transform-origin: 50% 50%;
+    transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle)));
+    margin-left: -15px; 
+    margin-top: -10px; 
+    line-height: initial;
+    padding-left: 0;
+}
+.label-0   { --angle: -135deg; }
+.label-20  { --angle: -108deg; } 
+.label-40  { --angle: -81deg; }  
+.label-60  { --angle: -54deg; }  
+.label-80  { --angle: -27deg; }  
+.label-100 { --angle: 0deg; }    
+.label-120 { --angle: 27deg; }
+.label-140 { --angle: 54deg; }
+.label-160 { --angle: 81deg; }
+.label-180 { --angle: 108deg; }
+.label-200 { --angle: 135deg; color: var(--accent-red); }
+
+
+/* --- KONTEN TENGAH (N & ENGINE ICON) --- */
+.center-display-area {
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, calc(-50% - 30px)); 
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
+    z-index: 12;
+    gap: 5px; 
+}
+.engine-indicator { opacity: 0.2; }
+.engine-indicator.active { opacity: 1; }
+.gear-display { font-size: 24pt; font-weight: bold; }
+
+/* --- SINYAL BELOK (SEIN) --- */
+.turn-signals {
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    width: calc(var(--gauge-radius) * 2 - 40px); 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18pt;
+    color: var(--secondary-text);
+    z-index: 12;
+    margin-top: 15px; 
+}
+.turn-signal.left-signal, .turn-signal.right-signal { opacity: 0.2; }
+.turn-signal.active { opacity: 1; }
+
+
+/* --- LEVEL INDICATORS (FUEL & ENGINE) --- */
 .level-indicators-area {
-    /* ... */
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    width: 100%; 
+    height: 100%;
+    display: block; 
+    z-index: 12;
 }
-/* ... */
+.fuel-indicator, .engine-health-indicator {
+    position: absolute; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    bottom: 0; 
+}
+.fuel-indicator { left: 50%; transform: translate(calc(-100% - 70px), 10px); }
+.engine-health-indicator { right: 50%; transform: translate(calc(105px), 10px); }
+
+.indicator-lights, .total-km-display {
+    display: none !important; 
+}
 
 
-/* --- KOTAK BAWAH: NAVIGASI KONTROL (Pemisah Jelas) --- */
+/* ------------------------------------------------ */
+/* --- KOTAK BAWAH: NAVIGASI KONTROL (bottom-controls) --- */
+/* ------------------------------------------------ */
 .bottom-controls {
     width: 100%;
-    /* PENTING: Tentukan ketinggian agar 'main-content' bisa menghitung sisanya */
+    /* PENTING: Tentukan ketinggian kotak bawah */
     height: var(--nav-height); 
     
     display: flex;
@@ -105,7 +288,7 @@ body {
     /* PENTING: Garis pemisah antara kotak atas dan kotak bawah */
     border-top: 1px solid rgba(255, 255, 255, 0.1); 
     
-    background: var(--dark-bg); /* Beri warna latar belakang untuk kotak bawah */
+    background: var(--dark-bg); 
     
     z-index: 100; 
     
@@ -136,13 +319,13 @@ body {
     gap: 5px;
     font-size: 9pt;
     color: var(--secondary-text);
-    padding: 5px 10px; /* Sedikit lebih banyak padding vertikal untuk tombol */
+    padding: 5px 10px; 
     border-radius: 8px; 
     cursor: pointer; 
     flex-grow: 0; 
     transition: background-color 0.2s;
     
-    /* Memastikan angka odometer tersembunyi jika masih ada di HTML */
+    /* Memastikan angka odometer tersembunyi */
     .total-km-digital {
         display: none !important;
     }
