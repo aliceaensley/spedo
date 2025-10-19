@@ -174,7 +174,7 @@ body {
 }
 
 .speed-header { 
-    /* TAMBAH PADDING AGAR KONTEN TIDAK MEPET */
+    /* Padding di sini menjaga jarak unit (MPH/KMH) dari tepi */
     padding: 5px 0; 
     display: flex; justify-content: space-between; font-size: 10pt; font-weight: bold; 
     color: #FFA500; margin-bottom: 5px;
