@@ -1,4 +1,3 @@
-
 let elements = {};
 let speedMode = 1;	
 let engineState = false;	
@@ -438,7 +437,8 @@ function toggleYoutubeSearchUI(show) {
 		elements.youtubeResults.classList.toggle('hidden', !show);
 	}
 	if (!show && elements.youtubeResults) {
-		elements.youtubeResults.innerHTML = ''; // Kosongkan hasil jika disembunyikan
+		// KOSONGKAN hasil hanya jika disembunyikan agar hasilnya tidak menumpuk saat pencarian baru
+		elements.youtubeResults.innerHTML = ''; 
 	}
 }
 
@@ -459,18 +459,17 @@ function toggleYoutubeUI(state) {
 		youtubeWrapper.classList.remove('hidden');
 		toggleActive(elements.youtubeToggleIcon, true);
 		
-		// Saat dibuka: 
-		// Jika iframe kosong (sebelumnya sudah direset) atau tidak ada hasil, tampilkan search UI.
-        // Jika ada video yang berjalan (src != 'about:blank'), sembunyikan search UI.
-		const isIframeBlank = elements.browserIframe.src === 'about:blank';
+		// ******* LOGIKA PENTING BARU: Tentukan apakah video sudah ada *******
+		const hasVideoLoaded = elements.browserIframe.src !== 'about:blank';
 		
-		if (isIframeBlank || elements.youtubeResults.innerHTML === '') {
-            elements.browserIframe.src = 'about:blank'; // Bersihkan sebelum mencari (jika ada sisa)
+		if (hasVideoLoaded) {
+            // Jika ada video yang berjalan, langsung sembunyikan antarmuka pencarian
+            toggleYoutubeSearchUI(false); 
+        } else {
+            // Jika iframe masih kosong (belum pernah memutar video), tampilkan antarmuka pencarian
+            elements.browserIframe.src = 'about:blank'; // Bersihkan jika ada sisa
             toggleYoutubeSearchUI(true);
             if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
-        } else {
-            // Jika ada video yang berjalan, sembunyikan hasil pencarian.
-            toggleYoutubeSearchUI(false); 
         }
 		
 	} else {
@@ -479,11 +478,10 @@ function toggleYoutubeUI(state) {
 		youtubeWrapper.classList.add('hidden');
 		toggleActive(elements.youtubeToggleIcon, false);
 		
-		// KUNCI PENTING: JANGAN RESET IFRAME.SRC
-        // Ini memastikan video terus diputar (audio tetap terdengar) di latar belakang.
+		// JANGAN RESET IFRAME.SRC: Memastikan video/audio tetap berjalan di latar belakang.
         
-		// Sembunyikan hasil pencarian (overlay)
-		toggleYoutubeSearchUI(false);	
+		// Sembunyikan overlay hasil pencarian (jika belum tertutup)
+		elements.youtubeResults.classList.add('hidden');	
 	}
 }
 
