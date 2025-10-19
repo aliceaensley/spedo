@@ -1,104 +1,100 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Speedometer & YouTube</title>
+    <title>Neon Speedometer UI</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="welcome-overlay">
-        <div class="welcome-message">
-            <div class="javanese-script">ꦱꦸꦒꦼꦁꦫꦮꦸꦃ</div>
-            <h1>SUGENG RAWUH</h1>
-            <p>Ampun Supen Dungo Rumiyen Sakderenge Budal</p>
-        </div>
+    <div id="welcome-overlay" class="welcome-overlay">
+        <h1>SUGENG RAWUH</h1>
+        <p>Ampun Suwo Dunyo Rameyen Sakarengo Budal</p>
     </div>
-    
-    <main class="speedometer-container" id="speedometer-ui">
+
+    <div id="speedometer-ui" class="speedometer-ui">
         
-        <div class="youtube-integrated-container hidden" id="youtube-ui-wrapper">
-            
-            <div class="search-bar-container" id="youtube-search-ui">
+        <div id="youtube-ui-wrapper" class="youtube-ui-wrapper hidden">
+            <div class="youtube-search-ui">
                 <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
                 <button id="youtube-search-button">Cari</button>
             </div>
             
             <div class="video-and-results-wrapper">
-                <iframe id="browser-iframe" src="about:blank"></iframe>
-                
-                <div class="search-results-container hidden" id="youtube-results">
+                <iframe id="browser-iframe" src="about:blank" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <div id="youtube-results" class="youtube-results hidden">
                     </div>
             </div>
-            
-            <div class="youtube-close-button" id="youtube-hide-button">
-                HIDE YOUTUBE [ESC]
+            <div class="hide-button-container">
+                <button id="youtube-hide-button">HIDE YOUTUBE [ESC]</button>
             </div>
         </div>
 
-        <div class="speedometer-main-elements"> 
+        <div class="speedometer-main-elements">
             
-            <div class="speedometer-view-wrapper" id="speedometer-view-wrapper">
-                
-                <div id="digital-speed-view">
-                    <div class="panel speed-panel">
-                        <div class="speed-header">
-                            <span class="speed-unit" id="speed-mode-digital">MPH</span>
-                        </div>
-                        <div class="speed-value-wrapper">
-                            <div class="speed-value" id="speed-digital">000</div>
-                            <img src="https://bit.ly/signalice" alt="Logo Hak Cipta" class="speed-copyright-logo hidden">
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="analog-speed-view" class="hidden">
-                    <div class="panel analog-panel">
-                        <div class="gauge-wrapper">
-                            <div class="analog-speed-value" id="speed-analog-text">0</div>
-                            <div class="speed-unit-analog" id="speed-mode-analog">MPH</div>
-                            
-                            <div class="speed-needle" id="analog-needle"></div>
-                            <div class="center-pin"></div>
-                        </div>
-                    </div>
-                </div>
-                
+            <div class="mode-toggle" id="mode-toggle-icon">
+                <i class="icon-mode"></i>
             </div>
-            
-            <div class="bottom-data-wrapper">
-                
-                <div class="panel info-panels-grid">
-                    <div class="stat-item"><div class="stat-label">Fuel</div><div class="stat-value" id="fuel">0%</div></div>
-                    <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value" id="health">100%</div></div>
-                    
-                    <div class="stat-item rpm-stat-item">
-                        <div class="stat-label">RPM</div>
-                        <div class="rpm-bar-wrapper">
-                            <div class="rpm-bar" id="rpm-bar-main"></div> 
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item"><div class="stat-label">Time</div><div class="stat-value" id="time-wib">00:00:00</div></div>
-                </div>
 
-                <div class="panel bottom-panel">
-                    <div class="status-indicators">
-                        <div class="indicator-icon" id="headlights-icon">💡</div>
-                        <div class="indicator-icon" id="engine-icon">⚙️</div>
-                        <div class="indicator-icon" id="seatbelt-icon">💺</div>
+            <div id="analog-speed-view" class="hidden">
+                <div class="panel analog-panel">
+                    <div class="gauge-wrapper">
+                        <div class="scale-text" style="transform: rotate(-135deg) translate(0, -70px) rotate(135deg);">0</div>
+                        <div class="scale-text" style="transform: rotate(-67.5deg) translate(0, -70px) rotate(67.5deg);">50</div>
+                        <div class="scale-text" style="transform: rotate(0deg) translate(0, -70px) rotate(0deg);">100</div>
+                        <div class="scale-text" style="transform: rotate(67.5deg) translate(0, -70px) rotate(-67.5deg);">150</div>
+                        <div class="scale-text" style="transform: rotate(135deg) translate(0, -70px) rotate(-135deg);">200</div>
                         
-                        <div class="indicator-icon mode-toggle" id="mode-toggle-icon">⏱️</div>
+                        <div class="scale-mark" style="transform: rotate(-135deg);"></div>
+                        <div class="scale-mark" style="transform: rotate(-108deg);"></div>
+                        <div class="scale-mark" style="transform: rotate(-81deg);"></div>
+                        <div class="scale-mark" style="transform: rotate(-54deg);"></div>
+                        <div class="scale-mark" style="transform: rotate(-27deg);"></div>
+                        <div class="scale-mark" style="transform: rotate(0deg);"></div>
+                        <div class="scale-mark" style="transform: rotate(27deg);"></div>
+                        <div class="scale-mark" style="transform: rotate(54deg);"></div>
+                        <div class="scale-mark" style="transform: rotate(81deg);"></div>
+                        <div class="scale-mark" style="transform: rotate(108deg);"></div>
+                        <div class="scale-mark" style="transform: rotate(135deg);"></div>
                         
-                        <div class="indicator-icon youtube-toggle" id="youtube-toggle-icon">▶️</div>
+                        <div class="analog-speed-value" id="speed-analog-text">0</div>
+                        <div class="speed-unit-analog" id="speed-mode-analog">MPH</div>
+                        
+                        <div class="speed-needle" id="analog-needle"></div>
+                        <div class="center-pin"></div>
                     </div>
                 </div>
             </div>
-            
-        </div> </main>
 
+            <div id="digital-speed-view">
+                <div class="speed-unit">
+                    <span id="speed-mode-digital">KMH</span>
+                </div>
+                <div class="speed-value" id="speed-digital">000</div>
+            </div>
+
+            <div class="rpm-bar-container">
+                <div class="rpm-bar-fill" id="rpm-bar-main"></div>
+            </div>
+
+            <div class="vitals">
+                <div class="vital-item">Fuel: <span id="fuel">100%</span></div>
+                <div class="vital-item">Health: <span id="health">100%</span></div>
+            </div>
+
+            <div class="indicators">
+                <div class="indicator-icon" id="headlights-icon"><i class="icon-headlights"></i></div>
+                <div class="indicator-icon" id="engine-icon"><i class="icon-engine"></i></div>
+                <div class="indicator-icon active" id="seatbelt-icon"><i class="icon-seatbelt"></i></div>
+            </div>
+
+            <div class="bottom-bar">
+                <div class="time-wib" id="time-wib">00:00:00</div>
+                <div class="youtube-toggle" id="youtube-toggle-icon"><i class="icon-youtube"></i></div>
+            </div>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
