@@ -30,7 +30,7 @@ seatbeltSound.volume = 0.7;
 const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw';	
 // *****************************************************************
 
-// --- FUNGSI GENERATE TANDA SPEEDOMETER ANALOG (FIXED) ---
+// --- FUNGSI GENERATE TANDA SPEEDOMETER ANALOG (FINAL) ---
 function generateAnalogMarks() {
     const marksWrapper = elements.speedMarksWrapper;
     if (!marksWrapper) return;
@@ -51,13 +51,12 @@ function generateAnalogMarks() {
         // SUDUT YANG DIBERIKAN KE ANGKA AGAR DIA BERADA DI POSISI RADIALNYA
         const labelRotation = angle;
         // SUDUT COUNTER-ROTATE AGAR TULISAN ANGKA TETAP TEGAK LURUS
-        // Kita butuh memutar balik angle, lalu menambahkan offset 90 derajat agar angkanya horizontal relatif ke jari-jari.
         const counterRotate = -angle - 90; 
 
         // 1. Tanda Utama (Major Mark) - Setiap 10 unit
         const majorMark = document.createElement('div');
         majorMark.classList.add('speed-mark', 'line', 'major');
-        // Geser ke luar lingkaran (-75px), lalu putar.
+        // Jarak Tanda Garis: -75px
         majorMark.style.transform = `translate(-50%, -100%) translateY(-75px) rotate(${angle}deg)`;
         marksWrapper.appendChild(majorMark);
 
@@ -384,7 +383,7 @@ function startSimulation() {
 		
 		if (isVehicleIdle) {
 			setSpeed(0);
-			// RPM HARUS TEPAT DI IDLE (0.16) saat speed 0 (Fix RPM Idle terlalu tinggi)
+			// RPM HARUS TEPAT DI IDLE (0.16) saat speed 0 
 			setRPM(IDLE_RPM_VALUE);	
 		} else {
 			setSpeed(currentSpeed);	
@@ -612,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		videoAndResultsWrapper: document.querySelector('.video-and-results-wrapper')	
 	};
 	
-	// PANGGILAN FUNGSI BARU DI SINI
+	// 4. PANGGILAN FUNGSI GENERATE MARKS
     generateAnalogMarks(); 
 	
 	// 2. Tampilkan dan sembunyikan Overlay Selamat Datang
@@ -651,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// 3. SETUP CLOCK WIB
 	startClock();	
 	
-	// 4. SETUP INTERAKSI KLIK & KEYPRESS YOUTUBE
+	// 5. SETUP INTERAKSI KLIK & KEYPRESS YOUTUBE
 	if (elements.youtubeToggleIcon) {
 		elements.youtubeToggleIcon.addEventListener('click', () => { toggleYoutubeUI(); });
 	}
@@ -682,12 +681,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 	
-	// 5. SETUP INTERAKSI KLIK MODE TOGGLE
+	// 6. SETUP INTERAKSI KLIK MODE TOGGLE
 	if (elements.modeToggleIcon) {
 		elements.modeToggleIcon.addEventListener('click', toggleSpeedometerMode);
 	}
 
-	// 6. SET DEFAULT STATE (Simulasi)
+	// 7. SET DEFAULT STATE (Simulasi)
 	setSpeedMode(0); // Default KMH
 	setHeadlights(0); // Mati
 	setSeatbelts(true); // Default terpasang (true: terpasang)
@@ -695,6 +694,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	setEngine(true); // Mesin Hidup (Start Simulation)
 	startVitalUpdates(); // Mulai update Fuel/Health
 
-	// 7. Simulasikan Status Indikator (Contoh)
+	// 8. Simulasikan Status Indikator (Contoh)
 	setHeadlights(1);
 });
