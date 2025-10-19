@@ -1,373 +1,302 @@
-/* --- BASE & RESET --- */
+/* Basic Reset and Font */
 * {
-    box-sizing: border-box; 
     user-select: none;
-    margin: 0;
+    user-drag: none;
+    box-sizing: border-box; 
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+}
+
+@font-face {
+    font-family: 'Digital';
+    /* Ganti dengan font bergaya digital/retro jika ada */
 }
 
 body {
-    /* Penting untuk overlay di game/aplikasi */
-    background-color: transparent !important; 
+    background-color: transparent !important;
+    font-family: 'Digital', Arial, sans-serif;
     color: white;
-}
-
-/* --- THEME COLORS & SIZES --- */
-:root {
-    --primary-text: #E0E0E0;
-    --secondary-text: #9E9E9E;
-    --accent-red: #FF0000;
-    --accent-blue: #00BFFF; /* Warna dominan UI */
-    --dark-bg: #1A1A1A;
-    --medium-dark-bg: #2C2C2C;
-    --gauge-radius: 90px; 
-    --gauge-text-color: #E0E0E0;
-    --gauge-start-angle: -135deg; 
-    --gauge-end-angle: 135deg; 
-    --accent-green: #00FF00; /* Warna lampu sein */
-    --level-good: #00FF00; 
-    --level-warning: #FFA500; 
-    --level-critical: #FF0000; 
-    --nav-height: 45px; 
-}
-
-/* --- UTILITY CLASS --- */
-.hidden-view {
-    display: none !important;
-}
-
-/* ------------------------------------------------ */
-/* --- WADAH UTAMA (UI Container) --- */
-/* ------------------------------------------------ */
-.speedometer-ui {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-    width: 220px; 
-    height: 300px; 
-    
-    background: transparent; 
-    box-shadow: none; 
-    
-    border-radius: 15px;
-    padding: 0; 
-    
-    display: flex;
-    flex-direction: column;
-    color: var(--primary-text);
+    /* Tambahkan overflow: hidden untuk mencegah scroll saat overlay aktif */
     overflow: hidden; 
 }
 
-/* ------------------------------------------------ */
-/* --- KOTAK ATAS: SPEEDOMETER & INDIKATOR --- */
-/* ------------------------------------------------ */
-.main-content {
-    height: calc(100% - var(--nav-height)); 
-    width: 100%;
-    
-    padding: 10px; 
-    
-    display: flex;
-    flex-direction: column; 
-    gap: 10px; 
-    position: relative;
-}
-.left-panel {
-    width: 100%; 
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    flex-grow: 1; 
-}
-
-/* --- GAUGE DISPLAY AREA & VIEWS --- */
-.gauge-display-area {
-    width: 100%;
-    height: 180px; 
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; 
-    flex-shrink: 0; 
-    padding-top: 5px; 
-    background-color: transparent; 
-}
-
-/* Kontainer untuk Analog View dan Digital View */
-#analog-view, #digital-view {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+/* --- Gaya Overlay Selamat Datang --- */
+#welcome-overlay {
+    position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
+    /* Latar belakang transparan gelap */
+    background: rgba(0, 0, 0, 0.9); 
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 9999; 
+    opacity: 1;
+    transition: opacity 1s ease-out;
 }
 
-/* --- DIGITAL VIEW STYLE --- */
-#digital-view {
-    flex-direction: column;
-    z-index: 50; 
-    padding-bottom: 30px; 
+#welcome-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none; 
 }
 
-.large-speed-value {
-    font-size: 60pt;
-    font-weight: 900;
-    color: var(--accent-blue);
-    text-shadow: 0 0 20px var(--accent-blue);
-    line-height: 1;
-}
-
-.speed-unit {
-    font-size: 14pt;
-    color: var(--secondary-text);
-    margin-top: -5px;
-}
-
-/* --- GAUGE WRAPPER (ANALOG) --- */
-.gauge-wrapper {
-    width: calc(var(--gauge-radius) * 2); 
-    height: calc(var(--gauge-radius) * 2); 
-    position: relative;
-    background-color: var(--dark-bg); 
-    border-radius: 50%; 
-    box-shadow: 
-        0 0 0 5px var(--accent-blue), 
-        0 0 20px rgba(0, 191, 255, 0.6); 
-    z-index: 10;
-}
-
-/* --- JARUM SPEEDOMETER --- */
-.speed-needle {
-    position: absolute;
-    bottom: 50%; 
-    left: 50%;
-    transform-origin: 50% 100%; 
-    width: 3px;
-    height: calc(var(--gauge-radius) - 10px); 
-    background-color: var(--accent-red); 
-    z-index: 15;
-    transform: translateX(-50%) translateY(calc(var(--gauge-radius) - 90px)) rotate(var(--gauge-start-angle)); 
-    box-shadow: 0 0 10px var(--accent-red);
-    transition: transform 0.3s ease-out;
-}
-.speed-needle::before {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 18px;
-    height: 18px;
-    background-color: var(--accent-red);
-    border-radius: 50%;
-    border: 3px solid white;
-    z-index: 20; 
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-/* --- SKALA ANGKA GAUGE --- */
-.gauge-scale-numbers {
-    position: absolute;
-    top: 50%; 
-    left: 50%; 
-    width: 0;
-    height: 0;
-    z-index: 12;
-    display: block; 
-    padding: 0;
-}
-
-.speed-label {
-    position: absolute;
-    font-size: 10pt;
-    color: var(--gauge-text-color);
-    width: 30px; 
+.welcome-message {
     text-align: center;
-    font-weight: bold; 
-    --angle: 0deg;
-    --radius: calc(var(--gauge-radius) - 10px); 
-    transform-origin: 50% 50%;
-    transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle)));
-    margin-left: -15px; 
-    margin-top: -10px; 
-    line-height: initial;
-    padding-left: 0;
+    color: #FFA500; 
+    /* Efek Neon Orange */
+    text-shadow: 0 0 20px rgba(255, 165, 0, 0.8), 0 0 30px rgba(255, 165, 0, 0.5);
+    animation: pulse 1.5s infinite alternate; 
 }
-.label-0   { --angle: -135deg; }
-.label-20  { --angle: -108deg; } 
-.label-40  { --angle: -81deg; }  
-.label-60  { --angle: -54deg; }  
-.label-80  { --angle: -27deg; }  
-.label-100 { --angle: 0deg; }    
-.label-120 { --angle: 27deg; }
-.label-140 { --angle: 54deg; }
-.label-160 { --angle: 81deg; }
-.label-180 { --angle: 108deg; }
-.label-200 { --angle: 135deg; color: var(--accent-red); }
+
+/* Styling khusus untuk Aksara Jawa */
+.javanese-script {
+    font-family: 'Noto Sans Javanese', serif; 
+    font-size: 5em; 
+    line-height: 1;
+    margin-bottom: 20px;
+    color: white; 
+    /* Efek neon biru/putih untuk Aksara Jawa */
+    text-shadow: 
+        0 0 15px rgba(255, 255, 255, 0.8), 
+        0 0 30px rgba(0, 191, 255, 0.6); 
+}
 
 
-/* --- KONTEN TENGAH (N & ENGINE ICON) --- */
-.center-display-area {
-    position: absolute;
-    top: 50%; 
-    left: 50%;
-    transform: translate(-50%, calc(-50% - 30px)); 
+.welcome-message h1 {
+    font-size: 3.5em; 
+    margin-bottom: 5px; 
+    letter-spacing: 5px;
+    opacity: 0.7; /* Sedikit redup dibandingkan Aksara Jawa */
+}
+
+.welcome-message p {
+    font-size: 1.3em;
+    opacity: 0.9;
+    font-weight: bold;
+    color: white; 
+}
+
+@keyframes pulse {
+    from { transform: scale(1); opacity: 0.8; }
+    to { transform: scale(1.05); opacity: 1; }
+}
+
+
+/* --- Speedometer Utama (Neon Orange) --- */
+.speedometer-container {
+    position: fixed;
+    bottom: 15px; 
+    right: 15px;
+    width: 300px; 
+    
+    background: linear-gradient(135deg, #FFA500, #FF4500); 
+    padding: 5px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
+    z-index: 1000; 
+    
     display: flex;
-    flex-direction: column; 
-    align-items: center;
-    justify-content: center;
-    z-index: 12;
+    flex-direction: column;
+    gap: 5px;
+    
+    transition: width 0.3s, height 0.3s, right 0.3s, bottom 0.3s;
+}
+
+/* KONDISI SPEEDOMETER SAAT YOUTUBE AKTIF */
+.speedometer-container.youtube-active {
+    width: 500px; 
+    height: 500px; 
+    right: 15px; 
+    bottom: 15px; 
+    padding: 10px;
+    flex-direction: row; 
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.speedometer-container.youtube-active .speed-panel,
+.speedometer-container.youtube-active .info-panels-grid,
+.speedometer-container.youtube-active .bottom-panel {
+    /* Sembunyikan panel data utama saat YouTube aktif */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s;
+}
+
+/* YOUTUBE INTEGRATION CONTAINER */
+.youtube-integrated-container {
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    position: absolute; 
+    top: 0;
+    left: 0;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+#browser-iframe {
+    width: 100%;
+    flex-grow: 1;
+    border: none;
+    background-color: black;
+    border-radius: 5px;
+}
+
+/* Panel Data Speedometer */
+.panel {
+    background-color: rgba(0, 0, 0, 0.75); 
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%; 
+}
+/* Atur tata letak default */
+.speedometer-container:not(.youtube-active) .speed-panel { order: 1; }
+.speedometer-container:not(.youtube-active) .info-panels-grid { order: 2; }
+.speedometer-container:not(.youtube-active) .bottom-panel { order: 3; }
+
+
+/* Speed Panel */
+.speed-panel { display: flex; flex-direction: column; }
+.speed-header { 
+    display: flex; justify-content: space-between; font-size: 10pt; font-weight: bold; 
+    color: #FFA500; margin-bottom: 5px;
+}
+.speed-value-wrapper { 
+    text-align: right; 
+    display: flex; 
+    align-items: flex-end; 
+    justify-content: flex-end; 
     gap: 5px; 
 }
-/* Indikator Engine Check */
-.engine-indicator { opacity: 0.2; }
-.engine-indicator.active { opacity: 1; }
-.gear-display { font-size: 24pt; font-weight: bold; }
 
-/* ------------------------------------------------ */
-/* --- SINYAL BELOK (SEIN) - POSISI FINAL --- */
-/* ------------------------------------------------ */
-.turn-signals {
-    position: absolute;
-    top: 50%; 
-    left: 50%;
-    /* Menggeser ke atas sedikit (+5px dari tengah vertikal) */
-    transform: translate(-50%, calc(-50% + 5px)); 
-    
-    /* Mengurangi lebar agar panah lebih dekat ke pusat jarum */
-    width: calc(var(--gauge-radius) * 2 - 120px); 
-    
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 18pt;
-    color: var(--secondary-text);
-    z-index: 12;
-    margin-top: 0px; 
-}
-.turn-signal.left-signal, .turn-signal.right-signal { opacity: 0.2; }
-/* Sein aktif berwarna hijau */
-.turn-signal.active { opacity: 1; color: var(--accent-green); }
-
-
-/* ------------------------------------------------ */
-/* --- LEVEL INDICATORS (FUEL & ENGINE) --- */
-/* ------------------------------------------------ */
-.level-indicators-area {
-    position: absolute;
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    width: 100%; 
-    height: 100%;
-    display: block; 
-    z-index: 12;
+.speed-value { 
+    font-size: 48pt; font-weight: 900; line-height: 1; color: white; 
+    text-shadow: 0 0 10px #FFA500; 
 }
 
-.fuel-indicator, .engine-health-indicator {
-    position: absolute; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    line-height: 1.1;
-    
-    padding: 5px 8px; 
-    border-radius: 8px; 
-    background: rgba(44, 44, 44, 0.6); 
-    box-shadow: none; 
-    
-    font-weight: bold;
-    z-index: 5; 
-    bottom: 0; 
+/* STYLING GAMBAR HAK CIPTA SPEEDOMETER */
+.speed-copyright-logo {
+    width: 30px; 
+    height: 30px; 
+    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 0.7)); 
 }
 
-.fuel-indicator {
-    left: 50%; 
-    /* Posisikan di kiri bawah gauge */
-    transform: translate(calc(-100% - 70px), 10px); 
-    color: var(--level-good); 
+/* Info Grid (Stats) */
+.info-panels-grid { 
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 5px;
+    background-color: transparent;
 }
-.engine-health-indicator {
-    right: 50%; 
-    /* Posisikan di kanan bawah gauge */
-    transform: translate(calc(105px), 10px); 
-    color: var(--level-good); 
+.stat-item { 
+    padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; 
+    background-color: rgba(0, 0, 0, 0.75); text-align: center;
 }
+.stat-label { color: #FFA500; font-size: 9pt; }
+.stat-value { font-size: 12pt; font-weight: bold; color: white; }
 
-.fuel-indicator .label, .engine-health-indicator .label {
-    font-size: 6pt; 
-    font-weight: normal;
-    color: var(--secondary-text);
-}
-
-.fuel-indicator .value, .engine-health-indicator .value {
-    font-size: 9pt; 
-}
-
-/* Indikator yang tidak digunakan disembunyikan */
-.indicator-lights, .total-km-display {
-    display: none !important; 
-}
-
-
-/* ------------------------------------------------ */
-/* --- KOTAK BAWAH: NAVIGASI KONTROL (bottom-controls) --- */
-/* ------------------------------------------------ */
-.bottom-controls {
-    width: 100%;
-    height: var(--nav-height); 
-    
-    display: flex;
-    flex-direction: column; 
-    
-    border-top: 1px solid rgba(255, 255, 255, 0.1); 
-    
-    background: var(--dark-bg); 
-    
-    z-index: 100; 
-    
-    padding: 0; 
-    
-    /* Tombol/elemen ekstra seperti Map/Action Buttons disembunyikan */
-    .action-buttons-bar, .action-icon, .nav-item[data-view="map"] {
-        display: none !important; 
-    }
-}
-
-
-/* Penyesuaian Navigasi: Analog dan Digital di Tengah */
-.bottom-nav { 
-    display: flex;
+/* Bottom Panel (Indicators ONLY) */
+.bottom-panel { 
+    display: flex; 
     justify-content: center; 
     align-items: center; 
-    width: 100%;
-    height: 100%; 
-    
-    padding: 0 10px; 
-    
-    gap: 20px; 
+    padding: 10px; 
 }
 
-.nav-item {
+.status-indicators { display: flex; gap: 15px; font-size: 20pt; }
+.indicator-icon { opacity: 0.4; cursor: pointer; } 
+.indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
+
+.youtube-toggle.active {
+    opacity: 1;
+    text-shadow: 0 0 8px #FF0000; /* Warna merah untuk YouTube aktif */
+}
+
+/* --- STYLING YOUTUBE SEARCH --- */
+
+.search-bar-container {
     display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 9pt;
-    color: var(--secondary-text);
-    padding: 5px 10px; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    flex-grow: 0; 
+    padding-bottom: 10px;
+    background-color: transparent; 
+    border-bottom: 1px solid #FF4500;
+}
+
+#youtube-search-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #555;
+    border-radius: 5px 0 0 5px;
+    background-color: #1a1a1a;
+    color: white;
+}
+
+#youtube-search-button {
+    padding: 8px 15px;
+    border: none;
+    background-color: #FF0000; 
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+}
+
+/* Area Hasil Pencarian */
+.search-results-container {
+    height: 100px; 
+    overflow-x: scroll; 
+    overflow-y: hidden;
+    display: flex;
+    flex-wrap: nowrap; 
+    gap: 10px;
+    padding: 10px 0;
+    background-color: transparent;
+    border-bottom: 1px solid #444;
+}
+
+.search-result-item {
+    cursor: pointer;
+    flex: 0 0 auto; 
+    width: 100px; 
+    text-align: center;
+}
+
+.search-result-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.search-result-item p {
+    font-size: 8pt; 
+    color: #AAA;
+    margin-top: 5px;
+    height: 25px; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+/* TOMBOL HIDE YOUTUBE BARU */
+.youtube-close-button {
+    background-color: #FF4500; 
+    color: white;
+    text-align: center;
+    padding: 8px;
+    margin-top: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
     transition: background-color 0.2s;
 }
 
-.nav-item.active {
-    background-color: var(--accent-blue);
-    color: white;
-    font-weight: bold; 
+.youtube-close-button:hover {
+    background-color: #FF6347;
+}
+
+.hidden {
+    display: none !important;
 }
