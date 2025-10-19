@@ -178,9 +178,17 @@ body {
     /* Padding di sini menjaga jarak unit (MPH/KMH) dari tepi */
     padding: 5px 0; 
     display: flex; justify-content: space-between; font-size: 10pt; font-weight: bold; 
-    color: #FFA500; margin-bottom: 5px;
+    color: #FFA500; 
+    /* MODIFIKASI: Hapus atau kurangi margin-bottom agar unit lebih dekat ke angka */
+    margin-bottom: 0px; 
     flex-shrink: 0;
 }
+
+#speed-mode-digital {
+    /* MODIFIKASI: Menurunkan posisi unit MPH/KMH agar tidak terlalu tinggi */
+    margin-top: 25px; 
+}
+
 .speed-value-wrapper { 
     /* MODIFIKASI: Menengahkan secara horizontal dan vertikal */
     text-align: center; 
