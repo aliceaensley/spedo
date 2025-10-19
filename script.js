@@ -30,7 +30,7 @@ seatbeltSound.volume = 0.7;
 const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw';	
 // *****************************************************************
 
-// --- FUNGSI GENERATE TANDA SPEEDOMETER ANALOG (BARU) ---
+// --- FUNGSI GENERATE TANDA SPEEDOMETER ANALOG (FIXED) ---
 function generateAnalogMarks() {
     const marksWrapper = elements.speedMarksWrapper;
     if (!marksWrapper) return;
@@ -47,26 +47,37 @@ function generateAnalogMarks() {
 
     for (let speed = 0; speed <= MAX_SPEED; speed += 10) {
         const angle = START_ANGLE + (speed * ANGLE_PER_UNIT);
-        const counterRotate = -angle; // Untuk membuat angka tegak lurus
         
+        // SUDUT YANG DIBERIKAN KE ANGKA AGAR DIA BERADA DI POSISI RADIALNYA
+        const labelRotation = angle;
+        // SUDUT COUNTER-ROTATE AGAR TULISAN ANGKA TETAP TEGAK LURUS
+        // Kita butuh memutar balik angle, lalu menambahkan offset 90 derajat agar angkanya horizontal relatif ke jari-jari.
+        const counterRotate = -angle - 90; 
+
         // 1. Tanda Utama (Major Mark) - Setiap 10 unit
         const majorMark = document.createElement('div');
         majorMark.classList.add('speed-mark', 'line', 'major');
+        // Geser ke luar lingkaran (-75px), lalu putar.
         majorMark.style.transform = `translate(-50%, -100%) translateY(-75px) rotate(${angle}deg)`;
         marksWrapper.appendChild(majorMark);
 
         // 2. Angka Label (Label Mark) - Setiap 10 unit
         const label = document.createElement('div');
         label.classList.add('speed-mark', 'label');
-        label.style.transform = `translate(-50%, -50%) translateY(-60px) rotate(${angle}deg)`;
+        
+        // Rotasi Wadah Angka: Tempatkan angka di posisi radial yang benar
+        label.style.setProperty('--rotate-angle', `${labelRotation}deg`); 
+        
+        // Counter Rotasi Teks: Putar teks di dalamnya agar tegak lurus (horizontal)
         label.style.setProperty('--counter-rotate-angle', `${counterRotate}deg`);
         label.innerHTML = `<span class="text-rotate">${speed}</span>`;
         marksWrapper.appendChild(label);
         
-        // 3. Tanda Kecil (Minor Marks) - Setiap 5 unit (kecuali di angka 10)
-        if (speed < MAX_SPEED && speed % 10 === 0) {
+        // 3. Tanda Kecil (Minor Marks) - Setiap 1 unit
+        if (speed < MAX_SPEED) {
             for (let i = 1; i <= 9; i++) {
-                if (i === 5) continue; // Tanda 5 tidak dibuat di sini
+                if (i % 5 === 0) continue; // Skip minor mark 5 (karena nanti jadi major mark di kelipatan 10)
+
                 const minorSpeed = speed + i;
                 const minorAngle = START_ANGLE + (minorSpeed * ANGLE_PER_UNIT);
                 
