@@ -41,6 +41,7 @@ body {
     bottom: 15px;
     right: 15px;
     width: 220px; 
+    /* Disesuaikan tingginya setelah menghilangkan action bar */
     height: 300px; 
     background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%); 
     border-radius: 15px;
@@ -121,14 +122,11 @@ body {
     width: calc(var(--gauge-radius) * 2); 
     height: calc(var(--gauge-radius) * 2); 
     position: relative;
-    
     background-color: var(--dark-bg); 
     border-radius: 50%; 
-    
     box-shadow: 
         0 0 0 5px var(--accent-blue), 
         0 0 20px rgba(0, 191, 255, 0.6); 
-    
     z-index: 10;
 }
 
@@ -142,6 +140,7 @@ body {
     height: calc(var(--gauge-radius) - 10px); 
     background-color: var(--accent-red); 
     z-index: 15;
+    /* Default rotation ke 0 (start angle) */
     transform: translateX(-50%) translateY(calc(var(--gauge-radius) - 90px)) rotate(var(--gauge-start-angle)); 
     box-shadow: 0 0 10px var(--accent-red);
     transition: transform 0.3s ease-out;
@@ -209,12 +208,11 @@ body {
 .label-200 { --angle: 135deg; color: var(--accent-red); }
 
 
-/* --- KONTEN TENGAH (N & ENGINE ICON) - POSISI DI ATAS --- */
+/* --- KONTEN TENGAH (N & ENGINE ICON) --- */
 .center-display-area {
     position: absolute;
     top: 50%;
     left: 50%;
-    /* Digeser ke atas 30px agar tidak menempel pada pusat jarum */
     transform: translate(-50%, calc(-50% - 30px)); 
     display: flex;
     flex-direction: column; 
@@ -244,7 +242,7 @@ body {
 }
 
 
-/* --- SINYAL BELOK (SEIN) - POSISI SAMPING JARUM --- */
+/* --- SINYAL BELOK (SEIN) --- */
 .turn-signals {
     position: absolute;
     top: 50%; 
@@ -300,23 +298,17 @@ body {
     background: rgba(0, 0, 0, 0.4); 
     font-weight: bold;
     z-index: 5; 
-    
-    /* Posisikan di bawah lingkaran utama */
     bottom: 0; 
 }
 
 .fuel-indicator {
-    /* FUEL: Tetap di -70px horizontal (sangat ke kiri) dan 10px vertikal (ke bawah) */
     left: 50%; 
     transform: translate(calc(-100% - 70px), 10px); 
-    
     color: var(--level-good); 
 }
 .engine-health-indicator {
-    /* ENGINE: Digeser ke 105px horizontal (POSISI FINAL KANAN) dan 10px vertikal (ke bawah) */
     right: 50%; 
     transform: translate(calc(105px), 10px); 
-    
     color: var(--level-good); 
 }
 
@@ -330,19 +322,13 @@ body {
     font-size: 9pt; 
 }
 
-/* --- INDIKATOR LAMPU LAMA & TOTAL KM (Dihilangkan) --- */
-.indicator-lights, .total-km-display {
-    display: none !important; 
-}
 
-/* --- BOTTOM CONTROLS --- */
+/* --- BOTTOM CONTROLS (Area Bawah) --- */
 .bottom-controls {
     width: 100%;
     display: flex;
-    /* Ubah dari column menjadi flex agar navigasi langsung di bagian bawah */
     flex-direction: column; 
     gap: 0; 
-    /* Hilangkan border-top yang biasanya memisahkan action buttons bar */
     border-top: none; 
     padding-top: 0; 
     flex-shrink: 0;
@@ -353,30 +339,26 @@ body {
     z-index: 100; 
 }
 
-/* --- ACTION BUTTONS BAR (HILANG TOTAL) --- */
-.action-buttons-bar {
+/* Action Buttons Bar (Opsional: Tetap jaga CSS ini jika HTML tidak dapat diubah) */
+.action-buttons-bar, .action-icon {
     display: none !important; 
 }
-/* Ikon individu juga disembunyikan jika masih ada di HTML */
-.action-icon {
-    display: none !important;
-}
 
 
-/* Penyesuaian Navigasi: Hanya Analog dan Digital, Centered */
+/* Penyesuaian Navigasi: Analog dan Digital di Tengah */
 .bottom-nav { 
     display: flex;
-    /* Centering item navigasi */
+    /* PENTING: Untuk menengahkan item navigasi yang tersisa */
     justify-content: center; 
     align-items: center;
     width: 100%;
-    /* Tambahkan padding di bagian atas untuk memisahkan dari gauge */
+    /* Memberi jarak yang bagus dari gauge */
     padding: 10px 5px 0 5px; 
     /* Jarak antara Analog dan Digital */
     gap: 20px; 
 }
 
-/* Sembunyikan tombol Map dari navigasi */
+/* Tombol Map (Opsional: Tetap jaga CSS ini jika HTML tidak dapat diubah) */
 .nav-item[data-view="map"] {
     display: none !important;
 }
