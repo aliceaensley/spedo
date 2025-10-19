@@ -8,6 +8,7 @@
 }
 
 body {
+    /* Penting untuk overlay di game/aplikasi */
     background-color: transparent !important; 
     color: white;
 }
@@ -17,14 +18,14 @@ body {
     --primary-text: #E0E0E0;
     --secondary-text: #9E9E9E;
     --accent-red: #FF0000;
-    --accent-blue: #00BFFF; 
+    --accent-blue: #00BFFF; /* Warna dominan UI */
     --dark-bg: #1A1A1A;
     --medium-dark-bg: #2C2C2C;
     --gauge-radius: 90px; 
     --gauge-text-color: #E0E0E0;
     --gauge-start-angle: -135deg; 
     --gauge-end-angle: 135deg; 
-    --accent-green: #00FF00; 
+    --accent-green: #00FF00; /* Warna lampu sein */
     --level-good: #00FF00; 
     --level-warning: #FFA500; 
     --level-critical: #FF0000; 
@@ -37,7 +38,7 @@ body {
 }
 
 /* ------------------------------------------------ */
-/* --- WADAH UTAMA --- */
+/* --- WADAH UTAMA (UI Container) --- */
 /* ------------------------------------------------ */
 .speedometer-ui {
     position: fixed;
@@ -59,7 +60,7 @@ body {
 }
 
 /* ------------------------------------------------ */
-/* --- KOTAK ATAS: SPEEDOMETER & INDIKATOR (main-content) --- */
+/* --- KOTAK ATAS: SPEEDOMETER & INDIKATOR --- */
 /* ------------------------------------------------ */
 .main-content {
     height: calc(100% - var(--nav-height)); 
@@ -223,19 +224,22 @@ body {
     z-index: 12;
     gap: 5px; 
 }
+/* Indikator Engine Check */
 .engine-indicator { opacity: 0.2; }
 .engine-indicator.active { opacity: 1; }
 .gear-display { font-size: 24pt; font-weight: bold; }
 
 /* ------------------------------------------------ */
-/* --- SINYAL BELOK (SEIN) --- */
+/* --- SINYAL BELOK (SEIN) - POSISI FINAL --- */
 /* ------------------------------------------------ */
 .turn-signals {
     position: absolute;
     top: 50%; 
     left: 50%;
+    /* Menggeser ke atas sedikit (+5px dari tengah vertikal) */
     transform: translate(-50%, calc(-50% + 5px)); 
     
+    /* Mengurangi lebar agar panah lebih dekat ke pusat jarum */
     width: calc(var(--gauge-radius) * 2 - 120px); 
     
     display: flex;
@@ -247,6 +251,7 @@ body {
     margin-top: 0px; 
 }
 .turn-signal.left-signal, .turn-signal.right-signal { opacity: 0.2; }
+/* Sein aktif berwarna hijau */
 .turn-signal.active { opacity: 1; color: var(--accent-green); }
 
 
@@ -283,11 +288,13 @@ body {
 
 .fuel-indicator {
     left: 50%; 
+    /* Posisikan di kiri bawah gauge */
     transform: translate(calc(-100% - 70px), 10px); 
     color: var(--level-good); 
 }
 .engine-health-indicator {
     right: 50%; 
+    /* Posisikan di kanan bawah gauge */
     transform: translate(calc(105px), 10px); 
     color: var(--level-good); 
 }
@@ -302,6 +309,7 @@ body {
     font-size: 9pt; 
 }
 
+/* Indikator yang tidak digunakan disembunyikan */
 .indicator-lights, .total-km-display {
     display: none !important; 
 }
@@ -325,7 +333,7 @@ body {
     
     padding: 0; 
     
-    /* Memastikan tidak ada tombol ekstra yang terlihat */
+    /* Tombol/elemen ekstra seperti Map/Action Buttons disembunyikan */
     .action-buttons-bar, .action-icon, .nav-item[data-view="map"] {
         display: none !important; 
     }
