@@ -352,7 +352,13 @@ body {
     padding: 10px 0 0 0; 
 }
 
-.status-indicators { display: flex; gap: 15px; font-size: 20pt; }
+.status-indicators { 
+    display: flex; 
+    gap: 15px; 
+    font-size: 20pt; 
+    /* MODIFIKASI: Meratakan ikon ke tengah horizontal */
+    justify-content: center; 
+}
 .indicator-icon { opacity: 0.4; cursor: pointer; } 
 .indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
 
