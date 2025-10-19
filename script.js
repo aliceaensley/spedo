@@ -408,22 +408,31 @@ function toggleYoutubeUI(state) {
     isYoutubeOpen = state;
     
     if (state) {
+        // KONDISI YOUTUBE DITAMPILKAN (OPEN)
         speedometer.classList.add('youtube-active');
         youtubeWrapper.classList.remove('hidden');
         toggleActive(elements.youtubeToggleIcon, true);
         
-        // Mulai dengan menampilkan search UI (yaitu results overlay) dan mengosongkan iframe
-        if (elements.browserIframe) elements.browserIframe.src = 'about:blank';
-        toggleYoutubeSearchUI(true);
-        if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
+        // Saat dibuka, selalu tampilkan overlay hasil pencarian
+        // KECUALI iframe masih berisi URL video (tidak 'about:blank')
+        if (elements.browserIframe.src === 'about:blank' || elements.youtubeResults.innerHTML === '') {
+            elements.browserIframe.src = 'about:blank'; // Bersihkan sebelum mencari
+            toggleYoutubeSearchUI(true);
+            if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
+        } else {
+            toggleYoutubeSearchUI(false); // Sembunyikan hasil, tampilkan video yang sudah berjalan
+        }
         
     } else {
+        // KONDISI YOUTUBE DISEMBUYIKAN (HIDDEN/CLOSE)
         speedometer.classList.remove('youtube-active');
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
         
-        if (elements.browserIframe) elements.browserIframe.src = 'about:blank';
-        // Sembunyikan hasil pencarian juga
+        // 🚨 PERBAIKAN: Hapus reset iframe.src = 'about:blank' di sini
+        // Ini memastikan video tetap berputar di latar belakang/tersembunyi.
+        
+        // HANYA sembunyikan hasil pencarian (overlay)
         toggleYoutubeSearchUI(false); 
     }
 }
@@ -455,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
         youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), 
-        speedometerMainElements: document.querySelector('.speedometer-main-elements'), // PEMETAAN BARU
+        speedometerMainElements: document.querySelector('.speedometer-main-elements'), 
         
         speedDigital: document.getElementById('speed-digital'),
         speedModeDigital: document.getElementById('speed-mode-digital'),
