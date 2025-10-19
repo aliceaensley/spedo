@@ -1,4 +1,3 @@
-
 /* ========================================================= */
 /* Final CSS Speedometer - High-Tech Glow Theme */
 /* ========================================================= */
@@ -422,6 +421,55 @@ body {
     box-shadow: 0 0 5px white;
     z-index: 11;
 }
+
+/* ========================================================= */
+/* --- GAYA BARU: SKALA ANGKA SPEEDOMETER --- */
+/* ========================================================= */
+.speed-marks-wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+/* Base untuk setiap tanda/mark */
+.speed-mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0 0; /* Titik putar di tengah */
+}
+
+/* Tanda kecil (garis) */
+.speed-mark.line {
+    width: 2px;
+    height: 8px; /* Panjang tanda */
+    background-color: rgba(0, 191, 255, 0.7); /* Warna Cyan/Biru Neon */
+    /* Geser ke luar lingkaran dan putar */
+    transform: translate(-50%, -100%) translateY(-75px) rotate(0deg); 
+    z-index: 5;
+}
+.speed-mark.line.major {
+    height: 12px; /* Tanda utama lebih panjang */
+    background-color: #00BFFF; /* Warna lebih terang */
+}
+
+/* Angka Kecepatan */
+.speed-mark.label {
+    font-size: 11pt;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); /* Glow pada angka */
+    /* Geser ke luar lingkaran dan atur posisi tengah */
+    transform: translate(-50%, -50%) translateY(-60px) rotate(0deg); 
+    z-index: 6;
+}
+/* Memutar angka agar tegak lurus (counter-rotate) */
+.speed-mark.label .text-rotate {
+    transform: rotate(var(--counter-rotate-angle)); 
+    display: block;
+}
+
 
 /* --- WADAH BAWAH NEON ORANGE --- */
 .bottom-data-wrapper {
