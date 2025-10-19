@@ -31,15 +31,24 @@
                                 <div class="speed-label label-200">200</div>
                             </div>
 
-                            <div class="indicator-lights">
+                            <div class="center-display-area">
+                                <div class="engine-indicator">
+                                    <i class="fas fa-engine"></i> </div>
+                                <div class="gear-display">N</div>
+                                <div class="turn-signals">
+                                    <span class="turn-signal left-signal">◀</span>
+                                    <span class="turn-signal right-signal">▶</span>
+                                </div>
+                            </div>
+                            <div id="speed-needle" class="speed-needle"></div>
+                            
+                            <div class="indicator-lights hidden-view">
                                 <span class="indicator-light handbrake-light">🚷</span> 
                                 <span class="indicator-light seatbelt-light">🚨</span>
                                 <span class="indicator-light engine-light">🔴</span>
                             </div>
                             
-                            <div id="speed-needle" class="speed-needle"></div>
-                            
-                            <div class="total-km-display">
+                            <div class="total-km-display hidden-view">
                                 <span class="label">TOTAL</span>
                                 <span id="total-distance" class="value">0.000KM</span>
                             </div>
