@@ -491,8 +491,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Tampilkan dan sembunyikan Overlay Selamat Datang
     if (elements.welcomeOverlay) {
         
-        // ** Durasi tampilan welcome overlay (2.5 detik) **
+        // Durasi tampilan welcome overlay (2.5 detik)
         const OVERLAY_DURATION_MS = 2500; 
+        // Durasi pemutaran audio (2 detik)
+        const AUDIO_PLAY_DURATION_MS = 2000; 
 
         const playAndHide = () => {
             welcomeSound.currentTime = 0;
@@ -500,7 +502,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn("Gagal memutar kebo.mp3. Fallback durasi.", e);
             });
             
-            // Panggil fungsi untuk menyembunyikan overlay setelah durasi tetap
+            // ** MODIFIKASI: Hentikan audio setelah 2 detik **
+            setTimeout(() => {
+                welcomeSound.pause();
+                welcomeSound.currentTime = 0; 
+            }, AUDIO_PLAY_DURATION_MS); 
+            
+            // Panggil fungsi untuk menyembunyikan overlay setelah durasi tetap (2.5 detik)
             hideWelcomeOverlay(OVERLAY_DURATION_MS); 
         };
         
