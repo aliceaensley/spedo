@@ -422,25 +422,6 @@ body {
     z-index: 11;
 }
 
-/* --- Gaya RPM Diagram Batang (Bar Graph) --- */
-.rpm-bar-analog-wrapper {
-    width: 90%; 
-    height: 10px; 
-    background-color: rgba(0, 0, 0, 0.5); 
-    border-radius: 5px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 165, 0, 0.4); 
-    margin-top: 5px;
-}
-.rpm-bar {
-    height: 100%;
-    width: 0%; 
-    /* Gradien: Hijau (Low RPM) -> Merah (High RPM) */
-    background: linear-gradient(to right, #00FF00, #FFFF00, #FF4500, #FF0000); 
-    transition: width 0.1s linear;
-}
-
-
 /* --- WADAH BAWAH NEON ORANGE --- */
 .bottom-data-wrapper {
     background: linear-gradient(135deg, #FFA500, #FF4500); 
@@ -470,10 +451,34 @@ body {
 .stat-label { color: #FFA500; font-size: 9pt; }
 .stat-value { font-size: 12pt; font-weight: bold; color: white; }
 
-/* Tambahan: Pastikan stat item kosong tidak memiliki border */
-.empty-stat-item {
-    border: 1px solid transparent !important;
-    background-color: transparent !important;
+/* --- GAYA BARU UNTUK RPM DI INFO GRID --- */
+.rpm-stat-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; 
+}
+
+.rpm-bar-wrapper {
+    width: 100%; 
+    height: 8px; /* Tinggi bar */
+    background-color: rgba(255, 255, 255, 0.1); 
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 2px;
+}
+
+/* Gaya Batang RPM Utama */
+.rpm-bar {
+    height: 100%;
+    width: 0%; 
+    /* Gradien: Hijau (Low RPM) -> Merah (High RPM) */
+    background: linear-gradient(to right, #00FF00, #FFFF00, #FF4500, #FF0000); 
+    transition: width 0.1s linear;
+}
+
+.rpm-stat-item .stat-label {
+    margin-bottom: 2px;
 }
 
 
