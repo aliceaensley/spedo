@@ -340,8 +340,8 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 10px; 
-    padding-top: 10px;
+    gap: 0; /* Hapus gap vertikal antara nav dan action bar */
+    padding-top: 5px; /* Kurangi padding atas agar lebih rapat ke atas */
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
     
@@ -351,6 +351,13 @@ body {
     z-index: 100; 
 }
 
+/* --- ACTION BUTTONS BAR (HILANG) --- */
+/* Jika elemen action buttons bar tidak dihapus dari HTML, gunakan ini: */
+.action-buttons-bar {
+    display: none !important; 
+}
+
+
 /* Penyesuaian Navigasi: Hapus Map dan Centering Analog/Digital */
 .bottom-nav { 
     display: flex;
@@ -358,13 +365,13 @@ body {
     justify-content: center; 
     align-items: center;
     width: 100%;
-    padding: 0 5px; 
+    /* Tambahkan padding agar tombol tidak menempel pada tepi container */
+    padding: 5px 5px 0 5px; 
     /* Jarak antara Analog dan Digital */
     gap: 20px; 
 }
 
-/* Aturan untuk menyembunyikan tombol Map */
-/* Catatan: Dalam HTML, pastikan tombol Map memiliki kelas .nav-item dan atribut data-view="map" atau ID yang sesuai */
+/* Sembunyikan tombol Map dari navigasi */
 .nav-item[data-view="map"] {
     display: none !important;
 }
@@ -375,37 +382,31 @@ body {
     gap: 5px;
     font-size: 9pt;
     color: var(--secondary-text);
-    padding: 3px 5px;
-    border-radius: 5px;
+    padding: 3px 10px; /* Tambahkan padding horizontal agar tombol terlihat lebih lebar dan rapi */
+    border-radius: 8px; /* Sudut lebih membulat */
     cursor: pointer; 
-    /* Menghapus flex-grow yang mungkin ada sebelumnya agar tidak menyebar */
     flex-grow: 0; 
+    transition: background-color 0.2s;
 }
 .nav-item.active {
     background-color: var(--accent-blue);
     color: white;
+    font-weight: bold; /* Tambahkan penekanan pada tombol aktif */
 }
 
-/* --- ACTION BUTTONS BAR --- */
+/* Hapus bagian Action Icons Bar dari CSS karena kita akan menghapus elemen HTMLnya. 
+   Namun, jika elemen tersebut tetap ada, aturan di atas akan menyembunyikannya.
+   Jika Anda benar-benar menghapus elemen HTML <div class="action-buttons-bar">...</div> 
+   dari file HTML, Anda tidak memerlukan blok CSS ini:
 .action-buttons-bar {
-    display: flex;
-    justify-content: space-around; 
-    width: 100%;
-    padding: 0 5px; 
+    display: none !important; 
 }
+*/
+.action-buttons-bar {
+    display: none !important; 
+}
+
 .action-icon {
-    background-color: var(--medium-dark-bg);
-    border-radius: 5px;
-    width: 35px; 
-    height: 35px; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16pt;
-    cursor: pointer; 
-    transition: background-color 0.2s, box-shadow 0.2s;
-}
-.action-icon:hover {
-    background-color: var(--accent-blue);
-    box-shadow: 0 0 8px var(--accent-blue);
+    /* Tidak perlu gaya karena elemen ini akan di-hide oleh .action-buttons-bar */
+    display: none;
 }
