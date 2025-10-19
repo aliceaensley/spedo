@@ -18,6 +18,12 @@ const criticalFuelSound = new Audio('sekarat.mp3'); 
 const welcomeSound = new Audio('kebo.mp3'); 
 const seatbeltSound = new Audio('ahh.mp3'); 
 
+// 🔊 PENTING: PENGATURAN VOLUME AUDIO (Disesuaikan)
+fuelWarningSound.volume = 0.5; // Menengah
+criticalFuelSound.volume = 0.6; // Agak keras untuk kritis
+welcomeSound.volume = 0.3;     // Dibuat lebih pelan (kebo.mp3)
+seatbeltSound.volume = 0.7;    // Cukup terdengar saat dipakai
+
 // *****************************************************************
 // Kunci API YouTube FINAL (Pastikan Anda menggantinya dengan kunci yang valid)
 // *****************************************************************
@@ -195,6 +201,7 @@ function setEngine(state) {
 }
 
 function setSeatbelts(state) {
+    // Logika: putar audio hanya jika status berubah dari false ke true
     if (state === true && seatbeltState === false) {
         seatbeltSound.currentTime = 0;
         seatbeltSound.play().catch(e => { 
@@ -429,8 +436,7 @@ function toggleYoutubeUI(state) {
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
         
-        // 🚨 PERBAIKAN: Hapus reset iframe.src = 'about:blank' di sini
-        // Ini memastikan video tetap berputar di latar belakang/tersembunyi.
+        // PENTING: Tidak mereset iframe.src di sini agar video tetap berputar
         
         // HANYA sembunyikan hasil pencarian (overlay)
         toggleYoutubeSearchUI(false); 
@@ -575,11 +581,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. SET DEFAULT STATE (Simulasi)
     setSpeedMode(0); // Default KMH
     setHeadlights(0); // Mati
-    setSeatbelts(false); // Tidak terpasang
+    setSeatbelts(true); // Default terpasang (true: terpasang)
+    
     setEngine(true); // Mesin Hidup (Start Simulation)
     startVitalUpdates(); // Mulai update Fuel/Health
 
     // 7. Simulasikan Status Indikator (Contoh)
     setHeadlights(1);
-    setSeatbelts(true);
 });
