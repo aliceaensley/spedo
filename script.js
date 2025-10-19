@@ -38,8 +38,9 @@ function setSpeed(speed_ms) {
     return speed_kmh;
 }
 
+// Fungsi ini tidak lagi digunakan untuk Total KM karena sudah dihapus di analog view
 function updateTripData(distance_km) {
-    if (elements.totalDistance) elements.totalDistance.innerText = `${distance_km.toFixed(3)}KM`;
+    // if (elements.totalDistance) elements.totalDistance.innerText = `${distance_km.toFixed(3)}KM`;
 }
 
 function toggleIndicator(lightElement, isActive) {
@@ -74,6 +75,14 @@ function startSimulation() {
     setSpeed(0);
     updateTripData(0); 
 
+    // Reset indikator baru
+    if (elements.engineIndicator) elements.engineIndicator.classList.remove('active');
+    if (elements.leftSignal) elements.leftSignal.classList.remove('active');
+    if (elements.rightSignal) elements.rightSignal.classList.remove('active');
+    // Gear N selalu aktif di simulasi ini
+    if (elements.gearDisplay) elements.gearDisplay.innerText = 'N';
+
+
     simulationInterval = setInterval(() => {
         
         currentSpeed_ms += (Math.random() - 0.5) * 1; 
@@ -82,12 +91,22 @@ function startSimulation() {
         
         totalDistanceTraveled += (speed_kmh / 3600); 
         
-        updateTripData(totalDistanceTraveled);
+        updateTripData(totalDistanceTraveled); // Ini sekarang tidak melakukan apa-apa untuk Total KM
         
-        // Simulasikan indikator
-        toggleIndicator(elements.engineLight, speed_kmh > 100 && Math.random() < 0.1); 
-        toggleIndicator(elements.handbrakeLight, speed_kmh < 5 && Math.random() < 0.2); 
-        toggleIndicator(elements.seatbeltLight, speed_kmh > 10 && Math.random() < 0.05);
+        // Simulasikan indikator baru
+        toggleIndicator(elements.engineIndicator, speed_kmh > 100 && Math.random() < 0.1); 
+        toggleIndicator(elements.leftSignal, Math.random() < 0.05); // Contoh random turn signal
+        toggleIndicator(elements.rightSignal, Math.random() < 0.05); // Contoh random turn signal
+
+        // Pastikan hanya satu sinyal belok yang aktif (atau keduanya mati)
+        if (elements.leftSignal.classList.contains('active') && elements.rightSignal.classList.contains('active')) {
+             if (Math.random() < 0.5) {
+                 elements.leftSignal.classList.remove('active');
+             } else {
+                 elements.rightSignal.classList.remove('active');
+             }
+         }
+
 
     }, 1000); 
 }
@@ -98,10 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Pemetaan Elemen
     elements = {
         speedNeedle: document.getElementById('speed-needle'),
+        // Lampu indikator lama (hidden, tapi referensi tetap ada jika diperlukan)
         engineLight: document.querySelector('.engine-light'),
         handbrakeLight: document.querySelector('.handbrake-light'),
         seatbeltLight: document.querySelector('.seatbelt-light'),
-        totalDistance: document.getElementById('total-distance'), 
+        totalDistance: document.getElementById('total-distance'), // Ini masih ada di HTML tapi disembunyikan
         
         // Elemen View
         analogView: document.getElementById('analog-view'),
@@ -112,6 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
         analogNav: document.querySelector('.analog-nav-item'),
         digitalNav: document.querySelector('.digital-nav-item'),
         mapNav: document.querySelector('.map-nav-item'),
+
+        // Elemen Indikator Baru
+        engineIndicator: document.querySelector('.engine-indicator'),
+        gearDisplay: document.querySelector('.gear-display'),
+        leftSignal: document.querySelector('.left-signal'),
+        rightSignal: document.querySelector('.right-signal'),
     };
     
     // 2. Setup Awal
