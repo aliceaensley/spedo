@@ -79,13 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. View Toggle Logic (Analog/Digital) ---
     // -------------------------------------------------------------------
     const toggleView = (viewType) => {
-        // Nonaktifkan semua view dan tombol nav
         analogView.classList.add('hidden-view');
         digitalView.classList.add('hidden-view');
         navAnalog.classList.remove('active');
         navDigital.classList.remove('active');
 
-        // Tampilkan view yang dipilih
         if (viewType === 'analog') {
             analogView.classList.remove('hidden-view');
             navAnalog.classList.add('active');
@@ -104,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('message', (event) => {
         const data = event.data;
 
-        // Cek tipe data, seperti pada template GitHub
+        // Memproses data berdasarkan 'type' seperti template GitHub
         if (data.type === 'updateStatus') {
             
             if (data.speed !== undefined) {
@@ -115,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateGear(data.gear);
             }
             
-            // Menggunakan properti fuel dan engineHealth sesuai template GitHub
             if (data.fuel !== undefined && data.engineHealth !== undefined) {
                 updateLevels(data.fuel, data.engineHealth);
             }
@@ -127,12 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleSignal('right', data.signalRight);
             }
             
-            // Engine On/Off
             if (data.engineOn !== undefined) {
                 engineCheckLight.classList.toggle('active', data.engineOn);
             }
             
-            // Tambahan: Jika Anda memiliki logika untuk menunjukkan/menyembunyikan UI
+            // Fungsionalitas show/hide UI
             if (data.show !== undefined) {
                  const uiContainer = document.querySelector('.speedometer-ui');
                  if (uiContainer) {
@@ -152,4 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleSignal('left', false);
     toggleSignal('right', false);
     if (engineCheckLight) engineCheckLight.classList.remove('active'); 
+    
+    // Sembunyikan UI secara default, siap diaktifkan oleh 'data.show = true'
+    const uiContainer = document.querySelector('.speedometer-ui');
+    if (uiContainer) {
+        uiContainer.style.display = 'none';
+    }
 });
