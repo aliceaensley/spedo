@@ -242,7 +242,7 @@ function startClock() {
 // --- FUNGSI KONTROL SIMULASI BERKENDARA ---
 
 const IDLE_RPM_VALUE = 0.16;	
-const IDLE_TOLERANCE_MS = 0.2;	
+// IDLE_TOLERANCE_MS dihapus
 
 function stopSimulation() {
 	if (simulationInterval !== null) {
@@ -262,9 +262,9 @@ function startSimulation() {
 
 	let currentSpeed = 0; // dalam m/s
 	
-    // DITURUNKAN LAGI untuk gerakan yang SUPER HALUS
-	let accelerationRate = 0.15;	// Laju percepatan
-	let decelerationRate = 0.04;	// Laju perlambatan
+    // NILAI AKSELERASI DAN DESELERASI DITURUNKAN UNTUK KEHALUSAN
+	let accelerationRate = 0.1;	
+	let decelerationRate = 0.03;	
     
 	setSpeed(0);
 	setRPM(IDLE_RPM_VALUE);	
@@ -278,71 +278,70 @@ function startSimulation() {
         // *** LOGIKA PERUBAHAN KECEPATAN YANG LEBIH TERARAH (SMOOTH) ***
         // *************************************************************
 
-        // Konversi kecepatan ke KMH untuk logika yang lebih mudah (1 m/s = 3.6 km/h)
-        const currentSpeedKmH = currentSpeed * 3.6; 
+        const currentSpeedKmH = currentSpeed * 3.6; // Konversi untuk logika yang lebih mudah
         
-        if (currentSpeedKmH < 5) {
-            // Baru mulai: Selalu Akselerasi Kuat
-            targetSpeedChange = accelerationRate * 0.8;
+        if (currentSpeedKmH < 2) {
+            // Baru mulai: Selalu Akselerasi Pelan, agar transisi 0 -> 1 lebih halus
+            targetSpeedChange = accelerationRate * 0.5 * Math.random();
         
-        } else if (currentSpeedKmH < 65) {
-            // Kecepatan rendah hingga sedang: Cenderung Akselerasi (70% waktu)
-            if (action < 0.7) {	
+        } else if (currentSpeedKmH < 70) {
+            // Kecepatan rendah hingga sedang: Cenderung Akselerasi (80% waktu)
+            if (action < 0.8) {	
                 targetSpeedChange = accelerationRate * Math.random(); 
-            } else if (action < 0.9) {
-                targetSpeedChange = -decelerationRate * Math.random(); // Deselerasi sedikit
+            } else if (action < 0.95) {
+                targetSpeedChange = -decelerationRate * Math.random() * 0.5; // Deselerasi sangat sedikit
             } else {
                 targetSpeedChange = 0; // Cruise/Tahan
             }
             
-        } else if (currentSpeedKmH < 100) {
+        } else if (currentSpeedKmH < 120) {
             // Kecepatan tinggi (Cruising): Pertahankan kecepatan/cenderung melambat
-             if (action < 0.6) {
+             if (action < 0.5) {
                 // Akselerasi lebih kecil
-                targetSpeedChange = accelerationRate * (1 - (currentSpeedKmH / 120)) * Math.random() * 0.5; 
+                targetSpeedChange = accelerationRate * (1 - (currentSpeedKmH / 150)) * Math.random() * 0.3; 
              } else {
-                // Cenderung melambat sedikit
+                // Cenderung melambat
                 targetSpeedChange = -decelerationRate * Math.random() * 0.5;
              }
         } else {
-            // Kecepatan sangat tinggi (di atas 100 KMH), harus ada pengereman
+            // Kecepatan sangat tinggi, pengereman wajib
             targetSpeedChange = -decelerationRate * 2;
         }
 
 		currentSpeed += targetSpeedChange;
 		
         // Perlambatan natural (hambatan/drag)
-		if (targetSpeedChange < 0.1 && currentSpeed > 0) {
-			currentSpeed *= 0.99;	
+		if (targetSpeedChange < 0.05 && currentSpeed > 0) {
+			currentSpeed *= 0.995;	// Lebih halus lagi
 		}
 
-        // Pastikan kecepatan tidak negatif dan stabil di 0 saat berhenti
+        // --- PEMERIKSAAN STABILISASI NOL (Wajib) ---
 		if (currentSpeed < 0.001) {	
 			currentSpeed = 0;	
 		}	
-		
 		currentSpeed = Math.max(0, currentSpeed);
 		
 		isVehicleIdle = (currentSpeed === 0);
 		
 		if (isVehicleIdle) {
 			setSpeed(0);
-			// RPM disetel ke idle 0.16 (16%) saat mesin hidup dan kendaraan diam
+			// RPM HARUS TEPAT DI IDLE (0.16) saat speed 0 (Fix RPM Idle terlalu tinggi)
 			setRPM(IDLE_RPM_VALUE);	
 		} else {
 			setSpeed(currentSpeed);	
 			
 			const absSpeed = Math.abs(currentSpeed);
 			
-			// Perhitungan RPM: dibuat tetap proporsional dengan kecepatan (absSpeed)
+			// Perhitungan RPM: dimulai dari idle, naik proporsional dengan kecepatan
 			let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.005);	
 			let currentRPM = Math.min(0.99, baseRPM);
-			currentRPM += (Math.random() - 0.5) * 0.01;	// Fluktuasi RPM sangat kecil
+			// Fluktuasi RPM sangat dikurangi untuk kehalusan visual
+			currentRPM += (Math.random() - 0.5) * 0.005;	
 			
 			setRPM(currentRPM);
 		}
 		
-	}, 50);	// Interval Simulasi 50ms (untuk kehalusan)
+	}, 50);	
 }
 
 
