@@ -18,8 +18,8 @@ body {
     --secondary-text: #9E9E9E;
     --accent-red: #FF0000;
     --accent-blue: #00BFFF; 
-    --dark-bg: traansparent;
-    --medium-dark-bg: #2C2C2C;
+    --dark-bg: #1A1A1A;
+    --medium-dark-bg: transparent;
     --gauge-radius: 90px; 
     --gauge-text-color: #E0E0E0;
     --gauge-start-angle: -135deg; 
