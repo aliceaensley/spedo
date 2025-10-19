@@ -423,7 +423,7 @@ body {
 }
 
 /* ========================================================= */
-/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX) --- */
+/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX ULANG) --- */
 /* ========================================================= */
 .speed-marks-wrapper {
     position: absolute;
@@ -454,9 +454,10 @@ body {
     background-color: #00BFFF; /* Warna lebih terang */
 }
 
-/* Angka Kecepatan (FINAL FIX) */
+/* Angka Kecepatan (FINAL FIX ULANG) */
 .speed-mark.label {
-    font-size: 11pt;
+    /* Angka dikecilkan sedikit agar lebih banyak ruang */
+    font-size: 10pt; 
     font-weight: bold;
     color: white;
     text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); /* Glow pada angka */
@@ -466,11 +467,13 @@ body {
     transition: transform 0s; 
 }
 
-/* Memutar angka agar tegak lurus (counter-rotate) (FINAL FIX) */
+/* Memutar angka agar tegak lurus (counter-rotate) (FINAL FIX ULANG) */
 .speed-mark.label .text-rotate {
     display: block;
-    /* INI ADALAH PERBAIKAN KRITISNYA: Jarak radial 75px */
-    transform: translateY(-75px) rotate(var(--counter-rotate-angle)); 
+    /* INI ADALAH PERBAIKAN KRITISNYA: Jarak radial 65px */
+    /* Mengurangi jarak ini justru akan membuat angka lebih masuk ke dalam dan lebih rapat */
+    /* Kita perlu mengatur ini dengan hati-hati bersama dengan ukuran font */
+    transform: translateY(-65px) rotate(var(--counter-rotate-angle)); 
 }
 
 
