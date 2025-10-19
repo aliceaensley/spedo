@@ -152,12 +152,13 @@ function setSpeed(speed) {
 function setRPM(rpm) {
     const safeRPM = Math.max(0.16, rpm); 
     
-    // Pembaruan RPM Bar Analog (DIAGRAM BATANG) 
-    const barWidth = Math.round(safeRPM * 100); 
-    if (elements.rpmBarAnalog) {
-        elements.rpmBarAnalog.style.width = `${barWidth}%`;
+    // Konversi nilai 0.16 - 0.99 menjadi 16% - 99%
+    const barWidth = Math.round(safeRPM * 100); 
+
+    // Update RPM Bar MAIN (Menggunakan ID baru: rpmBarMain)
+    if (elements.rpmBarMain) {
+        elements.rpmBarMain.style.width = `${barWidth}%`;
     }
-    // Angka RPM di panel info grid sudah dihapus dari HTML
 }
 
 function setFuel(fuel) {
@@ -241,7 +242,7 @@ function stopSimulation() {
     }
     setSpeed(0);
     // RPM bar disetel ke 0 saat mesin mati
-    if (elements.rpmBarAnalog) elements.rpmBarAnalog.style.width = '0%'; 
+    if (elements.rpmBarMain) elements.rpmBarMain.style.width = '0%'; 
     isVehicleIdle = false; 
 }
 
@@ -472,7 +473,9 @@ document.addEventListener('DOMContentLoaded', () => {
         speedAnalogText: document.getElementById('speed-analog-text'),
         speedModeAnalog: document.getElementById('speed-mode-analog'),
         analogNeedle: document.getElementById('analog-needle'),
-        rpmBarAnalog: document.getElementById('rpm-bar-analog'),
+        
+        // ID BARU UNTUK RPM BAR UTAMA
+        rpmBarMain: document.getElementById('rpm-bar-main'),
         
         // Mode View Toggler
         digitalSpeedView: document.getElementById('digital-speed-view'),
