@@ -10,6 +10,7 @@ let fuelWarningInterval = null;
 let currentFuelWarningType = null; 
 let isVehicleIdle = false; 
 let timeInterval = null; 
+let currentSpeedometerMode = 'digital'; // 'digital' atau 'analog'
 
 // ✅ AUDIO FILES (Pastikan file ada di direktori yang sama)
 const fuelWarningSound = new Audio('bensin.mp3'); 
@@ -20,7 +21,7 @@ const seatbeltSound = new Audio('ahh.mp3');
 // *****************************************************************
 // Kunci API YouTube FINAL
 // *****************************************************************
-const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; 
+const YOUTUBE_API_KEY = 'ANDA_HARUS_MENGGANTI_INI_DENGAN_KUNCI_API_ANDA_YANG_ASLI'; // <-- GANTI DENGAN KUNCI ANDA!
 // *****************************************************************
 
 // --- FUNGSI UTILITY & TOGGLE ---
@@ -77,8 +78,25 @@ function toggleFuelWarning(type) {
     }
 }
 
+// --- FUNGSI BARU: TOGGLE ANALOG/DIGITAL ---
+function toggleSpeedometerMode() {
+    if (currentSpeedometerMode === 'digital') {
+        currentSpeedometerMode = 'analog';
+        elements.digitalSpeedView.classList.add('hidden');
+        elements.analogSpeedView.classList.remove('hidden');
+        toggleActive(elements.modeToggleIcon, true); // Aktifkan glow Biru
+    } else {
+        currentSpeedometerMode = 'digital';
+        elements.digitalSpeedView.classList.remove('hidden');
+        elements.analogSpeedView.classList.add('hidden');
+        toggleActive(elements.modeToggleIcon, false); // Matikan glow Biru
+    }
+    // Tidak perlu memanggil setSpeed/setRPM secara eksplisit, karena interval simulasi akan segera memperbarui
+}
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
+
+// --- FUNGSI PEMBARUAN DATA SPEEDOMETER (MODIFIKASI) ---
+
 function setSpeedMode(mode) {
     speedMode = mode;
     let unit = 'KMH';
@@ -88,7 +106,9 @@ function setSpeedMode(mode) {
         case 2: unit = 'Knots'; break;
         default: unit = 'KMH';
     }
-    if (elements.speedMode) elements.speedMode.innerText = unit;
+    // Update kedua mode
+    if (elements.speedModeDigital) elements.speedModeDigital.innerText = unit;
+    if (elements.speedModeAnalog) elements.speedModeAnalog.innerText = unit;
 }
 
 function setSpeed(speed) {
@@ -102,21 +122,46 @@ function setSpeed(speed) {
         case 2: speedValue = Math.round(absSpeed * 1.943844); break; 
         default: speedValue = Math.round(absSpeed * 3.6); 
     }
-    // Speed selalu ditampilkan 3 digit
+    
     const displayValue = String(speedValue).padStart(3, '0');
-    if (elements.speed) elements.speed.innerText = displayValue;
+    
+    // 1. Pembaruan Tampilan Digital (tetap 3 digit)
+    if (elements.speedDigital) elements.speedDigital.innerText = displayValue; 
+    
+    // 2. Pembaruan Tampilan Analog (angka di tengah)
+    if (elements.speedAnalogText) elements.speedAnalogText.innerText = speedValue;
+    
+    // 3. Pembaruan Jarum Analog (BARU!)
+    const MAX_ANALOG_UNIT = 200; // Asumsi max speed 200 unit (MPH/KMH)
+    const START_ANGLE = -135;
+    const TOTAL_ANGLE = 270; // 135 - (-135)
+    
+    const safeSpeed = Math.min(MAX_ANALOG_UNIT, speedValue);
+    const percentage = safeSpeed / MAX_ANALOG_UNIT;
+    const angle = START_ANGLE + (percentage * TOTAL_ANGLE);
+    
+    if (elements.analogNeedle) {
+        // Transform jarum analog
+        elements.analogNeedle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+    }
 }
 
 function setRPM(rpm) {
-    // Diasumsikan RPM masuk sebagai nilai 0.0 - 1.0 (Skala 0 - 10000)
-    
-    // Jika RPM di bawah 0.16, atur ke 0.16 sebagai minimum (agar tidak 0)
+    // Diasumsikan RPM masuk sebagai nilai 0.0 - 1.0
     const safeRPM = Math.max(0.16, rpm); 
     
-    // Konversi ke nilai 4 digit (misal: 0.16 -> 1600, 0.5 -> 5000)
+    // Konversi ke nilai 4 digit (misal: 0.16 -> 1600)
     const displayValue = `${Math.round(safeRPM * 10000)}`.padStart(4, '0'); 
     
+    // 1. Pembaruan RPM Digital (di panel info grid)
     if (elements.rpm) elements.rpm.innerText = displayValue;
+    
+    // 2. Pembaruan RPM Bar Analog (di panel analog)
+    // RPM 0.0 sampai 1.0 akan menjadi 0% sampai 100% lebar bar.
+    const barWidth = Math.round(safeRPM * 100); 
+    if (elements.rpmBarAnalog) {
+        elements.rpmBarAnalog.style.width = `${barWidth}%`;
+    }
 }
 
 function setFuel(fuel) {
@@ -156,7 +201,7 @@ function setEngine(state) {
 }
 
 function setSeatbelts(state) {
-    // Logika Suara Seatbelt: Putar ahh.mp3 jika sabuk baru dipasang (dari false ke true)
+    // Logika Suara Seatbelt
     if (state === true && seatbeltState === false) {
         seatbeltSound.currentTime = 0;
         seatbeltSound.play().catch(e => { 
@@ -199,8 +244,9 @@ function stopSimulation() {
         simulationInterval = null;
     }
     setSpeed(0);
-    // Atur RPM ke 0000 saat mesin dimatikan
+    // Atur RPM ke 0000 saat mesin dimatikan (hanya untuk tampilan digital info grid)
     if (elements.rpm) elements.rpm.innerText = '0000'; 
+    if (elements.rpmBarAnalog) elements.rpmBarAnalog.style.width = '0%'; // RPM Bar Analog mati
     isVehicleIdle = false; 
 }
 
@@ -209,43 +255,34 @@ function startSimulation() {
 
     let currentSpeed = 0;
     
-    // **Variabel Simulasi Baru untuk Kontrol Lebih Baik**
-    let accelerationRate = 0.5; // Maksimum percepatan per interval (m/s)
-    let decelerationRate = 0.1; // Deselerasi saat rem/gas dilepas (m/s)
+    let accelerationRate = 0.5; 
+    let decelerationRate = 0.1; 
 
     // Set nilai awal idle (000 dan 1600)
     setSpeed(0);
-    if (elements.rpm) elements.rpm.innerText = '1600'; 
+    setRPM(IDLE_RPM_VALUE); 
 
     simulationInterval = setInterval(() => {
         
         let targetSpeedChange = 0;
         
-        // Simulasikan input user: 
-        // 1. Peluang 50% untuk mencoba menambah kecepatan (Akselerasi)
-        // 2. Peluang 30% untuk mengurangi kecepatan (Deselerasi/Rem)
-        // 3. Peluang 20% untuk mempertahankan kecepatan (Cruising/Inertia)
         let action = Math.random();
         
         if (action < 0.5) { 
-            // 50%: Akselerasi/Tambah kecepatan (seperti gas ditekan)
             targetSpeedChange = accelerationRate * Math.random(); 
         } else if (action < 0.8) { 
-            // 30%: Deselerasi (seperti rem ditekan pelan)
             targetSpeedChange = -decelerationRate * Math.random() * 2; 
         } else {
-            // 20%: Cruising (Perubahan sangat kecil)
             targetSpeedChange = (Math.random() - 0.5) * 0.1;
         }
 
         // Terapkan perubahan kecepatan
         currentSpeed += targetSpeedChange;
         
-        // Perlambatan alami (Drag) - Terapkan hanya jika tidak akselerasi kuat
+        // Perlambatan alami (Drag)
         if (targetSpeedChange < 0.1 && currentSpeed > 0) {
-            currentSpeed *= 0.98; // Kurangi kecepatan 2% per interval
+            currentSpeed *= 0.98; 
         }
-
 
         // Jika kecepatan sangat rendah, paksa ke 0 (Idle)
         if (currentSpeed < IDLE_TOLERANCE_MS) { 
@@ -258,9 +295,9 @@ function startSimulation() {
         isVehicleIdle = (currentSpeed === 0);
         
         if (isVehicleIdle) {
-            // ✅ Kunci Nilai: Jika idle, Speed = 000, RPM = 1600 (nilai TEPAT dan STABIL)
+            // ✅ Kunci Nilai: Jika idle, Speed = 0, RPM = IDLE_RPM_VALUE (1600)
             setSpeed(0);
-            if (elements.rpm) elements.rpm.innerText = '1600'; 
+            setRPM(IDLE_RPM_VALUE); 
         } else {
             // ✅ Simulasi normal jika bergerak
             setSpeed(currentSpeed); 
@@ -268,10 +305,8 @@ function startSimulation() {
             const absSpeed = Math.abs(currentSpeed);
             
             // Logika RPM (Proporsional dengan Speed, tapi dengan lantai IDLE_RPM)
-            // RPM Max 9000 (0.9) jika Speed ~ 100 m/s (~360 KMH)
-            let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.007); // 0.007 adalah faktor transmisi
+            let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.007); 
             
-            // Batasi RPM agar tidak melewati batas (misal 9900 atau 0.99)
             let currentRPM = Math.min(0.99, baseRPM);
             
             // Tambahkan sedikit noise hanya saat bergerak
@@ -280,7 +315,7 @@ function startSimulation() {
             setRPM(currentRPM);
         }
         
-    }, 100); // ✅ Interval dipercepat menjadi 100ms agar simulasi lebih mulus
+    }, 100); // Interval 100ms agar simulasi lebih mulus
 }
 
 
@@ -306,7 +341,7 @@ function startVitalUpdates() {
 }
 
 
-// --- FUNGSI YOUTUBE API ---
+// --- FUNGSI YOUTUBE API (TETAP SAMA) ---
 async function searchYoutube(query) {
     if (!query) {
         elements.youtubeResults.innerHTML = '<p style="color:white; padding: 10px; width: 300px;">Harap masukkan kata kunci.</p>';
@@ -324,6 +359,9 @@ async function searchYoutube(query) {
         const response = await fetch(API_URL);
         
         if (!response.ok) {
+            // Log detail error dari YouTube API jika ada
+            const errorData = await response.json().catch(() => ({}));
+            console.error('YouTube API Response Error:', errorData);
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
         }
 
@@ -359,7 +397,7 @@ async function searchYoutube(query) {
     } catch (error) {
         console.error('Error fetching YouTube data:', error);
         
-        let errorMessage = 'Gagal melakukan pencarian YouTube. (Kemungkinan: API Key salah/kuota habis).';
+        let errorMessage = 'Gagal melakukan pencarian YouTube. (Kemungkinan: API Key salah/kuota habis/batasan CORS).';
         
         elements.youtubeResults.innerHTML = `<p style="color:red; padding: 10px; width: 300px;">${errorMessage}</p>`;
     }
@@ -407,7 +445,8 @@ function toggleYoutubeUI(state) {
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
         
-        // Video tetap berjalan saat disembunyikan (tidak mereset iframe.src)
+        // Kosongkan iframe saat disembunyikan untuk menghentikan pemutaran
+        if (elements.browserIframe) elements.browserIframe.src = 'about:blank';
     }
 }
 
@@ -444,55 +483,69 @@ document.addEventListener('DOMContentLoaded', () => {
     elements = {
         speedometerUI: document.getElementById('speedometer-ui'), 
         youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), 
-        speed: document.getElementById('speed'),
+        
+        // Elemen Tampilan Digital
+        speedDigital: document.getElementById('speed-digital'),
+        speedModeDigital: document.getElementById('speed-mode-digital'),
+        
+        // Elemen Tampilan Analog
+        speedAnalogText: document.getElementById('speed-analog-text'),
+        speedModeAnalog: document.getElementById('speed-mode-analog'),
+        analogNeedle: document.getElementById('analog-needle'),
+        rpmBarAnalog: document.getElementById('rpm-bar-analog'),
+        
+        // Mode View Toggler
+        digitalSpeedView: document.getElementById('digital-speed-view'),
+        analogSpeedView: document.getElementById('analog-speed-view'),
+        modeToggleIcon: document.getElementById('mode-toggle-icon'),
+        
+        // Elemen Info Grid (Tetap menggunakan ID lama)
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
         timeWIB: document.getElementById('time-wib'), 
-        speedMode: document.getElementById('speed-mode'),
+        
+        // Elemen Indikator Status
         headlightsIcon: document.getElementById('headlights-icon'),
         engineIcon: document.getElementById('engine-icon'), 
         seatbeltIcon: document.getElementById('seatbelt-icon'),
         youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
+        
+        // Elemen YouTube
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
         youtubeSearchInput: document.getElementById('youtube-search-input'),
         youtubeSearchButton: document.getElementById('youtube-search-button'),
         youtubeResults: document.getElementById('youtube-results'),
         browserIframe: document.getElementById('browser-iframe'), 
-        welcomeOverlay: document.getElementById('welcome-overlay'),
         youtubeHideButton: document.getElementById('youtube-hide-button'),
+        
+        // Overlay
+        welcomeOverlay: document.getElementById('welcome-overlay'),
     };
     
     // 2. Tampilkan dan sembunyikan Overlay Selamat Datang (Disinkronkan dengan Audio)
     if (elements.welcomeOverlay) {
         
-        // Atur listener untuk mendapatkan durasi audio
         welcomeSound.onloadedmetadata = () => {
             const audioDurationMs = welcomeSound.duration * 1000; // Konversi ke milidetik
             
-            // Putar suara Selebew setelah metadata dimuat
             welcomeSound.currentTime = 0;
             welcomeSound.play().catch(e => {
-                console.warn("Gagal memutar selebew.mp3. Pastikan file ada di direktori yang sama. Kesalahan:", e);
-                // Fallback jika pemutaran gagal (misal karena batasan autoplay browser)
-                hideWelcomeOverlay(2500); // Durasi default 2.5 detik
+                console.warn("Gagal memutar selebew.mp3. Fallback durasi.", e);
+                hideWelcomeOverlay(2500); 
             });
             
-            // Atur waktu untuk mulai fade out berdasarkan durasi audio
             hideWelcomeOverlay(audioDurationMs);
         };
         
-        // Fallback jika onloadedmetadata tidak pernah dipanggil (misalnya file tidak ditemukan)
         welcomeSound.onerror = () => {
              console.error("Gagal memuat file selebew.mp3. Menggunakan durasi default.");
-             hideWelcomeOverlay(2500); // Durasi default 2.5 detik
+             hideWelcomeOverlay(2500); 
         };
         
-        // Jika file sudah di-cache dan metadata segera tersedia
         if(welcomeSound.readyState >= 2) {
              welcomeSound.onloadedmetadata();
         }
-
     }
 
 
@@ -512,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleYoutubeUI(false); 
         });
     }
-
+    
     // 6. LOGIC INTERAKSI PENCARIAN YOUTUBE
     const handleSearch = () => {
         const query = elements.youtubeSearchInput.value;
@@ -569,9 +622,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (elements.seatbeltIcon) {
         elements.seatbeltIcon.addEventListener('click', () => {
-            // Panggil setSeatbelts dengan status kebalikan dari status saat ini.
             setSeatbelts(!seatbeltState);
         });
+    }
+
+    // ** EVENT KLIK BARU: TOGGLE MODE **
+    if (elements.modeToggleIcon) {
+        elements.modeToggleIcon.addEventListener('click', toggleSpeedometerMode);
     }
     
     // Nyalakan mesin setelah 2 detik untuk memulai startSimulation
