@@ -292,7 +292,6 @@ body {
 
 /* ========================================================= */
 /* --- SPEEDOMETER THEME STYLES --- */
-/* (Sisanya dari kode CSS yang sudah disepakati) */
 /* ========================================================= */
 
 .panel {
@@ -468,6 +467,13 @@ body {
 }
 .stat-label { color: #FFA500; font-size: 9pt; }
 .stat-value { font-size: 12pt; font-weight: bold; color: white; }
+
+/* Tambahan: Pastikan stat item kosong tidak memiliki border */
+.empty-stat-item {
+    border: 1px solid transparent !important;
+    background-color: transparent !important;
+}
+
 
 /* Bottom Panel (Indicators & Toggles) */
 .bottom-panel { 
