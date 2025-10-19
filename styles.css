@@ -28,16 +28,16 @@ body {
     --level-good: #00FF00; 
     --level-warning: #FFA500; 
     --level-critical: #FF0000; 
-    --nav-height: 45px; /* Ketinggian Kotak Bawah Navigasi */
+    --nav-height: 45px; 
 }
 
-/* --- UTILITY CLASS (PENTING UNTUK JS) --- */
+/* --- UTILITY CLASS --- */
 .hidden-view {
     display: none !important;
 }
 
 /* ------------------------------------------------ */
-/* --- WADAH UTAMA (SEPENUHNYA TRANSPARAN) --- */
+/* --- WADAH UTAMA --- */
 /* ------------------------------------------------ */
 .speedometer-ui {
     position: fixed;
@@ -228,17 +228,15 @@ body {
 .gear-display { font-size: 24pt; font-weight: bold; }
 
 /* ------------------------------------------------ */
-/* --- SINYAL BELOK (SEIN) - DIPINDAHKAN --- */
+/* --- SINYAL BELOK (SEIN) --- */
 /* ------------------------------------------------ */
 .turn-signals {
     position: absolute;
     top: 50%; 
     left: 50%;
-    /* PENTING: Geser ke atas sedikit (mengganti +40px menjadi +5px) */
     transform: translate(-50%, calc(-50% + 5px)); 
     
-    /* PENTING: Kecilkan lebar agar lebih dekat ke pusat */
-    width: calc(var(--gauge-radius) * 2 - 120px); /* 2*90 - 120 = 60px lebar */
+    width: calc(var(--gauge-radius) * 2 - 120px); 
     
     display: flex;
     justify-content: space-between;
@@ -327,6 +325,7 @@ body {
     
     padding: 0; 
     
+    /* Memastikan tidak ada tombol ekstra yang terlihat */
     .action-buttons-bar, .action-icon, .nav-item[data-view="map"] {
         display: none !important; 
     }
@@ -357,11 +356,8 @@ body {
     cursor: pointer; 
     flex-grow: 0; 
     transition: background-color 0.2s;
-    
-    .total-km-digital {
-        display: none !important;
-    }
 }
+
 .nav-item.active {
     background-color: var(--accent-blue);
     color: white;
