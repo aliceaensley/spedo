@@ -12,8 +12,7 @@ let isVehicleIdle = false;
 let timeInterval = null;	
 let currentSpeedometerMode = 'digital'; // 'digital' atau 'analog'
 
-// ✅ AUDIO FILES (Pastikan file ada di direktori yang sama: bensin.mp3, sekarat.mp3, kebo.mp3, ahh.mp3)
-// Anda harus menyediakan file-file audio ini di folder yang sama agar berfungsi
+// ✅ AUDIO FILES (Anda harus menyediakan file-file ini)
 const fuelWarningSound = new Audio('bensin.mp3');	
 const criticalFuelSound = new Audio('sekarat.mp3');	
 const welcomeSound = new Audio('kebo.mp3');	
@@ -26,10 +25,60 @@ welcomeSound.volume = 0.3;
 seatbeltSound.volume = 0.7;
 
 // *****************************************************************
-// Kunci API YouTube FINAL (GANTI dengan kunci yang valid agar pencarian berfungsi)
+// Kunci API YouTube FINAL (GANTI dengan kunci yang valid)
 // *****************************************************************
-const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; 
+const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw';	
 // *****************************************************************
+
+// --- FUNGSI GENERATE TANDA SPEEDOMETER ANALOG (BARU) ---
+function generateAnalogMarks() {
+    const marksWrapper = elements.speedMarksWrapper;
+    if (!marksWrapper) return;
+
+    marksWrapper.innerHTML = ''; // Bersihkan dulu
+    
+    // Rentang Sudut: -135 derajat (0 KMH) hingga 135 derajat (130 KMH)
+    const START_ANGLE = -135;
+    const TOTAL_ANGLE = 270;
+    const MAX_SPEED = 130;
+    
+    // Sudut per unit (1 KMH = 270 / 130)
+    const ANGLE_PER_UNIT = TOTAL_ANGLE / MAX_SPEED;
+
+    for (let speed = 0; speed <= MAX_SPEED; speed += 10) {
+        const angle = START_ANGLE + (speed * ANGLE_PER_UNIT);
+        const counterRotate = -angle; // Untuk membuat angka tegak lurus
+        
+        // 1. Tanda Utama (Major Mark) - Setiap 10 unit
+        const majorMark = document.createElement('div');
+        majorMark.classList.add('speed-mark', 'line', 'major');
+        majorMark.style.transform = `translate(-50%, -100%) translateY(-75px) rotate(${angle}deg)`;
+        marksWrapper.appendChild(majorMark);
+
+        // 2. Angka Label (Label Mark) - Setiap 10 unit
+        const label = document.createElement('div');
+        label.classList.add('speed-mark', 'label');
+        label.style.transform = `translate(-50%, -50%) translateY(-60px) rotate(${angle}deg)`;
+        label.style.setProperty('--counter-rotate-angle', `${counterRotate}deg`);
+        label.innerHTML = `<span class="text-rotate">${speed}</span>`;
+        marksWrapper.appendChild(label);
+        
+        // 3. Tanda Kecil (Minor Marks) - Setiap 5 unit (kecuali di angka 10)
+        if (speed < MAX_SPEED && speed % 10 === 0) {
+            for (let i = 1; i <= 9; i++) {
+                if (i === 5) continue; // Tanda 5 tidak dibuat di sini
+                const minorSpeed = speed + i;
+                const minorAngle = START_ANGLE + (minorSpeed * ANGLE_PER_UNIT);
+                
+                const minorMark = document.createElement('div');
+                minorMark.classList.add('speed-mark', 'line');
+                minorMark.style.transform = `translate(-50%, -100%) translateY(-75px) rotate(${minorAngle}deg)`;
+                marksWrapper.appendChild(minorMark);
+            }
+        }
+    }
+}
+
 
 // --- FUNGSI UTILITY & TOGGLE ---
 const toggleActive = (element, state) => {
@@ -137,7 +186,7 @@ function setSpeed(speed) {
 	if (elements.speedAnalogText) elements.speedAnalogText.innerText = speedValue;
 	
 	// 3. Pembaruan Jarum Analog	
-	const MAX_ANALOG_UNIT = 200;	
+	const MAX_ANALOG_UNIT = 130; // Maksimum sesuai skala baru
 	const START_ANGLE = -135;
 	const TOTAL_ANGLE = 270;	
 	
@@ -151,18 +200,18 @@ function setSpeed(speed) {
 }
 
 function setRPM(rpm) {
-    // KODE PERMINTAAN SEBELUMNYA: RPM 0% saat mesin mati
-    if (rpm === 0) {
-        if (elements.rpmBarMain) {
-            elements.rpmBarMain.style.width = '0%';
-        }
-        return; 
-    }
-    
-    // Untuk nilai RPM idle/berjalan (minimal 0.16)
-    const safeRPM = Math.max(0.16, rpm); 
-    	// Konversi nilai 0.16 - 0.99 menjadi 16% - 99%
-	const barWidth = Math.round(safeRPM * 100); 
+    // KODE PERMINTAAN SEBELUMNYA: RPM 0% saat mesin mati
+    if (rpm === 0) {
+        if (elements.rpmBarMain) {
+            elements.rpmBarMain.style.width = '0%';
+        }
+        return; 
+    }
+    
+    // Untuk nilai RPM idle/berjalan (minimal 0.16)
+    const safeRPM = Math.max(0.16, rpm); 
+    	// Konversi nilai 0.16 - 0.99 menjadi 16% - 99%
+	const barWidth = Math.round(safeRPM * 100); 
 
 	// Update RPM Bar MAIN
 	if (elements.rpmBarMain) {
@@ -251,8 +300,8 @@ function stopSimulation() {
 	setSpeed(0);
 	
 	// RPM bar disetel ke 0 saat mesin mati
-	setRPM(0); 
-    
+	setRPM(0);	
+    
 	isVehicleIdle = false;	
 }
 
@@ -261,10 +310,10 @@ function startSimulation() {
 
 	let currentSpeed = 0; // dalam m/s
 	
-    // NILAI AKSELERASI DAN DESELERASI DITURUNKAN UNTUK KEHALUSAN
+    // NILAI AKSELERASI DAN DESELERASI DITURUNKAN UNTUK KEHALUSAN
 	let accelerationRate = 0.1;	
 	let decelerationRate = 0.03;	
-    
+    
 	setSpeed(0);
 	setRPM(IDLE_RPM_VALUE);	
 
@@ -273,48 +322,48 @@ function startSimulation() {
 		let targetSpeedChange = 0;
 		const action = Math.random();
 		
-        // *************************************************************
-        // *** LOGIKA PERUBAHAN KECEPATAN YANG LEBIH TERARAH (SMOOTH) ***
-        // *************************************************************
+        // *************************************************************
+        // *** LOGIKA PERUBAHAN KECEPATAN YANG LEBIH TERARAH (SMOOTH) ***
+        // *************************************************************
 
-        const currentSpeedKmH = currentSpeed * 3.6; // Konversi untuk logika yang lebih mudah
-        
-        if (currentSpeedKmH < 2) {
-            // Baru mulai: Selalu Akselerasi Pelan, agar transisi 0 -> 1 lebih halus
-            targetSpeedChange = accelerationRate * 0.5 * Math.random();
-        
-        } else if (currentSpeedKmH < 70) {
-            // Kecepatan rendah hingga sedang: Cenderung Akselerasi (80% waktu)
-            if (action < 0.8) {	
-                targetSpeedChange = accelerationRate * Math.random(); 
-            } else if (action < 0.95) {
-                targetSpeedChange = -decelerationRate * Math.random() * 0.5; // Deselerasi sangat sedikit
-            } else {
-                targetSpeedChange = 0; // Cruise/Tahan
-            }
-            
-        } else if (currentSpeedKmH < 120) {
-            // Kecepatan tinggi (Cruising): Pertahankan kecepatan/cenderung melambat
-             if (action < 0.5) {
-                // Akselerasi lebih kecil
-                targetSpeedChange = accelerationRate * (1 - (currentSpeedKmH / 150)) * Math.random() * 0.3; 
-             } else {
-                // Cenderung melambat
-                targetSpeedChange = -decelerationRate * Math.random() * 0.5;
-             }
-        } else {
-            // Kecepatan sangat tinggi, pengereman wajib
-            targetSpeedChange = -decelerationRate * 2;
-        }
+        const currentSpeedKmH = currentSpeed * 3.6; // Konversi untuk logika yang lebih mudah
+        
+        if (currentSpeedKmH < 2) {
+            // Baru mulai: Selalu Akselerasi Pelan, agar transisi 0 -> 1 lebih halus
+            targetSpeedChange = accelerationRate * 0.5 * Math.random();
+        
+        } else if (currentSpeedKmH < 70) {
+            // Kecepatan rendah hingga sedang: Cenderung Akselerasi (80% waktu)
+            if (action < 0.8) {	
+                targetSpeedChange = accelerationRate * Math.random(); 
+            } else if (action < 0.95) {
+                targetSpeedChange = -decelerationRate * Math.random() * 0.5; // Deselerasi sangat sedikit
+            } else {
+                targetSpeedChange = 0; // Cruise/Tahan
+            }
+            
+        } else if (currentSpeedKmH < 120) {
+            // Kecepatan tinggi (Cruising): Pertahankan kecepatan/cenderung melambat
+             if (action < 0.5) {
+                // Akselerasi lebih kecil
+                targetSpeedChange = accelerationRate * (1 - (currentSpeedKmH / 150)) * Math.random() * 0.3; 
+             } else {
+                // Cenderung melambat
+                targetSpeedChange = -decelerationRate * Math.random() * 0.5;
+             }
+        } else {
+            // Kecepatan sangat tinggi, pengereman wajib
+            targetSpeedChange = -decelerationRate * 2;
+        }
 
 		currentSpeed += targetSpeedChange;
 		
-        // Perlambatan natural (hambatan/drag)
+        // Perlambatan natural (hambatan/drag)
 		if (targetSpeedChange < 0.05 && currentSpeed > 0) {
 			currentSpeed *= 0.995;	// Lebih halus lagi
 		}
 
-        // --- PEMERIKSAAN STABILISASI NOL (Wajib) ---
+        // --- PEMERIKSAAN STABILISASI NOL (Wajib) ---
 		if (currentSpeed < 0.001) {	
 			currentSpeed = 0;	
 		}	
@@ -438,7 +487,7 @@ function toggleYoutubeSearchUI(show) {
 	}
 	if (!show && elements.youtubeResults) {
 		// KOSONGKAN hasil hanya jika disembunyikan agar hasilnya tidak menumpuk saat pencarian baru
-		elements.youtubeResults.innerHTML = ''; 
+		elements.youtubeResults.innerHTML = '';	
 	}
 }
 
@@ -463,14 +512,14 @@ function toggleYoutubeUI(state) {
 		const hasVideoLoaded = elements.browserIframe.src !== 'about:blank';
 		
 		if (hasVideoLoaded) {
-            // Jika ada video yang berjalan, langsung sembunyikan antarmuka pencarian
-            toggleYoutubeSearchUI(false); 
-        } else {
-            // Jika iframe masih kosong (belum pernah memutar video), tampilkan antarmuka pencarian
-            elements.browserIframe.src = 'about:blank'; // Bersihkan jika ada sisa
-            toggleYoutubeSearchUI(true);
-            if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
-        }
+            // Jika ada video yang berjalan, langsung sembunyikan antarmuka pencarian
+            toggleYoutubeSearchUI(false); 
+        } else {
+            // Jika iframe masih kosong (belum pernah memutar video), tampilkan antarmuka pencarian
+            elements.browserIframe.src = 'about:blank'; // Bersihkan jika ada sisa
+            toggleYoutubeSearchUI(true);
+            if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
+        }
 		
 	} else {
 		// KONDISI YOUTUBE DISEMBUYIKAN (HIDDEN/CLOSE)
@@ -479,7 +528,7 @@ function toggleYoutubeUI(state) {
 		toggleActive(elements.youtubeToggleIcon, false);
 		
 		// JANGAN RESET IFRAME.SRC: Memastikan video/audio tetap berjalan di latar belakang.
-        
+        
 		// Sembunyikan overlay hasil pencarian (jika belum tertutup)
 		elements.youtubeResults.classList.add('hidden');	
 	}
@@ -512,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	elements = {
 		speedometerUI: document.getElementById('speedometer-ui'),	
 		youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'),	
-        speedometerMainElements: document.querySelector('.speedometer-main-elements'), 
+        speedometerMainElements: document.querySelector('.speedometer-main-elements'), 
 		
 		speedDigital: document.getElementById('speed-digital'),
 		speedModeDigital: document.getElementById('speed-mode-digital'),
@@ -520,8 +569,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		speedAnalogText: document.getElementById('speed-analog-text'),
 		speedModeAnalog: document.getElementById('speed-mode-analog'),
 		analogNeedle: document.getElementById('analog-needle'),
+        // === ELEMEN BARU ===
+        speedMarksWrapper: document.getElementById('speed-marks-wrapper'),
+        // ===================
 		
-        // ID UNTUK RPM BAR UTAMA
+        // ID UNTUK RPM BAR UTAMA
 		rpmBarMain: document.getElementById('rpm-bar-main'),
 		
 		// Mode View Toggler
@@ -548,6 +600,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		welcomeOverlay: document.getElementById('welcome-overlay'),
 		videoAndResultsWrapper: document.querySelector('.video-and-results-wrapper')	
 	};
+	
+	// PANGGILAN FUNGSI BARU DI SINI
+    generateAnalogMarks(); 
 	
 	// 2. Tampilkan dan sembunyikan Overlay Selamat Datang
 	if (elements.welcomeOverlay) {
@@ -593,17 +648,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		elements.youtubeHideButton.addEventListener('click', () => { toggleYoutubeUI(false); });
 	}
 	if (elements.youtubeSearchButton) {
-		elements.youtubeSearchButton.addEventListener('click', () => { 
-			searchYoutube(elements.youtubeSearchInput.value); 
+		elements.youtubeSearchButton.addEventListener('click', () => {	
+			searchYoutube(elements.youtubeSearchInput.value);	
 		});
 	}
-    if (elements.youtubeSearchInput) {
-        elements.youtubeSearchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                searchYoutube(elements.youtubeSearchInput.value);
-            }
-        });
-    }
+    if (elements.youtubeSearchInput) {
+        elements.youtubeSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchYoutube(elements.youtubeSearchInput.value);
+            }
+        });
+    }
 	document.addEventListener('keydown', (e) => {
 		if (e.key === 'Escape' && isYoutubeOpen) {
 			// Jika hasil pencarian terbuka, tutup dulu hasil pencarian
@@ -625,7 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	setSpeedMode(0); // Default KMH
 	setHeadlights(0); // Mati
 	setSeatbelts(true); // Default terpasang (true: terpasang)
-    
+    
 	setEngine(true); // Mesin Hidup (Start Simulation)
 	startVitalUpdates(); // Mulai update Fuel/Health
 
