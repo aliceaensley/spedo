@@ -185,7 +185,6 @@ body {
     line-height: initial;
     padding-left: 0;
 }
-/* Styling label khusus */
 .label-0, .label-100, .label-200 {
     font-size: 10pt;
     color: var(--gauge-text-color);
@@ -205,14 +204,14 @@ body {
 .label-180 { --angle: 108deg; }
 .label-200 { --angle: 135deg; color: var(--accent-red); }
 
-/* --- INDIKATOR LAMPU & TOTAL KM (Ditampilkan) --- */
+/* --- INDIKATOR LAMPU & TOTAL KM --- */
 .indicator-lights {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%); 
     z-index: 12; 
-    display: flex !important; /* Pastikan ditampilkan */
+    display: flex !important; 
     gap: 20px; 
     width: calc(var(--gauge-radius) * 2 - 80px); 
     justify-content: space-around;
@@ -230,28 +229,9 @@ body {
 .seatbelt-light { font-size: 14pt; }
 
 .total-km-display {
-    position: absolute;
-    bottom: 50%; 
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    z-index: 12;
-    width: 100%;
-    margin-top: 25px; 
-    display: block !important; /* Pastikan ditampilkan */
+    /* MENGHILANGKAN TOTAL KM DARI ANALOG VIEW */
+    display: none !important; 
 }
-.total-km-display .label {
-    font-size: 8pt;
-    color: var(--secondary-text);
-    display: block;
-}
-.total-km-display .value {
-    font-size: 16pt;
-    font-weight: bold;
-    color: var(--accent-blue);
-    text-shadow: 0 0 5px var(--accent-blue);
-}
-
 
 /* --- BOTTOM CONTROLS --- */
 .bottom-controls {
@@ -263,7 +243,6 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
     
-    /* Hapus background eksplisit karena .speedometer-ui sudah menanganinya */
     background: transparent; 
     border-radius: 0 0 15px 15px; 
     
