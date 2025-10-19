@@ -3,85 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Speedometer Minimalis Final</title>
+    <title>Advanced Speedometer UI</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div id="speedometer-ui" class="speedometer-ui">
-        
+    <div class="speedometer-ui">
         <div class="main-content">
             <div class="left-panel">
                 
                 <div class="gauge-display-area">
-                    
-                    <div id="analog-view">
-                        <div class="gauge-wrapper">
-                            
-                            <div class="gauge-scale-numbers">
-                                <div class="speed-label label-0">0</div>
-                                <div class="speed-label label-20">20</div>
-                                <div class="speed-label label-40">40</div>
-                                <div class="speed-label label-60">60</div>
-                                <div class="speed-label label-80">80</div>
-                                <div class="speed-label label-100">100</div>
-                                <div class="speed-label label-120">120</div>
-                                <div class="speed-label label-140">140</div>
-                                <div class="speed-label label-160">160</div>
-                                <div class="speed-label label-180">180</div>
-                                <div class="speed-label label-200">200</div>
-                            </div>
 
-                            <div class="center-display-area">
-                                <div class="engine-indicator">
-                                    <i class="fas fa-engine"></i> </div>
-                                <div class="gear-display">N</div>
-                                <div class="turn-signals">
-                                    <span class="turn-signal left-signal">◀</span>
-                                    <span class="turn-signal right-signal">▶</span>
+                    <div id="analog-view" class="view">
+                        <div class="gauge-wrapper">
+                            <div class="level-indicators-area">
+                                <div class="fuel-indicator">
+                                    <span class="label">FUEL</span>
+                                    <span id="fuel-value" class="value">98%</span>
+                                </div>
+                                <div class="engine-health-indicator">
+                                    <span class="label">ENGINE</span>
+                                    <span id="engine-value" class="value">99%</span>
                                 </div>
                             </div>
-                            <div id="speed-needle" class="speed-needle"></div>
-                            
-                            <div class="indicator-lights hidden-view">
-                                <span class="indicator-light handbrake-light">🚷</span> 
-                                <span class="indicator-light seatbelt-light">🚨</span>
-                                <span class="indicator-light engine-light">🔴</span>
+                            <div class="gauge-scale-numbers">
+                                <span class="speed-label label-0">0</span>
+                                <span class="speed-label label-20">20</span>
+                                <span class="speed-label label-40">40</span>
+                                <span class="speed-label label-60">60</span>
+                                <span class="speed-label label-80">80</span>
+                                <span class="speed-label label-100">100</span>
+                                <span class="speed-label label-120">120</span>
+                                <span class="speed-label label-140">140</span>
+                                <span class="speed-label label-160">160</span>
+                                <span class="speed-label label-180">180</span>
+                                <span class="speed-label label-200">200</span>
                             </div>
-                            
-                            <div class="total-km-display hidden-view">
-                                <span class="label">TOTAL</span>
-                                <span id="total-distance" class="value">0.000KM</span>
-                            </div>
+                            <div class="speed-needle" id="speed-needle"></div>
+                        </div>
+
+                        <div class="center-display-area">
+                            <i id="engine-check-light" class="fa-solid fa-engine-warning engine-indicator active"></i>
+                            <div id="gear-display" class="gear-display">N</div>
+                        </div>
+                        
+                        <div class="turn-signals">
+                            <span id="left-signal" class="turn-signal left-signal active">&#9664;</span> 
+                            <span id="right-signal" class="turn-signal right-signal">&#9654;</span>
                         </div>
                     </div>
 
-                    <div id="digital-view" class="digital-view hidden-view">
-                        <span id="digital-speed-large" class="large-speed-value">000</span>
-                        <span class="speed-unit">KMH</span>
+                    <div id="digital-view" class="view hidden-view">
+                        <div id="large-speed-value" class="large-speed-value">000</div>
+                        <div class="speed-unit">KMH</div>
                     </div>
 
                 </div>
 
-                <div class="bottom-controls">
-                    <div class="action-buttons-bar">
-                        <i class="action-icon play-icon">▶️</i>
-                        <i class="action-icon settings-icon">⚙️</i>
-                        <i class="action-icon warning-icon">⚠️</i>
-                        <i class="action-icon reload-icon">🔄</i>
-                    </div>
-                    
-                    <div class="bottom-nav">
-                        <span class="nav-item active analog-nav-item">⊙ Analog</span>
-                        <span class="nav-item digital-nav-item">Digital</span> 
-                        <span class="nav-item map-nav-item">🗺️ Map</span>
-                    </div>
-                </div>
-                
+                <div id="total-km-display" class="total-km-display">TOTAL <span id="total-km-value">0.000KM</span></div>
+
             </div>
-            
+        </div>
+
+        <div class="bottom-controls">
+            <div class="action-buttons-bar">
+                <div id="toggle-view" class="action-icon" title="Toggle View"><i class="fa-solid fa-sliders"></i></div>
+                <div id="open-settings" class="action-icon" title="Settings"><i class="fa-solid fa-gear"></i></div>
+                <div id="trigger-warning" class="action-icon" title="Warning"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div id="reset-trip" class="action-icon" title="Reset Trip"><i class="fa-solid fa-rotate-right"></i></div>
+            </div>
+            <div class="bottom-nav">
+                <div id="nav-analog" class="nav-item active">Analog</div>
+                <div id="nav-digital" class="nav-item">Digital</div>
+                <div id="nav-map" class="nav-item">Map</div>
+            </div>
         </div>
     </div>
-    
     <script src="script.js"></script>
 </body>
 </html>
