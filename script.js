@@ -12,20 +12,20 @@ let isVehicleIdle = false; 
 let timeInterval = null; 
 let currentSpeedometerMode = 'digital'; // 'digital' atau 'analog'
 
-// ✅ AUDIO FILES (Pastikan file ada di direktori yang sama)
+// ✅ AUDIO FILES (Pastikan file ada di direktori yang sama: bensin.mp3, sekarat.mp3, kebo.mp3, ahh.mp3)
 const fuelWarningSound = new Audio('bensin.mp3'); 
 const criticalFuelSound = new Audio('sekarat.mp3'); 
 const welcomeSound = new Audio('kebo.mp3'); 
 const seatbeltSound = new Audio('ahh.mp3'); 
 
-// 🔊 PENTING: PENGATURAN VOLUME AUDIO (Final)
-fuelWarningSound.volume = 0.5; // Menengah
-criticalFuelSound.volume = 0.6; // Agak keras untuk kritis
-welcomeSound.volume = 0.3;     // Dibuat lebih pelan (kebo.mp3)
-seatbeltSound.volume = 0.7;    // Cukup terdengar saat dipakai
+// 🔊 PENGATURAN VOLUME AUDIO
+fuelWarningSound.volume = 0.5;
+criticalFuelSound.volume = 0.6;
+welcomeSound.volume = 0.3;
+seatbeltSound.volume = 0.7;
 
 // *****************************************************************
-// Kunci API YouTube FINAL (Pastikan Anda menggantinya dengan kunci yang valid)
+// Kunci API YouTube FINAL (GANTI dengan kunci yang valid agar pencarian berfungsi)
 // *****************************************************************
 const YOUTUBE_API_KEY = 'AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw'; 
 // *****************************************************************
@@ -84,7 +84,7 @@ function toggleFuelWarning(type) {
     }
 }
 
-// --- FUNGSI BARU: TOGGLE ANALOG/DIGITAL ---
+// --- FUNGSI TOGGLE ANALOG/DIGITAL ---
 function toggleSpeedometerMode() {
     if (currentSpeedometerMode === 'digital') {
         currentSpeedometerMode = 'analog';
@@ -107,8 +107,8 @@ function setSpeedMode(mode) {
     let unit = 'KMH';
     switch(mode)
     {
-        case 1: unit = 'MPH'; break;
-        case 2: unit = 'Knots'; break;
+        case 1: unit = 'MPH'; break; 
+        case 2: unit = 'Knots'; break; 
         default: unit = 'KMH';
     }
     // Update kedua mode
@@ -152,12 +152,12 @@ function setSpeed(speed) {
 function setRPM(rpm) {
     const safeRPM = Math.max(0.16, rpm); 
     
-    // 1. Pembaruan RPM Bar Analog (DIAGRAM BATANG) 
+    // Pembaruan RPM Bar Analog (DIAGRAM BATANG) 
     const barWidth = Math.round(safeRPM * 100); 
     if (elements.rpmBarAnalog) {
         elements.rpmBarAnalog.style.width = `${barWidth}%`;
     }
-    // Hapus update elemen elements.rpm karena elemen angka RPM sudah dihapus dari HTML
+    // Angka RPM di panel info grid sudah dihapus dari HTML
 }
 
 function setFuel(fuel) {
@@ -240,7 +240,7 @@ function stopSimulation() {
         simulationInterval = null;
     }
     setSpeed(0);
-    // elements.rpm.innerText = '0000'; // Dihapus karena RPM angka fisik dihilangkan
+    // RPM bar disetel ke 0 saat mesin mati
     if (elements.rpmBarAnalog) elements.rpmBarAnalog.style.width = '0%'; 
     isVehicleIdle = false; 
 }
@@ -479,7 +479,6 @@ document.addEventListener('DOMContentLoaded', () => {
         analogSpeedView: document.getElementById('analog-speed-view'),
         modeToggleIcon: document.getElementById('mode-toggle-icon'),
         
-        // rpm: document.getElementById('rpm'), // DIHAPUS karena elemen angka RPM dihilangkan
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
         timeWIB: document.getElementById('time-wib'), 
