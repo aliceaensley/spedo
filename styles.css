@@ -339,10 +339,12 @@ body {
 .bottom-controls {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    gap: 0; /* Hapus gap vertikal antara nav dan action bar */
-    padding-top: 5px; /* Kurangi padding atas agar lebih rapat ke atas */
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    /* Ubah dari column menjadi flex agar navigasi langsung di bagian bawah */
+    flex-direction: column; 
+    gap: 0; 
+    /* Hilangkan border-top yang biasanya memisahkan action buttons bar */
+    border-top: none; 
+    padding-top: 0; 
     flex-shrink: 0;
     
     background: transparent; 
@@ -351,22 +353,25 @@ body {
     z-index: 100; 
 }
 
-/* --- ACTION BUTTONS BAR (HILANG) --- */
-/* Jika elemen action buttons bar tidak dihapus dari HTML, gunakan ini: */
+/* --- ACTION BUTTONS BAR (HILANG TOTAL) --- */
 .action-buttons-bar {
     display: none !important; 
 }
+/* Ikon individu juga disembunyikan jika masih ada di HTML */
+.action-icon {
+    display: none !important;
+}
 
 
-/* Penyesuaian Navigasi: Hapus Map dan Centering Analog/Digital */
+/* Penyesuaian Navigasi: Hanya Analog dan Digital, Centered */
 .bottom-nav { 
     display: flex;
     /* Centering item navigasi */
     justify-content: center; 
     align-items: center;
     width: 100%;
-    /* Tambahkan padding agar tombol tidak menempel pada tepi container */
-    padding: 5px 5px 0 5px; 
+    /* Tambahkan padding di bagian atas untuk memisahkan dari gauge */
+    padding: 10px 5px 0 5px; 
     /* Jarak antara Analog dan Digital */
     gap: 20px; 
 }
@@ -382,8 +387,8 @@ body {
     gap: 5px;
     font-size: 9pt;
     color: var(--secondary-text);
-    padding: 3px 10px; /* Tambahkan padding horizontal agar tombol terlihat lebih lebar dan rapi */
-    border-radius: 8px; /* Sudut lebih membulat */
+    padding: 3px 10px; 
+    border-radius: 8px; 
     cursor: pointer; 
     flex-grow: 0; 
     transition: background-color 0.2s;
@@ -391,22 +396,5 @@ body {
 .nav-item.active {
     background-color: var(--accent-blue);
     color: white;
-    font-weight: bold; /* Tambahkan penekanan pada tombol aktif */
-}
-
-/* Hapus bagian Action Icons Bar dari CSS karena kita akan menghapus elemen HTMLnya. 
-   Namun, jika elemen tersebut tetap ada, aturan di atas akan menyembunyikannya.
-   Jika Anda benar-benar menghapus elemen HTML <div class="action-buttons-bar">...</div> 
-   dari file HTML, Anda tidak memerlukan blok CSS ini:
-.action-buttons-bar {
-    display: none !important; 
-}
-*/
-.action-buttons-bar {
-    display: none !important; 
-}
-
-.action-icon {
-    /* Tidak perlu gaya karena elemen ini akan di-hide oleh .action-buttons-bar */
-    display: none;
+    font-weight: bold; 
 }
