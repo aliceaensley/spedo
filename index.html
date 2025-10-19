@@ -2,81 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Speedometer UI Final</title>
-    <link rel="stylesheet" href="styles.css"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Speedometer & YouTube</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="speedometer-ui">
     
-    <div class="main-content">
-        <div class="left-panel">
-            <div class="gauge-display-area">
-                
-                <div id="analog-view">
-                    <div class="gauge-wrapper">
-                        <div class="speed-needle"></div>
-                        
-                        <div class="center-display-area">
-                            <i class="fas fa-engine engine-indicator active"></i>
-                            <span class="gear-display">N</span> 
-                        </div>
-                        
-                        <div class="turn-signals">
-                            <i class="fas fa-caret-left turn-signal left-signal"></i> 
-                            <i class="fas fa-caret-right turn-signal right-signal"></i>
-                        </div>
-                        
-                        <div class="gauge-scale-numbers">
-                            <span class="speed-label label-0">0</span>
-                            <span class="speed-label label-20">20</span>
-                            <span class="speed-label label-40">40</span>
-                            <span class="speed-label label-60">60</span>
-                            <span class="speed-label label-80">80</span>
-                            <span class="speed-label label-100">100</span>
-                            <span class="speed-label label-120">120</span>
-                            <span class="speed-label label-140">140</span>
-                            <span class="speed-label label-160">160</span>
-                            <span class="speed-label label-180">180</span>
-                            <span class="speed-label label-200">200</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="digital-view" class="hidden-view">
-                    <span class="large-speed-value">000</span>
-                    <span class="speed-unit">KMH</span>
-                </div>
-                
-                <div class="level-indicators-area">
-                    <div class="fuel-indicator">
-                        <span class="value">100%</span>
-                        <span class="label">FUEL</span>
-                    </div>
-                    <div class="engine-health-indicator">
-                        <span class="value">100%</span>
-                        <span class="label">ENGINE</span>
-                    </div>
-                </div>
-            </div>
+<div id="welcome-overlay">
+        <div class="welcome-message">
+            <div class="javanese-script">ꦱꦸꦒꦼꦁꦫꦮꦸꦃ</div>
+            
+            <h1>SUGENG RAWUH</h1>
+            <p>Ampun Supen Dungo Rumiyen Sakderenge Budal</p>
         </div>
     </div>
     
-    <div class="bottom-controls">
-        <div class="bottom-nav">
-            <div class="nav-item active" data-view="analog">
-                <i class="far fa-clock"></i> Analog
+<main class="speedometer-container" id="speedometer-ui">
+        
+        <div class="youtube-integrated-container hidden" id="youtube-ui-wrapper">
+            
+            <div class="search-bar-container" id="youtube-search-ui">
+                <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
+                <button id="youtube-search-button">Cari</button>
             </div>
             
-            <div class="nav-item" data-view="digital">
-                Digital
+            <div class="search-results-container hidden" id="youtube-results">
+                </div>
+
+            <iframe id="browser-iframe" src="about:blank"></iframe>
+            
+            <div class="youtube-close-button" id="youtube-hide-button">
+                HIDE YOUTUBE [ESC]
             </div>
         </div>
-    </div>
+        
+        <div class="panel speed-panel">
+            <div class="speed-header">
+                <span class="speed-title">Speed</span>
+                <span class="speed-unit" id="speed-mode">MPH</span>
+            </div>
+            <div class="speed-value-wrapper">
+                <div class="speed-value" id="speed">000</div>
+                <img src="https://bit.ly/signalice" alt="Logo Hak Cipta" class="speed-copyright-logo">
+            </div>
+        </div>
 
-</div>
+        <div class="panel info-panels-grid">
+            <div class="stat-item"><div class="stat-label">RPM</div><div class="stat-value" id="rpm">0000</div></div>
+            <div class="stat-item"><div class="stat-label">Fuel</div><div class="stat-value" id="fuel">0%</div></div>
+            <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value" id="health">100%</div></div>
+            <div class="stat-item"><div class="stat-label">Time</div><div class="stat-value" id="time-wib">00:00:00</div></div>
+        </div>
 
-<script src="script.js"></script> 
+        <div class="panel bottom-panel">
+            <div class="status-indicators">
+                <div class="indicator-icon" id="headlights-icon">💡</div> 
+                <div class="indicator-icon" id="engine-icon">⚙️</div> 
+                <div class="indicator-icon" id="seatbelt-icon">💺</div> 
+                
+                <div class="indicator-icon youtube-toggle" id="youtube-toggle-icon">▶️</div> 
+            </div>
+        </div>
+        
+    </main>
+
+    <script src="script.js"></script>
 </body>
-</html>
