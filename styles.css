@@ -119,7 +119,7 @@ body {
     transition: opacity 0.1s;
 }
 
-/* YOUTUBE INTEGRATION CONTAINER (Tetap Sama) */
+/* YOUTUBE INTEGRATION CONTAINER */
 .youtube-integrated-container {
     background-color: rgba(0, 0, 0, 0.9);
     border-radius: 10px;
@@ -136,7 +136,7 @@ body {
 
 /* Panel Data Speedometer */
 .panel {
-    background-color: rgba(0, 0, 0, 0.75); 
+    background-color: rgba(0, 0, 0, 0.75); /* DEFAULT BACKGROUND HITAM SEMI-TRANSAPARAN */
     border-radius: 10px;
     padding: 10px;
     width: 100%; 
@@ -146,7 +146,6 @@ body {
 .speedometer-view-wrapper {
     width: 100%;
     position: relative; 
-    /* TINGGI DIPERBAIKI */
     height: 200px; 
 }
 #digital-speed-view, #analog-speed-view {
@@ -184,16 +183,21 @@ body {
 
 
 /* ========================================================= */
-/* --- GAYA BARU: ANALOG SPEED VIEW (Diperbaiki) --- */
+/* --- GAYA ANALOG SPEED VIEW (Transparan Panel) --- */
 /* ========================================================= */
 .analog-panel {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around; 
-    padding: 10px; 
-    background-color: rgba(0, 0, 0, 0.75);
-    height: 100%; /* Isi penuh wadah 200px */
+    padding: 10px 0 10px 0; 
+    
+    /* BACKGROUND DIHILANGKAN */
+    background-color: transparent; 
+    box-shadow: none;
+    border: none;
+    
+    height: 100%; 
 }
 
 /* Gauge (Speedometer Lingkaran) */
@@ -201,16 +205,19 @@ body {
     width: 180px; 
     height: 180px;
     border-radius: 50%;
-    /* Cincin luar Neon Biru/Cyan */
+    
+    /* Pertahankan background hitam/gelap untuk kontras angka */
+    background-color: rgba(0, 0, 0, 0.85);
+    
+    /* Neon glow Biru/Cyan */
     border: 5px solid rgba(0, 191, 255, 0.5); 
-    background-color: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.7), inset 0 0 5px rgba(0, 191, 255, 0.3);
+    
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* Neon glow Biru/Cyan */
-    box-shadow: 0 0 15px rgba(0, 191, 255, 0.7), inset 0 0 5px rgba(0, 191, 255, 0.3);
     flex-shrink: 0;
 }
 
@@ -219,7 +226,6 @@ body {
     font-size: 36pt; 
     font-weight: 900;
     color: white;
-    /* Glow Neon Orange */
     text-shadow: 0 0 8px #FFA500, 0 0 15px rgba(255, 165, 0, 0.5); 
     line-height: 1;
     z-index: 10;
@@ -237,7 +243,7 @@ body {
     left: 50%;
     transform-origin: 50% 100%; 
     width: 4px;
-    height: 80px; /* Lebih panjang */
+    height: 80px; 
     background-color: #FF0000; 
     z-index: 9;
     transform: translateX(-50%) rotate(-135deg); 
@@ -260,7 +266,7 @@ body {
 .rpm-bar-analog-wrapper {
     width: 90%; 
     height: 10px; 
-    background-color: rgba(255, 165, 0, 0.1); 
+    background-color: rgba(0, 0, 0, 0.5); /* Background gelap agar neon kontras */
     border-radius: 5px;
     overflow: hidden;
     border: 1px solid rgba(255, 165, 0, 0.4); 
@@ -274,7 +280,7 @@ body {
 }
 
 
-/* Info Grid (Stats) */
+/* Info Grid (Stats) - TETAP BACKGROUND HITAM */
 .info-panels-grid { 
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 5px;
     background-color: transparent;
@@ -286,7 +292,7 @@ body {
 .stat-label { color: #FFA500; font-size: 9pt; }
 .stat-value { font-size: 12pt; font-weight: bold; color: white; }
 
-/* Bottom Panel (Indicators & Toggles) */
+/* Bottom Panel (Indicators & Toggles) - TETAP BACKGROUND HITAM */
 .bottom-panel { 
     display: flex; 
     justify-content: center; 
