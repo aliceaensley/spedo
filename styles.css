@@ -211,7 +211,8 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); 
+    /* PENYESUAIAN PENTING: Geser seluruh area ke atas */
+    transform: translate(-50%, calc(-50% - 20px)); /* Menggeser ke atas sebesar 20px */
     display: flex;
     flex-direction: column; 
     align-items: center;
@@ -236,7 +237,8 @@ body {
     font-weight: bold;
     color: var(--primary-text);
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    margin-top: -10px; /* GESER N KE ATAS - Sesuaikan nilai ini */
+    /* margin-top dihilangkan/dikecilkan karena pergeseran sudah dilakukan di center-display-area */
+    margin-top: 0px; 
 }
 
 .turn-signals {
@@ -245,18 +247,21 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    top: 50%; 
-    transform: translateY(-50%); 
+    /* PENYESUAIAN PENTING: Geser ke atas sesuai dengan center-display-area agar tetap di atas jarum*/
+    top: 0; /* Posisikan di atas center-display-area */
+    transform: none; 
     font-size: 18pt;
     color: var(--secondary-text);
+    margin-top: -30px; /* Geser sinyal belok lebih tinggi lagi */
 }
 .turn-signal.left-signal {
-    margin-right: 50px; 
+    /* Margin di sini berfungsi sebagai jarak dari tengah */
+    margin-right: calc(var(--gauge-radius) * 2 - 130px); /* Adjust untuk jarak yang lebih baik */
     opacity: 0.2;
     transition: opacity 0.3s;
 }
 .turn-signal.right-signal {
-    margin-left: 50px; 
+    margin-left: calc(var(--gauge-radius) * 2 - 130px);
     opacity: 0.2;
     transition: opacity 0.3s;
 }
