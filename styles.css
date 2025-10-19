@@ -18,8 +18,8 @@ body {
     --secondary-text: #9E9E9E;
     --accent-red: #FF0000;
     --accent-blue: #00BFFF; 
-    --dark-bg: #1A1A1A;
-    --medium-dark-bg: transparent;
+    --dark-bg: #1A1A1A; /* Nilai HEX untuk referensi: #1A1A1A */
+    --medium-dark-bg: #2C2C2C;
     --gauge-radius: 90px; 
     --gauge-text-color: #E0E0E0;
     --gauge-start-angle: -135deg; 
@@ -45,11 +45,14 @@ body {
     right: 15px;
     width: 220px; 
     height: 300px; 
-    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%); 
-    border-radius: 15px;
+    
+    /* PENTING: GANTI BACKGROUND DENGAN RGBA UNTUK TRANSPARANSI (Alpha 0.85) */
+    /* Nilai 26, 26, 26 adalah nilai desimal dari #1A1A1A */
+    background: rgba(26, 26, 26, 0.85);
+    /* Box-shadow tetap dipertahankan */
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); 
     
-    /* PENTING: Menghilangkan padding agar sub-kotak bisa mengisi full-size */
+    border-radius: 15px;
     padding: 0; 
     
     display: flex;
@@ -62,11 +65,10 @@ body {
 /* --- KOTAK ATAS: SPEEDOMETER & INDIKATOR (main-content) --- */
 /* ------------------------------------------------ */
 .main-content {
-    /* Mengisi sisa ruang setelah dikurangi tinggi kotak bawah */
     height: calc(100% - var(--nav-height)); 
     width: 100%;
     
-    padding: 10px; /* Padding di dalam kotak atas */
+    padding: 10px; 
     
     display: flex;
     flex-direction: column; 
@@ -248,7 +250,7 @@ body {
 
 
 /* ------------------------------------------------ */
-/* --- LEVEL INDICATORS (FUEL & ENGINE) - Sekarang dengan kotak sendiri --- */
+/* --- LEVEL INDICATORS (FUEL & ENGINE) - Kotak Transparan --- */
 /* ------------------------------------------------ */
 .level-indicators-area {
     position: absolute;
@@ -268,11 +270,11 @@ body {
     align-items: center;
     line-height: 1.1;
     
-    /* PENTING: Penyesuaian untuk tampilan kotak terpisah */
-    padding: 5px 8px; /* Tambahkan padding agar ada ruang di dalam kotak */
-    border-radius: 8px; /* Border radius yang lebih besar */
-    background: var(--dark-bg); /* Latar belakang dari var --dark-bg */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Tambahkan sedikit shadow */
+    /* Latar belakang indikator transparan */
+    padding: 5px 8px; 
+    border-radius: 8px; 
+    background: rgba(44, 44, 44, 0.6); 
+    box-shadow: none; 
     
     font-weight: bold;
     z-index: 5; 
@@ -315,9 +317,9 @@ body {
     display: flex;
     flex-direction: column; 
     
-    /* Garis pemisah antara kotak atas dan kotak bawah */
     border-top: 1px solid rgba(255, 255, 255, 0.1); 
     
+    /* Menggunakan background solid agar tombol terlihat jelas */
     background: var(--dark-bg); 
     
     z-index: 100; 
@@ -354,7 +356,6 @@ body {
     flex-grow: 0; 
     transition: background-color 0.2s;
     
-    /* Memastikan angka odometer tersembunyi */
     .total-km-digital {
         display: none !important;
     }
