@@ -1,283 +1,4 @@
-/* --- BASE & RESET --- */
-* {
-    box-sizing: border-box; 
-    user-select: none;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    background-color: transparent !important; 
-    color: white;
-}
-
-/* --- THEME COLORS & SIZES --- */
-:root {
-    --primary-text: #E0E0E0;
-    --secondary-text: #9E9E9E;
-    --accent-red: #FF0000;
-    --accent-blue: #00BFFF; 
-    --dark-bg: #1A1A1A;
-    --medium-dark-bg: #2C2C2C;
-    --gauge-radius: 90px; /* Radius 90px (Diameter 180px) */
-    --gauge-text-color: #E0E0E0;
-    --gauge-start-angle: -135deg; 
-    --gauge-end-angle: 135deg; 
-    --accent-green: #00FF00; /* Warna hijau untuk Engine */
-    --level-good: #00FF00; /* Hijau */
-    --level-warning: #FFA500; /* Oranye */
-    --level-critical: #FF0000; /* Merah */
-}
-
-/* --- UTILITY CLASS --- */
-.hidden-view {
-    display: none !important;
-}
-
-/* --- MAIN WIDGET CONTAINER (Solid Background) --- */
-.speedometer-ui {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-    width: 220px; 
-    height: 300px; 
-    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark-bg) 100%); 
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); 
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    color: var(--primary-text);
-    overflow: hidden; 
-}
-
-/* --- MAIN CONTENT LAYOUT --- */
-.main-content {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column; 
-    gap: 10px; 
-    position: relative;
-}
-.left-panel {
-    width: 100%; 
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    flex-grow: 1; 
-}
-
-
-/* --- GAUGE DISPLAY AREA & VIEWS --- */
-.gauge-display-area {
-    width: 100%;
-    height: 180px; 
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; 
-    flex-shrink: 0; 
-    padding-top: 5px; 
-    background-color: transparent; 
-}
-
-/* Kontainer untuk Analog View dan Digital View */
-#analog-view, #digital-view {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* --- DIGITAL VIEW STYLE (Tidak Berubah) --- */
-#digital-view {
-    flex-direction: column;
-    z-index: 50; 
-    padding-bottom: 30px; 
-}
-
-.large-speed-value {
-    font-size: 60pt;
-    font-weight: 900;
-    color: var(--accent-blue);
-    text-shadow: 0 0 20px var(--accent-blue);
-    line-height: 1;
-}
-
-.speed-unit {
-    font-size: 14pt;
-    color: var(--secondary-text);
-    margin-top: -5px;
-}
-
-/* --- GAUGE WRAPPER (ANALOG) --- */
-.gauge-wrapper {
-    width: calc(var(--gauge-radius) * 2); 
-    height: calc(var(--gauge-radius) * 2); 
-    position: relative;
-    
-    background-color: var(--dark-bg); 
-    border-radius: 50%; 
-    
-    box-shadow: 
-        0 0 0 5px var(--accent-blue), 
-        0 0 20px rgba(0, 191, 255, 0.6); 
-    
-    z-index: 10;
-}
-
-/* --- JARUM SPEEDOMETER (Tidak Berubah) --- */
-.speed-needle {
-    position: absolute;
-    bottom: 50%; 
-    left: 50%;
-    transform-origin: 50% 100%; 
-    width: 3px;
-    height: calc(var(--gauge-radius) - 10px); 
-    background-color: var(--accent-red); 
-    z-index: 15;
-    transform: translateX(-50%) translateY(calc(var(--gauge-radius) - 90px)) rotate(var(--gauge-start-angle)); 
-    box-shadow: 0 0 10px var(--accent-red);
-    transition: transform 0.3s ease-out;
-}
-.speed-needle::before {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 18px;
-    height: 18px;
-    background-color: var(--accent-red);
-    border-radius: 50%;
-    border: 3px solid white;
-    z-index: 20; 
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-/* --- SKALA ANGKA GAUGE (Tidak Berubah) --- */
-.gauge-scale-numbers {
-    position: absolute;
-    top: 50%; 
-    left: 50%; 
-    width: 0;
-    height: 0;
-    z-index: 12;
-    display: block; 
-    padding: 0;
-}
-
-.speed-label {
-    position: absolute;
-    font-size: 10pt;
-    color: var(--gauge-text-color);
-    width: 30px; 
-    text-align: center;
-    font-weight: bold; 
-    --angle: 0deg;
-    --radius: calc(var(--gauge-radius) - 10px); 
-    transform-origin: 50% 50%;
-    transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle)));
-    margin-left: -15px; 
-    margin-top: -10px; 
-    line-height: initial;
-    padding-left: 0;
-}
-.label-0, .label-100, .label-200 {
-    font-size: 10pt;
-    color: var(--gauge-text-color);
-}
-.label-200 { color: var(--accent-red); }
-
-/* Aturan Sudut (Tidak Berubah) */
-.label-0   { --angle: -135deg; }
-.label-20  { --angle: -108deg; } 
-.label-40  { --angle: -81deg; }  
-.label-60  { --angle: -54deg; }  
-.label-80  { --angle: -27deg; }  
-.label-100 { --angle: 0deg; }    
-.label-120 { --angle: 27deg; }
-.label-140 { --angle: 54deg; }
-.label-160 { --angle: 81deg; }
-.label-180 { --angle: 108deg; }
-.label-200 { --angle: 135deg; color: var(--accent-red); }
-
-
-/* --- KONTEN TENGAH (N & ENGINE ICON) - DIGESER KE ATAS --- */
-.center-display-area {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    /* Nilai -30px dipertahankan untuk menggeser N ke atas */
-    transform: translate(-50%, calc(-50% - 30px)); 
-    display: flex;
-    flex-direction: column; 
-    align-items: center;
-    justify-content: center;
-    z-index: 12;
-    gap: 5px; 
-}
-
-.engine-indicator {
-    font-size: 20pt; 
-    color: var(--accent-green);
-    text-shadow: 0 0 8px var(--accent-green);
-    opacity: 0.2; 
-    transition: opacity 0.3s;
-}
-.engine-indicator.active {
-    opacity: 1; 
-}
-
-.gear-display {
-    font-size: 24pt; 
-    font-weight: bold;
-    color: var(--primary-text);
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    margin-top: 0px; 
-}
-
-
-/* --- SINYAL BELOK (SEIN) - POSISI SAMPING JARUM (Tidak Berubah) --- */
-.turn-signals {
-    position: absolute;
-    top: 50%; 
-    left: 50%;
-    transform: translate(-50%, -50%); 
-    width: calc(var(--gauge-radius) * 2 - 40px); 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 18pt;
-    color: var(--secondary-text);
-    z-index: 12;
-    margin-top: 15px; 
-}
-
-.turn-signal.left-signal {
-    margin-right: calc(var(--gauge-radius) - 55px); 
-    opacity: 0.2;
-    transition: opacity 0.3s;
-}
-.turn-signal.right-signal {
-    margin-left: calc(var(--gauge-radius) - 55px);
-    opacity: 0.2;
-    transition: opacity 0.3s;
-}
-.turn-signal.active {
-    opacity: 1;
-    color: var(--accent-blue);
-    text-shadow: 0 0 5px var(--accent-blue);
-}
-
-
-/* --- LEVEL INDICATORS (FUEL & ENGINE) - POSISI AKHIR (DI LUAR LINGKARAN, LEBIH RAPI) --- */
+/* --- LEVEL INDICATORS (FUEL & ENGINE) - POSISI AKHIR (DI LUAR LINGKARAN, LEBIH KEPINGGIR) --- */
 .level-indicators-area {
     /* Kontainer Penuh di dalam gauge-wrapper */
     position: absolute;
@@ -306,97 +27,39 @@ body {
     
     /* Posisikan di bawah lingkaran utama */
     bottom: 0; 
-    transform: translateY(100%); 
+    /* Gunakan transform Y untuk mengatur jarak vertikal dari bottom */
+    transform: translateY(10px); /* Tambah jarak vertikal (dari 5px menjadi 10px) */
 }
 
 .fuel-indicator {
-    /* Penyesuaian ke kiri (dari -55px menjadi -45px agar kurang kepinggir) */
+    /* POSISI AKHIR: Lebih ke kiri (dari -45px menjadi -55px) */
     left: 50%; 
-    transform: translate(calc(-100% - 45px), 5px); 
+    transform: translate(calc(-100% - 55px), 10px); 
     
     color: var(--level-good); 
 }
 .engine-health-indicator {
-    /* Penyesuaian ke kanan (dari 55px menjadi 45px agar kurang kepinggir) */
+    /* POSISI AKHIR: Lebih ke kanan (dari 45px menjadi 55px) */
     right: 50%; 
-    transform: translate(calc(45px), 5px); 
+    transform: translate(calc(55px), 10px); 
     
     color: var(--level-good); 
 }
+/* ... (Bagian .fuel-indicator .label, .value dan .engine-health-indicator .label, .value tetap sama) ... */
 
-.fuel-indicator .label, .engine-health-indicator .label {
-    font-size: 6pt; 
-    font-weight: normal;
-    color: var(--secondary-text);
-}
 
-.fuel-indicator .value, .engine-health-indicator .value {
-    font-size: 9pt; 
-}
-
-/* --- INDIKATOR LAMPU LAMA & TOTAL KM (Dihilangkan) --- */
-.indicator-lights, .total-km-display {
-    display: none !important; 
-}
-
-/* --- BOTTOM CONTROLS (Tidak Berubah) --- */
-.bottom-controls {
-    width: 100%;
+/* --- KONTEN TENGAH (N & ENGINE ICON) - DIGESER KE ATAS (Tidak Berubah) --- */
+.center-display-area {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Nilai -30px dipertahankan untuk menggeser N ke atas */
+    transform: translate(-50%, calc(-50% - 30px)); 
     display: flex;
-    flex-direction: column;
-    gap: 10px; 
-    padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    flex-shrink: 0;
-    
-    background: transparent; 
-    border-radius: 0 0 15px 15px; 
-    
-    z-index: 100; 
-}
-
-.bottom-nav { 
-    display: flex;
-    justify-content: space-between; 
+    flex-direction: column; 
     align-items: center;
-    width: 100%;
-    padding: 0 5px; 
-}
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 9pt;
-    color: var(--secondary-text);
-    padding: 3px 5px;
-    border-radius: 5px;
-    cursor: pointer; 
-}
-.nav-item.active {
-    background-color: var(--accent-blue);
-    color: white;
-}
-
-/* --- ACTION BUTTONS BAR (Tidak Berubah) --- */
-.action-buttons-bar {
-    display: flex;
-    justify-content: space-around; 
-    width: 100%;
-    padding: 0 5px; 
-}
-.action-icon {
-    background-color: var(--medium-dark-bg);
-    border-radius: 5px;
-    width: 35px; 
-    height: 35px; 
-    display: flex;
     justify-content: center;
-    align-items: center;
-    font-size: 16pt;
-    cursor: pointer; 
-    transition: background-color 0.2s, box-shadow 0.2s;
+    z-index: 12;
+    gap: 5px; 
 }
-.action-icon:hover {
-    background-color: var(--accent-blue);
-    box-shadow: 0 0 8px var(--accent-blue);
-}
+/* ... (CSS lainnya tetap sama) ... */
