@@ -242,7 +242,6 @@ function startClock() {
 // --- FUNGSI KONTROL SIMULASI BERKENDARA ---
 
 const IDLE_RPM_VALUE = 0.16;	
-// IDLE_TOLERANCE_MS dihapus
 
 function stopSimulation() {
 	if (simulationInterval !== null) {
@@ -459,14 +458,18 @@ function toggleYoutubeUI(state) {
 		youtubeWrapper.classList.remove('hidden');
 		toggleActive(elements.youtubeToggleIcon, true);
 		
-		// Saat dibuka, selalu tampilkan overlay hasil pencarian
-        // KECUALI iframe masih berisi URL video (tidak 'about:blank')
-        if (elements.browserIframe.src === 'about:blank' || elements.youtubeResults.innerHTML === '') {
-            elements.browserIframe.src = 'about:blank'; // Bersihkan sebelum mencari
+		// Saat dibuka: 
+		// Jika iframe kosong (sebelumnya sudah direset) atau tidak ada hasil, tampilkan search UI.
+        // Jika ada video yang berjalan (src != 'about:blank'), sembunyikan search UI.
+		const isIframeBlank = elements.browserIframe.src === 'about:blank';
+		
+		if (isIframeBlank || elements.youtubeResults.innerHTML === '') {
+            elements.browserIframe.src = 'about:blank'; // Bersihkan sebelum mencari (jika ada sisa)
             toggleYoutubeSearchUI(true);
             if (elements.youtubeSearchInput) elements.youtubeSearchInput.focus();
         } else {
-            toggleYoutubeSearchUI(false); // Sembunyikan hasil, tampilkan video yang sudah berjalan
+            // Jika ada video yang berjalan, sembunyikan hasil pencarian.
+            toggleYoutubeSearchUI(false); 
         }
 		
 	} else {
@@ -475,7 +478,10 @@ function toggleYoutubeUI(state) {
 		youtubeWrapper.classList.add('hidden');
 		toggleActive(elements.youtubeToggleIcon, false);
 		
-		// HANYA sembunyikan hasil pencarian (overlay)
+		// KUNCI PENTING: JANGAN RESET IFRAME.SRC
+        // Ini memastikan video terus diputar (audio tetap terdengar) di latar belakang.
+        
+		// Sembunyikan hasil pencarian (overlay)
 		toggleYoutubeSearchUI(false);	
 	}
 }
