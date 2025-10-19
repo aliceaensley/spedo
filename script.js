@@ -84,18 +84,17 @@ function toggleSpeedometerMode() {
         currentSpeedometerMode = 'analog';
         elements.digitalSpeedView.classList.add('hidden');
         elements.analogSpeedView.classList.remove('hidden');
-        toggleActive(elements.modeToggleIcon, true); // Aktifkan glow Biru
+        toggleActive(elements.modeToggleIcon, true); // Aktifkan glow Biru/Cyan
     } else {
         currentSpeedometerMode = 'digital';
         elements.digitalSpeedView.classList.remove('hidden');
         elements.analogSpeedView.classList.add('hidden');
-        toggleActive(elements.modeToggleIcon, false); // Matikan glow Biru
+        toggleActive(elements.modeToggleIcon, false); // Matikan glow
     }
-    // Tidak perlu memanggil setSpeed/setRPM secara eksplisit, karena interval simulasi akan segera memperbarui
 }
 
 
-// --- FUNGSI PEMBARUAN DATA SPEEDOMETER (MODIFIKASI) ---
+// --- FUNGSI PEMBARUAN DATA SPEEDOMETER ---
 
 function setSpeedMode(mode) {
     speedMode = mode;
@@ -117,7 +116,6 @@ function setSpeed(speed) {
     
     switch(speedMode)
     {
-        // 1 m/s = 2.236936 mph | 1 m/s = 1.943844 knot | 1 m/s = 3.6 kmh
         case 1: speedValue = Math.round(absSpeed * 2.236936); break; 
         case 2: speedValue = Math.round(absSpeed * 1.943844); break; 
         default: speedValue = Math.round(absSpeed * 3.6); 
@@ -125,39 +123,35 @@ function setSpeed(speed) {
     
     const displayValue = String(speedValue).padStart(3, '0');
     
-    // 1. Pembaruan Tampilan Digital (tetap 3 digit)
+    // 1. Pembaruan Tampilan Digital
     if (elements.speedDigital) elements.speedDigital.innerText = displayValue; 
     
     // 2. Pembaruan Tampilan Analog (angka di tengah)
     if (elements.speedAnalogText) elements.speedAnalogText.innerText = speedValue;
     
-    // 3. Pembaruan Jarum Analog (BARU!)
-    const MAX_ANALOG_UNIT = 200; // Asumsi max speed 200 unit (MPH/KMH)
+    // 3. Pembaruan Jarum Analog 
+    const MAX_ANALOG_UNIT = 200; 
     const START_ANGLE = -135;
-    const TOTAL_ANGLE = 270; // 135 - (-135)
+    const TOTAL_ANGLE = 270; 
     
     const safeSpeed = Math.min(MAX_ANALOG_UNIT, speedValue);
     const percentage = safeSpeed / MAX_ANALOG_UNIT;
     const angle = START_ANGLE + (percentage * TOTAL_ANGLE);
     
     if (elements.analogNeedle) {
-        // Transform jarum analog
         elements.analogNeedle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
     }
 }
 
 function setRPM(rpm) {
-    // Diasumsikan RPM masuk sebagai nilai 0.0 - 1.0
     const safeRPM = Math.max(0.16, rpm); 
     
-    // Konversi ke nilai 4 digit (misal: 0.16 -> 1600)
     const displayValue = `${Math.round(safeRPM * 10000)}`.padStart(4, '0'); 
     
-    // 1. Pembaruan RPM Digital (di panel info grid)
+    // 1. Pembaruan RPM Digital 
     if (elements.rpm) elements.rpm.innerText = displayValue;
     
-    // 2. Pembaruan RPM Bar Analog (di panel analog)
-    // RPM 0.0 sampai 1.0 akan menjadi 0% sampai 100% lebar bar.
+    // 2. Pembaruan RPM Bar Analog 
     const barWidth = Math.round(safeRPM * 100); 
     if (elements.rpmBarAnalog) {
         elements.rpmBarAnalog.style.width = `${barWidth}%`;
@@ -201,7 +195,6 @@ function setEngine(state) {
 }
 
 function setSeatbelts(state) {
-    // Logika Suara Seatbelt
     if (state === true && seatbeltState === false) {
         seatbeltSound.currentTime = 0;
         seatbeltSound.play().catch(e => { 
@@ -235,8 +228,8 @@ function startClock() {
 
 // --- FUNGSI KONTROL SIMULASI BERKENDARA ---
 
-const IDLE_RPM_VALUE = 0.16; // 1600 RPM
-const IDLE_TOLERANCE_MS = 0.2; // Batas kecepatan di mana simulasi dianggap bergerak (m/s)
+const IDLE_RPM_VALUE = 0.16; 
+const IDLE_TOLERANCE_MS = 0.2; 
 
 function stopSimulation() {
     if (simulationInterval !== null) {
@@ -244,9 +237,9 @@ function stopSimulation() {
         simulationInterval = null;
     }
     setSpeed(0);
-    // Atur RPM ke 0000 saat mesin dimatikan (hanya untuk tampilan digital info grid)
+    // Matikan tampilan RPM
     if (elements.rpm) elements.rpm.innerText = '0000'; 
-    if (elements.rpmBarAnalog) elements.rpmBarAnalog.style.width = '0%'; // RPM Bar Analog mati
+    if (elements.rpmBarAnalog) elements.rpmBarAnalog.style.width = '0%'; 
     isVehicleIdle = false; 
 }
 
@@ -258,14 +251,12 @@ function startSimulation() {
     let accelerationRate = 0.5; 
     let decelerationRate = 0.1; 
 
-    // Set nilai awal idle (000 dan 1600)
     setSpeed(0);
     setRPM(IDLE_RPM_VALUE); 
 
     simulationInterval = setInterval(() => {
         
         let targetSpeedChange = 0;
-        
         let action = Math.random();
         
         if (action < 0.5) { 
@@ -276,46 +267,36 @@ function startSimulation() {
             targetSpeedChange = (Math.random() - 0.5) * 0.1;
         }
 
-        // Terapkan perubahan kecepatan
         currentSpeed += targetSpeedChange;
         
-        // Perlambatan alami (Drag)
         if (targetSpeedChange < 0.1 && currentSpeed > 0) {
             currentSpeed *= 0.98; 
         }
 
-        // Jika kecepatan sangat rendah, paksa ke 0 (Idle)
         if (currentSpeed < IDLE_TOLERANCE_MS) { 
             currentSpeed = 0; 
         } 
         
         currentSpeed = Math.max(0, currentSpeed);
         
-        // Cek status Idle
         isVehicleIdle = (currentSpeed === 0);
         
         if (isVehicleIdle) {
-            // ✅ Kunci Nilai: Jika idle, Speed = 0, RPM = IDLE_RPM_VALUE (1600)
             setSpeed(0);
             setRPM(IDLE_RPM_VALUE); 
         } else {
-            // ✅ Simulasi normal jika bergerak
             setSpeed(currentSpeed); 
             
             const absSpeed = Math.abs(currentSpeed);
             
-            // Logika RPM (Proporsional dengan Speed, tapi dengan lantai IDLE_RPM)
             let baseRPM = IDLE_RPM_VALUE + (absSpeed * 0.007); 
-            
             let currentRPM = Math.min(0.99, baseRPM);
-            
-            // Tambahkan sedikit noise hanya saat bergerak
             currentRPM += (Math.random() - 0.5) * 0.02; 
             
             setRPM(currentRPM);
         }
         
-    }, 100); // Interval 100ms agar simulasi lebih mulus
+    }, 100); 
 }
 
 
@@ -331,7 +312,6 @@ function startVitalUpdates() {
     vitalInterval = setInterval(() => {
         const fuelReductionRate = engineState ? 0.005 : 0.000; 
         
-        // Logika Fuel
         const currentFuelText = elements.fuel.innerText.replace('%', '');
         const currentFuel = parseFloat(currentFuelText) / 100;
         
@@ -359,7 +339,6 @@ async function searchYoutube(query) {
         const response = await fetch(API_URL);
         
         if (!response.ok) {
-            // Log detail error dari YouTube API jika ada
             const errorData = await response.json().catch(() => ({}));
             console.error('YouTube API Response Error:', errorData);
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
@@ -445,28 +424,21 @@ function toggleYoutubeUI(state) {
         youtubeWrapper.classList.add('hidden');
         toggleActive(elements.youtubeToggleIcon, false);
         
-        // Kosongkan iframe saat disembunyikan untuk menghentikan pemutaran
         if (elements.browserIframe) elements.browserIframe.src = 'about:blank';
     }
 }
 
-/**
- * Fungsi untuk mengontrol durasi overlay berdasarkan audio.
- * @param {number} durationMs - Durasi audio dalam milidetik.
- */
 function hideWelcomeOverlay(durationMs) {
     if (!elements.welcomeOverlay) return;
 
     const totalDisplayTime = durationMs; 
     const fadeOutDuration = 1000;
 
-    // Mulai animasi fade-out tepat setelah durasi audio
     const fadeOutStartDelay = Math.max(0, totalDisplayTime - fadeOutDuration);
 
     setTimeout(() => {
         elements.welcomeOverlay.classList.add('fade-out');
         
-        // Hapus elemen sepenuhnya setelah transisi fade-out selesai
         setTimeout(() => {
             elements.welcomeOverlay.style.display = 'none';
             document.body.style.overflow = ''; 
@@ -484,11 +456,9 @@ document.addEventListener('DOMContentLoaded', () => {
         speedometerUI: document.getElementById('speedometer-ui'), 
         youtubeUIWrapper: document.getElementById('youtube-ui-wrapper'), 
         
-        // Elemen Tampilan Digital
         speedDigital: document.getElementById('speed-digital'),
         speedModeDigital: document.getElementById('speed-mode-digital'),
         
-        // Elemen Tampilan Analog
         speedAnalogText: document.getElementById('speed-analog-text'),
         speedModeAnalog: document.getElementById('speed-mode-analog'),
         analogNeedle: document.getElementById('analog-needle'),
@@ -499,19 +469,16 @@ document.addEventListener('DOMContentLoaded', () => {
         analogSpeedView: document.getElementById('analog-speed-view'),
         modeToggleIcon: document.getElementById('mode-toggle-icon'),
         
-        // Elemen Info Grid (Tetap menggunakan ID lama)
         rpm: document.getElementById('rpm'),
         fuel: document.getElementById('fuel'),
         health: document.getElementById('health'),
         timeWIB: document.getElementById('time-wib'), 
         
-        // Elemen Indikator Status
         headlightsIcon: document.getElementById('headlights-icon'),
         engineIcon: document.getElementById('engine-icon'), 
         seatbeltIcon: document.getElementById('seatbelt-icon'),
         youtubeToggleIcon: document.getElementById('youtube-toggle-icon'), 
         
-        // Elemen YouTube
         youtubeSearchUI: document.getElementById('youtube-search-ui'),
         youtubeSearchInput: document.getElementById('youtube-search-input'),
         youtubeSearchButton: document.getElementById('youtube-search-button'),
@@ -519,15 +486,14 @@ document.addEventListener('DOMContentLoaded', () => {
         browserIframe: document.getElementById('browser-iframe'), 
         youtubeHideButton: document.getElementById('youtube-hide-button'),
         
-        // Overlay
         welcomeOverlay: document.getElementById('welcome-overlay'),
     };
     
-    // 2. Tampilkan dan sembunyikan Overlay Selamat Datang (Disinkronkan dengan Audio)
+    // 2. Tampilkan dan sembunyikan Overlay Selamat Datang
     if (elements.welcomeOverlay) {
         
         welcomeSound.onloadedmetadata = () => {
-            const audioDurationMs = welcomeSound.duration * 1000; // Konversi ke milidetik
+            const audioDurationMs = welcomeSound.duration * 1000; 
             
             welcomeSound.currentTime = 0;
             welcomeSound.play().catch(e => {
@@ -603,7 +569,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setHeadlights(1);
     setSeatbelts(true);
     
-    // Mulai pembaruan data vital segera!
     startVitalUpdates(); 
 
     // 8. EVENT KLIK FUNGSI LAIN
