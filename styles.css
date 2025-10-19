@@ -351,17 +351,20 @@ body {
     z-index: 100; 
 }
 
+/* Penyesuaian Navigasi: Hapus Map dan Centering Analog/Digital */
 .bottom-nav { 
     display: flex;
-    /* Ubah dari space-between menjadi center untuk menengahkan Analog dan Digital */
+    /* Centering item navigasi */
     justify-content: center; 
     align-items: center;
     width: 100%;
     padding: 0 5px; 
-    gap: 20px; /* Tambahkan sedikit jarak antar item */
+    /* Jarak antara Analog dan Digital */
+    gap: 20px; 
 }
 
-/* Sembunyikan elemen Map */
+/* Aturan untuk menyembunyikan tombol Map */
+/* Catatan: Dalam HTML, pastikan tombol Map memiliki kelas .nav-item dan atribut data-view="map" atau ID yang sesuai */
 .nav-item[data-view="map"] {
     display: none !important;
 }
@@ -375,6 +378,8 @@ body {
     padding: 3px 5px;
     border-radius: 5px;
     cursor: pointer; 
+    /* Menghapus flex-grow yang mungkin ada sebelumnya agar tidak menyebar */
+    flex-grow: 0; 
 }
 .nav-item.active {
     background-color: var(--accent-blue);
