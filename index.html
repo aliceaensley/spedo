@@ -9,7 +9,6 @@
 <body>
 
 <div class="speedometer-ui">
-    
     <div class="main-content">
         <div class="left-panel">
             <div class="gauge-display-area">
@@ -17,17 +16,14 @@
                 <div id="analog-view">
                     <div class="gauge-wrapper">
                         <div class="speed-needle"></div>
-                        
                         <div class="center-display-area">
                             <i class="fas fa-engine engine-indicator active"></i>
                             <span class="gear-display">N</span> 
                         </div>
-                        
                         <div class="turn-signals">
                             <i class="fas fa-caret-left turn-signal left-signal"></i> 
                             <i class="fas fa-caret-right turn-signal right-signal"></i>
                         </div>
-                        
                         <div class="gauge-scale-numbers">
                             <span class="speed-label label-0">0</span>
                             <span class="speed-label label-20">20</span>
@@ -38,7 +34,7 @@
                             <span class="speed-label label-120">120</span>
                             <span class="speed-label label-140">140</span>
                             <span class="speed-label label-160">160</span>
-                            <span class="speed-label label-180">180</span>
+                            <span class="speed-label label-180">108</span>
                             <span class="speed-label label-200">200</span>
                         </div>
                     </div>
@@ -51,11 +47,11 @@
                 
                 <div class="level-indicators-area">
                     <div class="fuel-indicator">
-                        <span class="value">98%</span>
+                        <span class="value">100%</span>
                         <span class="label">FUEL</span>
                     </div>
                     <div class="engine-health-indicator">
-                        <span class="value">99%</span>
+                        <span class="value">100%</span>
                         <span class="label">ENGINE</span>
                     </div>
                 </div>
@@ -68,7 +64,6 @@
             <div class="nav-item active" data-view="analog">
                 <i class="far fa-clock"></i> Analog
             </div>
-            
             <div class="nav-item" data-view="digital">
                 Digital
             </div>
@@ -76,6 +71,50 @@
     </div>
 
 </div>
+
+<script>
+    let simSpeed = 0;
+    let simGear = 'N';
+    let simFuel = 100;
+    let simHealth = 100;
+    let simLeftSignal = false;
+    
+    // Logika untuk mengubah gear
+    const getSimGear = (speed) => {
+        if (speed < 10) return 'N';
+        if (speed < 40) return '1';
+        if (speed < 80) return '2';
+        if (speed < 120) return '3';
+        return '4';
+    };
+
+    // Fungsi Pengirim Data Simulasi
+    const sendSimulatedData = () => {
+        // --- SIMULASI ---
+        simSpeed = (simSpeed + 2) % 200; // Speed berulang 0-199
+        simGear = getSimGear(simSpeed);
+        simFuel = Math.max(0, simFuel - 0.05);
+        simHealth = Math.max(0, simHealth - 0.02);
+        
+        // Simulasi kedip sein
+        simLeftSignal = !simLeftSignal;
+
+        // --- PENGIRIMAN DATA (postMessage) ---
+        window.postMessage({
+            type: 'updateStatus',
+            speed: simSpeed,
+            gear: simGear,
+            fuel: simFuel,
+            engineHealth: simHealth,
+            signalLeft: simLeftSignal,
+            signalRight: !simLeftSignal, // Sein kanan bergantian
+            engineOn: true
+        }, '*');
+    };
+
+    // Mulai pengiriman data setiap 100ms
+    setInterval(sendSimulatedData, 100);
+</script>
 
 <script src="script.js"></script> 
 </body>
