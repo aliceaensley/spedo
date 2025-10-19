@@ -423,7 +423,7 @@ body {
 }
 
 /* ========================================================= */
-/* --- GAYA BARU: SKALA ANGKA SPEEDOMETER --- */
+/* --- GAYA BARU: SKALA ANGKA SPEEDOMETER (FIXED) --- */
 /* ========================================================= */
 .speed-marks-wrapper {
     position: absolute;
@@ -454,20 +454,23 @@ body {
     background-color: #00BFFF; /* Warna lebih terang */
 }
 
-/* Angka Kecepatan */
+/* Angka Kecepatan (FIXED) */
 .speed-mark.label {
     font-size: 11pt;
     font-weight: bold;
     color: white;
     text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); /* Glow pada angka */
-    /* Geser ke luar lingkaran dan atur posisi tengah */
-    transform: translate(-50%, -50%) translateY(-60px) rotate(0deg); 
+    /* Rotasi Wadah Angka: Tempatkan angka di posisi radial yang benar (Variabel --rotate-angle dari JS) */
+    transform: translate(-50%, -50%) rotate(var(--rotate-angle)); 
     z-index: 6;
+    transition: transform 0s; 
 }
-/* Memutar angka agar tegak lurus (counter-rotate) */
+
+/* Memutar angka agar tegak lurus (counter-rotate) (FIXED) */
 .speed-mark.label .text-rotate {
-    transform: rotate(var(--counter-rotate-angle)); 
     display: block;
+    /* TranslateY(-60px) menggeser teks ke posisi radial yang diinginkan, lalu di-counter rotate (Variabel --counter-rotate-angle dari JS) */
+    transform: translateY(-60px) rotate(var(--counter-rotate-angle)); 
 }
 
 
