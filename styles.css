@@ -37,7 +37,7 @@ body {
 }
 
 /* ------------------------------------------------ */
-/* --- WADAH UTAMA (SEKARANG SEPENUHNYA TRANSPARAN) --- */
+/* --- WADAH UTAMA (SEPENUHNYA TRANSPARAN) --- */
 /* ------------------------------------------------ */
 .speedometer-ui {
     position: fixed;
@@ -46,9 +46,8 @@ body {
     width: 220px; 
     height: 300px; 
     
-    /* PENTING: LATAR BELAKANG TRANSPARAN MURNI */
     background: transparent;
-    box-shadow: none; /* Hilangkan bayangan luar */
+    box-shadow: none; 
     
     border-radius: 15px;
     padding: 0; 
@@ -56,7 +55,7 @@ body {
     display: flex;
     flex-direction: column;
     color: var(--primary-text);
-    overflow: hidden; /* Pertahankan overflow: hidden agar konten tetap di dalam batas */
+    overflow: hidden; 
 }
 
 /* ------------------------------------------------ */
@@ -133,7 +132,7 @@ body {
     width: calc(var(--gauge-radius) * 2); 
     height: calc(var(--gauge-radius) * 2); 
     position: relative;
-    background-color: var(--dark-bg); /* Tetap hitam solid agar gauge terlihat jelas */
+    background-color: var(--dark-bg); 
     border-radius: 50%; 
     box-shadow: 
         0 0 0 5px var(--accent-blue), 
@@ -228,12 +227,17 @@ body {
 .engine-indicator.active { opacity: 1; }
 .gear-display { font-size: 24pt; font-weight: bold; }
 
-/* --- SINYAL BELOK (SEIN) --- */
+/* ------------------------------------------------ */
+/* --- SINYAL BELOK (SEIN) - DIPERBAIKI --- */
+/* ------------------------------------------------ */
 .turn-signals {
     position: absolute;
     top: 50%; 
     left: 50%;
-    transform: translate(-50%, -50%); 
+    /* PENTING: Menyesuaikan posisi sinyal belok */
+    /* Mengubah Y-axis dari transform agar lebih rendah, dan mengurangi margin-top */
+    transform: translate(-50%, calc(-50% + 40px)); /* Contoh: geser ke bawah 40px dari tengah */
+    
     width: calc(var(--gauge-radius) * 2 - 40px); 
     display: flex;
     justify-content: space-between;
@@ -241,7 +245,7 @@ body {
     font-size: 18pt;
     color: var(--secondary-text);
     z-index: 12;
-    margin-top: 15px; 
+    margin-top: 0px; /* Reset margin-top atau sesuaikan lagi jika perlu */
 }
 .turn-signal.left-signal, .turn-signal.right-signal { opacity: 0.2; }
 .turn-signal.active { opacity: 1; }
@@ -268,7 +272,6 @@ body {
     align-items: center;
     line-height: 1.1;
     
-    /* Latar belakang indikator transparan */
     padding: 5px 8px; 
     border-radius: 8px; 
     background: rgba(44, 44, 44, 0.6); 
@@ -317,12 +320,10 @@ body {
     
     border-top: 1px solid rgba(255, 255, 255, 0.1); 
     
-    /* PENTING: LATAR BELAKANG NAVIGASI MENGGUNAKAN WARNA SOLID AGAR JELAS */
     background: var(--dark-bg); 
     
     z-index: 100; 
     
-    /* Menghilangkan elemen yang tidak diinginkan */
     .action-buttons-bar, .action-icon, .nav-item[data-view="map"] {
         display: none !important; 
     }
