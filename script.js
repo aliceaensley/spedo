@@ -15,7 +15,7 @@ let currentSpeedometerMode = 'digital'; // 'digital' atau 'analog'
 // ✅ AUDIO FILES (Pastikan file ada di direktori yang sama)
 const fuelWarningSound = new Audio('bensin.mp3'); 
 const criticalFuelSound = new Audio('sekarat.mp3'); 
-const welcomeSound = new Audio('selebew.mp3'); 
+const welcomeSound = new Audio('kebo.mp3'); // <--- TELAH DIGANTI
 const seatbeltSound = new Audio('ahh.mp3'); 
 
 // *****************************************************************
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             welcomeSound.currentTime = 0;
             welcomeSound.play().catch(e => {
-                console.warn("Gagal memutar selebew.mp3. Fallback durasi.", e);
+                console.warn("Gagal memutar kebo.mp3. Fallback durasi.", e);
                 hideWelcomeOverlay(2500); 
             });
             
@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         
         welcomeSound.onerror = () => {
-             console.error("Gagal memuat file selebew.mp3. Menggunakan durasi default.");
+             console.error("Gagal memuat file kebo.mp3. Menggunakan durasi default.");
              hideWelcomeOverlay(2500); 
         };
         
