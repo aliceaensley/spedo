@@ -85,7 +85,7 @@ body {
     right: 15px;
     width: 300px; 
     
-    /* MODIFIKASI: Hapus Neon Orange Background dan Shadow */
+    /* BACKGROUND DIHILANGKAN DARI CONTAINER UTAMA */
     background: transparent; 
     padding: 0; 
     border-radius: 15px;
@@ -137,7 +137,7 @@ body {
 
 /* Panel Data Speedometer */
 .panel {
-    /* DEFAULT BACKGROUND HITAM SEMI-TRANSAPARAN */
+    /* DEFAULT BACKGROUND HITAM SEMI-TRANSAPARAN: HANYA DIGUNAKAN UNTUK INFO GRID ITEMS */
     background-color: rgba(0, 0, 0, 0.75); 
     border-radius: 10px;
     padding: 10px;
@@ -149,7 +149,8 @@ body {
     width: 100%;
     position: relative; 
     height: 200px; 
-    padding: 0 10px; /* Tambahkan padding agar Digital View tidak terlalu mepet */
+    /* PADDING DI SINI UNTUK JARAK TEPI */
+    padding: 5px 10px; 
 }
 #digital-speed-view, #analog-speed-view {
     position: absolute;
@@ -157,12 +158,24 @@ body {
     height: 100%;
     top: 0;
     left: 0;
-    padding: 0 10px; /* Tambahkan padding agar Digital View tidak terlalu mepet */
+    padding: 0; 
 }
 
 /* Speed Panel (Digital) */
-.speed-panel { display: flex; flex-direction: column; }
+.speed-panel { 
+    display: flex; 
+    flex-direction: column; 
+    
+    /* MODIFIKASI: Hilangkan background hitam di speed digital */
+    background-color: transparent; 
+    box-shadow: none;
+    border: none;
+    padding: 0; 
+}
+
 .speed-header { 
+    /* TAMBAH PADDING AGAR KONTEN TIDAK MEPET */
+    padding: 5px 0; 
     display: flex; justify-content: space-between; font-size: 10pt; font-weight: bold; 
     color: #FFA500; margin-bottom: 5px;
 }
@@ -285,7 +298,7 @@ body {
 
 
 /* ========================================================= */
-/* --- WADAH BAWAH NEON ORANGE (Baru) --- */
+/* --- WADAH BAWAH NEON ORANGE --- */
 /* ========================================================= */
 .bottom-data-wrapper {
     /* Gabungkan Info Grid dan Bottom Panel dalam satu kotak neon */
@@ -306,8 +319,8 @@ body {
     display: grid; 
     grid-template-columns: repeat(2, 1fr); 
     gap: 5px; 
-    padding: 0; /* Hapus padding agar kotak oranye menampungnya */
-    background-color: transparent; /* Pastikan ini transparan */
+    padding: 0; 
+    background-color: transparent; 
 }
 .stat-item { 
     padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; 
@@ -318,9 +331,8 @@ body {
 
 /* Bottom Panel (Indicators & Toggles) */
 .bottom-panel { 
-    /* Hapus background dan padding yang berlebihan */
     background-color: transparent; 
-    padding: 10px 0 0 0; /* Padding atas untuk pemisah visual */
+    padding: 10px 0 0 0; 
 }
 
 .status-indicators { display: flex; gap: 15px; font-size: 20pt; }
