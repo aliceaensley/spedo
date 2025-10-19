@@ -1,24 +1,36 @@
 /**
  * Konfigurasi Utama Speedometer dan API Key.
  */
-const API_KEY = "AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw"; // API Key baru yang Anda berikan
-const MAX_SPEED = 200; // Kecepatan maksimum untuk speedometer analog
-const MAX_RPM = 8000;  // RPM maksimum untuk bar analog
+// Ganti dengan API Key yang Anda berikan
+const API_KEY = "AIzaSyBXQ0vrsQPFnj9Dif2CM_ihZ5pBZDBDKjw"; 
+const MAX_SPEED = 200; 
+const MAX_RPM = 1.0; // RPM biasanya 0.0 sampai 1.0 dalam game/mod
+
 
 // --- Elemen DOM ---
+// Speed & View
 const digitalSpeedView = document.getElementById('digital-speed-view');
 const analogSpeedView = document.getElementById('analog-speed-view');
-const speedValueElement = document.querySelector('.speed-value');
-const rpmBar = document.querySelector('.rpm-bar');
-const speedNeedle = document.querySelector('.speed-needle');
-const gearDisplay = document.getElementById('gear-display');
-const infoTime = document.getElementById('info-time');
-const infoFuel = document.getElementById('info-fuel');
-const infoEngine = document.getElementById('info-engine');
-const welcomeOverlay = document.getElementById('welcome-overlay');
 const speedometerContainer = document.querySelector('.speedometer-container');
-const modeToggleButton = document.getElementById('mode-toggle-button');
-const youtubeToggleButton = document.getElementById('youtube-toggle-button');
+const speedValueElement = document.querySelector('.speed-value');
+const speedNeedle = document.querySelector('.speed-needle');
+const rpmBar = document.querySelector('.rpm-bar');
+
+// Toggles & Mode
+const modeToggleButton = document.getElementById('mode-toggle-button'); // Harusnya ada ID ini di HTML
+const youtubeToggleButton = document.getElementById('youtube-toggle-button'); // Harusnya ada ID ini di HTML
+
+// Info Grid & Indicators (Asumsi ID/Class ini ada di HTML Anda)
+const infoTime = document.getElementById('info-time'); // Di dalam stat-item Time
+const infoFuel = document.getElementById('info-fuel'); // Di dalam stat-item Fuel
+const infoEngine = document.getElementById('info-engine'); // Di dalam stat-item Engine
+const gearDisplay = document.getElementById('gear-display'); // Asumsi untuk menampilkan N, R, 1, 2, dll.
+
+const lightIcon = document.getElementById('light-icon'); // Ikon bohlam
+const seatbeltIcon = document.getElementById('seatbelt-icon'); // Ikon kursi/sabuk
+
+// Overlay
+const welcomeOverlay = document.getElementById('welcome-overlay'); 
 
 // --- Status Awal ---
 let currentMode = 'analog';
@@ -30,39 +42,28 @@ let isLoaded = false;
 //  1. FUNGSI UTAMA (INIT & DATA UPDATE)
 // =========================================================
 
-/**
- * Inisialisasi speedometer saat DOM dimuat.
- */
 document.addEventListener('DOMContentLoaded', () => {
-    // Tampilkan overlay selamat datang sebentar
+    // 1. Inisialisasi Overlay
     setTimeout(() => {
         welcomeOverlay.classList.add('fade-out');
         setTimeout(() => {
             welcomeOverlay.style.display = 'none';
-        }, 1000); // Tunggu 1 detik setelah fade out selesai
-
-        // Setelah overlay hilang, set mode awal
+        }, 1000); 
         setSpeedometerMode(currentMode);
         isLoaded = true;
-    }, 2000); // Tampilkan overlay selama 2 detik
+    }, 2000); 
     
-    // Setup event listeners
+    // 2. Setup Listeners
     setupEventListeners();
 
-    // Mulai update jam
+    // 3. Mulai update jam
     setInterval(updateTime, 1000); 
     updateTime();
 });
 
 /**
- * Memperbarui tampilan speedometer dengan data terbaru dari game/backend.
- * @param {number} speed - Kecepatan kendaraan.
- * @param {number} rpm - Rotasi per menit mesin (0.0 - 1.0).
- * @param {number} gear - Gigi transmisi.
- * @param {number} fuel - Persentase bahan bakar (0 - 100).
- * @param {number} engineHealth - Persentase kesehatan mesin (0 - 100).
- * @param {boolean} lights - Status lampu menyala.
- * @param {boolean} seatbelt - Status sabuk pengaman terpasang.
+ * Memperbarui tampilan speedometer dengan data terbaru.
+ * Ini adalah fungsi yang harus dipanggil oleh backend/game Anda.
  */
 function updateSpeedometer(speed, rpm, gear, fuel, engineHealth, lights, seatbelt) {
     if (!isLoaded) return;
@@ -71,12 +72,12 @@ function updateSpeedometer(speed, rpm, gear, fuel, engineHealth, lights, seatbel
     speedValueElement.textContent = Math.round(speed);
     
     // B. Update Mode Analog
-    // Jarum speed (dari -135 derajat hingga 135 derajat)
+    // Jarum speed: Rotasi dari -135deg (0) hingga 135deg (MAX_SPEED)
     const speedRatio = Math.min(speed / MAX_SPEED, 1);
     const rotation = -135 + (speedRatio * 270);
     speedNeedle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
     
-    // RPM Bar (dari 0% hingga 100%)
+    // RPM Bar: rpm (0.0 - 1.0) dikonversi ke persentase
     const rpmPercentage = rpm * 100;
     rpmBar.style.width = `${rpmPercentage}%`;
 
@@ -95,20 +96,18 @@ function updateSpeedometer(speed, rpm, gear, fuel, engineHealth, lights, seatbel
 
 /**
  * Mengubah mode tampilan speedometer (analog atau digital).
- * @param {string} mode - 'analog' atau 'digital'.
  */
 function setSpeedometerMode(mode) {
     currentMode = mode;
     if (mode === 'analog') {
         digitalSpeedView.style.display = 'none';
         analogSpeedView.style.display = 'block';
-        modeToggleButton.innerHTML = '<i class="fas fa-clock"></i> Analog';
-        modeToggleButton.classList.add('active');
+        // Asumsi tombol mode toggle adalah ikon Analog di HTML
+        if (modeToggleButton) modeToggleButton.classList.add('active'); 
     } else {
         digitalSpeedView.style.display = 'block';
         analogSpeedView.style.display = 'none';
-        modeToggleButton.innerHTML = '<i class="fas fa-digital-tachograph"></i> Digital';
-        modeToggleButton.classList.remove('active');
+        if (modeToggleButton) modeToggleButton.classList.remove('active');
     }
 }
 
@@ -120,13 +119,11 @@ function toggleYouTubeView() {
     
     if (isYouTubeActive) {
         speedometerContainer.classList.add('youtube-active');
-        youtubeToggleButton.classList.add('active');
-        // Panggil fungsi untuk menampilkan YouTube UI
+        if (youtubeToggleButton) youtubeToggleButton.classList.add('active');
         showYouTubeUI(); 
     } else {
         speedometerContainer.classList.remove('youtube-active');
-        youtubeToggleButton.classList.remove('active');
-        // Panggil fungsi untuk menyembunyikan YouTube UI
+        if (youtubeToggleButton) youtubeToggleButton.classList.remove('active');
         hideYouTubeUI(); 
     }
 }
@@ -135,86 +132,81 @@ function toggleYouTubeView() {
  * Menyiapkan semua event listener untuk tombol dan kontrol.
  */
 function setupEventListeners() {
-    // Tombol Toggle Mode Analog/Digital
-    modeToggleButton.addEventListener('click', () => {
-        const newMode = (currentMode === 'analog') ? 'digital' : 'analog';
-        setSpeedometerMode(newMode);
-    });
+    if (modeToggleButton) {
+        modeToggleButton.addEventListener('click', () => {
+            const newMode = (currentMode === 'analog') ? 'digital' : 'analog';
+            setSpeedometerMode(newMode);
+        });
+    }
     
-    // Tombol Toggle YouTube
-    youtubeToggleButton.addEventListener('click', toggleYouTubeView);
+    if (youtubeToggleButton) {
+        youtubeToggleButton.addEventListener('click', toggleYouTubeView);
+    }
 }
 
 
 // =========================================================
-//  3. FUNGSI TAMBAHAN (JAM, INDIKATOR)
+//  3. FUNGSI TAMBAHAN
 // =========================================================
 
-/**
- * Memperbarui tampilan jam.
- */
 function updateTime() {
     const now = new Date();
-    // Gunakan format 24 jam HH:MM
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    infoTime.textContent = `${hours}:${minutes}`;
+    if (infoTime) infoTime.textContent = `${hours}:${minutes}`;
 }
 
-/**
- * Memperbarui status ikon indikator.
- */
 function updateIndicators(gear, lights, seatbelt) {
-    // 1. Gear
+    // Gear Display
     const gearText = (gear === 0) ? 'N' : (gear === -1) ? 'R' : gear;
-    gearDisplay.textContent = gearText;
+    if (gearDisplay) gearDisplay.textContent = gearText;
 
-    // 2. Lampu (di panel bawah)
-    const lightIcon = document.getElementById('light-icon');
-    if (lights) {
-        lightIcon.classList.add('active');
-    } else {
-        lightIcon.classList.remove('active');
+    // Lampu
+    if (lightIcon) {
+        lightIcon.classList.toggle('active', lights);
     }
 
-    // 3. Sabuk Pengaman (di panel bawah)
-    const seatbeltIcon = document.getElementById('seatbelt-icon');
-    if (seatbelt) {
-        seatbeltIcon.classList.add('active');
-    } else {
-        seatbeltIcon.classList.remove('active');
+    // Sabuk Pengaman
+    if (seatbeltIcon) {
+        seatbeltIcon.classList.toggle('active', seatbelt);
     }
 }
-
 
 // =========================================================
 //  4. FUNGSI YOUTUBE (TEMPAT API KEY DIGUNAKAN)
 // =========================================================
 
 function showYouTubeUI() {
-    // Logika untuk menampilkan input pencarian YouTube, tombol, dan iframe/container video.
-    // Biasanya ini melibatkan:
-    // 1. Membuat atau menampilkan elemen HTML .youtube-integrated-container
-    // 2. Menggunakan API_KEY untuk membuat panggilan ke YouTube Data API (Search)
-    console.log("YouTube View Activated. API Key ready for search.");
-    // Contoh: document.getElementById('youtube-container').style.display = 'flex';
+    // Logika untuk menampilkan input pencarian YouTube dan memulai pencarian/video.
+    console.log(`YouTube UI is ready. Using API Key: ${API_KEY.substring(0, 10)}...`);
+    // Di sini Anda akan menambahkan kode untuk membuat iframe YouTube dan 
+    // memulai fungsi pencarian yang membutuhkan API_KEY.
 }
 
 function hideYouTubeUI() {
     // Logika untuk menyembunyikan YouTube UI.
-    console.log("YouTube View Deactivated.");
-    // Contoh: document.getElementById('youtube-container').style.display = 'none';
+    console.log("YouTube UI hidden.");
 }
 
 
 // =========================================================
-//  5. FUNGSI EXPOSURE GLOBAL (Untuk Komunikasi Backend/Game)
+//  5. FUNGSI EXPOSURE GLOBAL
 // =========================================================
 
-// Di lingkungan FiveM atau sejenisnya, fungsi ini mungkin dipanggil dari backend.
-// Pastikan fungsi ini dapat diakses secara global (misalnya: window.updateSpeedometer).
-
+// Ekspos fungsi utama untuk dipanggil oleh lingkungan game/backend
 window.updateSpeedometer = updateSpeedometer;
 
-// Catatan: Jika Anda menggunakan framework seperti Vue/React/jQuery, 
-// struktur kode akan berbeda dan menggunakan API key di dalam layanan framework tersebut.
+// --- DEMO ---
+// window.onload = () => {
+//     setInterval(() => {
+//         const randomSpeed = Math.random() * 150;
+//         const randomRpm = Math.random(); 
+//         const randomGear = Math.floor(Math.random() * 5);
+//         const randomFuel = Math.random() * 100;
+//         const randomEngine = Math.random() * 100;
+//         const randomLights = Math.random() > 0.7;
+//         const randomSeatbelt = Math.random() > 0.5;
+//         
+//         updateSpeedometer(randomSpeed, randomRpm, randomGear, randomFuel, randomEngine, randomLights, randomSeatbelt);
+//     }, 500);
+// };
