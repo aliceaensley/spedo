@@ -202,7 +202,7 @@ body {
 /* --- KONTEN TENGAH (N & ENGINE ICON) --- */
 .center-display-area {
     position: absolute;
-    top: 50%;
+    top: 50%; 
     left: 50%;
     transform: translate(-50%, calc(-50% - 30px)); 
     display: flex;
@@ -255,8 +255,6 @@ body {
 }
 .fuel-indicator { left: 50%; transform: translate(calc(-100% - 70px), 10px); }
 .engine-health-indicator { right: 50%; transform: translate(calc(105px), 10px); }
-.fuel-indicator .label, .engine-health-indicator .label { font-size: 6pt; }
-.fuel-indicator .value, .engine-health-indicator .value { font-size: 9pt; }
 
 /* Menghilangkan Indikator yang tidak relevan di sini */
 .indicator-lights, .total-km-display {
@@ -270,10 +268,9 @@ body {
     display: flex;
     flex-direction: column; 
     gap: 0; 
-    /* Merapikan/Menghilangkan garis & ruang atas yang tersisa dari action bar yang hilang */
     border-top: none; 
     padding-top: 0; 
-    padding-bottom: 0; /* Menghilangkan ruang kosong di bawah */
+    padding-bottom: 0; 
     flex-shrink: 0;
     
     background: transparent; 
@@ -282,7 +279,7 @@ body {
     z-index: 100; 
 }
 
-/* Action Buttons Bar (Dihilangkan) */
+/* Action Buttons Bar (Dihilangkan, untuk berjaga-jaga jika masih ada di HTML) */
 .action-buttons-bar, .action-icon {
     display: none !important; 
 }
@@ -295,13 +292,18 @@ body {
     justify-content: center; 
     align-items: center;
     width: 100%;
-    /* Mengurangi Padding Atas untuk Rapat ke Gauge */
-    padding: 5px 5px 5px 5px; /* Mengurangi padding bawah */
+    
+    /* PENTING: GARIS PEMISAH VISUAL BARU */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); 
+    
+    /* Padding untuk memberikan ruang di atas dan bawah garis pemisah */
+    padding: 10px 5px; 
+    
     /* Jarak antara Analog dan Digital */
     gap: 20px; 
 }
 
-/* Tombol Map (Dihilangkan) */
+/* Tombol Map (Dihilangkan, untuk berjaga-jaga jika masih ada di HTML) */
 .nav-item[data-view="map"] {
     display: none !important;
 }
@@ -317,13 +319,13 @@ body {
     cursor: pointer; 
     flex-grow: 0; 
     transition: background-color 0.2s;
-    /* Memastikan tidak ada angka di dalam tombol navigasi Digital */
+    /* Memastikan tidak ada angka odometer di dalam tombol navigasi Digital */
     .total-km-digital {
         display: none !important;
     }
 }
 .nav-item.active {
-    background-    color: var(--accent-blue);
+    background-color: var(--accent-blue);
     color: white;
     font-weight: bold; 
 }
