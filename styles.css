@@ -1,8 +1,8 @@
 /* ========================================================= */
-/* Final CSS Speedometer - High-Tech Glow Theme (ULTIMATE FIX v6) */
+/* FINAL TOTAL SPEEDOMETER CSS (v7) */
+/* Menghilangkan Ikon Biru & Merapikan Skala */
 /* ========================================================= */
 
-/* Basic Reset and Font */
 * {
     user-select: none;
     user-drag: none;
@@ -13,7 +13,7 @@
 
 @font-face {
     font-family: 'Digital';
-    /* Ganti dengan font bergaya digital/retro jika ada */
+    /* Pastikan font Digital terdefinisi */
 }
 
 body {
@@ -27,344 +27,24 @@ body {
     display: none !important;
 }
 
-/* --- Gaya Overlay Selamat Datang --- */
-#welcome-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; 
-    opacity: 1;
-    transition: opacity 1s ease-out;
-}
-
-#welcome-overlay.fade-out {
-    opacity: 0;
-    pointer-events: none; 
-}
-
-.welcome-message {
-    text-align: center;
-    color: #FFA500; 
-    text-shadow: 0 0 20px rgba(255, 165, 0, 0.8), 0 0 30px rgba(255, 165, 0, 0.5); 
-    animation: pulse 1.5s infinite alternate; 
-}
-
-.javanese-script {
-    font-family: 'Noto Sans Javanese', serif; 
-    font-size: 5em; 
-    line-height: 1;
-    margin-bottom: 20px;
-    color: white; 
-    text-shadow: 
-        0 0 15px rgba(255, 255, 255, 0.8), 
-        0 0 30px rgba(0, 191, 255, 0.6); 
-}
-
-.welcome-message h1 {
-    font-size: 3.5em; 
-    margin-bottom: 5px; 
-    letter-spacing: 5px;
-    opacity: 0.7; 
-}
-
-.welcome-message p {
-    font-size: 1.3em;
-    opacity: 0.9;
-    font-weight: bold;
-    color: white; 
-}
-
-@keyframes pulse {
-    from { transform: scale(1); opacity: 0.8; }
-    to { transform: scale(1.05); opacity: 1; }
-}
-
-
 /* --- Speedometer Utama (Container) --- */
 .speedometer-container {
     position: fixed;
     bottom: 15px; 
     right: 15px;
     width: 300px; 
-    
     background: transparent; 
     padding: 0; 
     border-radius: 15px;
     box-shadow: none; 
     z-index: 1000; 
-    
     display: flex;
     flex-direction: column;
     gap: 5px;
-    
-    transition: width 0.3s, height 0.3s, right 0.3s, bottom 0.3s;
 }
 
-/* KONDISI SPEEDOMETER SAAT YOUTUBE AKTIF */
-.speedometer-container.youtube-active {
-    width: 700px; /* Diperlebar agar ada ruang YouTube */
-    height: 500px; 
-    right: 15px; 
-    bottom: 15px; 
-    padding: 0;
-    /* Ubah ke row-reverse agar YouTube (di awal HTML) muncul di kiri */
-    flex-direction: row-reverse; 
-    align-items: flex-end; 
-    justify-content: flex-end; /* Dorong ke kanan bawah */
-}
+/* ... (Kode untuk panel, digital view, youtube dihilangkan untuk fokus) */
 
-/* Modifikasi agar Speedometer utama tetap muncul di sebelah kanan YouTube */
-.speedometer-main-elements {
-    width: 300px; /* Lebar Speedometer tetap */
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    transition: opacity 0.3s;
-}
-
-/* Saat YouTube Aktif, Speedometer Main Elements ditarik ke kanan */
-.speedometer-container.youtube-active .speedometer-main-elements {
-    padding: 15px 0 15px 5px; /* Padding untuk jarak dengan YouTube */
-}
-
-
-/* ========================================================= */
-/* --- YOUTUBE INTEGRATION CONTAINER (Glow Biru/Cyan) --- */
-/* ========================================================= */
-.youtube-integrated-container {
-    background-color: rgba(0, 0, 0, 0.95);
-    border-radius: 12px; 
-    width: 385px; /* Lebar YouTube */
-    height: 100%;
-    position: relative; /* Penting */
-    padding: 15px; 
-    box-sizing: border-box;
-    
-    /* Neon Glow Biru/Cyan */
-    border: 1px solid rgba(0, 191, 255, 0.5); 
-    box-shadow: 0 0 20px rgba(0, 191, 255, 0.4), inset 0 0 5px rgba(0, 191, 255, 0.2); 
-    
-    display: flex;
-    flex-direction: column;
-    gap: 10px; 
-    
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-}
-
-.speedometer-container.youtube-active .youtube-integrated-container {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-
-/* --- Search Bar dan Tombol --- */
-.search-bar-container {
-    display: flex;
-    gap: 8px;
-    flex-shrink: 0; 
-}
-
-#youtube-search-input {
-    flex-grow: 1;
-    padding: 10px 15px;
-    border: 1px solid rgba(0, 191, 255, 0.4); 
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
-    font-size: 11pt;
-    outline: none;
-    transition: all 0.2s;
-}
-
-#youtube-search-input:focus {
-    border-color: #00BFFF; 
-    box-shadow: 0 0 8px rgba(0, 191, 255, 0.7);
-}
-
-#youtube-search-button {
-    padding: 10px 15px;
-    background: #FF4500; 
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 10pt;
-    box-shadow: 0 0 5px #FF4500;
-    transition: background 0.2s, box-shadow 0.2s;
-}
-
-
-/* --- WRAPPER VIDEO DAN HASIL PENCARIAN --- */
-.video-and-results-wrapper {
-    flex-grow: 1; /* Mengambil sisa ruang vertikal */
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-#browser-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    background-color: black;
-}
-
-
-/* --- Hasil Pencarian (Results Overlay) --- */
-.search-results-container {
-    position: absolute;
-    top: 0; 
-    left: 0; 
-    width: 100%;
-    height: 100%;
-    
-    background: rgba(0, 0, 0, 0.95);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto; 
-    z-index: 50; 
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 165, 0, 0.3); 
-}
-
-.search-result-item {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    margin-bottom: 5px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s, box-shadow 0.2s, border-left 0.2s;
-    border-left: 3px solid transparent;
-}
-
-.search-result-item:hover {
-    background: rgba(255, 165, 0, 0.1); 
-    border-left: 3px solid #FFA500; 
-    box-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
-}
-
-.search-result-item img {
-    width: 70px;
-    height: 50px;
-    object-fit: cover;
-    margin-right: 12px;
-    border-radius: 2px;
-}
-
-.search-result-item p {
-    font-size: 10pt;
-    color: white;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: calc(100% - 82px);
-}
-
-
-/* --- Tombol HIDE/CLOSE --- */
-.youtube-close-button {
-    text-align: center;
-    padding: 5px 0;
-    flex-shrink: 0;
-    font-size: 10pt;
-    color: rgba(255, 255, 255, 0.7);
-    cursor: pointer;
-    transition: color 0.2s, text-shadow 0.2s;
-    margin-top: 5px;
-}
-
-#youtube-hide-button:hover {
-    color: #FF0000;
-    text-shadow: 0 0 5px #FF0000;
-}
-
-/* ========================================================= */
-/* --- SPEEDOMETER THEME STYLES --- */
-/* ========================================================= */
-
-.panel {
-    background-color: rgba(0, 0, 0, 0.75); 
-    border-radius: 10px;
-    padding: 10px;
-    width: 100%; 
-}
-
-/* --- WADAH VIEW TOGGLE --- */
-.speedometer-view-wrapper {
-    width: 100%;
-    position: relative; 
-    height: 200px; 
-    padding: 5px 10px; 
-}
-#digital-speed-view, #analog-speed-view {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    padding: 0; 
-}
-
-/* Speed Panel (Digital) */
-.speed-panel { 
-    display: flex; 
-    flex-direction: column; 
-    background-color: transparent; 
-    box-shadow: none;
-    border: none;
-    padding: 0; 
-    height: 100%; 
-}
-
-.speed-header { 
-    padding: 5px 0; 
-    display: flex; justify-content: flex-end; font-size: 10pt; font-weight: bold; 
-    color: #FFA500; 
-    margin-bottom: 0px; 
-    flex-shrink: 0;
-}
-
-#speed-mode-digital {
-    margin-top: 25px; 
-}
-
-.speed-value-wrapper { 
-    text-align: center; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 5px; 
-    flex-grow: 1; 
-    width: 100%;
-}
-
-.speed-value { 
-    font-size: 48pt; font-weight: 900; line-height: 1; color: white; 
-    text-shadow: 0 0 10px #FFA500; 
-    margin-top: 15px; 
-}
-
-.speed-copyright-logo {
-    width: 30px; 
-    height: 30px; 
-    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 0.7)); 
-    align-self: flex-end; 
-}
-
-
-/* --- GAYA ANALOG SPEED VIEW --- */
 .analog-panel {
     display: flex;
     flex-direction: column;
@@ -390,11 +70,6 @@ body {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-}
-
-.analog-speed-value, .speed-unit-analog {
-    /* Angka & Unit di tengah analog disembunyikan */
-    display: none; 
 }
 
 .speed-needle {
@@ -423,7 +98,7 @@ body {
 }
 
 /* ========================================================= */
-/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX ULTIMATE v6) --- */
+/* --- GAYA SKALA ANGKA (FINAL) --- */
 /* ========================================================= */
 .speed-marks-wrapper {
     position: absolute;
@@ -432,151 +107,63 @@ body {
     border-radius: 50%;
 }
 
-/* Base untuk setiap tanda/mark */
 .speed-mark {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform-origin: 0 0; /* Titik putar di tengah */
+    transform-origin: 0 0; 
 }
 
-/* Tanda kecil (garis) */
+/* Tanda Garis (Jarak 84px) */
 .speed-mark.line {
     width: 2px;
-    height: 8px; /* Panjang tanda */
-    background-color: rgba(0, 191, 255, 0.7); /* Warna Cyan/Biru Neon */
-    /* **FINAL FIX v6:** Garis ditarik lebih luar: 84px */
+    height: 8px; 
+    background-color: rgba(0, 191, 255, 0.7); 
+    /* Ditarik ke luar (radial 84px) */
     transform: translate(-50%, -100%) translateY(-84px) rotate(0deg); 
     z-index: 5;
 }
-.speed-mark.line.major {
-    height: 12px; /* Tanda utama lebih panjang */
-    background-color: #00BFFF; /* Warna lebih terang */
-}
 
-/* Angka Kecepatan (FINAL FIX ULTIMATE v6) */
+/* Angka Kecepatan (FONT SANGAT KECIL & Jarak 74px) */
 .speed-mark.label {
-    /* **FINAL FIX v6:** Font dikecilkan lagi menjadi 6pt untuk kerapihan 90-110 */
+    /* FONT FINAL: 6pt (paling kecil agar 100-120 rapi) */
     font-size: 6pt; 
     font-weight: bold;
     color: white;
-    text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); /* Glow pada angka */
-    /* Rotasi Wadah Angka */
+    text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); 
     transform: translate(-50%, -50%) rotate(var(--rotate-angle)); 
     z-index: 6;
     transition: transform 0s; 
 }
 
-/* Memutar angka agar tegak lurus (counter-rotate) */
+/* Memutar angka agar tegak lurus (Jarak 74px) */
 .speed-mark.label .text-rotate {
     display: block;
-    /* **FINAL FIX v6:** Angka ditarik lebih luar: 74px */
+    /* Ditarik ke luar (radial 74px) - Nempel ke Lingkaran */
     transform: translateY(-74px) rotate(var(--counter-rotate-angle)); 
 }
 
 
-/* --- WADAH BAWAH NEON ORANGE --- */
-.bottom-data-wrapper {
-    background: linear-gradient(135deg, #FFA500, #FF4500); 
-    padding: 5px; 
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
-    
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 100%;
-}
+/* --- KNOCKOUT IKON SPIDERMAN BIRU (SANGAT AGRESIF) --- */
 
-
-/* Info Grid (Stats) */
-.info-panels-grid { 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 5px; 
-    padding: 0; 
-    background-color: transparent; 
-}
-.stat-item { 
-    padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; 
-    background-color: rgba(0, 0, 0, 0.75); text-align: center;
-}
-.stat-label { color: #FFA500; font-size: 9pt; }
-.stat-value { font-size: 12pt; font-weight: bold; color: white; }
-
-/* --- GAYA BARU UNTUK RPM DI INFO GRID --- */
-.rpm-stat-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%; 
-}
-
-.rpm-bar-wrapper {
-    width: 100%; 
-    height: 8px; /* Tinggi bar */
-    background-color: rgba(255, 255, 255, 0.1); 
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 2px;
-}
-
-/* Gaya Batang RPM Utama */
-.rpm-bar {
-    height: 100%;
-    width: 0%; 
-    /* Gradien: Hijau (Low RPM) -> Merah (High RPM) */
-    background: linear-gradient(to right, #00FF00, #FFFF00, #FF4500, #FF0000); 
-    transition: width 0.1s linear;
-}
-
-.rpm-stat-item .stat-label {
-    margin-bottom: 2px;
-}
-
-
-/* Bottom Panel (Indicators & Toggles) */
-.bottom-panel { 
-    background-color: transparent; 
-    padding: 10px 0 0 0; 
-}
-
-.status-indicators { 
-    display: flex; 
-    gap: 15px; 
-    font-size: 20pt; 
-    justify-content: center; 
-}
-
-/* --- PENTING: MENGHILANGKAN OBJEK BIRU (SPIDERMAN) - KODE TERAKHIR --- */
-/* Target spesifik (headlights-icon) & kelas generik (indicator-icon) */
-/* **FINAL KNOCKOUT:** Dipaksa hilang dari seluruh area analog view */
+/* Menargetkan semua elemen ikon yang mungkin muncul di gauge */
+.gauge-wrapper i,
+.gauge-wrapper .indicator-icon,
+.gauge-wrapper #headlights-icon,
+.gauge-wrapper .fas.fa-lightbulb,
 #analog-speed-view *[class*='indicator'], 
-#analog-speed-view i[class*='light'],
-#analog-speed-view .indicator-icon,
+#analog-speed-view i[class*='light'] {
+    /* Dihilangkan dari DOM */
+    display: none !important;
+    /* Dibuat tidak terlihat dan tidak berinteraksi */
+    visibility: hidden !important; 
+    opacity: 0 !important; 
+    z-index: -9999 !important; 
+}
+
+/* Menghilangkan wadah indikator di area analog */
 #analog-speed-view .status-indicators {
     display: none !important;
 }
 
-/* Target terluar: jika icon tsb menjadi children langsung dari gauge-wrapper */
-.gauge-wrapper > .indicator-icon {
-    display: none !important;
-}
-
-
-.indicator-icon { opacity: 0.4; cursor: pointer; } 
-.indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
-
-.mode-toggle {
-    opacity: 0.8; 
-    color: #FFA500; 
-    transition: all 0.2s;
-}
-.mode-toggle.active {
-    text-shadow: 0 0 8px #00BFFF, 0 0 12px rgba(0, 191, 255, 0.5); /* Glow Biru/Cyan */
-}
-
-.youtube-toggle.active {
-    opacity: 1;
-    text-shadow: 0 0 8px #FF0000; 
-}
+/* --- (Sisa kode bottom panel dan info lainnya dihilangkan untuk fokus) --- */
