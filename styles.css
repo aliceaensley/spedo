@@ -1,6 +1,6 @@
 /* ========================================================= */
-/* FINAL TOTAL ULTIMATE CSS (v8) */
-/* Menghilangkan Ikon Biru Permanen & Skala Optimal */
+/* FINAL FULL ULTIMATE CSS (v8) */
+/* Menghilangkan Ikon Biru Permanen & Skala Optimal (0-130) */
 /* ========================================================= */
 
 * {
@@ -41,11 +41,78 @@ body {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    transition: width 0.3s, height 0.3s, right 0.3s, bottom 0.3s;
 }
 
-/* --- (Bagian YouTube, Digital View, dan Panel Lainnya) --- */
-/* (Disederhanakan untuk fokus) */
+/* KONDISI SPEEDOMETER SAAT YOUTUBE AKTIF */
+.speedometer-container.youtube-active {
+    width: 700px; 
+    height: 500px; 
+    right: 15px; 
+    bottom: 15px; 
+    padding: 0;
+    flex-direction: row-reverse; 
+    align-items: flex-end; 
+    justify-content: flex-end; 
+}
 
+.speedometer-main-elements {
+    width: 300px; 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: opacity 0.3s;
+}
+
+.speedometer-container.youtube-active .speedometer-main-elements {
+    padding: 15px 0 15px 5px; 
+}
+
+/* --- YOUTUBE INTEGRATION CONTAINER --- */
+.youtube-integrated-container {
+    background-color: rgba(0, 0, 0, 0.95);
+    border-radius: 12px; 
+    width: 385px; 
+    height: 100%;
+    position: relative; 
+    padding: 15px; 
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 191, 255, 0.5); 
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.4), inset 0 0 5px rgba(0, 191, 255, 0.2); 
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.speedometer-container.youtube-active .youtube-integrated-container {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* --- Search Bar dan Tombol (Gaya YouTube) --- */
+.search-bar-container { display: flex; gap: 8px; flex-shrink: 0; }
+#youtube-search-input { flex-grow: 1; padding: 10px 15px; border: 1px solid rgba(0, 191, 255, 0.4); border-radius: 6px; background: rgba(255, 255, 255, 0.05); color: white; font-size: 11pt; outline: none; transition: all 0.2s; }
+#youtube-search-button { padding: 10px 15px; background: #FF4500; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 10pt; box-shadow: 0 0 5px #FF4500; transition: background 0.2s, box-shadow 0.2s; }
+.video-and-results-wrapper { flex-grow: 1; position: relative; border-radius: 8px; overflow: hidden; }
+#browser-iframe { width: 100%; height: 100%; border: none; background-color: black; }
+.youtube-close-button { text-align: center; padding: 5px 0; flex-shrink: 0; font-size: 10pt; color: rgba(255, 255, 255, 0.7); cursor: pointer; transition: color 0.2s, text-shadow 0.2s; margin-top: 5px; }
+#youtube-hide-button:hover { color: #FF0000; text-shadow: 0 0 5px #FF0000; }
+
+
+/* --- SPEEDOMETER THEME STYLES --- */
+.panel { background-color: rgba(0, 0, 0, 0.75); border-radius: 10px; padding: 10px; width: 100%; }
+.speedometer-view-wrapper { width: 100%; position: relative; height: 200px; padding: 5px 10px; }
+#digital-speed-view, #analog-speed-view { position: absolute; width: 100%; height: 100%; top: 0; left: 0; padding: 0; }
+
+/* Digital View */
+.speed-panel { display: flex; flex-direction: column; background-color: transparent; box-shadow: none; border: none; padding: 0; height: 100%; }
+.speed-value-wrapper { text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; flex-grow: 1; width: 100%; }
+.speed-value { font-size: 48pt; font-weight: 900; line-height: 1; color: white; text-shadow: 0 0 10px #FFA500; margin-top: 15px; }
+
+/* Analog View */
 .analog-panel {
     display: flex;
     flex-direction: column;
@@ -126,7 +193,7 @@ body {
 
 /* Angka Kecepatan (FONT 6pt & Jarak Radial 74px - Sangat Nempel) */
 .speed-mark.label {
-    font-size: 6pt; /* FONT FINAL untuk kerapihan 100-120 */
+    font-size: 6pt; /* FINAL FONT */
     font-weight: bold;
     color: white;
     text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); 
@@ -142,11 +209,38 @@ body {
 }
 
 
+/* --- WADAH BAWAH NEON ORANGE --- */
+.bottom-data-wrapper {
+    background: linear-gradient(135deg, #FFA500, #FF4500); 
+    padding: 5px; 
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+/* Info Grid (Stats) */
+.info-panels-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 0; background-color: transparent; }
+.stat-item { padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; background-color: rgba(0, 0, 0, 0.75); text-align: center;}
+.stat-label { color: #FFA500; font-size: 9pt; }
+.stat-value { font-size: 12pt; font-weight: bold; color: white; }
+
+/* RPM Bar */
+.rpm-stat-item { display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
+.rpm-bar-wrapper { width: 100%; height: 8px; background-color: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin-top: 2px; }
+.rpm-bar { height: 100%; width: 0%; background: linear-gradient(to right, #00FF00, #FFFF00, #FF4500, #FF0000); transition: width 0.1s linear; }
+
+/* Bottom Panel (Indicators & Toggles) */
+.bottom-panel { background-color: transparent; padding: 10px 0 0 0; }
+.status-indicators { display: flex; gap: 15px; font-size: 20pt; justify-content: center; }
+
 /* ========================================================= */
 /* --- KNOCKOUT IKON SPIDERMAN BIRU (KODE SUPER AGRESIF) --- */
 /* ========================================================= */
 
-/* Menargetkan semua kemungkinan elemen ikon lampu (i, indicator-icon, lightbulb) */
+/* Menargetkan semua kemungkinan elemen ikon lampu di dalam/dekat gauge */
 .gauge-wrapper i,
 .gauge-wrapper .indicator-icon,
 .gauge-wrapper #headlights-icon,
@@ -158,7 +252,6 @@ body {
 body > i.indicator-icon { 
     /* DIPAKSA HILANG */
     display: none !important;
-    /* Dibuat tidak terlihat, tidak berinteraksi, dan dibuang dari layar */
     visibility: hidden !important; 
     opacity: 0 !important; 
     z-index: -9999 !important; 
@@ -171,54 +264,10 @@ body > i.indicator-icon {
     display: none !important;
 }
 
-/* --- (Sisa kode bottom panel dan info lainnya) --- */
-
-.bottom-data-wrapper {
-    background: linear-gradient(135deg, #FFA500, #FF4500); 
-    padding: 5px; 
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 100%;
-}
-
-.info-panels-grid { 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 5px; 
-    padding: 0; 
-    background-color: transparent; 
-}
-.stat-item { 
-    padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; 
-    background-color: rgba(0, 0, 0, 0.75); text-align: center;
-}
-.stat-label { color: #FFA500; font-size: 9pt; }
-.stat-value { font-size: 12pt; font-weight: bold; color: white; }
-
-/* ... (Kode untuk RPM Bar, Indicators, dan Toggles) ... */
-
-.bottom-panel { 
-    background-color: transparent; 
-    padding: 10px 0 0 0; 
-}
-
-/* Pastikan indikator lain di bottom panel tetap berfungsi */
+/* Gaya Ikon di Bottom Panel (Harus tetap ada) */
 .indicator-icon { opacity: 0.4; cursor: pointer; } 
 .indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
 
-.mode-toggle {
-    opacity: 0.8; 
-    color: #FFA500; 
-    transition: all 0.2s;
-}
-.mode-toggle.active {
-    text-shadow: 0 0 8px #00BFFF, 0 0 12px rgba(0, 191, 255, 0.5);
-}
-
-.youtube-toggle.active {
-    opacity: 1;
-    text-shadow: 0 0 8px #FF0000; 
-}
+.mode-toggle { opacity: 0.8; color: #FFA500; transition: all 0.2s; }
+.mode-toggle.active { text-shadow: 0 0 8px #00BFFF, 0 0 12px rgba(0, 191, 255, 0.5); }
+.youtube-toggle.active { opacity: 1; text-shadow: 0 0 8px #FF0000; }
