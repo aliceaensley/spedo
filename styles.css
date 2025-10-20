@@ -1,6 +1,6 @@
 /* ========================================================= */
-/* FINAL TOTAL SPEEDOMETER CSS (v7) */
-/* Menghilangkan Ikon Biru & Merapikan Skala */
+/* FINAL TOTAL ULTIMATE CSS (v8) */
+/* Menghilangkan Ikon Biru Permanen & Skala Optimal */
 /* ========================================================= */
 
 * {
@@ -43,7 +43,8 @@ body {
     gap: 5px;
 }
 
-/* ... (Kode untuk panel, digital view, youtube dihilangkan untuk fokus) */
+/* --- (Bagian YouTube, Digital View, dan Panel Lainnya) --- */
+/* (Disederhanakan untuk fokus) */
 
 .analog-panel {
     display: flex;
@@ -98,7 +99,7 @@ body {
 }
 
 /* ========================================================= */
-/* --- GAYA SKALA ANGKA (FINAL) --- */
+/* --- GAYA SKALA ANGKA (FINAL OPTIMAL) --- */
 /* ========================================================= */
 .speed-marks-wrapper {
     position: absolute;
@@ -114,20 +115,18 @@ body {
     transform-origin: 0 0; 
 }
 
-/* Tanda Garis (Jarak 84px) */
+/* Tanda Garis (Jarak Radial 84px - Sangat Nempel) */
 .speed-mark.line {
     width: 2px;
     height: 8px; 
     background-color: rgba(0, 191, 255, 0.7); 
-    /* Ditarik ke luar (radial 84px) */
     transform: translate(-50%, -100%) translateY(-84px) rotate(0deg); 
     z-index: 5;
 }
 
-/* Angka Kecepatan (FONT SANGAT KECIL & Jarak 74px) */
+/* Angka Kecepatan (FONT 6pt & Jarak Radial 74px - Sangat Nempel) */
 .speed-mark.label {
-    /* FONT FINAL: 6pt (paling kecil agar 100-120 rapi) */
-    font-size: 6pt; 
+    font-size: 6pt; /* FONT FINAL untuk kerapihan 100-120 */
     font-weight: bold;
     color: white;
     text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); 
@@ -136,29 +135,35 @@ body {
     transition: transform 0s; 
 }
 
-/* Memutar angka agar tegak lurus (Jarak 74px) */
+/* Memutar angka agar tegak lurus */
 .speed-mark.label .text-rotate {
     display: block;
-    /* Ditarik ke luar (radial 74px) - Nempel ke Lingkaran */
     transform: translateY(-74px) rotate(var(--counter-rotate-angle)); 
 }
 
 
-/* --- KNOCKOUT IKON SPIDERMAN BIRU (SANGAT AGRESIF) --- */
+/* ========================================================= */
+/* --- KNOCKOUT IKON SPIDERMAN BIRU (KODE SUPER AGRESIF) --- */
+/* ========================================================= */
 
-/* Menargetkan semua elemen ikon yang mungkin muncul di gauge */
+/* Menargetkan semua kemungkinan elemen ikon lampu (i, indicator-icon, lightbulb) */
 .gauge-wrapper i,
 .gauge-wrapper .indicator-icon,
 .gauge-wrapper #headlights-icon,
 .gauge-wrapper .fas.fa-lightbulb,
+.gauge-wrapper *[class*='lightbulb'],
 #analog-speed-view *[class*='indicator'], 
-#analog-speed-view i[class*='light'] {
-    /* Dihilangkan dari DOM */
+#analog-speed-view i[class*='light'],
+#analog-speed-view *[class*='lightbulb'],
+body > i.indicator-icon { 
+    /* DIPAKSA HILANG */
     display: none !important;
-    /* Dibuat tidak terlihat dan tidak berinteraksi */
+    /* Dibuat tidak terlihat, tidak berinteraksi, dan dibuang dari layar */
     visibility: hidden !important; 
     opacity: 0 !important; 
     z-index: -9999 !important; 
+    position: absolute !important; 
+    top: -9999px !important; 
 }
 
 /* Menghilangkan wadah indikator di area analog */
@@ -166,4 +171,54 @@ body {
     display: none !important;
 }
 
-/* --- (Sisa kode bottom panel dan info lainnya dihilangkan untuk fokus) --- */
+/* --- (Sisa kode bottom panel dan info lainnya) --- */
+
+.bottom-data-wrapper {
+    background: linear-gradient(135deg, #FFA500, #FF4500); 
+    padding: 5px; 
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+.info-panels-grid { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 5px; 
+    padding: 0; 
+    background-color: transparent; 
+}
+.stat-item { 
+    padding: 5px; border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; 
+    background-color: rgba(0, 0, 0, 0.75); text-align: center;
+}
+.stat-label { color: #FFA500; font-size: 9pt; }
+.stat-value { font-size: 12pt; font-weight: bold; color: white; }
+
+/* ... (Kode untuk RPM Bar, Indicators, dan Toggles) ... */
+
+.bottom-panel { 
+    background-color: transparent; 
+    padding: 10px 0 0 0; 
+}
+
+/* Pastikan indikator lain di bottom panel tetap berfungsi */
+.indicator-icon { opacity: 0.4; cursor: pointer; } 
+.indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
+
+.mode-toggle {
+    opacity: 0.8; 
+    color: #FFA500; 
+    transition: all 0.2s;
+}
+.mode-toggle.active {
+    text-shadow: 0 0 8px #00BFFF, 0 0 12px rgba(0, 191, 255, 0.5);
+}
+
+.youtube-toggle.active {
+    opacity: 1;
+    text-shadow: 0 0 8px #FF0000; 
+}
