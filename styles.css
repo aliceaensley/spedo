@@ -1,5 +1,5 @@
 /* ========================================================= */
-/* Final CSS Speedometer - High-Tech Glow Theme (ULTIMATE FIX v2) */
+/* Final CSS Speedometer - High-Tech Glow Theme (ULTIMATE FIX v3) */
 /* ========================================================= */
 
 /* Basic Reset and Font */
@@ -423,7 +423,7 @@ body {
 }
 
 /* ========================================================= */
-/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX ULTIMATE v2) --- */
+/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX ULTIMATE v3) --- */
 /* ========================================================= */
 .speed-marks-wrapper {
     position: absolute;
@@ -445,8 +445,8 @@ body {
     width: 2px;
     height: 8px; /* Panjang tanda */
     background-color: rgba(0, 191, 255, 0.7); /* Warna Cyan/Biru Neon */
-    /* **FINAL FIX v2:** Garis di jarak 78px (lebih jauh lagi) */
-    transform: translate(-50%, -100%) translateY(-78px) rotate(0deg); 
+    /* **FINAL FIX v3:** Garis di jarak 80px (lebih jauh lagi) */
+    transform: translate(-50%, -100%) translateY(-80px) rotate(0deg); 
     z-index: 5;
 }
 .speed-mark.line.major {
@@ -454,10 +454,10 @@ body {
     background-color: #00BFFF; /* Warna lebih terang */
 }
 
-/* Angka Kecepatan (FINAL FIX ULTIMATE v2) */
+/* Angka Kecepatan (FINAL FIX ULTIMATE v3) */
 .speed-mark.label {
-    /* **FINAL FIX v2:** Font dikecilkan menjadi 7.5pt */
-    font-size: 7.5pt; 
+    /* **FINAL FIX v3:** Font dikecilkan menjadi 7pt */
+    font-size: 7pt; 
     font-weight: bold;
     color: white;
     text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); /* Glow pada angka */
@@ -470,8 +470,8 @@ body {
 /* Memutar angka agar tegak lurus (counter-rotate) */
 .speed-mark.label .text-rotate {
     display: block;
-    /* **FINAL FIX v2:** Jarak radial 68px (lebih dekat dari garis 78px) */
-    transform: translateY(-68px) rotate(var(--counter-rotate-angle)); 
+    /* **FINAL FIX v3:** Jarak radial 70px (lebih dekat dari garis 80px) */
+    transform: translateY(-70px) rotate(var(--counter-rotate-angle)); 
 }
 
 
@@ -549,8 +549,17 @@ body {
 }
 
 /* --- PENTING: MENGHILANGKAN OBJEK BIRU (SPIDERMAN) --- */
-/* Jika elemen tersebut adalah bagian dari .status-indicators yang secara keliru muncul di analog view */
-/* Ini akan menyembunyikannya secara paksa hanya saat #analog-speed-view aktif. */
+/* Target spesifik untuk ikon lampu depan jika muncul di dalam gauge-wrapper */
+.gauge-wrapper #headlights-icon {
+    display: none !important;
+}
+
+/* Jika ikon headlights masih saja muncul dari lokasi lain yang tidak terduga di dalam analog view */
+#analog-speed-view #headlights-icon {
+    display: none !important;
+}
+
+/* Sembunyikan semua indikator jika secara keliru berada di dalam analog view */
 #analog-speed-view .status-indicators {
     display: none !important;
 }
