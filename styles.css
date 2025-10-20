@@ -1,5 +1,5 @@
 /* ========================================================= */
-/* Final CSS Speedometer - High-Tech Glow Theme (ULTIMATE FIX v4) */
+/* Final CSS Speedometer - High-Tech Glow Theme (ULTIMATE FIX v5) */
 /* ========================================================= */
 
 /* Basic Reset and Font */
@@ -423,7 +423,7 @@ body {
 }
 
 /* ========================================================= */
-/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX ULTIMATE v4) --- */
+/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX ULTIMATE v5) --- */
 /* ========================================================= */
 .speed-marks-wrapper {
     position: absolute;
@@ -445,7 +445,7 @@ body {
     width: 2px;
     height: 8px; /* Panjang tanda */
     background-color: rgba(0, 191, 255, 0.7); /* Warna Cyan/Biru Neon */
-    /* **FINAL FIX v4:** Garis ditarik lebih luar: 82px */
+    /* Garis tetap di 82px (sudah cukup luar) */
     transform: translate(-50%, -100%) translateY(-82px) rotate(0deg); 
     z-index: 5;
 }
@@ -454,10 +454,10 @@ body {
     background-color: #00BFFF; /* Warna lebih terang */
 }
 
-/* Angka Kecepatan (FINAL FIX ULTIMATE v4) */
+/* Angka Kecepatan (FINAL FIX ULTIMATE v5) */
 .speed-mark.label {
-    /* Font tetap 7pt */
-    font-size: 7pt; 
+    /* **FINAL FIX v5:** Font dikecilkan lagi menjadi 6.5pt untuk mengatasi 100/110 */
+    font-size: 6.5pt; 
     font-weight: bold;
     color: white;
     text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); /* Glow pada angka */
@@ -470,7 +470,7 @@ body {
 /* Memutar angka agar tegak lurus (counter-rotate) */
 .speed-mark.label .text-rotate {
     display: block;
-    /* **FINAL FIX v4:** Angka ditarik lebih luar: 72px (10px dari garis) */
+    /* Angka tetap di 72px (sudah cukup luar) */
     transform: translateY(-72px) rotate(var(--counter-rotate-angle)); 
 }
 
@@ -548,17 +548,14 @@ body {
     justify-content: center; 
 }
 
-/* --- PENTING: MENGHILANGKAN OBJEK BIRU (SPIDERMAN) --- */
-/* Target spesifik untuk ikon lampu depan */
-/* Ini menargetkan semua ikon dalam .status-indicators yang mungkin tampil */
-.gauge-wrapper .indicator-icon,
-#analog-speed-view .indicator-icon {
-    display: none !important;
-}
-
-/* Target spesifik ikon lampu depan (Headlights Icon) */
+/* --- PENTING: MENGHILANGKAN OBJEK BIRU (SPIDERMAN) - KODE TERAKHIR --- */
+/* Target spesifik (headlights-icon) & kelas generik (indicator-icon) */
+/* Menggunakan z-index untuk memastikan jika ia ada, ia berada di bawah jarum dan skala */
 .gauge-wrapper #headlights-icon,
-#analog-speed-view #headlights-icon {
+.gauge-wrapper .indicator-icon,
+#analog-speed-view #headlights-icon,
+#analog-speed-view .indicator-icon {
+    /* **FINAL KNOCKOUT:** Dipaksa hilang dari area analog */
     display: none !important;
 }
 
