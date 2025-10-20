@@ -193,7 +193,7 @@ body {
 
 /* Angka Kecepatan (FONT 6pt & Jarak Radial 74px - Sangat Nempel) */
 .speed-mark.label {
-    font-size: 6pt; /* FINAL FONT */
+    font-size: 6pt; /* FINAL FONT untuk kerapihan 100-120 */
     font-weight: bold;
     color: white;
     text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); 
