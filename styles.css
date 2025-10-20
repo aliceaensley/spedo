@@ -1,5 +1,5 @@
 /* ========================================================= */
-/* Final CSS Speedometer - High-Tech Glow Theme (ULTIMATE FIX v3) */
+/* Final CSS Speedometer - High-Tech Glow Theme (ULTIMATE FIX v4) */
 /* ========================================================= */
 
 /* Basic Reset and Font */
@@ -423,7 +423,7 @@ body {
 }
 
 /* ========================================================= */
-/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX ULTIMATE v3) --- */
+/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX ULTIMATE v4) --- */
 /* ========================================================= */
 .speed-marks-wrapper {
     position: absolute;
@@ -445,8 +445,8 @@ body {
     width: 2px;
     height: 8px; /* Panjang tanda */
     background-color: rgba(0, 191, 255, 0.7); /* Warna Cyan/Biru Neon */
-    /* **FINAL FIX v3:** Garis di jarak 80px (lebih jauh lagi) */
-    transform: translate(-50%, -100%) translateY(-80px) rotate(0deg); 
+    /* **FINAL FIX v4:** Garis ditarik lebih luar: 82px */
+    transform: translate(-50%, -100%) translateY(-82px) rotate(0deg); 
     z-index: 5;
 }
 .speed-mark.line.major {
@@ -454,9 +454,9 @@ body {
     background-color: #00BFFF; /* Warna lebih terang */
 }
 
-/* Angka Kecepatan (FINAL FIX ULTIMATE v3) */
+/* Angka Kecepatan (FINAL FIX ULTIMATE v4) */
 .speed-mark.label {
-    /* **FINAL FIX v3:** Font dikecilkan menjadi 7pt */
+    /* Font tetap 7pt */
     font-size: 7pt; 
     font-weight: bold;
     color: white;
@@ -470,8 +470,8 @@ body {
 /* Memutar angka agar tegak lurus (counter-rotate) */
 .speed-mark.label .text-rotate {
     display: block;
-    /* **FINAL FIX v3:** Jarak radial 70px (lebih dekat dari garis 80px) */
-    transform: translateY(-70px) rotate(var(--counter-rotate-angle)); 
+    /* **FINAL FIX v4:** Angka ditarik lebih luar: 72px (10px dari garis) */
+    transform: translateY(-72px) rotate(var(--counter-rotate-angle)); 
 }
 
 
@@ -549,12 +549,15 @@ body {
 }
 
 /* --- PENTING: MENGHILANGKAN OBJEK BIRU (SPIDERMAN) --- */
-/* Target spesifik untuk ikon lampu depan jika muncul di dalam gauge-wrapper */
-.gauge-wrapper #headlights-icon {
+/* Target spesifik untuk ikon lampu depan */
+/* Ini menargetkan semua ikon dalam .status-indicators yang mungkin tampil */
+.gauge-wrapper .indicator-icon,
+#analog-speed-view .indicator-icon {
     display: none !important;
 }
 
-/* Jika ikon headlights masih saja muncul dari lokasi lain yang tidak terduga di dalam analog view */
+/* Target spesifik ikon lampu depan (Headlights Icon) */
+.gauge-wrapper #headlights-icon,
 #analog-speed-view #headlights-icon {
     display: none !important;
 }
