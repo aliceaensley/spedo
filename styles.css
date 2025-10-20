@@ -1,5 +1,5 @@
 /* ========================================================= */
-/* Final CSS Speedometer - High-Tech Glow Theme */
+/* Final CSS Speedometer - High-Tech Glow Theme (ULTIMATE FIX v2) */
 /* ========================================================= */
 
 /* Basic Reset and Font */
@@ -423,7 +423,7 @@ body {
 }
 
 /* ========================================================= */
-/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX ULANG) --- */
+/* --- GAYA SKALA ANGKA SPEEDOMETER (FINAL FIX ULTIMATE v2) --- */
 /* ========================================================= */
 .speed-marks-wrapper {
     position: absolute;
@@ -445,8 +445,8 @@ body {
     width: 2px;
     height: 8px; /* Panjang tanda */
     background-color: rgba(0, 191, 255, 0.7); /* Warna Cyan/Biru Neon */
-    /* Geser ke luar lingkaran dan putar */
-    transform: translate(-50%, -100%) translateY(-75px) rotate(0deg); 
+    /* **FINAL FIX v2:** Garis di jarak 78px (lebih jauh lagi) */
+    transform: translate(-50%, -100%) translateY(-78px) rotate(0deg); 
     z-index: 5;
 }
 .speed-mark.line.major {
@@ -454,26 +454,24 @@ body {
     background-color: #00BFFF; /* Warna lebih terang */
 }
 
-/* Angka Kecepatan (FINAL FIX ULANG) */
+/* Angka Kecepatan (FINAL FIX ULTIMATE v2) */
 .speed-mark.label {
-    /* Angka dikecilkan sedikit agar lebih banyak ruang */
-    font-size: 10pt; 
+    /* **FINAL FIX v2:** Font dikecilkan menjadi 7.5pt */
+    font-size: 7.5pt; 
     font-weight: bold;
     color: white;
     text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); /* Glow pada angka */
-    /* Rotasi Wadah Angka: Tempatkan angka di posisi radial yang benar (Variabel --rotate-angle dari JS) */
+    /* Rotasi Wadah Angka */
     transform: translate(-50%, -50%) rotate(var(--rotate-angle)); 
     z-index: 6;
     transition: transform 0s; 
 }
 
-/* Memutar angka agar tegak lurus (counter-rotate) (FINAL FIX ULANG) */
+/* Memutar angka agar tegak lurus (counter-rotate) */
 .speed-mark.label .text-rotate {
     display: block;
-    /* INI ADALAH PERBAIKAN KRITISNYA: Jarak radial 65px */
-    /* Mengurangi jarak ini justru akan membuat angka lebih masuk ke dalam dan lebih rapat */
-    /* Kita perlu mengatur ini dengan hati-hati bersama dengan ukuran font */
-    transform: translateY(-65px) rotate(var(--counter-rotate-angle)); 
+    /* **FINAL FIX v2:** Jarak radial 68px (lebih dekat dari garis 78px) */
+    transform: translateY(-68px) rotate(var(--counter-rotate-angle)); 
 }
 
 
@@ -549,6 +547,14 @@ body {
     font-size: 20pt; 
     justify-content: center; 
 }
+
+/* --- PENTING: MENGHILANGKAN OBJEK BIRU (SPIDERMAN) --- */
+/* Jika elemen tersebut adalah bagian dari .status-indicators yang secara keliru muncul di analog view */
+/* Ini akan menyembunyikannya secara paksa hanya saat #analog-speed-view aktif. */
+#analog-speed-view .status-indicators {
+    display: none !important;
+}
+
 .indicator-icon { opacity: 0.4; cursor: pointer; } 
 .indicator-icon.active { opacity: 1; text-shadow: 0 0 5px yellow; }
 
