@@ -165,7 +165,8 @@ body {
 .unit-text {
     font-size: 0.7em;
     color: #ccc;
-    margin-top: -5px; 
+    **margin-top: -5px;** /* DIKEMBALIKAN KE ASLINYA */
+    **padding-top: 5px;** /* TAMBAHAN PADDING */
     font-weight: bold;
     flex-shrink: 0;
 }
@@ -278,7 +279,7 @@ body {
     
     /* EFEK NEON: Shadow Oranye dipertahankan */
     text-shadow: 
-        0 0 5px #FFA500,    
+        0 0 5px #FFA500,   
         0 0 15px #FFA500,   
         0 0 30px #FF4500,   
         0 0 45px #FF4500;   
