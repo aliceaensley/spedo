@@ -11,6 +11,7 @@ body {
     margin: 0;
     padding: 0;
     color: white;
+    /* Pastikan background utama transparan untuk HUD */
     background-color: transparent !important; 
     overflow: hidden;
     font-size: 14px; 
@@ -39,6 +40,7 @@ body {
 .dashboard-box {
     width: 250px;
     height: 150px;
+    /* Background semi-transparan gelap untuk dashboard */
     background-color: rgba(30, 30, 45, 0.95); 
     border-radius: 10px;
     padding: 12px 15px; 
@@ -116,7 +118,7 @@ body {
 
 .bar-fill {
     width: 100%;
-    transition: height 0.3s ease-out, background-color 0.3s, box-shadow 0.3s; /* Ditambahkan box-shadow */
+    transition: height 0.3s ease-out, background-color 0.3s, box-shadow 0.3s;
 }
 .health-fill { background-color: #00ff00; }
 .fuel-fill { background-color: #ffaa00; }
@@ -218,7 +220,7 @@ body {
 #turn-right-icon::before { content: '→'; }
 #engine-icon::before { content: '⚡'; } 
 #headlights-icon::before { content: '💡'; } 
-#abs-icon::before { content: '\1F4BA'; } /* Menggunakan simbol ABS/TCS */
+#abs-icon::before { content: '\1F4BA'; }
 
 /* Status Aktif */
 .icon.active { 
@@ -228,4 +230,56 @@ body {
 
 #turn-left-icon.active, #turn-right-icon.active {
     color: #00ffff;
+}
+
+/* =======================================
+    GAYA WELCOME OVERLAY BARU (2 Detik, Transparan, Neon Oranye)
+    ======================================= */
+.welcome-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Background diatur transparan */
+    background-color: transparent; 
+    
+    /* Pengaturan Flexbox untuk sentralisasi konten */
+    display: flex;
+    justify-content: center; /* Sentralisasi Horizontal */
+    align-items: center; /* Sentralisasi Vertikal */
+    
+    z-index: 99999; 
+    
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-out, visibility 0s 0.5s;
+}
+
+.welcome-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.welcome-text {
+    /* Font yang mendukung Aksara Jawa, dengan fallback */
+    font-family: 'Noto Sans Javanese', 'Javanese Text', Arial, sans-serif;
+    
+    /* Ukuran font disesuaikan agar kalimat panjang muat */
+    font-size: 1.8em; 
+    
+    /* PERUBAHAN: Warna teks diatur ke HITAM */
+    color: #000000; 
+    font-weight: bold;
+    
+    /* Penataan teks */
+    text-align: center;
+    line-height: 1.4; 
+    
+    /* EFEK NEON: Shadow Oranye dipertahankan */
+    text-shadow: 
+        0 0 5px #FFA500,    
+        0 0 15px #FFA500,   
+        0 0 30px #FF4500,   
+        0 0 45px #FF4500;   
 }
