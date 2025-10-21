@@ -165,8 +165,7 @@ body {
 .unit-text {
     font-size: 0.7em;
     color: #ccc;
-    **margin-top: -5px;** /* DIKEMBALIKAN KE ASLINYA */
-    **padding-top: 5px;** /* TAMBAHAN PADDING */
+    **margin-top: 5px;** /* PERUBAHAN DI SINI */
     font-weight: bold;
     flex-shrink: 0;
 }
@@ -174,7 +173,7 @@ body {
 .power-bar-dots {
     display: flex;
     gap: 5px;
-    margin-top: 5px; 
+    margin-top: 20px; /* DINAikkan 5px lagi untuk turun lebih jauh */
     flex-shrink: 0;
 }
 
