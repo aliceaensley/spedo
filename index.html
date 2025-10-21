@@ -3,104 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Speedometer & YouTube</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
+    <title>Digital Dashboard HUD Final</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="welcome-overlay">
-        <div class="welcome-message">
-            <div class="javanese-script">ꦱꦸꦒꦼꦁꦫꦮꦸꦃ</div>
-            <h1>SUGENG RAWUH</h1>
-            <p>Ampun Supen Dungo Rumiyen Sakderenge Budal</p>
+    <div class="game-background"></div>
+
+    <div class="digital-dashboard-container">
+        <div class="dashboard-box" id="dashboard-box">
+            
+            <div class="bars-section">
+                <div class="bar-labels-top">
+                    <span class="bar-label" id="health-percent">100%</span>
+                    <span class="bar-label" id="fuel-percent">87%</span>
+                </div>
+                
+                <div class="label-indicators">
+                    <span class="indicator-text">H</span>
+                    <span class="indicator-text">F</span>
+                </div>
+
+                <div class="bar-columns">
+                    <div class="bar-column">
+                        <div class="bar-fill health-fill" id="health-fill"></div>
+                    </div>
+                    <div class="bar-column">
+                        <div class="bar-fill fuel-fill" id="fuel-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="center-display-section">
+                
+                <div class="speed-readout">
+                    <span id="speed" class="speed-value">0</span> 
+                    <span class="gear-letter" id="gear">R</span>
+                </div>
+                <div class="unit-text" id="speed-mode">MPH</div> 
+
+                <div class="power-bar-dots" id="rpm-dots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+
+            <div class="status-icons-row">
+                <i class="icon indicator-icon" id="turn-left-icon"></i> 
+                <i class="icon status-icon" id="engine-icon"></i> 
+                <i class="icon status-icon" id="headlights-icon"></i>
+                <i class="icon status-icon" id="abs-icon"></i> 
+                <i class="icon indicator-icon" id="turn-right-icon"></i>
+
+                <div style="display:none;">
+                    <span id="indicators"></span>
+                    <span id="engine"></span>
+                    <span id="headlights"></span>
+                    <span id="rpm"></span>
+                    <span id="health"></span>
+                    <span id="fuel"></span>
+                    <span id="seatbelts"></span>
+                </div>
+            </div>
         </div>
     </div>
-    
-    <main class="speedometer-container" id="speedometer-ui">
-        
-        <div class="youtube-integrated-container hidden" id="youtube-ui-wrapper">
-            
-            <div class="search-bar-container" id="youtube-search-ui">
-                <input type="text" id="youtube-search-input" placeholder="Cari video YouTube...">
-                <button id="youtube-search-button">Cari</button>
-            </div>
-            
-            <div class="video-and-results-wrapper">
-                <iframe id="browser-iframe" src="about:blank"></iframe>
-                
-                <div class="search-results-container hidden" id="youtube-results">
-                    </div>
-            </div>
-            
-            <div class="youtube-close-button" id="youtube-hide-button">
-                HIDE YOUTUBE [ESC]
-            </div>
-        </div>
-
-        <div class="speedometer-main-elements"> 
-            
-            <div class="speedometer-view-wrapper" id="speedometer-view-wrapper">
-                
-                <div id="digital-speed-view">
-                    <div class="panel speed-panel">
-                        <div class="speed-header">
-                            <span class="speed-unit" id="speed-mode-digital">MPH</span>
-                        </div>
-                        <div class="speed-value-wrapper">
-                            <div class="speed-value" id="speed-digital">000</div>
-                            <img src="https://bit.ly/signalice" alt="Logo Hak Cipta" class="speed-copyright-logo hidden">
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="analog-speed-view" class="hidden">
-                    <div class="panel analog-panel">
-                        <div class="gauge-wrapper">
-                            <div class="speed-marks-wrapper" id="speed-marks-wrapper">
-                                </div>
-                            
-                            <div class="analog-speed-value" id="speed-analog-text">0</div>
-                            <div class="speed-unit-analog" id="speed-mode-analog">MPH</div>
-                            
-                            <div class="speed-needle" id="analog-needle"></div>
-                            <div class="center-pin"></div>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-            
-            <div class="bottom-data-wrapper">
-                
-                <div class="panel info-panels-grid">
-                    <div class="stat-item"><div class="stat-label">Fuel</div><div class="stat-value" id="fuel">0%</div></div>
-                    <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value" id="health">100%</div></div>
-                    
-                    <div class="stat-item rpm-stat-item">
-                        <div class="stat-label">RPM</div>
-                        <div class="rpm-bar-wrapper">
-                            <div class="rpm-bar" id="rpm-bar-main"></div> 
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item"><div class="stat-label">Time</div><div class="stat-value" id="time-wib">00:00:00</div></div>
-                </div>
-
-                <div class="panel bottom-panel">
-                    <div class="status-indicators">
-                        <div class="indicator-icon" id="headlights-icon">💡</div>
-                        <div class="indicator-icon" id="engine-icon">⚙️</div>
-                        <div class="indicator-icon" id="seatbelt-icon">💺</div>
-                        
-                        <div class="indicator-icon mode-toggle" id="mode-toggle-icon">⏱️</div>
-                        
-                        <div class="indicator-icon youtube-toggle" id="youtube-toggle-icon">▶️</div>
-                    </div>
-                </div>
-            </div>
-            
-        </div> </main>
 
     <script src="script.js"></script>
 </body>
